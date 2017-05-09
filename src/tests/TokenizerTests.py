@@ -18,13 +18,16 @@ from pydifact.Token import Token
 from pydifact.Tokenizer import Tokenizer
 import unittest
 
+
 class TokenizerTest(unittest.TestCase):
-    
+
     def setUp(self):
-        self._tokenizer = Tokenizer() 
+        self._tokenizer = Tokenizer()
 
     def _assertTokens(self, message, expected=[]):
-        tokens = self._tokenizer.getTokens("{message}'".format(message=message))
+        tokens = self._tokenizer.getTokens(
+            "{message}'".format(message=message))
+
         expected.append(Token(Token.TERMINATOR, "'"))
         self.assertEqual(expected, tokens)
 
@@ -43,7 +46,7 @@ class TokenizerTest(unittest.TestCase):
             Token(Token.DATA_SEPARATOR, "+"),
             Token(Token.CONTENT, "PD:5"),
         ])
-        
+
     def testDoubleEscape(self):
         self._assertTokens("RFF+PD??:5", [
             Token(Token.CONTENT, "RFF"),
@@ -79,11 +82,12 @@ class TokenizerTest(unittest.TestCase):
             Token(Token.COMPONENT_SEPARATOR, ":"),
             Token(Token.CONTENT, "6"),
         ])
-        
+
     def testNoTerminator(self):
         with self.assertRaises(RuntimeError) as cm:
             self._tokenizer.getTokens("TEST")
         self.assertEqual(str(cm.exception), "Unexpected end of EDI message")
+
 
 if __name__ == '__main__':
     unittest.main()

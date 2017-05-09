@@ -17,45 +17,38 @@
 
 class Segment:
     """Represent a segment of an EDI message."""
-    
-    def __init__(self, name, elements=[]):
+
+    def __init__(self, name: str, elements: list = []):
         """
         Create a new instance.
-    
         :param string $name The name of the segment.
         :param array $elements The data elements for this segment.
         """
         # The name of the segment.
         self. name = name
-        
+
         # The data elements for this segment.
         self.elements = elements
-        
 
-    def getName(self):
-        """
-        Get the name of this segment.
-        :return string
-        """
+    def __str__(self) -> str:
+        return self.getName()
+
+    def getName(self) -> str:
+        """Get the name of this segment."""
+
         return self.name
 
+    def getAllElements(self) -> list:
+        """Get all the elements from the segment."""
 
-    def getAllElements(self):
-        """
-        Get all the elements from the segment.
-        :return array
-        """
         return self.elements
 
-
-    def getElement(self, key):
+    def getElement(self, key: int) -> list or None:
         """
         Get an element from the segment.
         :param int key The element to get
-        :return mixed
         """
         try:
             return self.elements[key]
         except IndexError:
             return
-

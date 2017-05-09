@@ -18,6 +18,7 @@ from pydifact.Segment import Segment
 from pydifact.Serializer import Serializer
 import unittest
 
+
 class SerializerTest(unittest.TestCase):
 
     def setUp(self):
@@ -67,6 +68,7 @@ class SerializerTest(unittest.TestCase):
         self.assertSegments("ERC+10:?:?+???' - ?:?+???' - ?:?+???'", [
             Segment("ERC", ["10", ":+?' - :+?' - :+?'"]),
         ])
+
 
 if __name__ == '__main__':
     unittest.main()

@@ -14,19 +14,20 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+
 class Token:
 
-    CONTENT               =   11
-    COMPONENT_SEPARATOR   =   12
-    DATA_SEPARATOR        =   13
-    TERMINATOR            =   14
-    
+    CONTENT = 11
+    COMPONENT_SEPARATOR = 12
+    DATA_SEPARATOR = 13
+    TERMINATOR = 14
+
     def __init__(self, token_type, value):
         self.type = token_type
         self.value = value
-    
-    def __str__(self):
+
+    def __str__(self) -> str:
         return "{} ({})".format(self.value, self.type)
-    
-    def __eq__(self, other):
+
+    def __eq__(self, other) -> bool:
         return self.type == other.type and self.value == other.value

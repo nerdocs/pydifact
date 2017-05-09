@@ -14,50 +14,37 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
 from pydifact.Segment import Segment
 import unittest
 
+
 class SegmentTest(unittest.TestCase):
+
+    def setUp(self):
+        self.elements = [
+            "field1",
+            ["field2", "extra"],
+            "stuff",
+        ]
 
     def testGetName(self):
         segment = Segment("OMD")
         self.assertEqual("OMD", segment.getName())
 
     def testGetAllElements(self):
-        elements = [
-            "field1",
-            ["field2", "extra"],
-            "stuff",
-        ]
-        segment = Segment("OMD", elements)
-        self.assertEqual(elements, segment.getAllElements())
+        segment = Segment("OMD", self.elements)
+        self.assertEqual(self.elements, segment.getAllElements())
 
-    def testGetElement1(self):
-        elements = [
-            "field1",
-            ["field2", "extra"],
-            "stuff",
-        ]
-        segment = Segment("OMD", elements)
+    def testGetSingleElement(self):
+        segment = Segment("OMD", self.elements)
         self.assertEqual("field1", segment.getElement(0))
 
-    def testGetElement2(self):
-        elements = [
-            "field1",
-            ["field2", "extra"],
-            "stuff",
-        ]
-        segment = Segment("OMD", elements)
+    def testGetListElement(self):
+        segment = Segment("OMD", self.elements)
         self.assertEqual(["field2", "extra"], segment.getElement(1))
 
-    def testGetElement3(self):
-        elements = [
-            "field1",
-            ["field2", "extra"],
-            "stuff",
-        ]
-        segment = Segment("OMD", elements)
+    def testGetNonExistingElement(self):
+        segment = Segment("OMD", self.elements)
         self.assertIsNone(segment.getElement(7))
 
 

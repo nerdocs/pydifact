@@ -17,16 +17,16 @@
 from pydifact.ControlCharacter import ControlCharacterMixin
 import re
 
+
 class Serializer(ControlCharacterMixin):
     """Serialize a bunch of segments into an EDI message string."""
-    
+
     def __init__(self):
         super().__init__()
-        
 
     def serialize(self, segments: list) -> str:
         """Serialize all the passed segments."""
-        
+
         message = "UNA"
         message += self.componentSeparator
         message += self.dataSeparator
@@ -39,25 +39,22 @@ class Serializer(ControlCharacterMixin):
             for element in segment.getAllElements():
                 message += self.dataSeparator
                 if type(element) == list:
-                    for nr,subelement in enumerate(element):
+                    for nr, subelement in enumerate(element):
                         element[nr] = self.escape(subelement)
                     message += self.componentSeparator.join(element)
                 else:
                     message += self.escape(element)
 
-
             message += self.segmentTerminator
 
         return message
 
-
     def escape(self, string: str) -> str:
         """
         Escapes control characters.
-        
         :param str string The string to be escaped
-        """        
-        
+        """
+
         assert(type(string) == str)
 
         characters = [
@@ -73,9 +70,6 @@ class Serializer(ControlCharacterMixin):
         # Thanks to "Bor González Usach" for this wonderful piece of code:
         # https://gist.github.com/bgusach/a967e0587d6e01e889fd1d776c5f3729
         substrs = sorted(replace_map, key=len, reverse=True)
-        
         regexp = re.compile('|'.join(map(re.escape, substrs)))
-        
-        return regexp.sub(lambda match: replace_map[match.group(0)], string)
-    
 
+        return regexp.sub(lambda match: replace_map[match.group(0)], string)
