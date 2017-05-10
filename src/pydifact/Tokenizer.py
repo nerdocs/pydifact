@@ -37,11 +37,11 @@ class Tokenizer(ControlCharacterMixin):
         self.isEscaped = False
 
     def getTokens(self, message) -> list:
-        """
-        Convert the passed message into tokens.
-        @param string $message The EDI message
+        """Convert the passed message into tokens.
+        :param string $message The EDI message
         :return Token[]
         """
+
         self.message = message
         self.char = None
         self.string = ""
@@ -57,10 +57,7 @@ class Tokenizer(ControlCharacterMixin):
         return tokens
 
     def readNextChar(self) -> str:
-        """
-        Read the next character from the message.
-        :return None
-        """
+        """Read the next character from the message."""
         self.char = self.getNextChar()
 
         # If the last character was escaped, this one can't possibly be
@@ -127,9 +124,8 @@ class Tokenizer(ControlCharacterMixin):
             ]
 
     def storeCurrentCharAndReadNext(self) -> None:
-        """
-        Store the current character and read the next one
-        from the message.
+        """Store the current character and read the
+        next one from the message.
         """
 
         self.string += self.char
