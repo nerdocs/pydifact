@@ -36,10 +36,10 @@ class Tokenizer(ControlCharacterMixin):
         # bool $isEscaped If the current character has been esacped.
         self.isEscaped = False
 
-    def getTokens(self, message) -> list:
+    def getTokens(self, message: str) -> list:
         """Convert the passed message into tokens.
-        :param string $message The EDI message
-        :return Token[]
+        :param message: The EDI message
+        :return: Token[]
         """
 
         self.message = message
