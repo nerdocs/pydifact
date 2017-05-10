@@ -32,19 +32,19 @@ class SegmentTest(unittest.TestCase):
         self.assertEqual("OMD", segment.getName())
 
     def testGetAllElements(self):
-        segment = Segment("OMD", self.elements)
+        segment = Segment("OMD", *self.elements)
         self.assertEqual(self.elements, segment.getAllElements())
 
     def testGetSingleElement(self):
-        segment = Segment("OMD", self.elements)
+        segment = Segment("OMD", *self.elements)
         self.assertEqual("field1", segment.getElement(0))
 
     def testGetListElement(self):
-        segment = Segment("OMD", self.elements)
+        segment = Segment("OMD", *self.elements)
         self.assertEqual(["field2", "extra"], segment.getElement(1))
 
     def testGetNonExistingElement(self):
-        segment = Segment("OMD", self.elements)
+        segment = Segment("OMD", *self.elements)
         self.assertIsNone(segment.getElement(7))
 
 

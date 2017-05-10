@@ -18,21 +18,26 @@
 class Segment:
     """Represent a segment of an EDI message."""
 
-    def __init__(self, name: str, elements: list = []):
+    def __init__(self, name: str, *elements: tuple):
+        """Create a new instance.
+        :param str name: The name of the segment.
+        :param list elements: The data elements for this segment, as list.
         """
-        Create a new instance.
-        :param string $name The name of the segment.
-        :param array $elements The data elements for this segment.
-        """
+
         # The name of the segment.
+        # TODO: rename into "tag"
         self. name = name
 
-        # The data elements for this segment.
+        """The data elements for this segment.
+        this is a tuple (due to the fact that python creates a tuple
+        when passing a variable arguments list to a method)
+        """
         self.elements = elements
 
     def __str__(self) -> str:
         return self.getName()
 
+    # TODO: rename into get_tag"
     def getName(self) -> str:
         """Get the name of this segment."""
 
@@ -41,12 +46,12 @@ class Segment:
     def getAllElements(self) -> list:
         """Get all the elements from the segment."""
 
-        return self.elements
+        return list(self.elements)
 
     def getElement(self, key: int) -> list or None:
-        """
-        Get an element from the segment.
+        """Get an element from the segment.
         :param int key The element to get
+        :return the element, or None, if the key is out of range.
         """
         try:
             return self.elements[key]
