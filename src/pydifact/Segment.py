@@ -57,3 +57,6 @@ class Segment:
             return self.elements[key]
         except IndexError:
             return
+
+    def __eq__(self, other):
+        return self.getAllElements() == other.getAllElements()
