@@ -73,9 +73,9 @@ class ParserTest(unittest.TestCase):
 
     def _assertSegments(self, message: str, segments: list):
 
-        input = "UNA:+,? '\n"
-        input += message + "'\n"
-        result = self.parser.parse(input)
+        input_str = "UNA:+,? '\n"
+        input_str += message + "'\n"
+        result = self.parser.parse(input_str)
         # FIXME: result = iterator_to_array(result)
         self.assertEqual(segments, result)
 
