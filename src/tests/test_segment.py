@@ -27,25 +27,25 @@ class SegmentTest(unittest.TestCase):
             "stuff",
         ]
 
-    def testGetName(self):
+    def test_get_name(self):
         segment = Segment("OMD")
-        self.assertEqual("OMD", segment.getName())
+        self.assertEqual("OMD", segment.get_name())
 
-    def testGetAllElements(self):
+    def test_get_all_elements(self):
         segment = Segment("OMD", *self.elements)
-        self.assertEqual(self.elements, segment.getAllElements())
+        self.assertEqual(self.elements, segment.get_all_elements())
 
-    def testGetSingleElement(self):
+    def test_get_single_element(self):
         segment = Segment("OMD", *self.elements)
-        self.assertEqual("field1", segment.getElement(0))
+        self.assertEqual("field1", segment.get_element(0))
 
-    def testGetListElement(self):
+    def test_get_list_element(self):
         segment = Segment("OMD", *self.elements)
-        self.assertEqual(["field2", "extra"], segment.getElement(1))
+        self.assertEqual(["field2", "extra"], segment.get_element(1))
 
-    def testGetNonExistingElement(self):
+    def test_get_non_existing_element(self):
         segment = Segment("OMD", *self.elements)
-        self.assertIsNone(segment.getElement(7))
+        self.assertIsNone(segment.get_element(7))
 
 
 if __name__ == '__main__':

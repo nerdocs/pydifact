@@ -26,7 +26,7 @@ class Segment:
 
         # The name of the segment.
         # TODO: rename into "tag"
-        self. name = name
+        self.name = name
 
         """The data elements for this segment.
         this is a tuple (due to the fact that python creates a tuple
@@ -35,20 +35,20 @@ class Segment:
         self.elements = elements
 
     def __str__(self) -> str:
-        return self.getName()
+        return self.get_name()
 
     # TODO: rename into get_tag"
-    def getName(self) -> str:
+    def get_name(self) -> str:
         """Get the name of this segment."""
 
         return self.name
 
-    def getAllElements(self) -> list:
+    def get_all_elements(self) -> list:
         """Get all the elements from the segment."""
 
         return list(self.elements)
 
-    def getElement(self, key: int) -> list or None:
+    def get_element(self, key: int) -> list or None:
         """Get an element from the segment.
         :param int key The element to get
         :return the element, or None, if the key is out of range.
@@ -59,4 +59,4 @@ class Segment:
             return
 
     def __eq__(self, other):
-        return self.getAllElements() == other.getAllElements()
+        return self.get_all_elements() == other.get_all_elements()

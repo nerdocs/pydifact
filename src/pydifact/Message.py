@@ -26,7 +26,7 @@ class Message:
         self.segments = []
 
     @classmethod
-    def fromFile(cls, file: str):
+    def from_file(cls, file: str):
         """Create a instance from a file.
 
         Raises FileNotFoundError if filename is not found.
@@ -36,20 +36,20 @@ class Message:
 
         message = open(file).read()
 
-        return cls.fromString(message)
+        return cls.from_str(message)
 
     @classmethod
-    def fromString(cls, string: str):
+    def from_str(cls, string: str):
         """Create a instance from a string.
         :param string: The EDI message content
         :rtype: static
         """
 
         segments = Parser().parse(string)
-        return cls.fromSegments(segments)
+        return cls.from_segments(segments)
 
     @classmethod
-    def fromSegments(cls, segments: list):
+    def from_segments(cls, segments: list):
         """Create a instance from an array of segments.
         :param segments: The segments of the message
         :type segments: Segment[]
@@ -57,35 +57,35 @@ class Message:
 
         # create a new instance of Message and return it
         # with the added segments
-        return cls().addSegments(segments)
+        return cls().add_segments(segments)
 
-    def getAllSegments(self):
+    def get_all_segments(self):
         """Get all the segments.
         :rtype: Segment[]
         """
 
         return self.segments
 
-    def getSegments(self, name: str):
+    def get_segments(self, name: str):
         """Get all the segments that match the requested name.
         :param name: The name of the segment to return
         :rtype: Segment[]
         """
 
-        for segment in self.getAllSegments():
-            if segment.getName() == name:
+        for segment in self.get_all_segments():
+            if segment.get_name() == name:
                 yield segment
 
-    def getSegment(self, name: str):
+    def get_segment(self, name: str):
         """Get the first segment that matches the requested name.
         :param name: The name of the segment to return
         :rtype: Segment
         """
 
-        for segment in self.getSegments(name):
+        for segment in self.get_segments(name):
             return segment
 
-    def addSegments(self, segments: list):
+    def add_segments(self, segments: list):
         """Add multiple segments to the message.
         :param segments: The segments to add
         :type segments: Segment[]
@@ -93,11 +93,11 @@ class Message:
         """
 
         for segment in segments:
-            self.addSegment(segment)
+            self.add_segment(segment)
 
         return self
 
-    def addSegment(self, segment: Segment):
+    def add_segment(self, segment: Segment):
         """Add a segment to the message.
         :param segment: The segment to add
         :rtype: self
@@ -111,7 +111,7 @@ class Message:
         :rtype: str
         """
 
-        return Serializer().serialize(self.getAllSegments())
+        return Serializer().serialize(self.get_all_segments())
 
     def __str__(self):
         """Allow the object to be serialized by casting to a string.

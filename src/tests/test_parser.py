@@ -22,15 +22,15 @@ import unittest
 from unittest.mock import patch, MagicMock
 
 
-class ParserTest(unittest.TestCase):
+class TestParser(unittest.TestCase):
 
     def setUp(self):
         self.parser = Parser()
 
     @patch("pydifact.Tokenizer")
-    def setupSpecialCharacters(self,
-                               message: str,
-                               tokenizer: Tokenizer = None) -> str:
+    def setup_special_characters(self,
+                                 message: str,
+                                 tokenizer: Tokenizer = None) -> str:
         """
         :return: the message without the "UNA123456" string
         """
@@ -38,91 +38,108 @@ class ParserTest(unittest.TestCase):
         if tokenizer == None:
             tokenizer = MagicMock(spec=Tokenizer)
             tokenizer.setControlCharacter.assert_called_once_with("setComponentSeparator", 1)
-            #tokenizer.setControlCharacter.assert_called_once_with("setDataSeparator", 2)
-            #tokenizer.setControlCharacter.assert_called_once_with("setDecimalPoint", 3)
-            #tokenizer.setControlCharacter.assert_called_once_with("setEscapeCharacter", 4)
-            #tokenizer.setControlCharacter.assert_called_once_with("setSegmentTerminator", 6)
+            # tokenizer.setControlCharacter.assert_called_once_with("setDataSeparator", 2)
+            # tokenizer.setControlCharacter.assert_called_once_with("setDecimalPoint", 3)
+            # tokenizer.setControlCharacter.assert_called_once_with("setEscapeCharacter", 4)
+            # tokenizer.setControlCharacter.assert_called_once_with("setSegmentTerminator", 6)
 
-        self.parser.setupSpecialCharacters(message, tokenizer)
+        self.parser.setup_special_characters(message, tokenizer)
 
-    def testSetupSpecialCharacters1(self):
+    def test_setup_special_characters1(self):
 
         tokenizer = MagicMock(spec=Tokenizer)
-        message = self.setupSpecialCharacters("TEST", tokenizer)
+        message = self.setup_special_characters("TEST", tokenizer)
         self.assertEqual("TEST", message)
 
-    def testSetupSpecialCharacters2(self):
+    def test_setup_special_characters2(self):
 
-        message = self.setupSpecialCharacters("UNA123456")
+        message = self.setup_special_characters("UNA123456")
         self.assertEqual("", message)
 
-    def testSetupSpecialCharacters3(self):
+    def test_setup_special_characters3(self):
 
-        message = self.setupSpecialCharacters("UNA123456TEST")
+        message = self.setup_special_characters("UNA123456TEST")
         self.assertEqual("TEST", message)
 
-    def testSetupSpecialCharacters4(self):
+    def test_setup_special_characters4(self):
 
-        message = self.setupSpecialCharacters("UNA123456\nTEST")
+        message = self.setup_special_characters("UNA123456\nTEST")
         self.assertEqual("TEST", message)
 
-    def testSetupSpecialCharacters5(self):
+    def test_setup_special_characters5(self):
 
-        message = self.setupSpecialCharacters("UNA123456\r\nTEST")
+        message = self.setup_special_characters("UNA123456\r\nTEST")
         self.assertEqual("TEST", message)
 
-    def _assertSegments(self, message: str, segments: list):
+    def _assert_segments(self, message: str, segments: list):
+        """This function asserts that the given message, when parsed with
+        Parser.parse(), produces exactly the list output given by segments.
+        :param message: The message to parse. The UNA string is added.
+        :param segments: The expected segments list
+        """
 
-        input_str = "UNA:+,? '\n"
-        input_str += message + "'\n"
+        input_str = "UNA:+,? '\n" + message + "'\n"
         result = self.parser.parse(input_str)
-        # FIXME: result = iterator_to_array(result)
-        self.assertEqual(segments, result)
+        print(list(result))
+        print(segments)
+        self.assertCountEqual(segments, list(result))
 
-    def testBasic1(self):
+    def test_compare_equal_segments(self):
+        """Just make sure that comparing Segment objects works"""
+        a = [Segment("RFF", ["PD", "50515"])]
+        b = [Segment("RFF", ["PD", "50515"])]
+        assert a is not b, \
+            "Two separatedly created Segment objects may not be a singleton."
+        self.assertEqual(a, b)
 
-        self._assertSegments("RFF+PD:50515", [
+    def test_basic1(self):
+
+        self._assert_segments("RFF+PD:50515", [
             Segment("RFF", ["PD", "50515"]),
         ])
 
-    def testBasic2(self):
+    def test_basic2(self):
 
-        self._assertSegments("RFF+PD+50515", [
+        self._assert_segments("RFF+PD+50515", [
             Segment("RFF", "PD", "50515"),
         ])
 
-    def testEscapeCharacter(self):
+    def test_escape_character(self):
 
-        self._assertSegments("ERC+10:The message does not make sense??", [
+        self._assert_segments("ERC+10:The message does not make sense??", [
             Segment("ERC", ["10", "The message does not make sense?"]),
         ])
 
-    def testEscapeComponentSeparator(self):
+    def test_escape_component_separator(self):
 
-        self._assertSegments("ERC+10:Name?: Craig", [
+        self._assert_segments("ERC+10:Name?: Craig", [
             Segment("ERC", ["10", "Name: Craig"]),
         ])
 
-    def testEscapeDataSeparator(self):
+    def test_escape_data_separator(self):
 
-        self._assertSegments("DTM+735:?+0000:406", [
+        self._assert_segments("DTM+735:?+0000:406", [
             Segment("DTM", ["735", "+0000", "406"]),
         ])
 
     def testEscapeDecimalPoint(self):
 
-        self._assertSegments("QTY+136:12,235", [
+        self._assert_segments("QTY+136:12,235", [
             Segment("QTY", ["136", "12,235"]),
         ])
 
-    def testEscapeSegmentTerminator(self):
+    def test_escape_segment_terminator(self):
 
-        self._assertSegments("ERC+10:Craig?'s", [
+        self._assert_segments("ERC+10:Craig?'s", [
             Segment("ERC", ["10", "Craig's"]),
         ])
 
-    def testEscapeSequence(self):
+    def test_escape_sequence(self):
 
-        self._assertSegments("ERC+10:?:?+???' - ?:?+???' - ?:?+???'", [
+        self._assert_segments("ERC+10:?:?+???' - ?:?+???' - ?:?+???'", [
             Segment("ERC", ["10", ":+?' - :+?' - :+?'"]),
         ])
+
+
+if __name__ == '__main__':
+    unittest.main()

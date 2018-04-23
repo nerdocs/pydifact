@@ -28,54 +28,40 @@ class Parser:
         """
 
         tokenizer = Tokenizer()
-        self.setupSpecialCharacters(message, tokenizer)
-        tokens = tokenizer.getTokens(message)
-        segments = self.convertTokensToSegments(tokens)
+        message = self.setup_special_characters(message, tokenizer)
+        tokens = tokenizer.get_tokens(message)
+        segments = self.convert_tokens_to_segments(tokens)
         return segments
 
-    # FIXME this is differene than the PHP version!
-    # returns message, instead of altering the message argument
-    def setupSpecialCharacters(self,
-                               message: str,
-                               tokenizer: Tokenizer) -> str or None:
+    def setup_special_characters(self,
+                                 message: str,
+                                 tokenizer: Tokenizer) -> str or None:
         """Read (and remove) the UNA segment from the passed string.
         :param message: The EDI message to extract the UNA from
         :param tokenizer:
         :type tokenizer: Tokenizer
         :rtype: str or None
-        :return the message string without the UNA header, or None
+        :return: the message string without the UNA header, or None
             if the message does not start with "UNA"
         """
 
-        if not message[0:3] == "UNA":
+        if not message[:3] == "UNA":
             return None
 
         # Get the character definitions
         chars = message[3:9]
 
-        # Remove the UNA segment from the original message
-        message = message[9:].lstrip() + "\r\n"
+        tokenizer.setComponentSeparator(chars[0])
+        tokenizer.setDataSeparator(chars[1])
+        tokenizer.setDecimalPoint(chars[2])
+        tokenizer.setEscapeCharacter(chars[3])
+        tokenizer.setSegmentTerminator(chars[5])
 
-        # TODO - ditch mb_substr here!
-        pos = 0
-        tokenizer.setComponentSeparator(chars[pos:pos+1])
-        pos += 1
+        # Remove the UNA segment from the original message and
+        # return this new string
+        return message[9:].lstrip() + "\r\n"
 
-        tokenizer.setDataSeparator(chars[pos:pos+1])
-        pos += 1
-
-        tokenizer.setDecimalPoint(chars[pos:pos+1])
-        pos += 1
-
-        tokenizer.setEscapeCharacter(chars[pos:pos+1])
-        pos += 1
-
-        # chars[pos:pos+1]
-        pos += 1
-
-        tokenizer.setSegmentTerminator(chars[pos:pos+1])
-
-    def convertTokensToSegments(self, tokens: list):
+    def convert_tokens_to_segments(self, tokens: list):
         """Convert the tokenized message into an array of segments.
         :param tokens: The tokens that make up the message
         :type tokens: list of Token
@@ -83,8 +69,10 @@ class Parser:
         """
 
         segments = []
-        currentSegment = -1
+        data_element = None
+        isComposite = False
         inSegment = False
+
         for token in tokens:
 
             # If we're in the middle of a segment,
@@ -94,66 +82,46 @@ class Parser:
                     inSegment = False
                     continue
 
-            # If we're not in a segment, then start a new one now
+            # If we're not in a segment, then start a new empty one now
+            # and add it to the list. Also create a new empty data element,
+            # because if the next token is a DATA_SEPARATOR, at least we have
+            # an empty string to save into the segment then.
             else:
                 inSegment = True
-                currentSegment += 1
-                segments[currentSegment] = []
-                part = 0
-                key = 0
+                isComposite = False
+                # create a new, empty segment, and append it to
+                # the list of segments
+                currentSegment = []
+                segments.append(currentSegment)
 
-            # Whenever we reach a data separator, we increment
-            # the part counter to move on to the next part of data,
-            # and reset our key counter for the elements within the part.
+            # then proceed with ex exploration of the token
+
+            # Whenever we reach a data separator (+), we add the currently
+            # collected data element to the current segment (whatever it is,
+            # a string or list, and reset the data_element to ""
             if token.type == Token.DATA_SEPARATOR:
-                part += 1
-                key = 0
+                currentSegment.append(data_element)
+                isComposite = False
+                data_element = ""
                 continue
 
-            # Whenever we reach a component separator, we just
-            # increment the $key counter for the elements within the
-            # current part.
+            # Whenever we reach a component data separator (:), we know that
+            # the whole data element is a composite, so make a list out of
+            # the data_element if it isn't already one.
             if token.type == Token.COMPONENT_SEPARATOR:
-                key += 1
+                isComposite = True
+                if not type(data_element) == list:
+                    data_element = [data_element]
                 continue
 
-            # If this isn't the first part, then backfill any missing parts.
-            # This is because empty parts are not represented by a token,
-            # so we need to simulate them here.
-            if part > 0:
-                for i in range(0, part):
-                    try:
-                        segments[currentSegment][i]
-                    except IndexError:
-                        segments[currentSegment][i] = ""
-
-            # If this is the first element within the part then just
-            # set it as a string.
-            if key == 0:
-                segments[currentSegment][part] = token.value
+            # If this is a composite element, append the string to it
+            if isComposite:
+                data_element.append(token.value)
                 continue
-
-            # For the same as the parts, we need to backfill any empty
-            # elements. We also use this code to append the element we are
-            # currently processing.
-            for i in range(0, key):
-                value = token.value if i == key else ""
-
-                # If there is an initial element set as a string, we need
-                # to convert it into an array before we append to it
-                try:
-                    if not type(segments[currentSegment][part]) == list:
-                        segments[currentSegment][part] = [
-                            segments[currentSegment][part]
-                            ]
-                except IndexError:
-                    pass
-
-                # If this part does not exist, set it now
-                try:
-                    segments[currentSegment][part][i]
-                except IndexError:
-                    segments[currentSegment][part][i] = value
+            else:
+                # if not a composite (as far as we know yet), add as string
+                data_element = token.value
+                continue
 
         for segment in segments:
             name = segment.pop(0)

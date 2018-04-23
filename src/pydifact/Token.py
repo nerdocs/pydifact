@@ -16,13 +16,19 @@
 
 
 class Token:
+    """Represents a block of characters in the message.
 
+    This could be content, a component separator (usually +),
+    a data separator (usually :), or a segment terminator (usually ').
+    """
     CONTENT = 11
     COMPONENT_SEPARATOR = 12
     DATA_SEPARATOR = 13
     TERMINATOR = 14
 
     def __init__(self, token_type, value):
+        """Creates a Token with a type and a value"""
+
         self.type = token_type
         self.value = value
 

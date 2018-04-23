@@ -18,22 +18,22 @@
 class ControlCharacterMixin:
 
     def __init__(self):
-        # string $componentSeparator The control character used to
+        # str componentSeparator The control character used to
         # separate components.
         self.componentSeparator = ":"
 
-        # string $dataSeparator The control character used to separate
+        # str dataSeparator The control character used to separate
         # data elements.
         self.dataSeparator = "+"
 
-        # string $decimalPoint The control character used as a decimal point.
+        # str decimalPoint The control character used as a decimal point.
         self.decimalPoint = ","
 
-        # string $escapeCharacter The control character used as an
+        # str escapeCharacter The control character used as an
         # escape character.
         self.escapeCharacter = "?"
 
-        # string $segmentTerminator The control character used as an segment
+        # string segmentTerminator The control character used as an segment
         # terminator.
         self.segmentTerminator = "'"
 

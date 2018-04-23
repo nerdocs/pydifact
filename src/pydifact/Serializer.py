@@ -35,8 +35,8 @@ class Serializer(ControlCharacterMixin):
         message += " "
         message += self.segmentTerminator
         for segment in segments:
-            message += segment.getName()
-            for element in segment.getAllElements():
+            message += segment.get_name()
+            for element in segment.get_all_elements():
                 message += self.dataSeparator
                 if type(element) == list:
                     for nr, subelement in enumerate(element):

@@ -21,48 +21,52 @@ import unittest
 
 class MessageTest(unittest.TestCase):
 
-    def testFromFile(self):
+    def test_from_file(self):
 
         with self.assertRaises(FileNotFoundError):
-            Message.fromFile("/no/such/file")
+            Message.from_file("/no/such/file")
 
-    def testCreateWithSegments(self):
+    def test_create_with_segments(self):
 
-        message = Message.fromSegments([Segment("36CF")])
+        message = Message.from_segments([Segment("36CF")])
         self.assertEqual([
             Segment("36CF"),
-        ], message.getAllSegments())
+        ], message.get_all_segments())
 
-    def testGetSegments(self):
+    def test_get_segments(self):
 
-        message = Message.fromSegments([
+        message = Message.from_segments([
             Segment("36CF", 1),
             Segment("CPD"),
             Segment("36CF", 2)
         ])
-        segments = list(message.getSegments("36CF"))
+        segments = list(message.get_segments("36CF"))
         self.assertEqual([
             Segment("36CF", 1),
             Segment("36CF", 2),
         ], segments)
 
-    def testGetSegmentsDoesntExist(self):
+    def test_get_segments_doesnt_exist(self):
 
         message = Message()
-        segments = list(message.getSegments("36CF"))
+        segments = list(message.get_segments("36CF"))
         self.assertEqual([], segments)
 
-    def testGetSegment(self):
+    def test_get_segment(self):
 
-        message = Message.fromSegments([
+        message = Message.from_segments([
             Segment("36CF", 1),
             Segment("36CF", 2),
         ])
-        segment = message.getSegment("36CF")
+        segment = message.get_segment("36CF")
         self.assertEqual(Segment("36CF", 1), segment)
 
-    def testGetSegmentDoesntExist(self):
+    def test_get_segment_doesnt_exist(self):
 
         message = Message()
-        segment = message.getSegment("36CF")
+        segment = message.get_segment("36CF")
         self.assertIsNone(segment)
+
+
+if __name__ == '__main__':
+    unittest.main()

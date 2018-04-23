@@ -14,19 +14,28 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+from pydifact.Message import Message
 import unittest
-from pydifact.Token import Token
+import os
 
 
-class TokenTest(unittest.TestCase):
+class CompleteTest(unittest.TestCase):
 
-    def test_type(self):
-        token = Token(Token.CONTENT, "ok")
-        self.assertEqual(Token.CONTENT, token.type)
+    def setUp(self):
+        self.path = os.path.dirname(os.path.realpath(__file__)) + "/data"
 
-    def test_value(self):
-        token = Token(Token.CONTENT, "ok")
-        self.assertEqual("ok", token.value)
+    def test1(self):
+        self._testFormat("{}/wikipedia.edi".format(self.path))
+
+    def test2(self):
+        self._testFormat("{}/order.edi".format(self.path))
+
+    def _testFormat(self, file):
+
+        output = str(Message.from_file(file))
+        message = open(file).read()
+        expected = message.replace("\n", "")
+        self.assertEqual(expected, output)
 
 
 if __name__ == '__main__':

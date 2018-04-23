@@ -36,7 +36,7 @@ class Tokenizer(ControlCharacterMixin):
         # bool $isEscaped If the current character has been esacped.
         self.isEscaped = False
 
-    def getTokens(self, message: str) -> list:
+    def get_tokens(self, message: str) -> list:
         """Convert the passed message into tokens.
         :param message: The EDI message
         :return: Token[]
@@ -45,20 +45,24 @@ class Tokenizer(ControlCharacterMixin):
         self.message = message
         self.char = None
         self.string = ""
-        self.readNextChar()
+        self.read_next_char()
         tokens = []
 
         # FIXME: do this more pythonic:
-        token = self.getNextToken()
+        token = self.get_next_token()
         while token:
             tokens.append(token)
-            token = self.getNextToken()
+            token = self.get_next_token()
 
         return tokens
 
-    def readNextChar(self) -> str:
-        """Read the next character from the message."""
-        self.char = self.getNextChar()
+    def read_next_char(self) -> str:
+        """Read the next character from the message.
+
+        If the character is an escape character, set the isEscaped flag to
+        True, get the one after it and return that."""
+
+        self.char = self.get_next_char()
 
         # If the last character was escaped, this one can't possibly be
         if (self.isEscaped):
@@ -67,53 +71,53 @@ class Tokenizer(ControlCharacterMixin):
         # If this is the escape character, then read the next one and
         # flag the next as escaped
         if self.char == self.escapeCharacter:
-            self.char = self.getNextChar()
+            self.char = self.get_next_char()
             self.isEscaped = True
 
-    def getNextChar(self) -> str:
+    def get_next_char(self) -> str:
         """Get the next character from the message."""
 
         char = self.message[0:1]
         self.message = self.message[1:]
         return char
 
-    def getNextToken(self) -> Token or None:
+    def get_next_token(self) -> Token or None:
         """Get the next token from the message."""
 
-        if self.endOfMessage():
-            return
+        if self.end_of_message():
+            return None
 
         # If we're not escaping this character then see if it's
         # a control character
         if not self.isEscaped:
             if self.char == self.componentSeparator:
-                self.storeCurrentCharAndReadNext()
+                self.store_current_char_and_read_next()
                 return Token(Token.COMPONENT_SEPARATOR,
-                             self.extractStoredChars())
+                             self.extract_stored_chars())
 
             if self.char == self.dataSeparator:
-                self.storeCurrentCharAndReadNext()
-                return Token(Token.DATA_SEPARATOR, self.extractStoredChars())
+                self.store_current_char_and_read_next()
+                return Token(Token.DATA_SEPARATOR, self.extract_stored_chars())
 
             if self.char == self.segmentTerminator:
-                self.storeCurrentCharAndReadNext()
-                token = Token(Token.TERMINATOR, self.extractStoredChars())
+                self.store_current_char_and_read_next()
+                token = Token(Token.TERMINATOR, self.extract_stored_chars())
 
                 # Ignore any trailing space after the end of the segment
                 while self.char in ["\r", "\n"]:
-                    self.readNextChar()
+                    self.read_next_char()
 
                 return token
 
-        while not self.isControlCharacter():
-            if self.endOfMessage():
+        while not self.is_control_character():
+            if self.end_of_message():
                 raise RuntimeError("Unexpected end of EDI message")
 
-            self.storeCurrentCharAndReadNext()
+            self.store_current_char_and_read_next()
 
-        return Token(Token.CONTENT, self.extractStoredChars())
+        return Token(Token.CONTENT, self.extract_stored_chars())
 
-    def isControlCharacter(self) -> bool:
+    def is_control_character(self) -> bool:
         """Check if the current character is a control character."""
 
         if (self.isEscaped):
@@ -123,22 +127,22 @@ class Tokenizer(ControlCharacterMixin):
             self.componentSeparator, self.dataSeparator, self.segmentTerminator
             ]
 
-    def storeCurrentCharAndReadNext(self) -> None:
+    def store_current_char_and_read_next(self) -> None:
         """Store the current character and read the
         next one from the message.
         """
 
         self.string += self.char
-        self.readNextChar()
+        self.read_next_char()
 
-    def extractStoredChars(self) -> str:
+    def extract_stored_chars(self) -> str:
         """Get the previously stored characters. """
 
         string = self.string
         self.string = ""
         return string
 
-    def endOfMessage(self) -> None:
+    def end_of_message(self) -> None:
         """Check if we've reached the end of the message"""
 
         return len(self.char) == 0

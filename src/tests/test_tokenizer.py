@@ -24,15 +24,15 @@ class TokenizerTest(unittest.TestCase):
     def setUp(self):
         self._tokenizer = Tokenizer()
 
-    def _assertTokens(self, message, expected=[]):
-        tokens = self._tokenizer.getTokens(
+    def _assert_tokens(self, message, expected=[]):
+        tokens = self._tokenizer.get_tokens(
             "{message}'".format(message=message))
 
         expected.append(Token(Token.TERMINATOR, "'"))
         self.assertEqual(expected, tokens)
 
-    def testBasic(self):
-        self._assertTokens("RFF+PD:50515", [
+    def test_basic(self):
+        self._assert_tokens("RFF+PD:50515", [
             Token(Token.CONTENT, "RFF"),
             Token(Token.DATA_SEPARATOR, "+"),
             Token(Token.CONTENT, "PD"),
@@ -40,15 +40,15 @@ class TokenizerTest(unittest.TestCase):
             Token(Token.CONTENT, "50515"),
         ])
 
-    def testEscape(self):
-        self._assertTokens("RFF+PD?:5", [
+    def test_escape(self):
+        self._assert_tokens("RFF+PD?:5", [
             Token(Token.CONTENT, "RFF"),
             Token(Token.DATA_SEPARATOR, "+"),
             Token(Token.CONTENT, "PD:5"),
         ])
 
-    def testDoubleEscape(self):
-        self._assertTokens("RFF+PD??:5", [
+    def test_double_escape(self):
+        self._assert_tokens("RFF+PD??:5", [
             Token(Token.CONTENT, "RFF"),
             Token(Token.DATA_SEPARATOR, "+"),
             Token(Token.CONTENT, "PD?"),
@@ -56,15 +56,15 @@ class TokenizerTest(unittest.TestCase):
             Token(Token.CONTENT, "5"),
         ])
 
-    def testTripleEscape(self):
-        self._assertTokens("RFF+PD???:5", [
+    def test_triple_escape(self):
+        self._assert_tokens("RFF+PD???:5", [
             Token(Token.CONTENT, "RFF"),
             Token(Token.DATA_SEPARATOR, "+"),
             Token(Token.CONTENT, "PD?:5"),
         ])
 
-    def testQuadrupleEscape(self):
-        self._assertTokens("RFF+PD????:5", [
+    def test_quadruple_escape(self):
+        self._assert_tokens("RFF+PD????:5", [
             Token(Token.CONTENT, "RFF"),
             Token(Token.DATA_SEPARATOR, "+"),
             Token(Token.CONTENT, "PD??"),
@@ -72,8 +72,8 @@ class TokenizerTest(unittest.TestCase):
             Token(Token.CONTENT, "5"),
         ])
 
-    def testIgnoreWhitespace(self):
-        self._assertTokens("RFF:5'\nDEF:6", [
+    def test_ignore_whitespace(self):
+        self._assert_tokens("RFF:5'\nDEF:6", [
             Token(Token.CONTENT, "RFF"),
             Token(Token.COMPONENT_SEPARATOR, ":"),
             Token(Token.CONTENT, "5"),
@@ -83,9 +83,9 @@ class TokenizerTest(unittest.TestCase):
             Token(Token.CONTENT, "6"),
         ])
 
-    def testNoTerminator(self):
+    def test_no_terminator(self):
         with self.assertRaises(RuntimeError) as cm:
-            self._tokenizer.getTokens("TEST")
+            self._tokenizer.get_tokens("TEST")
         self.assertEqual(str(cm.exception), "Unexpected end of EDI message")
 
 

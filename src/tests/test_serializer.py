@@ -24,48 +24,48 @@ class SerializerTest(unittest.TestCase):
     def setUp(self):
         self.serializer = Serializer()
 
-    def assertSegments(self, expected: str, segments: list):
+    def assert_segments(self, expected: str, segments: list):
         expected = "UNA:+,? '" + expected + "'"
         message = self.serializer.serialize(segments)
         self.assertEqual(expected, message)
 
-    def testBasic1(self):
-        self.assertSegments("RFF+PD:50515", [
+    def test_basic1(self):
+        self.assert_segments("RFF+PD:50515", [
             Segment("RFF", ["PD", "50515"]),
         ])
 
-    def testBasic2(self):
-        self.assertSegments("RFF+PD+50515", [
+    def test_basic2(self):
+        self.assert_segments("RFF+PD+50515", [
             Segment("RFF", "PD", "50515"),
         ])
 
-    def testEscapeCharacter(self):
-        self.assertSegments("ERC+10:The message does not make sense??", [
+    def test_escape_character(self):
+        self.assert_segments("ERC+10:The message does not make sense??", [
             Segment("ERC", ["10", "The message does not make sense?"]),
         ])
 
-    def testEscapeComponentSeparator(self):
-        self.assertSegments("ERC+10:Name?: Craig", [
+    def test_escape_component_separator(self):
+        self.assert_segments("ERC+10:Name?: Craig", [
             Segment("ERC", ["10", "Name: Craig"]),
         ])
 
-    def testEscapeDataSeparator(self):
-        self.assertSegments("DTM+735:?+0000:406", [
+    def test_escape_data_separator(self):
+        self.assert_segments("DTM+735:?+0000:406", [
             Segment("DTM", ["735", "+0000", "406"]),
         ])
 
-    def testEscapeDecimalPoint(self):
-        self.assertSegments("QTY+136:12,235", [
+    def test_escape_decimal_point(self):
+        self.assert_segments("QTY+136:12,235", [
             Segment("QTY", ["136", "12,235"]),
         ])
 
-    def testEscapeSegmentTerminator(self):
-        self.assertSegments("ERC+10:Craig?'s", [
+    def test_escape_segment_terminator(self):
+        self.assert_segments("ERC+10:Craig?'s", [
             Segment("ERC", ["10", "Craig's"]),
         ])
 
-    def testEscapeSequence(self):
-        self.assertSegments("ERC+10:?:?+???' - ?:?+???' - ?:?+???'", [
+    def test_escape_sequence(self):
+        self.assert_segments("ERC+10:?:?+???' - ?:?+???' - ?:?+???'", [
             Segment("ERC", ["10", ":+?' - :+?' - :+?'"]),
         ])
 
