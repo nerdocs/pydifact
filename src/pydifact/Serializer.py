@@ -25,7 +25,10 @@ class Serializer(ControlCharacterMixin):
         super().__init__()
 
     def serialize(self, segments: list) -> str:
-        """Serialize all the passed segments."""
+        """Serialize all the passed segments.
+
+        :param segments: a list of segments to serialize
+        """
 
         message = "UNA"
         message += self.componentSeparator
@@ -52,7 +55,7 @@ class Serializer(ControlCharacterMixin):
     def escape(self, string: str) -> str:
         """
         Escapes control characters.
-        :param str string The string to be escaped
+        :param string the string to be escaped
         """
 
         assert(type(string) == str)
