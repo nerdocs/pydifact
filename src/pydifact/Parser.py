@@ -47,7 +47,7 @@ class Parser:
         """
 
         # The UNA segment (if exists) and the UNB segment must always be ASCII, even if after the BGM the files
-        # continues with cyryllic or UTF-16.
+        # continues with cyrillic or UTF-16.
         if not message[:3] == "UNA":
             return None
 
