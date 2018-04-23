@@ -37,57 +37,57 @@ class ControlCharacterMixin:
         # terminator.
         self.segmentTerminator = "'"
 
-    def setControlCharacter(self,
-                            cc_type: str,
-                            char: str):
-        """
-        Set a control character.
-        :param string type: The type of control character to set,
+        self.reservedCharacter = ' '
+
+    def set_control_character(self, cc_type: str, char: str):
+        """Set a control character.
+
+        :param cc_type: The type of control character to set,
             as one of the following attribute strings:
             componentSeparator, dataSeparator, decimalPoint,
             escapeCharacter, segmentTerminator
-        :param string char: The character to set it to
+        :param char: The character to set it to
         :return: self
         """
         if len(char) != 1:
             raise ValueError(
                 "Control characters must only be a single character")
 
-        # FIXME self.$type = $char; Do this dynamically, like in PHP
+        # set the attribute dynamically.
         setattr(self, cc_type, char)
         return self
 
-    def setComponentSeparator(self, char: str):
+    def set_component_separator(self, char: str):
         """
         Set the control character used to separate components.
         :param str char: The character to use
         """
-        return self.setControlCharacter("componentSeparator", char)
+        return self.set_control_character("componentSeparator", char)
 
-    def setDataSeparator(self, char: str):
+    def set_data_separator(self, char: str):
         """
         Set the control character used to separate data elements.
         :param str char: The character to use
         """
-        return self.setControlCharacter("dataSeparator", char)
+        return self.set_control_character("dataSeparator", char)
 
-    def setDecimalPoint(self, char: str):
+    def set_decimal_point(self, char: str):
         """
         Set the control character used as a decimal point.
         :param str char: The character to use
         """
-        return self.setControlCharacter("decimalPoint", char)
+        return self.set_control_character("decimalPoint", char)
 
-    def setEscapeCharacter(self, char: str):
+    def set_escape_character(self, char: str):
         """
         Set the control character used as an escape character.
         :param str char: The character to use
         """
-        return self.setControlCharacter("escapeCharacter", char)
+        return self.set_control_character("escapeCharacter", char)
 
-    def setSegmentTerminator(self, char: str):
+    def set_segment_terminator(self, char: str):
         """
         Set the control character used as an segment terminator.
         :param str char: The character to use
         """
-        return self.setControlCharacter("segmentTerminator", char)
+        return self.set_control_character("segmentTerminator", char)

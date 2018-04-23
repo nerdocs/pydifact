@@ -54,11 +54,11 @@ class Parser:
         # Get the character definitions
         chars = message[3:9]
 
-        tokenizer.setComponentSeparator(chars[0])
-        tokenizer.setDataSeparator(chars[1])
-        tokenizer.setDecimalPoint(chars[2])
-        tokenizer.setEscapeCharacter(chars[3])
-        tokenizer.setSegmentTerminator(chars[5])
+        tokenizer.set_component_separator(chars[0])
+        tokenizer.set_data_separator(chars[1])
+        tokenizer.set_decimal_point(chars[2])
+        tokenizer.set_escape_character(chars[3])
+        tokenizer.set_segment_terminator(chars[5])
 
         # Remove the UNA segment from the original message and
         # return this new string
