@@ -35,7 +35,7 @@ class TestParser(unittest.TestCase):
         :return: the message without the "UNA123456" string
         """
 
-        if tokenizer == None:
+        if tokenizer is None:
             tokenizer = MagicMock(spec=Tokenizer)
             tokenizer.setControlCharacter.assert_called_once_with("setComponentSeparator", 1)
             # tokenizer.setControlCharacter.assert_called_once_with("setDataSeparator", 2)
