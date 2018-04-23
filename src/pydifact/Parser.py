@@ -33,10 +33,11 @@ class Parser:
         segments = self.convert_tokens_to_segments(tokens)
         return segments
 
-    def setup_special_characters(self,
-                                 message: str,
+    @staticmethod
+    def setup_special_characters(message: str,
                                  tokenizer: Tokenizer) -> str or None:
         """Read (and remove) the UNA segment from the passed string.
+
         :param message: The EDI message to extract the UNA from
         :param tokenizer:
         :type tokenizer: Tokenizer
@@ -45,6 +46,8 @@ class Parser:
             if the message does not start with "UNA"
         """
 
+        # The UNA segment (if exists) and the UNB segment must always be ASCII, even if after the BGM the files
+        # continues with cyryllic or UTF-16.
         if not message[:3] == "UNA":
             return None
 
@@ -61,7 +64,8 @@ class Parser:
         # return this new string
         return message[9:].lstrip() + "\r\n"
 
-    def convert_tokens_to_segments(self, tokens: list):
+    @staticmethod
+    def convert_tokens_to_segments(tokens: list):
         """Convert the tokenized message into an array of segments.
         :param tokens: The tokens that make up the message
         :type tokens: list of Token
@@ -70,16 +74,16 @@ class Parser:
 
         segments = []
         data_element = None
-        isComposite = False
-        inSegment = False
+        is_composite = False
+        in_segment = False
 
         for token in tokens:
 
             # If we're in the middle of a segment,
             # check if we've reached the end
-            if inSegment:
+            if in_segment:
                 if token.type == Token.TERMINATOR:
-                    inSegment = False
+                    in_segment = False
                     continue
 
             # If we're not in a segment, then start a new empty one now
@@ -87,12 +91,12 @@ class Parser:
             # because if the next token is a DATA_SEPARATOR, at least we have
             # an empty string to save into the segment then.
             else:
-                inSegment = True
-                isComposite = False
+                in_segment = True
+                is_composite = False
                 # create a new, empty segment, and append it to
                 # the list of segments
-                currentSegment = []
-                segments.append(currentSegment)
+                current_segment = []
+                segments.append(current_segment)
 
             # then proceed with ex exploration of the token
 
@@ -100,8 +104,8 @@ class Parser:
             # collected data element to the current segment (whatever it is,
             # a string or list, and reset the data_element to ""
             if token.type == Token.DATA_SEPARATOR:
-                currentSegment.append(data_element)
-                isComposite = False
+                current_segment.append(data_element)
+                is_composite = False
                 data_element = ""
                 continue
 
@@ -109,13 +113,13 @@ class Parser:
             # the whole data element is a composite, so make a list out of
             # the data_element if it isn't already one.
             if token.type == Token.COMPONENT_SEPARATOR:
-                isComposite = True
+                is_composite = True
                 if not type(data_element) == list:
                     data_element = [data_element]
                 continue
 
             # If this is a composite element, append the string to it
-            if isComposite:
+            if is_composite:
                 data_element.append(token.value)
                 continue
             else:
