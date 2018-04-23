@@ -80,8 +80,6 @@ class TestParser(unittest.TestCase):
 
         input_str = "UNA:+,? '\n" + message + "'\n"
         result = self.parser.parse(input_str)
-        print(list(result))
-        print(segments)
         self.assertCountEqual(segments, list(result))
 
     def test_compare_equal_segments(self):
