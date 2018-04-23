@@ -14,7 +14,7 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from pydifact.Segment import Segment
+from pydifact.Segments import Segment
 from pydifact.Serializer import Serializer
 import unittest
 

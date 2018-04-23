@@ -14,7 +14,7 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 from pydifact.Parser import Parser
-from pydifact.Segment import Segment
+from pydifact.Segments import Segment
 from pydifact.Serializer import Serializer
 
 
@@ -73,7 +73,7 @@ class Message:
         """
 
         for segment in self.get_all_segments():
-            if segment.get_name() == name:
+            if segment.get_segment_code() == name:
                 yield segment
 
     def get_segment(self, name: str):

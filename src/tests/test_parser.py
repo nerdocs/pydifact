@@ -15,7 +15,7 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from pydifact.Parser import Parser
-from pydifact.Segment import Segment
+from pydifact.Segments import Segment
 from pydifact.Tokenizer import Tokenizer
 
 import unittest

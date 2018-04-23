@@ -1,1 +1,1 @@
-from pydifact import Message, Parser, Segment, Serializer, Token, Tokenizer
+from pydifact import Message, Parser, Segments, Serializer, Token, Tokenizer

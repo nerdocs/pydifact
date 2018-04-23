@@ -14,7 +14,7 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from pydifact.Segment import Segment
+from pydifact.Segments import Segment
 import unittest
 
 
@@ -27,9 +27,9 @@ class SegmentTest(unittest.TestCase):
             "stuff",
         ]
 
-    def test_get_name(self):
+    def test_get_segment_code(self):
         segment = Segment("OMD")
-        self.assertEqual("OMD", segment.get_name())
+        self.assertEqual("OMD", segment.get_segment_code())
 
     def test_get_all_elements(self):
         segment = Segment("OMD", *self.elements)

@@ -14,19 +14,28 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+class SegmentInterface():
 
-class Segment:
+    def get_segment_code(self) -> str:
+        """Get the code of this segment."""
+
+    def get_all_elements(self) -> list:
+        """Get all the elements from the segment."""
+
+    def get_element(self, key: int) -> list or None:
+        """Get an element from the segment."""
+
+
+class AbstractSegment(SegmentInterface):
     """Represent a segment of an EDI message."""
 
-    def __init__(self, name: str, *elements: tuple):
+    def __init__(self, code: str, *elements: tuple):
         """Create a new instance.
         :param str name: The name of the segment.
         :param list elements: The data elements for this segment, as list.
         """
 
-        # The name of the segment.
-        # TODO: rename into "tag"
-        self.name = name
+        self.code = code
 
         """The data elements for this segment.
         this is a tuple (due to the fact that python creates a tuple
@@ -38,19 +47,17 @@ class Segment:
         return self.get_name()
 
     # TODO: rename into get_tag"
-    def get_name(self) -> str:
-        """Get the name of this segment."""
-
-        return self.name
+    def get_segment_code(self) -> str:
+        """Get the code of this segment."""
+        return self.code
 
     def get_all_elements(self) -> list:
         """Get all the elements from the segment."""
-
         return list(self.elements)
 
     def get_element(self, key: int) -> list or None:
         """Get an element from the segment.
-        :param int key The element to get
+        :param key The element to get
         :return the element, or None, if the key is out of range.
         """
         try:
@@ -60,3 +67,28 @@ class Segment:
 
     def __eq__(self, other):
         return self.get_all_elements() == other.get_all_elements()
+
+
+class Segment(AbstractSegment):
+    """Represent a segment of an EDI message."""
+
+
+class FactoryInterface:
+    """Factory for producing segments."""
+
+    def create_segment(self, characters: str, name: str, *elements: tuple) -> SegmentInterface:
+        """Create a new instance of the relevant class type.
+
+        :param characters: The control characters
+        :param name: The name of the segment
+        :param elements: The data elements for this segment
+        """
+        raise NotImplementedError
+
+
+class Factory(FactoryInterface):
+    """Factory for producing segments."""
+
+    def create_segment(self, characters: str, name: str, *elements: tuple) -> SegmentInterface:
+        """Create a new Segment instance."""
+        return Segment(name, elements)

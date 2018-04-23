@@ -15,7 +15,7 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from pydifact.Message import Message
-from pydifact.Segment import Segment
+from pydifact.Segments import Segment
 import unittest
 
 
