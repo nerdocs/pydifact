@@ -18,26 +18,23 @@
 class ControlCharacterMixin:
 
     def __init__(self):
-        # str componentSeparator The control character used to
-        # separate components.
-        self.componentSeparator = ":"
+        # The control character used to separate components.
+        self.componentSeparator = ':'
 
-        # str dataSeparator The control character used to separate
-        # data elements.
-        self.dataSeparator = "+"
+        # The control character used to separate data elements.
+        self.dataSeparator = '+'
 
-        # str decimalPoint The control character used as a decimal point.
-        self.decimalPoint = ","
+        # The control character used as a decimal point.
+        self.decimalPoint = ','
 
-        # str escapeCharacter The control character used as an
-        # escape character.
-        self.escapeCharacter = "?"
+        # The control character used as an escape character.
+        self.escapeCharacter = '?'
 
-        # string segmentTerminator The control character used as an segment
-        # terminator.
-        self.segmentTerminator = "'"
-
+        # Reserved for future use
         self.reservedCharacter = ' '
+
+        # The control character used as an segment terminator.
+        self.segmentTerminator = "'"
 
     def set_control_character(self, cc_type: str, char: str):
         """Set a control character.
@@ -58,36 +55,32 @@ class ControlCharacterMixin:
         return self
 
     def set_component_separator(self, char: str):
-        """
-        Set the control character used to separate components.
-        :param str char: The character to use
+        """Set the control character used to separate components.
+        :param char: The character to use
         """
         return self.set_control_character("componentSeparator", char)
 
     def set_data_separator(self, char: str):
-        """
-        Set the control character used to separate data elements.
-        :param str char: The character to use
+        """Set the control character used to separate data elements.
+        :param char: The character to use
         """
         return self.set_control_character("dataSeparator", char)
 
     def set_decimal_point(self, char: str):
-        """
-        Set the control character used as a decimal point.
-        :param str char: The character to use
+        """Set the control character used as a decimal point.
+        :param char: The character to use
         """
         return self.set_control_character("decimalPoint", char)
 
     def set_escape_character(self, char: str):
-        """
-        Set the control character used as an escape character.
-        :param str char: The character to use
+        """Set the control character used as an escape character.
+        :param char: The character to use
         """
         return self.set_control_character("escapeCharacter", char)
 
     def set_segment_terminator(self, char: str):
         """
         Set the control character used as an segment terminator.
-        :param str char: The character to use
+        :param char: The character to use
         """
         return self.set_control_character("segmentTerminator", char)
