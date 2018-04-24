@@ -13,6 +13,7 @@
 #
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+from enum import Enum
 
 
 class Token:
@@ -21,19 +22,21 @@ class Token:
     This could be content, a component separator (usually +),
     a data separator (usually :), or a segment terminator (usually ').
     """
-    CONTENT = 11
-    COMPONENT_SEPARATOR = 12
-    DATA_SEPARATOR = 13
-    TERMINATOR = 14
+    class Type(Enum):
+        CONTENT = 11
+        COMPONENT_SEPARATOR = 12
+        DATA_SEPARATOR = 13
+        TERMINATOR = 14
 
-    def __init__(self, token_type, value):
+    def __init__(self, token_type: Type, value: str):
         """Creates a Token with a type and a value"""
+        assert type(token_type) == Token.Type
 
         self.type = token_type
         self.value = value
 
     def __str__(self) -> str:
-        return "{} ({})".format(self.value, self.type)
+        return "{} ({})".format(self.value, self.type.name)
 
     def __eq__(self, other) -> bool:
         return self.type == other.type and self.value == other.value

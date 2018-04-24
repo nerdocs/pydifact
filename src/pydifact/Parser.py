@@ -83,7 +83,7 @@ class Parser:
             # If we're in the middle of a segment,
             # check if we've reached the end
             if in_segment:
-                if token.type == Token.TERMINATOR:
+                if token.type == Token.Type.TERMINATOR:
                     in_segment = False
                     continue
 
@@ -104,7 +104,7 @@ class Parser:
             # Whenever we reach a data separator (+), we add the currently
             # collected data element to the current segment (whatever it is,
             # a string or list, and reset the data_element to ""
-            if token.type == Token.DATA_SEPARATOR:
+            if token.type == Token.Type.DATA_SEPARATOR:
                 current_segment.append(data_element)
                 is_composite = False
                 data_element = ""
@@ -113,7 +113,7 @@ class Parser:
             # Whenever we reach a component data separator (:), we know that
             # the whole data element is a composite, so make a list out of
             # the data_element if it isn't already one.
-            if token.type == Token.COMPONENT_SEPARATOR:
+            if token.type == Token.Type.COMPONENT_SEPARATOR:
                 is_composite = True
                 if not type(data_element) == list:
                     data_element = [data_element]

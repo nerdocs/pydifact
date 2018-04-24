@@ -92,16 +92,16 @@ class Tokenizer(ControlCharacterMixin):
         if not self.isEscaped:
             if self.char == self.componentSeparator:
                 self.store_current_char_and_read_next()
-                return Token(Token.COMPONENT_SEPARATOR,
+                return Token(Token.Type.COMPONENT_SEPARATOR,
                              self.extract_stored_chars())
 
             if self.char == self.dataSeparator:
                 self.store_current_char_and_read_next()
-                return Token(Token.DATA_SEPARATOR, self.extract_stored_chars())
+                return Token(Token.Type.DATA_SEPARATOR, self.extract_stored_chars())
 
             if self.char == self.segmentTerminator:
                 self.store_current_char_and_read_next()
-                token = Token(Token.TERMINATOR, self.extract_stored_chars())
+                token = Token(Token.Type.TERMINATOR, self.extract_stored_chars())
 
                 # Ignore any trailing space after the end of the segment
                 while self.char in ["\r", "\n"]:
@@ -115,7 +115,7 @@ class Tokenizer(ControlCharacterMixin):
 
             self.store_current_char_and_read_next()
 
-        return Token(Token.CONTENT, self.extract_stored_chars())
+        return Token(Token.Type.CONTENT, self.extract_stored_chars())
 
     def is_control_character(self) -> bool:
         """Check if the current character is a control character."""

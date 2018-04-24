@@ -21,11 +21,11 @@ from pydifact.Token import Token
 class TokenTest(unittest.TestCase):
 
     def test_type(self):
-        token = Token(Token.CONTENT, "ok")
-        self.assertEqual(Token.CONTENT, token.type)
+        token = Token(Token.Type.CONTENT, "ok")
+        self.assertEqual(Token.Type.CONTENT, token.type)
 
     def test_value(self):
-        token = Token(Token.CONTENT, "ok")
+        token = Token(Token.Type.CONTENT, "ok")
         self.assertEqual("ok", token.value)
 
 
