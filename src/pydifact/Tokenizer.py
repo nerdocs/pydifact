@@ -36,6 +36,8 @@ class Tokenizer(ControlCharacterMixin):
         # bool $isEscaped If the current character has been esacped.
         self.isEscaped = False
 
+        self.message = ""
+
     def get_tokens(self, message: str) -> list:
         """Convert the passed message into tokens.
         :param message: The EDI message
@@ -56,7 +58,7 @@ class Tokenizer(ControlCharacterMixin):
 
         return tokens
 
-    def read_next_char(self) -> str:
+    def read_next_char(self) -> None:
         """Read the next character from the message.
 
         If the character is an escape character, set the isEscaped flag to
@@ -65,7 +67,7 @@ class Tokenizer(ControlCharacterMixin):
         self.char = self.get_next_char()
 
         # If the last character was escaped, this one can't possibly be
-        if (self.isEscaped):
+        if self.isEscaped:
             self.isEscaped = False
 
         # If this is the escape character, then read the next one and
@@ -120,7 +122,7 @@ class Tokenizer(ControlCharacterMixin):
     def is_control_character(self) -> bool:
         """Check if the current character is a control character."""
 
-        if (self.isEscaped):
+        if self.isEscaped:
             return False
 
         return self.char in [
@@ -129,8 +131,7 @@ class Tokenizer(ControlCharacterMixin):
 
     def store_current_char_and_read_next(self) -> None:
         """Store the current character and read the
-        next one from the message.
-        """
+        next one from the message."""
 
         self.string += self.char
         self.read_next_char()
@@ -142,7 +143,7 @@ class Tokenizer(ControlCharacterMixin):
         self.string = ""
         return string
 
-    def end_of_message(self) -> None:
+    def end_of_message(self) -> bool:
         """Check if we've reached the end of the message"""
 
         return len(self.char) == 0
