@@ -121,7 +121,7 @@ class TestParser(unittest.TestCase):
             Segment("DTM", ["735", "+0000", "406"]),
         ])
 
-    def testEscapeDecimalPoint(self):
+    def test_escape_decimal_point(self):
 
         self._assert_segments("QTY+136:12,235", [
             Segment("QTY", ["136", "12,235"]),

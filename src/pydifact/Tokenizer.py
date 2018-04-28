@@ -72,7 +72,7 @@ class Tokenizer(ControlCharacterMixin):
 
         # If this is the escape character, then read the next one and
         # flag the next as escaped
-        if self.char == self.escapeCharacter:
+        if self.char == self._escape_character:
             self.char = self.get_next_char()
             self.isEscaped = True
 
@@ -92,16 +92,16 @@ class Tokenizer(ControlCharacterMixin):
         # If we're not escaping this character then see if it's
         # a control character
         if not self.isEscaped:
-            if self.char == self.componentSeparator:
+            if self.char == self._component_separator:
                 self.store_current_char_and_read_next()
                 return Token(Token.Type.COMPONENT_SEPARATOR,
                              self.extract_stored_chars())
 
-            if self.char == self.dataSeparator:
+            if self.char == self._data_separator:
                 self.store_current_char_and_read_next()
                 return Token(Token.Type.DATA_SEPARATOR, self.extract_stored_chars())
 
-            if self.char == self.segmentTerminator:
+            if self.char == self._segment_terminator:
                 self.store_current_char_and_read_next()
                 token = Token(Token.Type.TERMINATOR, self.extract_stored_chars())
 
@@ -126,7 +126,7 @@ class Tokenizer(ControlCharacterMixin):
             return False
 
         return self.char in [
-            self.componentSeparator, self.dataSeparator, self.segmentTerminator
+            self._component_separator, self._data_separator, self._segment_terminator
             ]
 
     def store_current_char_and_read_next(self) -> None:

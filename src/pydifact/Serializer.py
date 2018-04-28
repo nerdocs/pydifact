@@ -31,24 +31,24 @@ class Serializer(ControlCharacterMixin):
         """
 
         message = "UNA"
-        message += self.componentSeparator
-        message += self.dataSeparator
-        message += self.decimalPoint
-        message += self.escapeCharacter
+        message += self._component_separator
+        message += self._data_separator
+        message += self._decimal_point
+        message += self._escape_character
         message += " "
-        message += self.segmentTerminator
+        message += self._segment_terminator
         for segment in segments:
             message += segment.get_segment_code()
             for element in segment.get_all_elements():
-                message += self.dataSeparator
+                message += self._data_separator
                 if type(element) == list:
                     for nr, subelement in enumerate(element):
                         element[nr] = self.escape(subelement)
-                    message += self.componentSeparator.join(element)
+                    message += self._component_separator.join(element)
                 else:
                     message += self.escape(element)
 
-            message += self.segmentTerminator
+            message += self._segment_terminator
 
         return message
 
@@ -61,14 +61,14 @@ class Serializer(ControlCharacterMixin):
         assert(type(string) == str)
 
         characters = [
-            self.escapeCharacter,
-            self.componentSeparator,
-            self.dataSeparator,
-            self.segmentTerminator,
+            self._escape_character,
+            self._component_separator,
+            self._data_separator,
+            self._segment_terminator,
         ]
         replace_map = {}
         for character in characters:
-            replace_map[character] = self.escapeCharacter + character
+            replace_map[character] = self._escape_character + character
 
         # Thanks to "Bor González Usach" for this wonderful piece of code:
         # https://gist.github.com/bgusach/a967e0587d6e01e889fd1d776c5f3729

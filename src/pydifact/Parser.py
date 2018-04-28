@@ -58,7 +58,7 @@ class Parser:
         tokenizer.set_data_separator(chars[1])
         tokenizer.set_decimal_point(chars[2])
         tokenizer.set_escape_character(chars[3])
-        # 4 is reserved character
+        tokenizer.set_reserved_character(chars[4])
         tokenizer.set_segment_terminator(chars[5])
 
         # Remove the UNA segment from the original message and
