@@ -24,7 +24,6 @@ class Parser:
     def parse(self, message: str) -> list:
         """Parse the message into an array of segments.
         :param message: The EDI message
-        :rtype: list
         """
 
         tokenizer = Tokenizer()
