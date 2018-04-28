@@ -30,7 +30,7 @@ class SegmentInterface:
 class AbstractSegment(SegmentInterface):
     """Represent a segment of an EDI message."""
 
-    def __init__(self, code: str, *elements: tuple):
+    def __init__(self, code: str, *elements: tuple or list):
         """Create a new instance.
         :param str name: The name of the segment.
         :param list elements: The data elements for this segment, as list.

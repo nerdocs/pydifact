@@ -74,17 +74,19 @@ class Parser:
         """
 
         segments = []
+        current_segment = []
         data_element = None
-        is_composite = False
         in_segment = False
+        empty_component_counter = 0
 
         for token in tokens:
 
-            # If we're in the middle of a segment,
-            # check if we've reached the end
+            # If we're in the middle of a segment, check if we've reached the end
             if in_segment:
                 if token.type == Token.Type.TERMINATOR:
                     in_segment = False
+                    current_segment.append(data_element)
+                    data_element = []
                     continue
 
             # If we're not in a segment, then start a new empty one now
@@ -92,42 +94,51 @@ class Parser:
             # because if the next token is a DATA_SEPARATOR, at least we have
             # an empty string to save into the segment then.
             else:
-                in_segment = True
-                is_composite = False
-                # create a new, empty segment, and append it to
-                # the list of segments
                 current_segment = []
                 segments.append(current_segment)
-
-            # then proceed with ex exploration of the token
+                data_element = []
+                in_segment = True
 
             # Whenever we reach a data separator (+), we add the currently
-            # collected data element to the current segment (whatever it is,
-            # a string or list, and reset the data_element to ""
+            # collected data element to the current segment and reset the
+            # data_element to an empty list []
             if token.type == Token.Type.DATA_SEPARATOR:
+                if len(data_element) == 0:  # empty element
+                    data_element = ""
+                elif len(data_element) == 1:
+                    data_element = data_element[0]
+
                 current_segment.append(data_element)
-                is_composite = False
-                data_element = ""
+
+                data_element = []
+                empty_component_counter = -1
                 continue
 
             # Whenever we reach a component data separator (:), we know that
-            # the whole data element is a composite, so make a list out of
-            # the data_element if it isn't already one.
+            # the whole data element is a composite, so increment the counter
+            # this is especially needed when more than one component data
+            # separators are in a row "23:::56"
             if token.type == Token.Type.COMPONENT_SEPARATOR:
-                is_composite = True
-                if not type(data_element) == list:
-                    data_element = [data_element]
+                empty_component_counter += 1
                 continue
 
-            # If this is a composite element, append the string to it
-            if is_composite:
-                data_element.append(token.value)
-                continue
-            else:
-                # if not a composite (as far as we know yet), add as string
-                data_element = token.value
-                continue
+            # when we reach here, the token value is "content"
 
+            # backfill empty strings for skipped component data (:::)
+            for i in range(0, empty_component_counter):
+                data_element.append("")
+
+            data_element.append(token.value)
+            empty_component_counter = -1
+            continue
+
+#        for segment in segments:
+#            name = segment.pop(0)
+#            yield Segment(name, *segment)
+
+        list = []
         for segment in segments:
             name = segment.pop(0)
-            yield Segment(name, *segment)
+            list.append(Segment(name, *segment))
+
+        return list
