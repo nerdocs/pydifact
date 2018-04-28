@@ -14,7 +14,8 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-class SegmentInterface():
+
+class SegmentInterface:
 
     def get_segment_code(self) -> str:
         """Get the code of this segment."""
@@ -65,7 +66,11 @@ class AbstractSegment(SegmentInterface):
         except IndexError:
             return
 
-    def __eq__(self, other):
+    def __str__(self) -> str:
+        """Returns the Segment in Python list printout"""
+        return str([self.get_segment_code()] + self.get_all_elements())
+
+    def __eq__(self, other) -> bool:
         return self.get_all_elements() == other.get_all_elements()
 
 

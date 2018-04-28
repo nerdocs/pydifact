@@ -19,14 +19,14 @@ from enum import Enum
 class Token:
     """Represents a block of characters in the message.
 
-    This could be content, a component separator (usually +),
-    a data separator (usually :), or a segment terminator (usually ').
+    This could be content, a data separator (usually +),
+    a component data separator (usually :), or a segment terminator (usually ').
     """
     class Type(Enum):
         CONTENT = 11
-        COMPONENT_SEPARATOR = 12
-        DATA_SEPARATOR = 13
-        TERMINATOR = 14
+        COMPONENT_SEPARATOR = 12    # default :
+        DATA_SEPARATOR = 13         # default +
+        TERMINATOR = 14             # default '
 
     def __init__(self, token_type: Type, value: str):
         """Creates a Token with a type and a value"""
