@@ -29,3 +29,26 @@ class TestControlCharacters(unittest.TestCase):
         self.assertRaises(AttributeError,
                           self.cc.set_control_character, 'wrongtype', '+')
 
+    def test_wrong_character_size(self):
+        self.assertRaises(ValueError,
+                          self.cc.set_control_character, 'decimal_point', ',.')
+
+    def test_correct_parameters(self):
+
+        self.cc.set_control_character('component_separator', '/')
+        self.assertEqual(self.cc._component_separator, '/')
+
+        self.cc.set_control_character('data_separator', '/')
+        self.assertEqual(self.cc._data_separator, '/')
+
+        self.cc.set_control_character('decimal_point', '/')
+        self.assertEqual(self.cc._decimal_point, '/')
+
+        self.cc.set_control_character('escape_character', '/')
+        self.assertEqual(self.cc._escape_character, '/')
+
+        self.cc.set_control_character('reserved_character', '/')
+        self.assertEqual(self.cc._reserved_character, '/')
+
+        self.cc.set_control_character('segment_terminator', '/')
+        self.assertEqual(self.cc._segment_terminator, '/')
