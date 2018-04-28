@@ -63,7 +63,7 @@ class Parser:
 
         # Remove the UNA segment from the original message and
         # return this new string
-        return message[9:].lstrip() + "\r\n"
+        return message[9:].lstrip()
 
     @staticmethod
     def convert_tokens_to_segments(tokens: list):
@@ -85,6 +85,11 @@ class Parser:
             if in_segment:
                 if token.type == Token.Type.TERMINATOR:
                     in_segment = False
+                    if len(data_element) == 0:  # empty element
+                        data_element = ""
+                    elif len(data_element) == 1:
+                        data_element = data_element[0]
+
                     current_segment.append(data_element)
                     data_element = []
                     continue

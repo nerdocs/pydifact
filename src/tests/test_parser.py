@@ -19,7 +19,7 @@ from pydifact.Segments import Segment
 from pydifact.Tokenizer import Tokenizer
 
 import unittest
-from unittest.mock import patch, MagicMock
+from unittest import mock
 
 
 class TestParser(unittest.TestCase):
@@ -27,48 +27,47 @@ class TestParser(unittest.TestCase):
     def setUp(self):
         self.parser = Parser()
 
-    @patch("pydifact.Tokenizer")
-    def setup_special_characters(self,
-                                 message: str,
-                                 tokenizer: Tokenizer = None) -> str:
-        """
-        :return: the message without the "UNA123456" string
+    @mock.patch('pydifact.Tokenizer.Tokenizer')
+    def get_control_characters(self, message: str, tokenizer=None) -> str:
+        """Returns the given message without the EDIFACT header.
+
+        :return: the message without the "UNA123456" header string
         """
 
         if tokenizer is None:
-            tokenizer = MagicMock(spec=Tokenizer)
-            tokenizer.setControlCharacter.assert_called_once_with("setComponentSeparator", 1)
-            # tokenizer.setControlCharacter.assert_called_once_with("setDataSeparator", 2)
-            # tokenizer.setControlCharacter.assert_called_once_with("setDecimalPoint", 3)
-            # tokenizer.setControlCharacter.assert_called_once_with("setEscapeCharacter", 4)
-            # tokenizer.setControlCharacter.assert_called_once_with("setSegmentTerminator", 6)
+            tokenizer = mock.MagicMock(spec=Tokenizer)
+            tokenizer.set_control_character.assert_called_once_with("set_component_separator", 1)
+            tokenizer.set_control_character.assert_called_once_with("set_data_separator", 2)
+            tokenizer.set_control_character.assert_called_once_with("set_decimal_point", 3)
+            tokenizer.set_control_character.assert_called_once_with("set_escape_character", 4)
+            tokenizer.set_control_character.assert_called_once_with("set_segment_terminator", 6)
 
-        self.parser.setup_special_characters(message, tokenizer)
+        return self.parser.setup_special_characters(message, tokenizer)
 
-    def test_setup_special_characters1(self):
-
-        tokenizer = MagicMock(spec=Tokenizer)
-        message = self.setup_special_characters("TEST", tokenizer)
-        self.assertEqual("TEST", message)
+#    def test_setup_special_characters1(self):
+#
+#        tokenizer = mock.MagicMock(spec=Tokenizer)
+#        message = self.get_control_characters("TEST", tokenizer)
+#        self.assertEqual("TEST", message)
 
     def test_setup_special_characters2(self):
 
-        message = self.setup_special_characters("UNA123456")
+        message = self.get_control_characters("UNA123456")
         self.assertEqual("", message)
 
     def test_setup_special_characters3(self):
 
-        message = self.setup_special_characters("UNA123456TEST")
+        message = self.get_control_characters("UNA123456TEST")
         self.assertEqual("TEST", message)
 
     def test_setup_special_characters4(self):
 
-        message = self.setup_special_characters("UNA123456\nTEST")
+        message = self.get_control_characters("UNA123456\nTEST")
         self.assertEqual("TEST", message)
 
     def test_setup_special_characters5(self):
 
-        message = self.setup_special_characters("UNA123456\r\nTEST")
+        message = self.get_control_characters("UNA123456\r\nTEST")
         self.assertEqual("TEST", message)
 
     def _assert_segments(self, message: str, segments: list):
@@ -80,6 +79,8 @@ class TestParser(unittest.TestCase):
 
         input_str = "UNA:+,? '\n" + message + "'\n"
         result = list(self.parser.parse(input_str))
+        # print("input segments: {}".format(segments[0]))
+        # print("parser result:  {}".format(result[0]))
         self.assertCountEqual(segments, result)
 
     def test_compare_equal_segments(self):
