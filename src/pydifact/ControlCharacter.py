@@ -56,7 +56,7 @@ class ControlCharacterMixin:
                 "{} doesn't have an attribute with the name '_{}'".format(
                     self, cc_type)
             )
-        setattr(self, cc_type, char)
+        setattr(self, '_' + cc_type, char)
         return self
 
     def set_component_separator(self, char: str):
