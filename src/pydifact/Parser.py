@@ -136,9 +136,9 @@ class Parser:
 #            name = segment.pop(0)
 #            yield Segment(name, *segment)
 
-        list = []
+        segment_list = []
         for segment in segments:
             name = segment.pop(0)
-            list.append(Segment(name, *segment))
+            segment_list.append(Segment(name, *segment))
 
-        return list
+        return segment_list
