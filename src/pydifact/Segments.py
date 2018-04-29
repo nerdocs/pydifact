@@ -17,8 +17,8 @@
 
 class SegmentInterface:
 
-    def get_segment_code(self) -> str:
-        """Get the code of this segment."""
+    def tag(self) -> str:
+        """Get the code/tag of this segment."""
 
     def get_all_elements(self) -> list:
         """Get all the elements from the segment."""
@@ -32,11 +32,11 @@ class AbstractSegment(SegmentInterface):
 
     def __init__(self, code: str, *elements: tuple or list):
         """Create a new instance.
-        :param str name: The name of the segment.
+        :param str code: The code/tag of the segment.
         :param list elements: The data elements for this segment, as list.
         """
-
-        self.code = code
+        assert type(code) == str
+        self._code = code
 
         """The data elements for this segment.
         this is a tuple (due to the fact that python creates a tuple
@@ -47,10 +47,10 @@ class AbstractSegment(SegmentInterface):
     def __str__(self) -> str:
         return self.get_name()
 
-    # TODO: rename into get_tag"
-    def get_segment_code(self) -> str:
+    @property
+    def tag(self) -> str:
         """Get the code of this segment."""
-        return self.code
+        return str(self._code)
 
     def get_all_elements(self) -> list:
         """Get all the elements from the segment."""
@@ -68,7 +68,10 @@ class AbstractSegment(SegmentInterface):
 
     def __str__(self) -> str:
         """Returns the Segment in Python list printout"""
-        return str([self.get_segment_code()] + self.get_all_elements())
+        return '\'{}\' EDI segment'.format(self.tag)
+
+    def __repr__(self) -> str:
+        return self.tag + " segment: " + str(self.get_all_elements())
 
     def __eq__(self, other) -> bool:
         return self.get_all_elements() == other.get_all_elements()

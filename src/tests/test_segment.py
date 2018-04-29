@@ -29,7 +29,7 @@ class SegmentTest(unittest.TestCase):
 
     def test_get_segment_code(self):
         segment = Segment("OMD")
-        self.assertEqual("OMD", segment.get_segment_code())
+        self.assertEqual("OMD", segment.tag)
 
     def test_get_all_elements(self):
         segment = Segment("OMD", *self.elements)
