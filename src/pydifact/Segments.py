@@ -20,9 +20,11 @@ class SegmentInterface:
     def tag(self) -> str:
         """Get the code/tag of this segment."""
 
+    # TODO: make this more pythonic: a property would suffice
     def get_all_elements(self) -> list:
         """Get all the elements from the segment."""
 
+    # TODO: make this more pythonic: iterable!
     def get_element(self, key: int) -> list or None:
         """Get an element from the segment."""
 
