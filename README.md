@@ -15,6 +15,7 @@ ATM this is a Work In Progress, feel free to help.
 
 To read a message from a file or from a string, take the `Message` class:
 
+    from pydifact.Message import Message
     message = Message.from_file("/pydifact/data/order.edi");
     message = Message:from_str("UNA:+,? 'UNH+1+ORDERS:D:96A:UN:EAN008'")
 
