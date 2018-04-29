@@ -29,4 +29,5 @@ for segment in message.get_all_segments():
         segment.tag, segment.get_all_elements()))
 ```
 
-            
+#### Testing
+pydifact uses unittests for testing. You can use [nose](https://nose.readthedocs.io/en/latest/) to automate the tests. Just install the requirements with `pip install -r requirements_dev.txt` and exec `nosetests` within the project folder.
