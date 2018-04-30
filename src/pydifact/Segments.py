@@ -15,22 +15,7 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-class SegmentInterface:
-
-    @property
-    def tag(self) -> str:
-        """Get the code/tag of this segment."""
-
-    # TODO: make this more pythonic: a property would suffice
-    def get_all_elements(self) -> list:
-        """Get all the elements from the segment."""
-
-    # TODO: make this more pythonic: iterable!
-    def get_element(self, key: int) -> list or None:
-        """Get an element from the segment."""
-
-
-class AbstractSegment(SegmentInterface):
+class Segment:
     """Represent a segment of an EDI message."""
 
     def __init__(self, code: str, *elements: tuple or list):
@@ -42,19 +27,15 @@ class AbstractSegment(SegmentInterface):
         self._code = code
 
         """The data elements for this segment.
-        this is a tuple (due to the fact that python creates a tuple
+        this is converted to a list (due to the fact that python creates a tuple
         when passing a variable arguments list to a method)
         """
-        self.elements = elements
+        self.elements = list(elements)
 
     @property
     def tag(self) -> str:
         """Get the code of this segment."""
         return str(self._code)
-
-    def get_all_elements(self) -> list:
-        """Get all the elements from the segment."""
-        return list(self.elements)
 
     def get_element(self, key: int) -> list or None:
         """Get an element from the segment.
@@ -71,20 +52,16 @@ class AbstractSegment(SegmentInterface):
         return '\'{}\' EDI segment'.format(self.tag)
 
     def __repr__(self) -> str:
-        return self.tag + " segment: " + str(self.get_all_elements())
+        return self.tag + " segment: " + str(self.elements)
 
     def __eq__(self, other) -> bool:
-        return self.get_all_elements() == other.get_all_elements()
-
-
-class Segment(AbstractSegment):
-    """Represent a segment of an EDI message."""
+        return list(self.elements) == list(other.elements)
 
 
 class FactoryInterface:
     """Factory for producing segments."""
 
-    def create_segment(self, characters: str, name: str, *elements: tuple) -> SegmentInterface:
+    def create_segment(self, characters: str, name: str, *elements: tuple) -> Segment:
         """Create a new instance of the relevant class type.
 
         :param characters: The control characters
@@ -94,9 +71,9 @@ class FactoryInterface:
         raise NotImplementedError
 
 
-class Factory(FactoryInterface):
+class SegmentFactory(FactoryInterface):
     """Factory for producing segments."""
 
-    def create_segment(self, characters: str, name: str, *elements: tuple) -> SegmentInterface:
+    def create_segment(self, characters: str, name: str, *elements: tuple) -> Segment:
         """Create a new Segment instance."""
         return Segment(name, elements)

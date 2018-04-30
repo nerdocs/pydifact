@@ -14,33 +14,33 @@ ATM this is a Work In Progress, feel free to help.
 
 #### Usage
 
-To read a message from a file or from a string, take the `Message` class:
+To read a message from a file or from a string, take the `Message` class and 
+iter over the segments:
 
 ```python
 from pydifact.Message import Message
-from pydifact.Segments import Segment
 message = Message.from_file("./tests/data/order.edi");
 message = Message.from_str("UNA:+,? 'UNH+1+ORDERS:D:96A:UN:EAN008'")
-```
 
-Now you can iter over the segments:
-
-```python
-for segment in message.get_all_segments():
+for segment in message.segments:
     print('Segment code: {}, content: {}'.format(
-        segment.tag, segment.get_all_elements()))
+        segment.tag, segment.elements))
 ```
 
 Or you can create an EDI message:
 
 ```python
+from pydifact.Segments import Segment
 message = Message()
 message.add_segment(Segment('QTY', ['12', '3']))
 print(message.serialize())
 ```
 
 #### Testing
-pydifact uses unittests for testing. You can use [nose](https://nose.readthedocs.io/en/latest/) to automate the tests. Just install the requirements with `pip install -r requirements_dev.txt` and exec `nosetests` within the project folder.
+pydifact uses unittests for testing. 
+You can use [nose](https://nose.readthedocs.io/en/latest/) to automate the 
+tests. Just install the requirements with `pip install -r requirements_dev.txt` 
+and exec `nosetests` within the project folder.
 
 
 #### License

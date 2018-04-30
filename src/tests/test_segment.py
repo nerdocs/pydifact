@@ -30,9 +30,9 @@ class SegmentTest(unittest.TestCase):
         segment = Segment("OMD")
         self.assertEqual("OMD", segment.tag)
 
-    def test_get_all_elements(self):
+    def test_all_elements(self):
         segment = Segment("OMD", *self.elements)
-        self.assertEqual(self.elements, segment.get_all_elements())
+        self.assertEqual(self.elements, segment.elements)
 
     def test_get_single_element(self):
         segment = Segment("OMD", *self.elements)

@@ -39,7 +39,7 @@ class Serializer(ControlCharacterMixin):
         message += self._segment_terminator
         for segment in segments:
             message += segment.tag
-            for element in segment.get_all_elements():
+            for element in segment.elements:
                 message += self._data_separator
                 if type(element) == list:
                     for nr, subelement in enumerate(element):
