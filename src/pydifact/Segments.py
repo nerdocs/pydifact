@@ -17,6 +17,7 @@
 
 class SegmentInterface:
 
+    @property
     def tag(self) -> str:
         """Get the code/tag of this segment."""
 
@@ -45,9 +46,6 @@ class AbstractSegment(SegmentInterface):
         when passing a variable arguments list to a method)
         """
         self.elements = elements
-
-    def __str__(self) -> str:
-        return self.get_name()
 
     @property
     def tag(self) -> str:
