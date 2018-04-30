@@ -1,5 +1,6 @@
-## pydifact - A Python EDIFACT library
+## pydifact
 
+A PHP library to parse and serialize UN/EDIFACT messages.
 
 #### Preamble
 
@@ -17,6 +18,7 @@ To read a message from a file or from a string, take the `Message` class:
 
 ```python
 from pydifact.Message import Message
+from pydifact.Segments import Segment
 message = Message.from_file("./tests/data/order.edi");
 message = Message.from_str("UNA:+,? 'UNH+1+ORDERS:D:96A:UN:EAN008'")
 ```
@@ -27,6 +29,14 @@ Now you can iter over the segments:
 for segment in message.get_all_segments():
     print('Segment code: {}, content: {}'.format(
         segment.tag, segment.get_all_elements()))
+```
+
+Or you can create an EDI message:
+
+```python
+message = Message()
+message.add_segment(Segment('QTY', ['12', '3']))
+print(message.serialize())
 ```
 
 #### Testing
