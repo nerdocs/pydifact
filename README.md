@@ -31,3 +31,9 @@ for segment in message.get_all_segments():
 
 #### Testing
 pydifact uses unittests for testing. You can use [nose](https://nose.readthedocs.io/en/latest/) to automate the tests. Just install the requirements with `pip install -r requirements_dev.txt` and exec `nosetests` within the project folder.
+
+
+#### License
+This library is licensed under the
+![LGPLv3](https://www.gnu.org/graphics/lgplv3-88x31.png) license, see the 
+LICENSE file.
