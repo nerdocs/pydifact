@@ -14,7 +14,7 @@ ATM this is a Work In Progress, feel free to help.
 
 #### Usage
 
-To read a message from a file or from a string, take the `Message` class and 
+To read a message from a file or from a string, take the `Message` class and
 iter over the segments:
 
 ```python
@@ -23,7 +23,7 @@ message = Message.from_file("./tests/data/order.edi");
 message = Message.from_str("UNA:+,? 'UNH+1+ORDERS:D:96A:UN:EAN008'")
 
 for segment in message.segments:
-    print('Segment code: {}, content: {}'.format(
+    print('Segment tag: {}, content: {}'.format(
         segment.tag, segment.elements))
 ```
 
@@ -37,13 +37,13 @@ print(message.serialize())
 ```
 
 #### Testing
-pydifact uses unittests for testing. 
-You can use [nose](https://nose.readthedocs.io/en/latest/) to automate the 
-tests. Just install the requirements with `pip install -r requirements_dev.txt` 
+pydifact uses unittests for testing.
+You can use [nose](https://nose.readthedocs.io/en/latest/) to automate the
+tests. Just install the requirements with `pip install -r requirements_dev.txt`
 and exec `nosetests` within the project folder.
 
 
 #### License
 This library is licensed under the
-![LGPLv3](https://www.gnu.org/graphics/lgplv3-88x31.png) license, see the 
+![LGPLv3](https://www.gnu.org/graphics/lgplv3-88x31.png) license, see the
 LICENSE file.

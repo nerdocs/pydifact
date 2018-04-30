@@ -18,34 +18,19 @@
 class Segment:
     """Represent a segment of an EDI message."""
 
-    def __init__(self, code: str, *elements: tuple or list):
+    def __init__(self, tag: str, *elements: tuple or list):
         """Create a new instance.
-        :param str code: The code/tag of the segment.
+        :param str tag: The code/tag of the segment.
         :param list elements: The data elements for this segment, as list.
         """
-        assert type(code) == str
-        self._code = code
+        assert type(tag) == str
+        self.tag = tag
 
         """The data elements for this segment.
         this is converted to a list (due to the fact that python creates a tuple
         when passing a variable arguments list to a method)
         """
         self.elements = list(elements)
-
-    @property
-    def tag(self) -> str:
-        """Get the code of this segment."""
-        return str(self._code)
-
-    def get_element(self, key: int) -> list or None:
-        """Get an element from the segment.
-        :param key The element to get
-        :return the element, or None, if the key is out of range.
-        """
-        try:
-            return self.elements[key]
-        except IndexError:
-            return
 
     def __str__(self) -> str:
         """Returns the Segment in Python list printout"""

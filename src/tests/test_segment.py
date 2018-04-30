@@ -36,15 +36,16 @@ class SegmentTest(unittest.TestCase):
 
     def test_get_single_element(self):
         segment = Segment("OMD", *self.elements)
-        self.assertEqual("field1", segment.get_element(0))
+        self.assertEqual("field1", segment.elements[0])
 
     def test_get_list_element(self):
         segment = Segment("OMD", *self.elements)
-        self.assertEqual(["field2", "extra"], segment.get_element(1))
+        self.assertEqual(["field2", "extra"], segment.elements[1])
 
     def test_get_non_existing_element(self):
         segment = Segment("OMD", *self.elements)
-        self.assertIsNone(segment.get_element(7))
+        with self.assertRaises(IndexError):
+            segment.elements[7]
 
 
 if __name__ == '__main__':
