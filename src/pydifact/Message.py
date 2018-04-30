@@ -84,6 +84,8 @@ class Message:
         for segment in self.get_segments(name):
             return segment
 
+        return None
+
     def add_segments(self, segments: list) -> 'Message':
         """Add multiple segments to the message.
         :param segments: The segments to add
