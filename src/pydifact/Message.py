@@ -35,7 +35,8 @@ class Message:
         :rtype: static
         """
 
-        message = open(file).read()
+        with open(file) as f:
+            message = f.read()
         return cls.from_str(message)
 
     @classmethod
