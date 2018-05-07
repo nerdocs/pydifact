@@ -23,6 +23,7 @@ class Token:
     a component data separator (usually :), or a segment terminator (usually ').
     """
     class Type(Enum):
+        CTRL_CHARS = 10                # ASCII string holding the control chars
         CONTENT = 11
         COMPONENT_SEPARATOR = 12    # default :
         DATA_SEPARATOR = 13         # default +
@@ -36,7 +37,7 @@ class Token:
         self.value = value
 
     def __str__(self) -> str:
-        return "{} ({})".format(self.value, self.type.name)
+        return "'{}' ({})".format(self.value, self.type.name)
 
     def __eq__(self, other) -> bool:
         return self.type == other.type and self.value == other.value

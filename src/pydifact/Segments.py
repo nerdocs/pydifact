@@ -18,7 +18,7 @@
 class Segment:
     """Represent a segment of an EDI message."""
 
-    def __init__(self, tag: str, *elements: tuple or list):
+    def __init__(self, tag: str, *elements):
         """Create a new instance.
         :param str tag: The code/tag of the segment.
         :param list elements: The data elements for this segment, as list.
@@ -34,31 +34,24 @@ class Segment:
 
     def __str__(self) -> str:
         """Returns the Segment in Python list printout"""
-        return '\'{}\' EDI segment'.format(self.tag)
+        return '\'{}\' EDI segment: {}'.format(self.tag, str(self.elements))
 
     def __repr__(self) -> str:
         return self.tag + " segment: " + str(self.elements)
 
     def __eq__(self, other) -> bool:
-        return list(self.elements) == list(other.elements)
+        return type(self) == type(other) \
+               and list(self.elements) == list(other.elements)
 
 
-class FactoryInterface:
+class SegmentFactory:
     """Factory for producing segments."""
 
-    def create_segment(self, characters: str, name: str, *elements: tuple) -> Segment:
+    def create_segment(self, characters: str, name: str, *elements: list) -> Segment:
         """Create a new instance of the relevant class type.
 
         :param characters: The control characters
         :param name: The name of the segment
         :param elements: The data elements for this segment
         """
-        raise NotImplementedError
-
-
-class SegmentFactory(FactoryInterface):
-    """Factory for producing segments."""
-
-    def create_segment(self, characters: str, name: str, *elements: tuple) -> Segment:
-        """Create a new Segment instance."""
-        return Segment(name, elements)
+        return Segment(name, *elements)

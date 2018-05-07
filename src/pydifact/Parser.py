@@ -15,59 +15,96 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 from pydifact.Tokenizer import Tokenizer
 from pydifact.Token import Token
-from pydifact.Segments import Segment
+from pydifact.Segments import Segment, SegmentFactory
+from pydifact.control import Characters
 
 
 class Parser:
-    """Parse EDI messages into an array of segments."""
+    """Parse EDI messages into a list of segments."""
 
-    def parse(self, message: str) -> list:
-        """Parse the message into an array of segments.
+    def __init__(self, factory: SegmentFactory = None):
+        if factory is None:
+            factory = SegmentFactory()
+
+        self.factory = factory
+
+    def parse(self, message: str, characters: Characters = None) -> list:
+        """Parse the message into a list of segments.
+
+        :param characters: the control characters to use, if there is no
+                UNA segment present
         :param message: The EDI message
+        :rtype:
         """
 
+        tokens = []
+        # If there is a UNA token, take the following 6 characters
+        # unconditionally, save them as token and use it as control characters
+        # for further parsing
+        if message[0:3] == 'UNA':
+            control_chars = message[3:9]
+            tokens.append(Token(Token.Type.CONTENT, 'UNA'))
+            tokens.append(Token(Token.Type.CTRL_CHARS, control_chars))
+
+            # remove the UNA segment from the string
+            message = message[9:].lstrip("\r\n")
+            characters = Characters.from_str('UNA' + control_chars)
+
+        else:
+            # if no UNA header present, use default control characters
+            if characters is None:
+                characters = Characters()
+
         tokenizer = Tokenizer()
-        message = self.setup_special_characters(message, tokenizer)
-        tokens = tokenizer.get_tokens(message)
-        segments = self.convert_tokens_to_segments(tokens)
+        tokens += tokenizer.get_tokens(message, characters)
+        segments = self.convert_tokens_to_segments(tokens, characters)
         return segments
 
     @staticmethod
-    def setup_special_characters(message: str,
-                                 tokenizer: Tokenizer) -> str or None:
-        """Read (and remove) the UNA segment from the passed string.
+    def get_control_characters(message: str,
+                               characters: Characters = None) -> Characters:
+        """Read the UNA segment from the passed string.
 
-        :param message: The EDI message to extract the UNA from
-        :param tokenizer:
-        :type tokenizer: Tokenizer
+        :param message: a valid EDI message string, or UNA segment string,
+                        to extract the control characters from
+        :param characters: the control characters to use, if none found in
+                           the message
         :rtype: str or None
-        :return: the message string without the UNA header, or None
-            if the message does not start with "UNA"
+        :return: the control characters
         """
 
-        # The UNA segment (if exists) and the UNB segment must always be ASCII, even if after the BGM the files
+        if not characters:
+            characters = Characters()
+
+        # First, try to read the UNA segment ("Service String Advice",
+        # conditional). This segment and the UNB segment (Interchange Header)
+        # must always be written in ASCII, even if after the BGM the files
         # continues with cyrillic or UTF-16.
+
+        # If it does not exist, return a default.
         if not message[:3] == "UNA":
-            return None
+            return characters
 
         # Get the character definitions
         chars = message[3:9]
+        characters.is_extracted_from_message = True
 
-        tokenizer.set_component_separator(chars[0])
-        tokenizer.set_data_separator(chars[1])
-        tokenizer.set_decimal_point(chars[2])
-        tokenizer.set_escape_character(chars[3])
-        tokenizer.set_reserved_character(chars[4])
-        tokenizer.set_segment_terminator(chars[5])
+        characters.component_separator = chars[0]
+        characters.data_separator = chars[1]
+        characters.decimal_point = chars[2]
+        characters.escape_character = chars[3]
+        characters.reserved_character = chars[4]
+        characters.segment_terminator = chars[5]
 
-        # Remove the UNA segment from the original message and
-        # return this new string
-        return message[9:].lstrip()
+        return characters
 
-    @staticmethod
-    def convert_tokens_to_segments(tokens: list):
+    def convert_tokens_to_segments(self, tokens: list,
+                                   characters: Characters,
+                                   with_una: bool = False):
         """Convert the tokenized message into an array of segments.
+        :param with_una: whether the UNA segment should be included
         :param tokens: The tokens that make up the message
+        :param characters: the control characters to use
         :type tokens: list of Token
         :rtype list of Segment
         """
@@ -76,17 +113,32 @@ class Parser:
         current_segment = []
         data_element = None
         in_segment = False
+        is_una_segment = False
         empty_component_counter = 0
 
         for token in tokens:
 
             # If we're in the middle of a segment, check if we've reached the end
             if in_segment:
+
+                # a UNA control character string is a special case.
+                # It has no data terminator, as the last character DEFINES the
+                # data terminator.
+                # So we must handle the string as content, AND terminator
+                # at the same time.
+                if token.type == Token.Type.CTRL_CHARS:
+                    in_segment = False
+                    current_segment.append(data_element[0])
+                    current_segment.append(token.value)
+                    data_element = []
+                    continue
+
                 if token.type == Token.Type.TERMINATOR:
                     in_segment = False
                     if len(data_element) == 0:  # empty element
-                        data_element = ""
-                    elif len(data_element) == 1:
+                        data_element = ''
+                    if len(data_element) == 1:
+                        # use a str instead of a list
                         data_element = data_element[0]
 
                     current_segment.append(data_element)
@@ -103,19 +155,23 @@ class Parser:
                 data_element = []
                 in_segment = True
 
+                # If we're in the UNA segment, do something special
+                if token.value == 'UNA':
+                    is_una_segment = True
+
             # Whenever we reach a data separator (+), we add the currently
             # collected data element to the current segment and reset the
             # data_element to an empty list []
             if token.type == Token.Type.DATA_SEPARATOR:
                 if len(data_element) == 0:  # empty element
-                    data_element = ""
+                    data_element = ''
                 elif len(data_element) == 1:
                     data_element = data_element[0]
 
                 current_segment.append(data_element)
 
                 data_element = []
-                empty_component_counter = -1
+                empty_component_counter = 0
                 continue
 
             # Whenever we reach a component data separator (:), we know that
@@ -126,23 +182,16 @@ class Parser:
                 empty_component_counter += 1
                 continue
 
-            # when we reach here, the token value is "content"
-
-            # backfill empty strings for skipped component data (:::)
-            for i in range(0, empty_component_counter):
-                data_element.append("")
+            # here we can be sure that the token value is normal "content"
+            # first backfill empty strings for skipped component data (:::)
+            for i in range(1, empty_component_counter):
+                data_element.append('')
 
             data_element.append(token.value)
-            empty_component_counter = -1
+            empty_component_counter = 0
             continue
 
-#        for segment in segments:
-#            name = segment.pop(0)
-#            yield Segment(name, *segment)
-
-        segment_list = []
         for segment in segments:
             name = segment.pop(0)
-            segment_list.append(Segment(name, *segment))
+            yield self.factory.create_segment(characters, name, *segment)
 
-        return segment_list

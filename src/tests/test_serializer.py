@@ -25,7 +25,7 @@ class SerializerTest(unittest.TestCase):
 
     def assert_segments(self, expected: str, segments: list):
         expected = "UNA:+,? '" + expected + "'"
-        message = self.serializer.serialize(segments)
+        message = self.serializer.serialize(segments, with_una=True)
         self.assertEqual(expected, message)
 
     def test_basic1(self):

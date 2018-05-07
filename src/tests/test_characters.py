@@ -15,7 +15,6 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import unittest
-
 from pydifact.control import Characters
 
 
@@ -23,9 +22,24 @@ class CharactersTest(unittest.TestCase):
 
     def test_with_separator_identity(self):
         one = Characters()
-        other = one.with_component_separator(':')
+        other = Characters()
+        # a copy of a characters object must be equal, but not the same
         self.assertTrue(one == other, 'Objects differ: "{}", "{}"'.format(one, other))
         self.assertFalse(one is other)
+
+    def test_cc_assigning(self):
+        one = Characters()
+        one.component_separator = 'x'
+        self.assertEqual(one.component_separator, 'x')
+        self.assertEqual(str(one), "x+,? '")
+
+#    def test_wrong_cc_assigning(self):
+#        with self.assertRaises(ValueError):
+#            Characters().with_control_character(
+#                'component_separator', 'xd')
+#
+#        with self.assertRaises(AttributeError):
+#            Characters().with_control_character('notexisting', ':')
 
 
 if __name__ == '__main__':

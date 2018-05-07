@@ -17,6 +17,8 @@ from pydifact.Token import Token
 from pydifact.Tokenizer import Tokenizer
 import unittest
 
+from pydifact.control import Characters
+
 
 class TokenizerTest(unittest.TestCase):
 
@@ -84,7 +86,7 @@ class TokenizerTest(unittest.TestCase):
 
     def test_no_terminator(self):
         with self.assertRaises(RuntimeError) as cm:
-            self._tokenizer.get_tokens("TEST")
+            self._tokenizer.get_tokens("TEST", Characters())
         self.assertEqual(str(cm.exception), "Unexpected end of EDI message")
 
 

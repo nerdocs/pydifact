@@ -30,7 +30,7 @@ class MessageTest(unittest.TestCase):
         message = Message.from_segments([Segment("36CF")])
         self.assertEqual([
             Segment("36CF"),
-        ], message.get_all_segments())
+        ], message.segments)
 
     def test_get_segments(self):
 

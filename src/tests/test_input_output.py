@@ -24,17 +24,24 @@ class CompleteTest(unittest.TestCase):
         self.path = os.path.dirname(os.path.realpath(__file__)) + "/data"
 
     def test1(self):
-        self._testFormat("{}/wikipedia.edi".format(self.path))
+        self._test_file_read("{}/wikipedia.edi".format(self.path))
 
     def test2(self):
-        self._testFormat("{}/order.edi".format(self.path))
+        self._test_file_read("{}/order.edi".format(self.path))
 
-    def _testFormat(self, file):
+    def test_patient1(self):
+        self.maxDiff = None
+        self._test_file_read("{}/patient1.edi".format(self.path))
 
-        output = str(Message.from_file(file))
-        message = open(file).read()
-        expected = message.replace("\n", "")
-        self.assertEqual(expected, output)
+    def _test_file_read(self, file_name):
+
+        # read in a complete message from a file
+        message = Message.from_file(file_name)
+        output = message.serialize()
+        with open(file_name) as file:
+            message = file.read()
+            expected = message.replace("\n", "")
+            self.assertEqual(expected, output)
 
 
 if __name__ == '__main__':

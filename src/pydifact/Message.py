@@ -13,9 +13,12 @@
 #
 #    You should have received a copy of the GNU Lesser General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+import collections
+
 from pydifact.Parser import Parser
 from pydifact.Segments import Segment
 from pydifact.Serializer import Serializer
+from pydifact.control import Characters
 
 
 class Message:
@@ -26,13 +29,16 @@ class Message:
         # The segments that make up this message
         self.segments = []
 
+        # Flag whether the UNA header is present
+        self.has_una_segment = False
+
     @classmethod
-    def from_file(cls, file: str):
-        """Create an instance from a file.
+    def from_file(cls, file: str) -> 'Message':
+        """Create a Message instance from a file.
 
         Raises FileNotFoundError if filename is not found.
         :param file: The full path to a file that contains an EDI message
-        :rtype: static
+        :rtype: Message
         """
 
         with open(file) as f:
@@ -40,38 +46,34 @@ class Message:
         return cls.from_str(message)
 
     @classmethod
-    def from_str(cls, string: str):
-        """Create a instance from a string.
+    def from_str(cls, string: str) -> 'Message':
+        """Create a Message instance from a string.
         :param string: The EDI message content
-        :rtype: static
+        :rtype: Message
         """
-
         segments = Parser().parse(string)
+
         return cls.from_segments(segments)
 
     @classmethod
-    def from_segments(cls, segments: list) -> list:
-        """Create a instance from an array of segments.
+    def from_segments(cls, segments: list or collections.Iterable) -> 'Message':
+        """Create a new Message instance from a iterable list of segments.
+
         :param segments: The segments of the message
-        :type segments: Segment[]
+        :type segments: list/iterable of Segment
+        :rtype Message
         """
 
         # create a new instance of Message and return it
         # with the added segments
         return cls().add_segments(segments)
 
-    def get_all_segments(self) -> list:
-        """Get all the segments.
-        :rtype: Segment[]
-        """
-        return self.segments
-
     def get_segments(self, name: str) -> list:
         """Get all the segments that match the requested name.
         :param name: The name of the segment to return
-        :rtype: Segment[]
+        :rtype: list of Segment
         """
-        for segment in self.get_all_segments():
+        for segment in self.segments:
             if segment.tag == name:
                 yield segment
 
@@ -86,10 +88,11 @@ class Message:
 
         return None
 
-    def add_segments(self, segments: list) -> 'Message':
+    def add_segments(self, segments: list or collections.Iterable) -> 'Message':
         """Add multiple segments to the message.
+
         :param segments: The segments to add
-        :type segments: Segment[]
+        :type segments: list or iterable of Segments
         """
         for segment in segments:
             self.add_segment(segment)
@@ -97,15 +100,18 @@ class Message:
         return self
 
     def add_segment(self, segment: Segment) -> 'Message':
-        """Add a segment to the message.
+        """Append a segment to the message.
+
         :param segment: The segment to add
         """
+        if segment.tag == "UNA":
+            self.has_una_segment = True
         self.segments.append(segment)
         return self
 
     def serialize(self) -> str:
         """Serialize all the segments added to this object."""
-        return Serializer().serialize(self.get_all_segments())
+        return Serializer().serialize(self.segments, self.has_una_segment)
 
     def __str__(self) -> str:
         """Allow the object to be serialized by casting to a string."""
