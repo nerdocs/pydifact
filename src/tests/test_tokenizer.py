@@ -23,10 +23,10 @@ class TokenizerTest(unittest.TestCase):
     def setUp(self):
         self._tokenizer = Tokenizer()
 
-    def _assert_tokens(self, message, expected=[]):
-        tokens = self._tokenizer.get_tokens(
-            "{message}'".format(message=message))
-
+    def _assert_tokens(self, message, expected=None):
+        if expected is None:
+            expected = []
+        tokens = self._tokenizer.get_tokens("{}'".format(message), Characters())
         expected.append(Token(Token.Type.TERMINATOR, "'"))
         self.assertEqual(expected, tokens)
 
