@@ -18,7 +18,7 @@ import unittest
 import os
 
 
-class CompleteTest(unittest.TestCase):
+class InputOutputTest(unittest.TestCase):
 
     def setUp(self):
         self.path = os.path.dirname(os.path.realpath(__file__)) + "/data"
@@ -39,8 +39,7 @@ class CompleteTest(unittest.TestCase):
         message = Message.from_file(file_name)
         output = message.serialize()
         with open(file_name) as file:
-            message = file.read()
-            expected = message.replace("\n", "")
+            expected = file.read()  # .replace("\n", "")
             self.assertEqual(expected, output)
 
 
