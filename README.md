@@ -1,6 +1,6 @@
 ## pydifact
 
-A PHP library to parse and serialize UN/EDIFACT messages.
+A Python library to parse and serialize UN/EDIFACT messages.
 
 #### Preamble
 
@@ -10,7 +10,8 @@ This is a port of [metroplex-systems/edifact](https://github.com/metroplex-syste
 
 Because I did not find a decent UN/EDIFACT library for Python, so I decided to port one of the available good PHP libraries to Python. Here is the result.
 
-ATM this is a Work In Progress, feel free to help.
+ATM this is a Work In Progress, the API is not stable yet.
+Feel free to help.
 
 #### Usage
 
