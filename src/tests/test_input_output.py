@@ -33,12 +33,12 @@ class InputOutputTest(unittest.TestCase):
         self.maxDiff = None
         self._test_file_read("{}/patient1.edi".format(self.path))
 
-    def _test_file_read(self, file_name):
+    def _test_file_read(self, file_name: str, encoding: str = 'iso8859-1'):
 
         # read in a complete message from a file
         message = Message.from_file(file_name)
         output = message.serialize()
-        with open(file_name) as file:
+        with open(file_name, encoding) as file:
             expected = file.read()  # .replace("\n", "")
             self.assertEqual(expected, output)
 

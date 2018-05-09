@@ -19,7 +19,7 @@ from pydifact.parser import Parser
 from pydifact.segments import Segment
 from pydifact.serializer import Serializer
 from pydifact.control import Characters
-
+import codecs
 
 class Message:
     """Represent an EDI message for both reading and writing."""
@@ -33,15 +33,19 @@ class Message:
         self.has_una_segment = False
 
     @classmethod
-    def from_file(cls, file: str) -> 'Message':
+    def from_file(cls, file: str, encoding: str = 'iso8859-1') -> 'Message':
         """Create a Message instance from a file.
 
         Raises FileNotFoundError if filename is not found.
+        :param encoding: an 
         :param file: The full path to a file that contains an EDI message
         :rtype: Message
         """
 
-        with open(file) as f:
+        # codecs.lookup raises an LookupError if given codec was not found:
+        codecs.lookup(encoding)
+
+        with open(file, encoding=encoding) as f:
             message = f.read()
         return cls.from_str(message)
 
