@@ -23,7 +23,7 @@ class Token:
     a component data separator (usually :), or a segment terminator (usually ').
     """
     class Type(Enum):
-        CTRL_CHARS = 10                # ASCII string holding the control chars
+        CTRL_CHARS = 10             # ASCII string holding the control chars
         CONTENT = 11
         COMPONENT_SEPARATOR = 12    # default :
         DATA_SEPARATOR = 13         # default +
