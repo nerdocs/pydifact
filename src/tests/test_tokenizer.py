@@ -13,8 +13,8 @@
 #
 #    You should have received a copy of the GNU Lesser General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
-from pydifact.Token import Token
-from pydifact.Tokenizer import Tokenizer
+from pydifact.token import Token
+from pydifact.tokenizer import Tokenizer
 import unittest
 
 from pydifact.control import Characters

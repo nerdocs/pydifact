@@ -13,9 +13,9 @@
 #
 #    You should have received a copy of the GNU Lesser General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
-from pydifact.Parser import Parser
-from pydifact.Segments import Segment
-from pydifact.Tokenizer import Tokenizer
+from pydifact.parser import Parser
+from pydifact.segments import Segment
+from pydifact.tokenizer import Tokenizer
 
 import unittest
 from unittest import mock

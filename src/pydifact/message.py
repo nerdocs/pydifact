@@ -15,9 +15,9 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import collections
 
-from pydifact.Parser import Parser
-from pydifact.Segments import Segment
-from pydifact.Serializer import Serializer
+from pydifact.parser import Parser
+from pydifact.segments import Segment
+from pydifact.serializer import Serializer
 from pydifact.control import Characters
 
 

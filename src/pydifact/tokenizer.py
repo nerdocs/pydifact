@@ -13,7 +13,7 @@
 #
 #    You should have received a copy of the GNU Lesser General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
-from pydifact.Token import Token
+from pydifact.token import Token
 from pydifact.control.characters import Characters
 
 

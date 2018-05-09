@@ -13,8 +13,8 @@
 #
 #    You should have received a copy of the GNU Lesser General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
-from pydifact.Message import Message
-from pydifact.Segments import Segment
+from pydifact.message import Message
+from pydifact.segments import Segment
 import unittest
 
 

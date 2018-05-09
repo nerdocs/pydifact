@@ -13,9 +13,9 @@
 #
 #    You should have received a copy of the GNU Lesser General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
-from pydifact.Tokenizer import Tokenizer
-from pydifact.Token import Token
-from pydifact.Segments import Segment, SegmentFactory
+from pydifact.tokenizer import Tokenizer
+from pydifact.token import Token
+from pydifact.segments import Segment, SegmentFactory
 from pydifact.control import Characters
 
 

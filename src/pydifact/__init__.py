@@ -13,4 +13,4 @@
 #
 #    You should have received a copy of the GNU Lesser General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
-from pydifact import Message, Parser, Segments, Serializer, Token, Tokenizer
+from pydifact import message, parser, segments, serializer, token, tokenizer
