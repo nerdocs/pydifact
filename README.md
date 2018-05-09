@@ -47,4 +47,4 @@ and exec `nosetests` within the project folder.
 #### License
 This library is licensed under the
 ![LGPLv3](https://www.gnu.org/graphics/lgplv3-88x31.png) license, see the
-LICENSE file.
+[LICENSE file](LICENSE.LGPL.md).
