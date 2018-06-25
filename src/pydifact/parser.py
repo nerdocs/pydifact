@@ -13,6 +13,7 @@
 #
 #    You should have received a copy of the GNU Lesser General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
 from pydifact.tokenizer import Tokenizer
 from pydifact.token import Token
 from pydifact.segments import Segment, SegmentFactory
@@ -27,6 +28,7 @@ class Parser:
             factory = SegmentFactory()
 
         self.factory = factory
+        self.characters = Characters()
 
     def parse(self, message: str, characters: Characters = None) -> list:
         """Parse the message into a list of segments.
@@ -37,6 +39,7 @@ class Parser:
         :rtype:
         """
 
+        # FIXME: DRY: use get_control_characters here?
         tokens = []
         # If there is a UNA token, take the following 6 characters
         # unconditionally, save them as token and use it as control characters
@@ -48,16 +51,16 @@ class Parser:
 
             # remove the UNA segment from the string
             message = message[9:].lstrip("\r\n")
-            characters = Characters.from_str('UNA' + control_chars)
+            self.characters = Characters.from_str('UNA' + control_chars)
 
         else:
             # if no UNA header present, use default control characters
-            if characters is None:
-                characters = Characters()
+            if characters is not None:
+                self.characters = characters
 
         tokenizer = Tokenizer()
-        tokens += tokenizer.get_tokens(message, characters)
-        segments = self.convert_tokens_to_segments(tokens, characters)
+        tokens += tokenizer.get_tokens(message, self.characters)
+        segments = self.convert_tokens_to_segments(tokens, self.characters)
         return segments
 
     @staticmethod
