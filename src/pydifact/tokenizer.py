@@ -49,6 +49,7 @@ class Tokenizer:
         self._char = None
         self._string = ''
         self._message = message
+        self._message_index = 0
         self.read_next_char()
         tokens = []
 
@@ -84,8 +85,8 @@ class Tokenizer:
 
         # FIXME: this is pretty wasteful. Maybe use a list in the first place?
         # imagine the string is 2Mb big.
-        char = self._message[0:1]
-        self._message = self._message[1:]
+        char = self._message[self._message_index:self._message_index+1]
+        self._message_index += 1
         return char
 
     def get_next_token(self) -> Token or None:
