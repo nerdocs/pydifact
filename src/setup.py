@@ -8,7 +8,7 @@ setup(
     description='A Python EDI file parser.',
     # install_requires=[],
     url='https://github.com/nerdocs/pydifact',
-    packages=['pydifact'],
+    packages=['pydifact', 'pydifact.control'],
     license='LGPLv3+',
     classifiers=[
         'Development Status :: 3 - Alpha',
