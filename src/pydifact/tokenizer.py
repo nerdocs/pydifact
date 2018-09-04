@@ -24,7 +24,7 @@ class Tokenizer:
         super().__init__()
 
         # The message that we are tokenizing.
-        self._message = ""
+        self._message = []
 
         # The current character from the message we are dealing with.
         self._char = ""
@@ -48,7 +48,7 @@ class Tokenizer:
         self.characters = characters
         self._char = None
         self._string = ''
-        self._message = message
+        self._message = iter(message)
         self._message_index = 0
         self.read_next_char()
         tokens = []
@@ -82,12 +82,10 @@ class Tokenizer:
 
     def get_next_char(self) -> str:
         """Get the next character from the message."""
-
-        # FIXME: this is pretty wasteful. Maybe use a list in the first place?
-        # imagine the string is 2Mb big.
-        char = self._message[self._message_index:self._message_index+1]
-        self._message_index += 1
-        return char
+        try:
+            return next(self._message)
+        except StopIteration:
+            return ''
 
     def get_next_token(self) -> Token or None:
         """Get the next token from the message."""
