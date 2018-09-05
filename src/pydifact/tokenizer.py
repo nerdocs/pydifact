@@ -15,6 +15,7 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 from pydifact.token import Token
 from pydifact.control.characters import Characters
+from typing import Union
 
 
 class Tokenizer:
@@ -80,12 +81,12 @@ class Tokenizer:
             self._char = self.get_next_char()
             self.isEscaped = True
 
-    def get_next_char(self) -> str:
+    def get_next_char(self) -> Union[str, None]:
         """Get the next character from the message."""
         try:
             return next(self._message)
         except StopIteration:
-            return ''
+            return
 
     def get_next_token(self) -> Token or None:
         """Get the next token from the message."""
@@ -151,5 +152,4 @@ class Tokenizer:
 
     def end_of_message(self) -> bool:
         """Check if we've reached the end of the message"""
-
-        return len(self._char) == 0
+        return self._char is None
