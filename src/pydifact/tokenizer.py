@@ -15,6 +15,7 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 from pydifact.token import Token
 from pydifact.control.characters import Characters
+from typing import Union
 
 
 class Tokenizer:
@@ -24,7 +25,7 @@ class Tokenizer:
         super().__init__()
 
         # The message that we are tokenizing.
-        self._message = ""
+        self._message = []
 
         # The current character from the message we are dealing with.
         self._char = ""
@@ -48,7 +49,7 @@ class Tokenizer:
         self.characters = characters
         self._char = None
         self._string = ''
-        self._message = message
+        self._message = iter(message)
         self._message_index = 0
         self.read_next_char()
         tokens = []
@@ -80,14 +81,12 @@ class Tokenizer:
             self._char = self.get_next_char()
             self.isEscaped = True
 
-    def get_next_char(self) -> str:
+    def get_next_char(self) -> Union[str, None]:
         """Get the next character from the message."""
-
-        # FIXME: this is pretty wasteful. Maybe use a list in the first place?
-        # imagine the string is 2Mb big.
-        char = self._message[self._message_index:self._message_index+1]
-        self._message_index += 1
-        return char
+        try:
+            return next(self._message)
+        except StopIteration:
+            return
 
     def get_next_token(self) -> Token or None:
         """Get the next token from the message."""
@@ -153,5 +152,4 @@ class Tokenizer:
 
     def end_of_message(self) -> bool:
         """Check if we've reached the end of the message"""
-
-        return len(self._char) == 0
+        return self._char is None
