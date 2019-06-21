@@ -19,8 +19,8 @@ To read a message from a file or from a string, take the `Message` class and
 iter over the segments:
 
 ```python
-from pydifact.Message import Message
-message = Message.from_file("./tests/data/order.edi");
+from pydifact.message import Message
+message = Message.from_file("./tests/data/order.edi")
 message = Message.from_str("UNA:+,? 'UNH+1+ORDERS:D:96A:UN:EAN008'")
 
 for segment in message.segments:
@@ -31,7 +31,7 @@ for segment in message.segments:
 Or you can create an EDI message:
 
 ```python
-from pydifact.Segments import Segment
+from pydifact.segments import Segment
 message = Message()
 message.add_segment(Segment('QTY', ['12', '3']))
 print(message.serialize())
