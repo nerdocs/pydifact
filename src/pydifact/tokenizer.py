@@ -48,12 +48,11 @@ class Tokenizer:
 
         self.characters = characters
         self._char = None
-        self._string = ''
+        self._string = ""
         self._message = iter(message)
         self._message_index = 0
         self.read_next_char()
         tokens = []
-
 
         # FIXME: do this more pythonic:
         token = self.get_next_token()
@@ -99,8 +98,9 @@ class Tokenizer:
         if not self.isEscaped:
             if self._char == self.characters.component_separator:
                 self.store_current_char_and_read_next()
-                return Token(Token.Type.COMPONENT_SEPARATOR,
-                             self.extract_stored_chars())
+                return Token(
+                    Token.Type.COMPONENT_SEPARATOR, self.extract_stored_chars()
+                )
 
             if self._char == self.characters.data_separator:
                 self.store_current_char_and_read_next()
@@ -133,8 +133,8 @@ class Tokenizer:
         return self._char in [
             self.characters.component_separator,
             self.characters.data_separator,
-            self.characters.segment_terminator
-            ]
+            self.characters.segment_terminator,
+        ]
 
     def store_current_char_and_read_next(self) -> None:
         """Store the current character and read the

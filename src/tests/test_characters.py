@@ -19,7 +19,6 @@ from pydifact.control import Characters
 
 
 class CharactersTest(unittest.TestCase):
-
     def test_with_separator_identity(self):
         one = Characters()
         other = Characters()
@@ -29,9 +28,10 @@ class CharactersTest(unittest.TestCase):
 
     def test_cc_assigning(self):
         one = Characters()
-        one.component_separator = 'x'
-        self.assertEqual(one.component_separator, 'x')
+        one.component_separator = "x"
+        self.assertEqual(one.component_separator, "x")
         self.assertEqual(str(one), "x+,? '")
+
 
 #    def test_wrong_cc_assigning(self):
 #        with self.assertRaises(ValueError):
@@ -42,5 +42,5 @@ class CharactersTest(unittest.TestCase):
 #            Characters().with_control_character('notexisting', ':')
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

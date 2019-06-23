@@ -19,7 +19,6 @@ import os
 
 
 class InputOutputTest(unittest.TestCase):
-
     def setUp(self):
         self.path = os.path.dirname(os.path.realpath(__file__)) + "/data"
 
@@ -33,7 +32,7 @@ class InputOutputTest(unittest.TestCase):
         self.maxDiff = None
         self._test_file_read("{}/patient1.edi".format(self.path))
 
-    def _test_file_read(self, file_name: str, encoding: str = 'iso8859-1'):
+    def _test_file_read(self, file_name: str, encoding: str = "iso8859-1"):
 
         # read in a complete message from a file
         message = Message.from_file(file_name)
@@ -43,5 +42,5 @@ class InputOutputTest(unittest.TestCase):
             self.assertEqual(expected, output)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

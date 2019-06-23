@@ -19,7 +19,6 @@ import unittest
 
 
 class MessageTest(unittest.TestCase):
-
     def test_from_file(self):
 
         with self.assertRaises(FileNotFoundError):
@@ -28,22 +27,15 @@ class MessageTest(unittest.TestCase):
     def test_create_with_segments(self):
 
         message = Message.from_segments([Segment("36CF")])
-        self.assertEqual([
-            Segment("36CF"),
-        ], message.segments)
+        self.assertEqual([Segment("36CF")], message.segments)
 
     def test_get_segments(self):
 
-        message = Message.from_segments([
-            Segment("36CF", 1),
-            Segment("CPD"),
-            Segment("36CF", 2)
-        ])
+        message = Message.from_segments(
+            [Segment("36CF", 1), Segment("CPD"), Segment("36CF", 2)]
+        )
         segments = list(message.get_segments("36CF"))
-        self.assertEqual([
-            Segment("36CF", 1),
-            Segment("36CF", 2),
-        ], segments)
+        self.assertEqual([Segment("36CF", 1), Segment("36CF", 2)], segments)
 
     def test_get_segments_doesnt_exist(self):
 
@@ -53,10 +45,7 @@ class MessageTest(unittest.TestCase):
 
     def test_get_segment(self):
 
-        message = Message.from_segments([
-            Segment("36CF", 1),
-            Segment("36CF", 2),
-        ])
+        message = Message.from_segments([Segment("36CF", 1), Segment("36CF", 2)])
         segment = message.get_segment("36CF")
         self.assertEqual(Segment("36CF", 1), segment)
 
@@ -67,5 +56,5 @@ class MessageTest(unittest.TestCase):
         self.assertIsNone(segment)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

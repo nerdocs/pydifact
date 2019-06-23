@@ -16,12 +16,12 @@
 from pydifact.message import Message
 import unittest
 
-class HugeMessageTest(unittest.TestCase):
 
+class HugeMessageTest(unittest.TestCase):
     def test_huge_message(self):
         """tests parsing a huge message"""
-        message = Message.from_file('data/huge_file2.edi')
+        message = Message.from_file("data/huge_file2.edi")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

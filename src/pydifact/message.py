@@ -21,6 +21,7 @@ from pydifact.serializer import Serializer
 from pydifact.control import Characters
 import codecs
 
+
 class Message:
     """Represent an EDI message for both reading and writing."""
 
@@ -33,7 +34,7 @@ class Message:
         self.has_una_segment = False
 
     @classmethod
-    def from_file(cls, file: str, encoding: str = 'iso8859-1') -> 'Message':
+    def from_file(cls, file: str, encoding: str = "iso8859-1") -> "Message":
         """Create a Message instance from a file.
 
         Raises FileNotFoundError if filename is not found.
@@ -50,7 +51,7 @@ class Message:
         return cls.from_str(message)
 
     @classmethod
-    def from_str(cls, string: str) -> 'Message':
+    def from_str(cls, string: str) -> "Message":
         """Create a Message instance from a string.
         :param string: The EDI message content
         :rtype: Message
@@ -60,7 +61,7 @@ class Message:
         return cls.from_segments(segments)
 
     @classmethod
-    def from_segments(cls, segments: list or collections.Iterable) -> 'Message':
+    def from_segments(cls, segments: list or collections.Iterable) -> "Message":
         """Create a new Message instance from a iterable list of segments.
 
         :param segments: The segments of the message
@@ -92,7 +93,7 @@ class Message:
 
         return None
 
-    def add_segments(self, segments: list or collections.Iterable) -> 'Message':
+    def add_segments(self, segments: list or collections.Iterable) -> "Message":
         """Add multiple segments to the message.
 
         :param segments: The segments to add
@@ -103,7 +104,7 @@ class Message:
 
         return self
 
-    def add_segment(self, segment: Segment) -> 'Message':
+    def add_segment(self, segment: Segment) -> "Message":
         """Append a segment to the message.
 
         :param segment: The segment to add

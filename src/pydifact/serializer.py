@@ -35,7 +35,7 @@ class Serializer:
         :param with_una: True if a UNA header should be written. Defauts to False.
         """
 
-        message = ''
+        message = ""
 
         if with_una:
             # create an EDIFACT header
@@ -50,7 +50,7 @@ class Serializer:
         # iter through all segments
         for segment in segments:
             # skip the UNA segment as we already have written it if requested
-            if segment.tag == 'UNA':
+            if segment.tag == "UNA":
                 continue
             message += segment.tag
             for element in segment.elements:
@@ -72,8 +72,9 @@ class Serializer:
         :param string: The string to be escaped
         """
 
-        if string is None: return ""
-        assert(type(string) == str)
+        if string is None:
+            return ""
+        assert type(string) == str
 
         characters = [
             self.characters.escape_character,
@@ -88,6 +89,6 @@ class Serializer:
         # Thanks to "Bor González Usach" for this wonderful piece of code:
         # https://gist.github.com/bgusach/a967e0587d6e01e889fd1d776c5f3729
         substrs = sorted(replace_map, key=len, reverse=True)
-        regexp = re.compile('|'.join(map(re.escape, substrs)))
+        regexp = re.compile("|".join(map(re.escape, substrs)))
 
         return regexp.sub(lambda match: replace_map[match.group(0)], string)

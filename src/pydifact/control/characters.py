@@ -21,29 +21,29 @@ class Characters:
 
     def __init__(self):
         # The control character used to separate components.
-        self.component_separator = ':'
+        self.component_separator = ":"
 
         # The control character used to separate data elements.
-        self.data_separator = '+'
+        self.data_separator = "+"
 
         # The control character used as a decimal point.
-        self.decimal_point = ','
+        self.decimal_point = ","
 
         # The control character used as an escape character.
-        self.escape_character = '?'
+        self.escape_character = "?"
 
         # Reserved for future use
-        self.reserved_character = ' '
+        self.reserved_character = " "
 
         # The control character used as an segment terminator.
         self.segment_terminator = "'"
 
     @classmethod
-    def from_str(cls, string: str) -> 'Characters':
+    def from_str(cls, string: str) -> "Characters":
         """Returns a new instance with control characters set to given string.
         :param string: The string to set the control characters to
         """
-        if string[0:3] == 'UNA':
+        if string[0:3] == "UNA":
             string = string[3:9]
         assert len(string) >= 6
 
@@ -67,14 +67,12 @@ class Characters:
         :return: clone of self
         """
         if len(char) != 1:
-            raise ValueError(
-                "control characters must only be a single character")
+            raise ValueError("control characters must only be a single character")
 
         # set the attribute dynamically.
         if not hasattr(self, cc_type):
             raise AttributeError(
-                "{} doesn't have an attribute with the name '{}'".format(
-                    self, cc_type)
+                "{} doesn't have an attribute with the name '{}'".format(self, cc_type)
             )
 
         other = copy(self)
@@ -84,20 +82,24 @@ class Characters:
         return other
 
     def __str__(self):
-        return self.component_separator + \
-               self.data_separator + \
-               self.decimal_point + \
-               self.escape_character + \
-               self.reserved_character + \
-               self.segment_terminator
+        return (
+            self.component_separator
+            + self.data_separator
+            + self.decimal_point
+            + self.escape_character
+            + self.reserved_character
+            + self.segment_terminator
+        )
 
     def __repr__(self):
         return "'{}'".format(self.__str__())
 
     def __eq__(self, other):
-        return (self.component_separator == other.component_separator) and \
-            (self.data_separator == other.data_separator) and \
-            (self.decimal_point == other.decimal_point) and \
-            (self.escape_character == other.escape_character) and \
-            (self.reserved_character == other.reserved_character) and \
-            (self.segment_terminator == other.segment_terminator)
+        return (
+            (self.component_separator == other.component_separator)
+            and (self.data_separator == other.data_separator)
+            and (self.decimal_point == other.decimal_point)
+            and (self.escape_character == other.escape_character)
+            and (self.reserved_character == other.reserved_character)
+            and (self.segment_terminator == other.segment_terminator)
+        )

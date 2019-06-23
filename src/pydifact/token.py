@@ -22,12 +22,13 @@ class Token:
     This could be content, a data separator (usually +),
     a component data separator (usually :), or a segment terminator (usually ').
     """
+
     class Type(Enum):
-        CTRL_CHARS = 10             # ASCII string holding the control chars
+        CTRL_CHARS = 10  # ASCII string holding the control chars
         CONTENT = 11
-        COMPONENT_SEPARATOR = 12    # default :
-        DATA_SEPARATOR = 13         # default +
-        TERMINATOR = 14             # default '
+        COMPONENT_SEPARATOR = 12  # default :
+        DATA_SEPARATOR = 13  # default +
+        TERMINATOR = 14  # default '
 
     def __init__(self, token_type: Type, value: str):
         """Creates a Token with a type and a value"""

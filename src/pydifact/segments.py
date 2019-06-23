@@ -34,14 +34,13 @@ class Segment:
 
     def __str__(self) -> str:
         """Returns the Segment in Python list printout"""
-        return '\'{}\' EDI segment: {}'.format(self.tag, str(self.elements))
+        return "'{}' EDI segment: {}".format(self.tag, str(self.elements))
 
     def __repr__(self) -> str:
         return self.tag + " segment: " + str(self.elements)
 
     def __eq__(self, other) -> bool:
-        return type(self) == type(other) \
-               and list(self.elements) == list(other.elements)
+        return type(self) == type(other) and list(self.elements) == list(other.elements)
 
 
 class SegmentFactory:

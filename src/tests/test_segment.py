@@ -18,13 +18,8 @@ import unittest
 
 
 class SegmentTest(unittest.TestCase):
-
     def setUp(self):
-        self.elements = [
-            "field1",
-            ["field2", "extra"],
-            "stuff",
-        ]
+        self.elements = ["field1", ["field2", "extra"], "stuff"]
 
     def test_get_segment_code(self):
         segment = Segment("OMD")
@@ -48,5 +43,5 @@ class SegmentTest(unittest.TestCase):
             segment.elements[7]
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

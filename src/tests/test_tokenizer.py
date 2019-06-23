@@ -21,7 +21,6 @@ from pydifact.control import Characters
 
 
 class TokenizerTest(unittest.TestCase):
-
     def setUp(self):
         self._tokenizer = Tokenizer()
 
@@ -33,56 +32,74 @@ class TokenizerTest(unittest.TestCase):
         self.assertEqual(expected, tokens)
 
     def test_basic(self):
-        self._assert_tokens("RFF+PD:50515", [
-            Token(Token.Type.CONTENT, "RFF"),
-            Token(Token.Type.DATA_SEPARATOR, "+"),
-            Token(Token.Type.CONTENT, "PD"),
-            Token(Token.Type.COMPONENT_SEPARATOR, ":"),
-            Token(Token.Type.CONTENT, "50515"),
-        ])
+        self._assert_tokens(
+            "RFF+PD:50515",
+            [
+                Token(Token.Type.CONTENT, "RFF"),
+                Token(Token.Type.DATA_SEPARATOR, "+"),
+                Token(Token.Type.CONTENT, "PD"),
+                Token(Token.Type.COMPONENT_SEPARATOR, ":"),
+                Token(Token.Type.CONTENT, "50515"),
+            ],
+        )
 
     def test_escape(self):
-        self._assert_tokens("RFF+PD?:5", [
-            Token(Token.Type.CONTENT, "RFF"),
-            Token(Token.Type.DATA_SEPARATOR, "+"),
-            Token(Token.Type.CONTENT, "PD:5"),
-        ])
+        self._assert_tokens(
+            "RFF+PD?:5",
+            [
+                Token(Token.Type.CONTENT, "RFF"),
+                Token(Token.Type.DATA_SEPARATOR, "+"),
+                Token(Token.Type.CONTENT, "PD:5"),
+            ],
+        )
 
     def test_double_escape(self):
-        self._assert_tokens("RFF+PD??:5", [
-            Token(Token.Type.CONTENT, "RFF"),
-            Token(Token.Type.DATA_SEPARATOR, "+"),
-            Token(Token.Type.CONTENT, "PD?"),
-            Token(Token.Type.COMPONENT_SEPARATOR, ":"),
-            Token(Token.Type.CONTENT, "5"),
-        ])
+        self._assert_tokens(
+            "RFF+PD??:5",
+            [
+                Token(Token.Type.CONTENT, "RFF"),
+                Token(Token.Type.DATA_SEPARATOR, "+"),
+                Token(Token.Type.CONTENT, "PD?"),
+                Token(Token.Type.COMPONENT_SEPARATOR, ":"),
+                Token(Token.Type.CONTENT, "5"),
+            ],
+        )
 
     def test_triple_escape(self):
-        self._assert_tokens("RFF+PD???:5", [
-            Token(Token.Type.CONTENT, "RFF"),
-            Token(Token.Type.DATA_SEPARATOR, "+"),
-            Token(Token.Type.CONTENT, "PD?:5"),
-        ])
+        self._assert_tokens(
+            "RFF+PD???:5",
+            [
+                Token(Token.Type.CONTENT, "RFF"),
+                Token(Token.Type.DATA_SEPARATOR, "+"),
+                Token(Token.Type.CONTENT, "PD?:5"),
+            ],
+        )
 
     def test_quadruple_escape(self):
-        self._assert_tokens("RFF+PD????:5", [
-            Token(Token.Type.CONTENT, "RFF"),
-            Token(Token.Type.DATA_SEPARATOR, "+"),
-            Token(Token.Type.CONTENT, "PD??"),
-            Token(Token.Type.COMPONENT_SEPARATOR, ":"),
-            Token(Token.Type.CONTENT, "5"),
-        ])
+        self._assert_tokens(
+            "RFF+PD????:5",
+            [
+                Token(Token.Type.CONTENT, "RFF"),
+                Token(Token.Type.DATA_SEPARATOR, "+"),
+                Token(Token.Type.CONTENT, "PD??"),
+                Token(Token.Type.COMPONENT_SEPARATOR, ":"),
+                Token(Token.Type.CONTENT, "5"),
+            ],
+        )
 
     def test_ignore_whitespace(self):
-        self._assert_tokens("RFF:5'\nDEF:6", [
-            Token(Token.Type.CONTENT, "RFF"),
-            Token(Token.Type.COMPONENT_SEPARATOR, ":"),
-            Token(Token.Type.CONTENT, "5"),
-            Token(Token.Type.TERMINATOR, "'"),
-            Token(Token.Type.CONTENT, "DEF"),
-            Token(Token.Type.COMPONENT_SEPARATOR, ":"),
-            Token(Token.Type.CONTENT, "6"),
-        ])
+        self._assert_tokens(
+            "RFF:5'\nDEF:6",
+            [
+                Token(Token.Type.CONTENT, "RFF"),
+                Token(Token.Type.COMPONENT_SEPARATOR, ":"),
+                Token(Token.Type.CONTENT, "5"),
+                Token(Token.Type.TERMINATOR, "'"),
+                Token(Token.Type.CONTENT, "DEF"),
+                Token(Token.Type.COMPONENT_SEPARATOR, ":"),
+                Token(Token.Type.CONTENT, "6"),
+            ],
+        )
 
     def test_no_terminator(self):
         with self.assertRaises(RuntimeError) as cm:
@@ -90,5 +107,5 @@ class TokenizerTest(unittest.TestCase):
         self.assertEqual(str(cm.exception), "Unexpected end of EDI message")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

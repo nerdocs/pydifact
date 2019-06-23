@@ -18,7 +18,6 @@ from pydifact.token import Token
 
 
 class TokenTest(unittest.TestCase):
-
     def test_type(self):
         token = Token(Token.Type.CONTENT, "ok")
         self.assertEqual(Token.Type.CONTENT, token.type)
@@ -28,5 +27,5 @@ class TokenTest(unittest.TestCase):
         self.assertEqual("ok", token.value)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()
