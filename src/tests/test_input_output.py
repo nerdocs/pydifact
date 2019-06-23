@@ -37,7 +37,7 @@ class InputOutputTest(unittest.TestCase):
         # read in a complete message from a file
         message = Message.from_file(file_name)
         output = message.serialize()
-        with open(file_name, encoding) as file:
+        with open(file_name, "r", encoding=encoding) as file:
             expected = file.read()  # .replace("\n", "")
             self.assertEqual(expected, output)
 
