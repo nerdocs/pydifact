@@ -66,12 +66,13 @@ class Serializer:
 
         return message
 
-    def escape(self, string: str) -> str:
+    def escape(self, string: str or None) -> str:
         """Escapes control characters.
 
         :param string the string to be escaped
         """
 
+        if string is None: return ""
         assert(type(string) == str)
 
         characters = [
