@@ -31,8 +31,8 @@ class Serializer:
     def serialize(self, segments: list, with_una: bool = False) -> str:
         """Serialize all the passed segments.
 
-        :param segments: a list of segments to serialize
-        :param with_una: flag if a UNA header should be written
+        :param segments: A list of segments to serialize
+        :param with_una: True if a UNA header should be written. Defauts to False.
         """
 
         message = ''
@@ -69,7 +69,7 @@ class Serializer:
     def escape(self, string: str or None) -> str:
         """Escapes control characters.
 
-        :param string the string to be escaped
+        :param string: The string to be escaped
         """
 
         if string is None: return ""
