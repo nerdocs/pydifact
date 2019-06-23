@@ -28,7 +28,7 @@ class ParserTest(unittest.TestCase):
         self.parser = Parser()
         self.default_una_segment = Segment("UNA", ":+,? '")
 
-    @mock.patch("pydifact.Tokenizer.Tokenizer")
+    @mock.patch("pydifact.tokenizer.Tokenizer")
     def get_control_characters(self, message: str, tokenizer=None) -> Characters:
         """Returns the control characters from the given message.
 
