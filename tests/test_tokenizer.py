@@ -76,7 +76,7 @@ def test_double_escape():
             Token(Token.Type.COMPONENT_SEPARATOR, ":"),
             Token(Token.Type.CONTENT, "5"),
         ],
-     )
+    )
 
 
 def test_triple_escape():
