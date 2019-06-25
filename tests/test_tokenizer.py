@@ -104,18 +104,17 @@ def test_quadruple_escape():
 
 
 def test_ignore_whitespace():
-    _assert_tokens(
-        "RFF:5'\nDEF:6",
-        [
-            Token(Token.Type.CONTENT, "RFF"),
-            Token(Token.Type.COMPONENT_SEPARATOR, ":"),
-            Token(Token.Type.CONTENT, "5"),
-            Token(Token.Type.TERMINATOR, "'"),
-            Token(Token.Type.CONTENT, "DEF"),
-            Token(Token.Type.COMPONENT_SEPARATOR, ":"),
-            Token(Token.Type.CONTENT, "6"),
-        ],
-    )
+    """This test checks if line breaks after a segment terminator is ignored."""
+    expected = [
+        Token(Token.Type.CONTENT, "RFF"),
+        Token(Token.Type.COMPONENT_SEPARATOR, ":"),
+        Token(Token.Type.CONTENT, "5"),
+        Token(Token.Type.TERMINATOR, "'"),
+        Token(Token.Type.CONTENT, "DEF"),
+        Token(Token.Type.COMPONENT_SEPARATOR, ":"),
+        Token(Token.Type.CONTENT, "6"),
+    ]
+    _assert_tokens("RFF:5'\nDEF:6", expected)
 
 
 def test_no_terminator():
