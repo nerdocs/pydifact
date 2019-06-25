@@ -153,3 +153,6 @@ class Tokenizer:
     def end_of_message(self) -> bool:
         """Check if we've reached the end of the message"""
         return self._char is None
+
+    def __str__(self):
+        return self._string
