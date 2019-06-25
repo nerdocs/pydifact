@@ -27,12 +27,19 @@ def tokenizer():
     return Tokenizer()
 
 
-def _assert_tokens(message: str, expected: list = None) -> None:
+def _assert_tokens(
+    message: str, expected: list = None, error_message: str = None
+) -> None:
+    """Helper function to accelerate tokenizer testing."""
+
     if expected is None:
         expected = []
     tokens = Tokenizer().get_tokens("{}'".format(message), Characters())
     expected.append(Token(Token.Type.TERMINATOR, "'"))
-    assert expected == tokens
+    if not error_message:
+        assert expected == tokens
+    else:
+        assert expected == tokens, error_message
 
 
 def test_basic():
