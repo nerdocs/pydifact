@@ -15,7 +15,7 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 from pydifact.token import Token
 from pydifact.control.characters import Characters
-from typing import Union
+from typing import Union, List
 
 
 class Tokenizer:
@@ -39,9 +39,9 @@ class Tokenizer:
         # The control characters for the message
         self.characters = None
 
-    def get_tokens(self, message: str, characters: Characters = None) -> list:
+    def get_tokens(self, message: str, characters: Characters = None) -> List[Token]:
         """Convert the passed message into tokens.
-        :param characters: the Control Characters to use for tokenizing.
+        :param characters: the Control Characters to use for tokenizing. If omitted, use a default set.
         :param message: The EDI message
         :return: Token[]
         """
