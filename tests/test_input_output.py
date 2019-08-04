@@ -17,30 +17,30 @@ from pydifact.message import Message
 import unittest
 import os
 
+from pydifact.segments import Segment
 
-class InputOutputTest(unittest.TestCase):
-    def setUp(self):
-        self.path = os.path.dirname(os.path.realpath(__file__)) + "/data"
-
-    def test1(self):
-        self._test_file_read("{}/wikipedia.edi".format(self.path))
-
-    def test2(self):
-        self._test_file_read("{}/order.edi".format(self.path))
-
-    def test_patient1(self):
-        self.maxDiff = None
-        self._test_file_read("{}/patient1.edi".format(self.path))
-
-    def _test_file_read(self, file_name: str, encoding: str = "iso8859-1"):
-
-        # read in a complete message from a file
-        message = Message.from_file(file_name)
-        output = message.serialize()
-        with open(file_name, "r", encoding=encoding) as file:
-            expected = file.read()  # .replace("\n", "")
-            self.assertEqual(expected, output)
+path = os.path.dirname(os.path.realpath(__file__)) + "/data"
 
 
-if __name__ == "__main__":
-    unittest.main()
+
+def test_wikipedia_file():
+    message = Message.from_file("{}/wikipedia.edi".format(path))
+    # make some checks
+    assert message.get_segment("UNB") == Segment('UNB', ['IATB', '1'], '6XPPC', 'LHPPC', ['940101', '0950'], '1')
+    assert message.get_segment("IFT") == Segment("IFT", "3", "XYZCOMPANY AVAILABILITY")
+    assert message.get_segment("TVL") == Segment("TVL",
+                                                 ["240493", "1000", "", "1220"],
+                                                 "FRA",
+                                                 "JFK",
+                                                 "DL",
+                                                 "400",
+                                                 "C")
+
+# def test_order_file():
+#     _test_file_read("{}/order.edi".format(path))
+#
+#
+# def test_patient1_file():
+#     _test_file_read("{}/patient1.edi".format(path))
+
+
