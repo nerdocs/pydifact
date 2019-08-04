@@ -77,8 +77,8 @@ class Tokenizer:
         # If this is the escape character, then read the next one and
         # flag the next as escaped
         if self._char == self.characters.escape_character:
-            self._char = self.get_next_char()
             self.isEscaped = True
+            self._char = self.get_next_char()
 
     def get_next_char(self) -> Union[str, None]:
         """Get the next character from the message."""
