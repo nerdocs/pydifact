@@ -46,7 +46,8 @@ class Segment:
 class SegmentFactory:
     """Factory for producing segments."""
 
-    def create_segment(self, characters: str, name: str, *elements: list) -> Segment:
+    @staticmethod
+    def create_segment(characters: str, name: str, *elements: list) -> Segment:
         """Create a new instance of the relevant class type.
 
         :param characters: The control characters
