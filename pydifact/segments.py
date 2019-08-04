@@ -53,4 +53,5 @@ class SegmentFactory:
         :param name: The name of the segment
         :param elements: The data elements for this segment
         """
+        # FIXME: characters is not used!
         return Segment(name, *elements)
