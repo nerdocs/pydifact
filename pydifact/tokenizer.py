@@ -39,6 +39,8 @@ class Tokenizer:
         # The control characters for the message
         self.characters = None
 
+        self._message_index = 0
+
     def get_tokens(self, message: str, characters: Characters = None) -> List[Token]:
         """Convert the passed message into tokens.
         :param characters: the Control Characters to use for tokenizing. If omitted, use a default set.
