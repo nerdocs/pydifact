@@ -17,11 +17,14 @@ from pydifact.message import Message
 import unittest
 
 
-class HugeMessageTest(unittest.TestCase):
-    def test_huge_message(self):
-        """tests parsing a huge message"""
-        message = Message.from_file("data/huge_file2.edi")
+# This is commented out, as it's only a performance benchmark, no real test.
+# use this file with  python -m cProfile tests/test_huge_message
+def performance_test_huge_message():
+    """tests parsing a huge message"""
+    message = Message.from_file("tests/data/huge_file2.edi")
+    assert message
 
 
 if __name__ == "__main__":
-    unittest.main()
+    # just call this function for profiling purposes
+    test_huge_message()
