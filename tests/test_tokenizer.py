@@ -34,7 +34,7 @@ def _assert_tokens(
 
     if expected is None:
         expected = []
-    tokens = Tokenizer().get_tokens("{}'".format(message), Characters())
+    tokens = Tokenizer().get_tokens("{}'".format(message))
     expected.append(Token(Token.Type.TERMINATOR, "'"))
     if not error_message:
         assert expected == tokens
