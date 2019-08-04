@@ -95,6 +95,8 @@ class Characters:
         return "'{}'".format(self.__str__())
 
     def __eq__(self, other):
+        if type(other) == str:
+            other = Characters.from_str(other)
         return (
             (self.component_separator == other.component_separator)
             and (self.data_separator == other.data_separator)
