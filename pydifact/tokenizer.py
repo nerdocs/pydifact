@@ -39,14 +39,14 @@ class Tokenizer:
         # The control characters for the message
         self.characters = None
 
-    def get_tokens(self, message: str, characters: Characters) -> list:
+    def get_tokens(self, message: str, characters: Characters = None) -> list:
         """Convert the passed message into tokens.
-        :param characters:
+        :param characters: the Control Characters to use for tokenizing.
         :param message: The EDI message
         :return: Token[]
         """
 
-        self.characters = characters
+        self.characters = characters or Characters()
         self._char = None
         self._string = ""
         self._message = iter(message)
