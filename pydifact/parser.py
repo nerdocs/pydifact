@@ -67,12 +67,12 @@ class Parser:
     def get_control_characters(
         message: str, characters: Characters = None
     ) -> Characters or None:
-        """Read the UNA segment from the passed string and extract the control characters.
+        """Read the UNA segment from the passed string and extract/store the control characters from it.
 
         :param message: a valid EDI message string, or UNA segment string,
-                        to extract the control characters from
+                        to extract the control characters from.
         :param characters: the control characters to use, if none found in
-                           the message
+                           the message. Default: ":+,? '"
         :return: the control characters
         """
 
