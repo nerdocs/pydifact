@@ -37,8 +37,11 @@ class Token:
         self.type = token_type
         self.value = value
 
-    def __str__(self) -> str:
-        return "'{}' ({})".format(self.value, self.type.name)
+    def __str__(self):
+        return "{name} Token: '{value}'".format(name=self.type.name, value=self.value)
+
+    def __repr__(self):
+        return "<{name} Token '{value}'>".format(name=self.type.name, value=self.value)
 
     def __eq__(self, other) -> bool:
         return self.type == other.type and self.value == other.value
