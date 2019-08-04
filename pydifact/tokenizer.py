@@ -144,7 +144,7 @@ class Tokenizer:
         self.read_next_char()
 
     def extract_stored_chars(self) -> str:
-        """Get the previously stored characters and empty the store."""
+        """Return the previously stored characters and empty the store."""
 
         string = self._string
         self._string = ""
