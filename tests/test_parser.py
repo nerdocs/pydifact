@@ -109,10 +109,10 @@ def test_compare_equal_segments(parser, default_una_segment):
     """Just make sure that comparing Segment objects works"""
     a = Segment("RFF", ["PD", "50515"])
     b = Segment("RFF", ["PD", "50515"])
+    assert a == b
     assert (
         a is not b
     ), "Two separatedly, but visually identically created Segment objects may not be the same object."
-    assert a == b
 
 
 def test_una_parser1(parser):
