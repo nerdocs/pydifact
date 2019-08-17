@@ -68,16 +68,17 @@ class Tokenizer:
         """Read the next character from the message.
 
         If the character is an escape character, set the isEscaped flag to
-        True, get the one after it and return that."""
+        True, get the one after it and store that character in the internal storage."""
 
+        # first, get the next char.
         self._char = self.get_next_char()
 
-        # If the last character was escaped, this one can't possibly be
+        # If the last character was escaped, this one can't possibly be an escaped one.
         if self.isEscaped:
             self.isEscaped = False
 
-        # If this is the escape character, then read the next one and
-        # flag the next as escaped
+        # If this is the escape character, then read the next one, store it and
+        # flag it as escaped
         if self._char == self.characters.escape_character:
             self.isEscaped = True
             self._char = self.get_next_char()
@@ -97,26 +98,23 @@ class Tokenizer:
 
         # If we're not escaping this character then see if it's
         # a control character
-        if not self.isEscaped:
-            if self._char == self.characters.component_separator:
-                self.store_current_char_and_read_next()
-                return Token(
-                    Token.Type.COMPONENT_SEPARATOR, self.extract_stored_chars()
-                )
+        if self._char == self.characters.component_separator:
+            self.store_current_char_and_read_next()
+            return Token(Token.Type.COMPONENT_SEPARATOR, self.extract_stored_chars())
 
-            if self._char == self.characters.data_separator:
-                self.store_current_char_and_read_next()
-                return Token(Token.Type.DATA_SEPARATOR, self.extract_stored_chars())
+        if self._char == self.characters.data_separator:
+            self.store_current_char_and_read_next()
+            return Token(Token.Type.DATA_SEPARATOR, self.extract_stored_chars())
 
-            if self._char == self.characters.segment_terminator:
-                self.store_current_char_and_read_next()
-                token = Token(Token.Type.TERMINATOR, self.extract_stored_chars())
+        if self._char == self.characters.segment_terminator:
+            self.store_current_char_and_read_next()
+            token = Token(Token.Type.TERMINATOR, self.extract_stored_chars())
 
-                # Ignore any trailing space after the end of the segment
-                while self._char in ["\r", "\n"]:
-                    self.read_next_char()
+            # Ignore any trailing space or CR/LF after the end of the segment
+            while self._char in [" ", "\r", "\n"]:
+                self.read_next_char()
 
-                return token
+            return token
 
         while not self.is_control_character():
             if self.end_of_message():

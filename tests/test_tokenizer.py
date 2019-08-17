@@ -17,7 +17,6 @@ import pytest
 
 from pydifact.token import Token
 from pydifact.tokenizer import Tokenizer
-import unittest
 
 from pydifact.control import Characters
 
@@ -34,78 +33,85 @@ def _assert_tokens(
 
     if expected is None:
         expected = []
-    tokens = Tokenizer().get_tokens("{}'".format(message))
-    expected.append(Token(Token.Type.TERMINATOR, "'"))
-    if not error_message:
-        assert expected == tokens
-    else:
+    tokens = Tokenizer().get_tokens(message)
+    if error_message:
         assert expected == tokens, error_message
+    else:
+        assert expected == tokens
 
 
 def test_basic():
     _assert_tokens(
-        "RFF+PD:50515",
+        "RFF+PD:50515'",
         [
             Token(Token.Type.CONTENT, "RFF"),
             Token(Token.Type.DATA_SEPARATOR, "+"),
             Token(Token.Type.CONTENT, "PD"),
             Token(Token.Type.COMPONENT_SEPARATOR, ":"),
             Token(Token.Type.CONTENT, "50515"),
+            Token(Token.Type.TERMINATOR, "'"),
         ],
     )
 
 
 def test_escape():
     _assert_tokens(
-        "RFF+PD?:5",
+        "RFF+PD?:5'",
         [
             Token(Token.Type.CONTENT, "RFF"),
             Token(Token.Type.DATA_SEPARATOR, "+"),
             Token(Token.Type.CONTENT, "PD:5"),
+            Token(Token.Type.TERMINATOR, "'"),
         ],
     )
 
 
 def test_double_escape():
     _assert_tokens(
-        "RFF+PD??:5",
+        "RFF+PD??:5'",
         [
             Token(Token.Type.CONTENT, "RFF"),
             Token(Token.Type.DATA_SEPARATOR, "+"),
             Token(Token.Type.CONTENT, "PD?"),
             Token(Token.Type.COMPONENT_SEPARATOR, ":"),
             Token(Token.Type.CONTENT, "5"),
+            Token(Token.Type.TERMINATOR, "'"),
         ],
     )
 
 
 def test_triple_escape():
     _assert_tokens(
-        "RFF+PD???:5",
+        "RFF+PD???:5'",
         [
             Token(Token.Type.CONTENT, "RFF"),
             Token(Token.Type.DATA_SEPARATOR, "+"),
             Token(Token.Type.CONTENT, "PD?:5"),
+            Token(Token.Type.TERMINATOR, "'"),
         ],
     )
 
 
 def test_quadruple_escape():
     _assert_tokens(
-        "RFF+PD????:5",
+        "RFF+PD????:5'",
         [
             Token(Token.Type.CONTENT, "RFF"),
             Token(Token.Type.DATA_SEPARATOR, "+"),
             Token(Token.Type.CONTENT, "PD??"),
             Token(Token.Type.COMPONENT_SEPARATOR, ":"),
             Token(Token.Type.CONTENT, "5"),
+            Token(Token.Type.TERMINATOR, "'"),
         ],
     )
 
 
-def test_ignore_whitespace():
-    """This test checks if line breaks after a segment terminator is ignored."""
-    expected = [
+# This tests check if line break combinations (CR/LF) after a segment terminator are correctly ignored.
+
+
+@pytest.fixture
+def expected_crlf():
+    return [
         Token(Token.Type.CONTENT, "RFF"),
         Token(Token.Type.COMPONENT_SEPARATOR, ":"),
         Token(Token.Type.CONTENT, "5"),
@@ -113,8 +119,36 @@ def test_ignore_whitespace():
         Token(Token.Type.CONTENT, "DEF"),
         Token(Token.Type.COMPONENT_SEPARATOR, ":"),
         Token(Token.Type.CONTENT, "6"),
+        Token(Token.Type.TERMINATOR, "'"),
     ]
-    _assert_tokens("RFF:5'\nDEF:6", expected)
+
+
+def test_ignore_lf(expected_crlf):
+    _assert_tokens("RFF:5'\nDEF:6'", expected_crlf)
+
+
+def test_ignore_crlf(expected_crlf):
+    _assert_tokens("RFF:5'\r\nDEF:6'", expected_crlf)
+
+
+def test_ignore_cr(expected_crlf):
+    _assert_tokens("RFF:5'\rDEF:6'", expected_crlf)
+
+
+def test_ignore_lfcr(expected_crlf):
+    _assert_tokens("RFF:5'\n\rDEF:6'", expected_crlf)
+
+
+def test_ignore_lfcr_combined(expected_crlf):
+    _assert_tokens("RFF:5'\n\r\n\r\nDEF:6'\n\r", expected_crlf)
+
+
+def test_ignore_whitespace(expected_crlf):
+    _assert_tokens("RFF:5'   \nDEF:6'", expected_crlf)
+
+
+def test_ignore_long_whitespace(expected_crlf):
+    _assert_tokens("RFF:5'               \nDEF:6'", expected_crlf)
 
 
 def test_no_terminator():
