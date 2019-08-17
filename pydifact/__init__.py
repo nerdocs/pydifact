@@ -15,4 +15,4 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 from pydifact import message, parser, segments, serializer, token, tokenizer
 
-__version__ = "0.0.2"
+__version__ = "0.0.3"
