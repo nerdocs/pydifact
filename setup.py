@@ -9,13 +9,12 @@ setup(
     # install_requires=[],
     url="https://github.com/nerdocs/pydifact",
     packages=["pydifact", "pydifact.control"],
-    license="LGPLv3+",
+    license="MIT",
     classifiers=[
         "Development Status :: 3 - Alpha",
         "Environment :: Console",
         "Intended Audience :: Developers",
-        "License :: OSI Approved :: GNU Lesser General Public License "
-        "v3 or later (LGPLv3+)",
+        "License :: OSI Approved :: MIT License",
         "Natural Language :: English",
         "Operating System :: MacOS :: MacOS X",
         "Operating System :: Microsoft :: Windows",
