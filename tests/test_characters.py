@@ -34,10 +34,8 @@ def test_cc_assigning():
 
 
 def test_wrong_cc_assigning():
-   with pytest.raises(ValueError):
-       Characters().with_control_character(
-           'component_separator', 'xd')
+    with pytest.raises(ValueError):
+        Characters().with_control_character("component_separator", "xd")
 
-   with pytest.raises(AttributeError):
-       Characters().with_control_character('notexisting', ':')
-
+    with pytest.raises(AttributeError):
+        Characters().with_control_character("notexisting", ":")
