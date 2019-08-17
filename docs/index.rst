@@ -1,19 +1,19 @@
-.. pydifact documentation master file, created by
-   sphinx-quickstart on Sun Aug 18 00:46:08 2019.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
+Pydifact documentation
+======================
 
-Welcome to pydifact's documentation!
-====================================
+Pydifact is a library that aims to provide complete support for reading and
+writing `EDIFACT <https://de.wikipedia.org/wiki/EDIFACT>`_ files.
+These file format, despite being old, is still a standard in many business cases.
+
+In Austria e.g., it is used for the transfer of medical reports between doctors.
 
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
 
+   API
 
-
-Indices and tables
-==================
+------------------------
 
 * :ref:`genindex`
 * :ref:`modindex`
