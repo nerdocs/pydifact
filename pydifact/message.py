@@ -1,18 +1,25 @@
-#    pydifact - a python edifact library
-#    Copyright (C) 2017-2018  Christian González
+# Pydifact - a python edifact library
 #
-#    This program is free software: you can redistribute it and/or modify
-#    it under the terms of the GNU Lesser General Public License as published
-#    by the Free Software Foundation, either version 3 of the License, or
-#    (at your option) any later version.
+# Copyright (c) 2019 Christian González
 #
-#    This program is distributed in the hope that it will be useful,
-#    but WITHOUT ANY WARRANTY; without even the implied warranty of
-#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#    GNU Lesser General Public License for more details.
+# Permission is hereby granted, free of charge, to any person obtaining a copy of
+# this software and associated documentation files (the "Software"), to deal in
+# the Software without restriction, including without limitation the rights to
+# use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
 #
-#    You should have received a copy of the GNU Lesser General Public License
-#    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+# THE SOFTWARE.
+
 import collections
 
 from pydifact.parser import Parser
@@ -38,8 +45,9 @@ class Message:
         """Create a Message instance from a file.
 
         Raises FileNotFoundError if filename is not found.
-        :param encoding: an 
-        :param file: The full path to a file that contains an EDI message
+        :param encoding: an optional string which specifies the encoding.
+        Default is "iso8859-1".
+        :param file: The full path to a file that contains an EDI message.
         :rtype: Message
         """
 
@@ -66,7 +74,7 @@ class Message:
 
         :param segments: The segments of the message
         :type segments: list/iterable of Segment
-        :rtype Message
+        :rtype: Message
         """
 
         # create a new instance of Message and return it
@@ -85,7 +93,7 @@ class Message:
     def get_segment(self, name: str) -> Segment or None:
         """Get the first segment that matches the requested name.
 
-         :return: The requested segment, or None if not found
+        :return: The requested segment, or None if not found
         :param name: The name of the segment to return
         """
         for segment in self.get_segments(name):
