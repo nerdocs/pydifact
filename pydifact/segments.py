@@ -34,7 +34,9 @@ class Segment:
 
     def __str__(self) -> str:
         """Returns the Segment in Python list printout"""
-        return "'{tag}' EDI segment: {elements}".format(tag=self.tag, elements=str(self.elements))
+        return "'{tag}' EDI segment: {elements}".format(
+            tag=self.tag, elements=str(self.elements)
+        )
 
     def __repr__(self) -> str:
         return "{} segment: {}".format(self.tag, str(self.elements))

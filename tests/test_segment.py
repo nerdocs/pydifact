@@ -46,5 +46,3 @@ def test_get_non_existing_element():
     segment = Segment("OMD", *elements)
     with pytest.raises(IndexError):
         segment.elements[7]
-
-

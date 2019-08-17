@@ -22,19 +22,17 @@ from pydifact.segments import Segment
 path = os.path.dirname(os.path.realpath(__file__)) + "/data"
 
 
-
 def test_wikipedia_file():
     message = Message.from_file("{}/wikipedia.edi".format(path))
     # make some checks
-    assert message.get_segment("UNB") == Segment('UNB', ['IATB', '1'], '6XPPC', 'LHPPC', ['940101', '0950'], '1')
+    assert message.get_segment("UNB") == Segment(
+        "UNB", ["IATB", "1"], "6XPPC", "LHPPC", ["940101", "0950"], "1"
+    )
     assert message.get_segment("IFT") == Segment("IFT", "3", "XYZCOMPANY AVAILABILITY")
-    assert message.get_segment("TVL") == Segment("TVL",
-                                                 ["240493", "1000", "", "1220"],
-                                                 "FRA",
-                                                 "JFK",
-                                                 "DL",
-                                                 "400",
-                                                 "C")
+    assert message.get_segment("TVL") == Segment(
+        "TVL", ["240493", "1000", "", "1220"], "FRA", "JFK", "DL", "400", "C"
+    )
+
 
 # def test_order_file():
 #     _test_file_read("{}/order.edi".format(path))
@@ -42,5 +40,3 @@ def test_wikipedia_file():
 #
 # def test_patient1_file():
 #     _test_file_read("{}/patient1.edi".format(path))
-
-
