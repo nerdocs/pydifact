@@ -18,16 +18,17 @@ from pydifact.segments import Segment
 from pydifact.tokenizer import Tokenizer
 
 import pytest
-from pytest_mock import mocker
+
+# from pytest_mock import mocker
 
 from pydifact.control import Characters
 
 
-@pytest.fixture
-def mocked_tokenizer(mocker):
-    tokenizer = Tokenizer()
-    mocker.patch("pydifact.tokenizer.Tokenizer")
-    return tokenizer
+# @pytest.fixture
+# def mocked_tokenizer(mocker):
+#     tokenizer = Tokenizer()
+#     mocker.patch("pydifact.tokenizer.Tokenizer")
+#     return tokenizer
 
 
 @pytest.fixture
