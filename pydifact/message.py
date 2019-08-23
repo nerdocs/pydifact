@@ -45,8 +45,7 @@ class Message:
         """Create a Message instance from a file.
 
         Raises FileNotFoundError if filename is not found.
-        :param encoding: an optional string which specifies the encoding.
-        Default is "iso8859-1".
+        :param encoding: an optional string which specifies the encoding. Default is "iso8859-1".
         :param file: The full path to a file that contains an EDI message.
         :rtype: Message
         """
