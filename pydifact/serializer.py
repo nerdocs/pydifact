@@ -41,35 +41,37 @@ class Serializer:
         :param with_una: True if a UNA header should be written. Defauts to False.
         """
 
-        message = ""
+        message_parts = []
 
         if with_una:
             # create an EDIFACT header
-            message = "UNA"
-            message += self.characters.component_separator
-            message += self.characters.data_separator
-            message += self.characters.decimal_point
-            message += self.characters.escape_character
-            message += self.characters.reserved_character
-            message += self.characters.segment_terminator
+            message_parts = ["UNA",
+                             self.characters.component_separator,
+                             self.characters.data_separator,
+                             self.characters.decimal_point,
+                             self.characters.escape_character,
+                             self.characters.reserved_character,
+                             self.characters.segment_terminator,
+                             ]
 
         # iter through all segments
         for segment in segments:
             # skip the UNA segment as we already have written it if requested
             if segment.tag == "UNA":
                 continue
-            message += segment.tag
+            message_parts += [segment.tag]
             for element in segment.elements:
-                message += self.characters.data_separator
+                message_parts += [self.characters.data_separator]
                 if type(element) == list:
                     for nr, subelement in enumerate(element):
                         element[nr] = self.escape(subelement)
-                    message += self.characters.component_separator.join(element)
+                    message_parts += [self.characters.component_separator.join(element)]
                 else:
-                    message += self.escape(element)
+                    message_parts += [self.escape(element)]
 
-            message += self.characters.segment_terminator
+            message_parts += [self.characters.segment_terminator]
 
+        message = "".join(message_parts)
         return message
 
     def escape(self, string: str or None) -> str:
@@ -80,7 +82,7 @@ class Serializer:
 
         if string is None:
             return ""
-        assert type(string) == str
+        assert type(string) == str, "%s is not a str, it is %s" % (string, type(string),)
 
         characters = [
             self.characters.escape_character,

@@ -29,7 +29,7 @@ class Segment:
         :param str tag: The code/tag of the segment.
         :param list elements: The data elements for this segment, as list.
         """
-        assert type(tag) == str
+        assert type(tag) == str, "%s is not a str, it is %s" % (tag, type(tag),)
         self.tag = tag
 
         """The data elements for this segment.
