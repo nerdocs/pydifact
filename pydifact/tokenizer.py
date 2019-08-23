@@ -34,6 +34,8 @@ class Tokenizer:
         # The message that we are tokenizing.
         self._message = []
 
+        self._current_chars = []
+
         # The current character from the message we are dealing with.
         self._char = ""
 
@@ -46,6 +48,8 @@ class Tokenizer:
         # The control characters for the message
         self.characters = None
 
+        self.token_selector = {}
+
         self._message_index = 0
 
     def get_tokens(self, message: str, characters: Characters = None) -> List[Token]:
@@ -57,17 +61,21 @@ class Tokenizer:
 
         self.characters = characters or Characters()
         self._char = None
-        self._string = ""
         self._message = iter(message)
         self._message_index = 0
         self.read_next_char()
+
+        self.token_selector = {
+            self.characters.component_separator: Token.Type.COMPONENT_SEPARATOR,
+            self.characters.data_separator: Token.Type.DATA_SEPARATOR,
+            self.characters.segment_terminator: Token.Type.TERMINATOR,
+        }
+
         tokens = []
 
-        # FIXME: do this more pythonic:
-        token = self.get_next_token()
-        while token:
-            tokens.append(token)
+        while not self.end_of_message():
             token = self.get_next_token()
+            tokens.append(token)
 
         return tokens
 
@@ -100,27 +108,16 @@ class Tokenizer:
     def get_next_token(self) -> Token or None:
         """Get the next token from the message."""
 
-        if self.end_of_message():
-            return None
-
         # If we're not escaping this character then see if it's
         # a control character
-        if self._char == self.characters.component_separator:
+
+        token_type = self.token_selector.get(self._char)
+        if token_type:
             self.store_current_char_and_read_next()
-            return Token(Token.Type.COMPONENT_SEPARATOR, self.extract_stored_chars())
-
-        if self._char == self.characters.data_separator:
-            self.store_current_char_and_read_next()
-            return Token(Token.Type.DATA_SEPARATOR, self.extract_stored_chars())
-
-        if self._char == self.characters.segment_terminator:
-            self.store_current_char_and_read_next()
-            token = Token(Token.Type.TERMINATOR, self.extract_stored_chars())
-
-            # Ignore any trailing space or CR/LF after the end of the segment
-            while self._char in [" ", "\r", "\n"]:
-                self.read_next_char()
-
+            token = Token(token_type, self.extract_stored_chars())
+            if token_type == Token.Type.TERMINATOR:
+                while self._char in self.characters.line_terminators:
+                    self.read_next_char()
             return token
 
         while not self.is_control_character():
@@ -128,7 +125,6 @@ class Tokenizer:
                 raise RuntimeError("Unexpected end of EDI message")
 
             self.store_current_char_and_read_next()
-
         return Token(Token.Type.CONTENT, self.extract_stored_chars())
 
     def is_control_character(self) -> bool:
@@ -137,29 +133,25 @@ class Tokenizer:
         if self.isEscaped:
             return False
 
-        return self._char in [
-            self.characters.component_separator,
-            self.characters.data_separator,
-            self.characters.segment_terminator,
-        ]
+        return self._char in self.token_selector
 
     def store_current_char_and_read_next(self) -> None:
         """Store the current character and read the
         next one from the message."""
 
-        self._string += self._char
+        self._current_chars.append(self._char)
         self.read_next_char()
 
     def extract_stored_chars(self) -> str:
         """Return the previously stored characters and empty the store."""
 
-        string = self._string
-        self._string = ""
-        return string
+        chars = self._current_chars
+        self._current_chars = []
+        return "".join(chars)
 
     def end_of_message(self) -> bool:
         """Check if we've reached the end of the message"""
         return self._char is None
 
     def __str__(self):
-        return self._string
+        return "".join(self._current_chars)

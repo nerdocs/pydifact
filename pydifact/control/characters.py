@@ -46,6 +46,8 @@ class Characters:
         # The control character used as an segment terminator.
         self.segment_terminator = "'"
 
+        self.line_terminators = [" ", "\r", "\n"]
+
     @classmethod
     def from_str(cls, string: str) -> "Characters":
         """Returns a new instance with control characters set to given string.
