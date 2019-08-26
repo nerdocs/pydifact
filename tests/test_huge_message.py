@@ -14,17 +14,16 @@
 #    You should have received a copy of the GNU Lesser General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 from pydifact.message import Message
-import unittest
 
-
-# This is commented out, as it's only a performance benchmark, no real test.
-# use this file with  python -m cProfile tests/test_huge_message
+# This only a performance benchmark, no real test.
 def performance_test_huge_message():
-    """tests parsing a huge message"""
+    """Performange test parsing a huge message"""
     message = Message.from_file("tests/data/huge_file2.edi")
     assert message
 
 
 if __name__ == "__main__":
-    # just call this function for profiling purposes
-    test_huge_message()
+    # just call performance test function for profiling purposes
+    # use this file with:
+    #    $ python -m cProfile -s time tests/test_huge_message.py |head -n 20
+    performance_test_huge_message()
