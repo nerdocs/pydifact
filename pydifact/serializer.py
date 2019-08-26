@@ -45,14 +45,15 @@ class Serializer:
 
         if with_una:
             # create an EDIFACT header
-            message_parts = ["UNA",
-                             self.characters.component_separator,
-                             self.characters.data_separator,
-                             self.characters.decimal_point,
-                             self.characters.escape_character,
-                             self.characters.reserved_character,
-                             self.characters.segment_terminator,
-                             ]
+            message_parts = [
+                "UNA",
+                self.characters.component_separator,
+                self.characters.data_separator,
+                self.characters.decimal_point,
+                self.characters.escape_character,
+                self.characters.reserved_character,
+                self.characters.segment_terminator,
+            ]
 
         # iter through all segments
         for segment in segments:
@@ -82,7 +83,7 @@ class Serializer:
 
         if string is None:
             return ""
-        assert type(string) == str, "%s is not a str, it is %s" % (string, type(string),)
+        assert type(string) == str, "%s is not a str, it is %s" % (string, type(string))
 
         characters = [
             self.characters.escape_character,
