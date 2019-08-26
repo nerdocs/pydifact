@@ -15,9 +15,10 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 from pydifact.message import Message
 
+
 # This only a performance benchmark, no real test.
 def performance_test_huge_message():
-    """Performange test parsing a huge message"""
+    """Performance test parsing a huge message"""
     message = Message.from_file("tests/data/huge_file2.edi")
     assert message
 
