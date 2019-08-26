@@ -5,10 +5,13 @@ verify_ssl = true
 
 [dev-packages]
 pytest = "*"
+pytest-cov = "*"
 keyring = "*"
 nose = "*"
 pytest-profiling = "*"
 sphinx = "*"
+setuptools = "*"
+wheel = "*"
 
 [packages]
 
