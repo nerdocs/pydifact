@@ -36,13 +36,24 @@ message = Message()
 message.add_segment(Segment('QTY', ['12', '3']))
 print(message.serialize())
 ```
+#### Development
+
+To develop pydifact, install the dev requirements with `pipenv install --dev`. This installs all python packages needed for development and testing.
+
+Format all python files using [black](https://black.readthedocs.io).
+
+Happy coding, PR are more than welcome to make this library better, or to add a feature that matches your needs. Nevertheless, don't forget adding tests for every aspect you add in code.
 
 #### Testing
-pydifact uses unittests for testing.
-You can use [nose](https://nose.readthedocs.io/en/latest/) to automate the
-tests. Just install the requirements with `pip install -r requirements_dev.txt`
-and exec `nosetests` within the project folder.
+pydifact uses [pytest](http://pytest.org) for testing.
+Just exec `pytest` within the project folder to execute the unit tests.
 
+There is one test to check the performance of parsing huge files, named `test_huge_message` - you can skip that test by calling
+
+```bash
+pytest --ignore tests/test_huge_message.py
+```
+This is recommended for fast testing.
 
 #### License
 This library is licensed under the
