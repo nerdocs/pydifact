@@ -25,5 +25,5 @@ def performance_test_huge_message():
 if __name__ == "__main__":
     # just call performance test function for profiling purposes
     # use this file with:
-    #    $ python -m cProfile -s time tests/test_huge_message.py |head -n 20
+    #    $ python -m cProfile -s time tests/test_huge_message.py
     performance_test_huge_message()
