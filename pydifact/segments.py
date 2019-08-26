@@ -19,6 +19,7 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
+from pydifact.control import Characters
 
 
 class Segment:
@@ -55,7 +56,7 @@ class SegmentFactory:
     """Factory for producing segments."""
 
     @staticmethod
-    def create_segment(characters: str, name: str, *elements: list) -> Segment:
+    def create_segment(characters: Characters, name: str, *elements: list) -> Segment:
         """Create a new instance of the relevant class type.
 
         :param characters: The control characters
