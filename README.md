@@ -31,6 +31,7 @@ for segment in message.segments:
 Or you can create an EDI message:
 
 ```python
+from pydifact.message import Message
 from pydifact.segments import Segment
 message = Message()
 message.add_segment(Segment('QTY', ['12', '3']))
