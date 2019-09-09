@@ -34,7 +34,7 @@ class Serializer:
 
         self.characters = characters
 
-    def serialize(self, segments: list, with_una: bool = False) -> str:
+    def serialize(self, segments: list, with_una: bool = False, break_lines=False) -> str:
         """Serialize all the passed segments.
 
         :param segments: A list of segments to serialize
@@ -71,6 +71,8 @@ class Serializer:
                     message_parts += [self.escape(element)]
 
             message_parts += [self.characters.segment_terminator]
+            if break_lines:
+                message_ports += ['\n']
 
         message = "".join(message_parts)
         return message
