@@ -31,6 +31,8 @@ class Segment:
         :param list elements: The data elements for this segment, as list.
         """
         assert type(tag) == str, "%s is not a str, it is %s" % (tag, type(tag))
+        if tag == "":
+            raise ValueError("The tag of a segment must not be empty.")
         self.tag = tag
 
         # The data elements for this segment.
