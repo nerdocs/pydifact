@@ -91,8 +91,8 @@ class Characters:
         # return clone
         return other
 
-    def __str__(self):
-        return (
+    def __str__(self) -> str:
+        return str(
             self.component_separator
             + self.data_separator
             + self.decimal_point
