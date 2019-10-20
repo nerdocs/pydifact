@@ -22,4 +22,4 @@
 
 from pydifact import message, parser, segments, serializer, token, tokenizer
 
-__version__ = "0.0.3"
+__version__ = "0.0.4"
