@@ -33,10 +33,9 @@ class Segment:
         assert type(tag) == str, "%s is not a str, it is %s" % (tag, type(tag))
         self.tag = tag
 
-        """The data elements for this segment.
-        this is converted to a list (due to the fact that python creates a tuple
-        when passing a variable arguments list to a method)
-        """
+        # The data elements for this segment.
+        # this is converted to a list (due to the fact that python creates a tuple
+        # when passing a variable arguments list to a method)
         self.elements = list(elements)
 
     def __str__(self) -> str:
