@@ -13,54 +13,89 @@
 #
 #    You should have received a copy of the GNU Lesser General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+import pytest
+
+from pydifact.message import Message
 from pydifact.segments import Segment
 from pydifact.serializer import Serializer
-import unittest
 
 
-class SerializerTest(unittest.TestCase):
-    def setUp(self):
-        self.serializer = Serializer()
-
-    def assert_segments(self, expected: str, segments: list):
-        expected = "UNA:+,? '" + expected + "'"
-        message = self.serializer.serialize(segments, with_una=True)
-        self.assertEqual(expected, message)
-
-    def test_basic1(self):
-        self.assert_segments("RFF+PD:50515", [Segment("RFF", ["PD", "50515"])])
-
-    def test_basic2(self):
-        self.assert_segments("RFF+PD+50515", [Segment("RFF", "PD", "50515")])
-
-    def test_escape_character(self):
-        self.assert_segments(
-            "ERC+10:The message does not make sense??",
-            [Segment("ERC", ["10", "The message does not make sense?"])],
-        )
-
-    def test_escape_component_separator(self):
-        self.assert_segments(
-            "ERC+10:Name?: Craig", [Segment("ERC", ["10", "Name: Craig"])]
-        )
-
-    def test_escape_data_separator(self):
-        self.assert_segments(
-            "DTM+735:?+0000:406", [Segment("DTM", ["735", "+0000", "406"])]
-        )
-
-    def test_escape_decimal_point(self):
-        self.assert_segments("QTY+136:12,235", [Segment("QTY", ["136", "12,235"])])
-
-    def test_escape_segment_terminator(self):
-        self.assert_segments("ERC+10:Craig?'s", [Segment("ERC", ["10", "Craig's"])])
-
-    def test_escape_sequence(self):
-        self.assert_segments(
-            "ERC+10:?:?+???' - ?:?+???' - ?:?+???'",
-            [Segment("ERC", ["10", ":+?' - :+?' - :+?'"])],
-        )
+@pytest.fixture
+def serializer():
+    return Serializer()
 
 
-if __name__ == "__main__":
-    unittest.main()
+def assert_segments(serializer, expected: str, segments: list):
+    """Helper function add default UNA header and terminator, and compare string to segment"""
+    expected = "UNA:+,? '" + expected + "'"
+    message = serializer.serialize(segments, with_una_header=True)
+    assert expected == message
+
+
+def test_una_integrity1():
+    m = Message()
+    initstring = ":+,? '"
+    m.add_segment(Segment("UNA", initstring))
+    assert m.serialize() == "UNA" + initstring
+
+
+def test_UNA_integrity2():
+    m = Message()
+    initstring = ":+.? '"
+    m.add_segment(Segment("UNA", initstring))
+    assert m.serialize() == "UNA" + initstring
+
+
+def test_empty_segment():
+    m = Message()
+    with pytest.raises(ValueError):
+        m.add_segment(Segment("", []))
+
+
+def test_empty_segment_list():
+    m = Message()
+    assert m.serialize() == ""
+
+
+def test_basic1(serializer):
+    assert_segments(serializer, "RFF+PD:50515", [Segment("RFF", ["PD", "50515"])])
+
+
+def test_basic2(serializer):
+    assert_segments(serializer, "RFF+PD+50515", [Segment("RFF", "PD", "50515")])
+
+
+def test_escape_character(serializer):
+    assert_segments(
+        serializer,
+        "ERC+10:The message does not make sense??",
+        [Segment("ERC", ["10", "The message does not make sense?"])],
+    )
+
+
+def test_escape_component_separator(serializer):
+    assert_segments(
+        serializer, "ERC+10:Name?: Craig", [Segment("ERC", ["10", "Name: Craig"])]
+    )
+
+
+def test_escape_data_separator(serializer):
+    assert_segments(
+        serializer, "DTM+735:?+0000:406", [Segment("DTM", ["735", "+0000", "406"])]
+    )
+
+
+def test_escape_decimal_point(serializer):
+    assert_segments(serializer, "QTY+136:12,235", [Segment("QTY", ["136", "12,235"])])
+
+
+def test_escape_segment_terminator(serializer):
+    assert_segments(serializer, "ERC+10:Craig?'s", [Segment("ERC", ["10", "Craig's"])])
+
+
+def test_escape_sequence(serializer):
+    assert_segments(
+        serializer,
+        "ERC+10:?:?+???' - ?:?+???' - ?:?+???'",
+        [Segment("ERC", ["10", ":+?' - :+?' - :+?'"])],
+    )

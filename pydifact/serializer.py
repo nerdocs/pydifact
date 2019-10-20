@@ -19,9 +19,12 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
+from typing import List
 
 from pydifact.control.characters import Characters
 import re
+
+from pydifact.segments import Segment
 
 
 class Serializer:
@@ -34,16 +37,18 @@ class Serializer:
 
         self.characters = characters
 
-    def serialize(self, segments: list, with_una: bool = False) -> str:
+    def serialize(self, segments: List[Segment], with_una_header: bool = True) -> str:
         """Serialize all the passed segments.
 
         :param segments: A list of segments to serialize
-        :param with_una: True if a UNA header should be written. Defauts to False.
+        :param with_una_header: set to False if you want to skip the UNA segment in the output.
+            Defaults to True.
         """
 
         message_parts = []
 
-        if with_una:
+        # if there is no UNA header, and user requests one...
+        if with_una_header and len(segments) > 0:
             # create an EDIFACT header
             message_parts = [
                 "UNA",

@@ -36,6 +36,7 @@ class Message:
 
         # The segments that make up this message
         self.segments = []
+        self.characters = Characters()
 
         # Flag whether the UNA header is present
         self.has_una_segment = False
@@ -118,12 +119,15 @@ class Message:
         """
         if segment.tag == "UNA":
             self.has_una_segment = True
+            self.characters = Characters.from_str(segment.elements[0])
         self.segments.append(segment)
         return self
 
     def serialize(self) -> str:
         """Serialize all the segments added to this object."""
-        return Serializer().serialize(self.segments, self.has_una_segment)
+        return Serializer(self.characters).serialize(
+            self.segments, self.has_una_segment
+        )
 
     def __str__(self) -> str:
         """Allow the object to be serialized by casting to a string."""
