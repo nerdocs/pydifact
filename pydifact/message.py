@@ -21,6 +21,7 @@
 # THE SOFTWARE.
 
 import collections
+from typing import List
 
 from pydifact.parser import Parser
 from pydifact.segments import Segment
@@ -101,7 +102,7 @@ class Message:
 
         return None
 
-    def add_segments(self, segments: list or collections.Iterable) -> "Message":
+    def add_segments(self, segments: List[Segment] or collections.Iterable) -> "Message":
         """Add multiple segments to the message.
 
         :param segments: The segments to add
