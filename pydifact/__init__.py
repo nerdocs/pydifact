@@ -23,3 +23,11 @@
 from pydifact import message, parser, segments, serializer, token, tokenizer
 
 __version__ = "0.0.4"
+
+from .control.characters import Characters
+from .message import Message
+from .parser import Parser
+from .segments import Segment
+from .serializer import Serializer
+from .token import Token
+from .tokenizer import Tokenizer
