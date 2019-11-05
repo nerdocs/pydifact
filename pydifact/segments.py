@@ -56,13 +56,17 @@ class Segment:
 class SegmentFactory:
     """Factory for producing segments."""
 
+    characters = None
+
     @staticmethod
-    def create_segment(characters: Characters, name: str, *elements: list) -> Segment:
+    def create_segment(name: str, *elements: list) -> Segment:
         """Create a new instance of the relevant class type.
 
-        :param characters: The control characters
         :param name: The name of the segment
         :param elements: The data elements for this segment
         """
+        if not SegmentFactory.characters:
+            SegmentFactory.characters = Characters()
+
         # FIXME: characters is not used!
         return Segment(name, *elements)
