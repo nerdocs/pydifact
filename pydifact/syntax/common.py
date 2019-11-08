@@ -1,14 +1,5 @@
+
 from pydifact import Segment, Characters
-
-
-class UNASegment(Segment):
-    """Service String Advice."""
-
-    def __init__(self, characters: Characters or str = None):
-        if not characters:
-            characters = Characters()
-        assert len(str(characters)) == 6
-        super().__init__("UNA", characters)
 
 
 def assert_n(s, length):
@@ -46,3 +37,13 @@ def assert_a_max(s, length):
 
 def assert_format(s, fmt_str):
     assert re.match(fmt_str, s)
+
+
+class UNASegment(Segment):
+    """Service String Advice."""
+
+    def __init__(self, characters: Characters or str = None):
+        if not characters:
+            characters = Characters()
+        assert len(str(characters)) == 6
+        super().__init__("UNA", characters)
