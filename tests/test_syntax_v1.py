@@ -1,7 +1,7 @@
 import pytest
 
 from pydifact.segments import Segment
-from pydifact.syntax.v1 import UNASegment
+from pydifact.syntax.common import UNASegment
 
 default_characters = ":+,? '"
 
