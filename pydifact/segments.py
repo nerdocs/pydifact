@@ -19,13 +19,15 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
+from typing import Union, List
+
 from pydifact.control import Characters
 
 
 class Segment:
     """Represent a segment of an EDI message."""
 
-    def __init__(self, tag: str, *elements):
+    def __init__(self, tag: str, *elements: Union[str, List[str]]) -> "Segment":
         """Create a new instance.
         :param str tag: The code/tag of the segment.
         :param list elements: The data elements for this segment, as list.
@@ -63,7 +65,7 @@ class SegmentFactory:
     characters = None
 
     @staticmethod
-    def create_segment(name: str, *elements: list) -> Segment:
+    def create_segment(name: str, *elements: Union[str, List[str]]) -> Segment:
         """Create a new instance of the relevant class type.
 
         :param name: The name of the segment

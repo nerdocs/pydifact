@@ -21,7 +21,7 @@
 # THE SOFTWARE.
 
 import collections
-from typing import List
+from typing import List, Optional
 
 from pydifact.parser import Parser
 from pydifact.segments import Segment
@@ -91,7 +91,7 @@ class Message:
             if segment.tag == name:
                 yield segment
 
-    def get_segment(self, name: str) -> Segment or None:
+    def get_segment(self, name: str) -> Optional[Segment]:
         """Get the first segment that matches the requested name.
 
         :return: The requested segment, or None if not found
@@ -102,7 +102,9 @@ class Message:
 
         return None
 
-    def add_segments(self, segments: List[Segment] or collections.Iterable) -> "Message":
+    def add_segments(
+        self, segments: List[Segment] or collections.Iterable
+    ) -> "Message":
         """Add multiple segments to the message.
 
         :param segments: The segments to add

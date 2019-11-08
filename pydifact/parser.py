@@ -19,6 +19,7 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
+from typing import Optional
 
 from pydifact.tokenizer import Tokenizer
 from pydifact.token import Token
@@ -72,7 +73,7 @@ class Parser:
     @staticmethod
     def get_control_characters(
         message: str, characters: Characters = None
-    ) -> Characters or None:
+    ) -> Optional[Characters]:
         """Read the UNA segment from the passed string and extract/store the control characters from it.
 
         :param message: a valid EDI message string, or UNA segment string,

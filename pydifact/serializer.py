@@ -19,7 +19,7 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
-from typing import List
+from typing import List, Optional
 
 from pydifact.control.characters import Characters
 import re
@@ -80,7 +80,7 @@ class Serializer:
         message = "".join(message_parts)
         return message
 
-    def escape(self, string: str or None) -> str:
+    def escape(self, string: Optional[str]) -> str:
         """Escapes control characters.
 
         :param string: The string to be escaped
