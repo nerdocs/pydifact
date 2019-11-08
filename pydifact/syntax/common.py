@@ -1,3 +1,4 @@
+import re
 
 from pydifact import Segment, Characters
 
