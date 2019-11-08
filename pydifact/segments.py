@@ -51,7 +51,10 @@ class Segment:
         return "{} segment: {}".format(self.tag, str(self.elements))
 
     def __eq__(self, other) -> bool:
-        return type(self) == type(other) and list(self.elements) == list(other.elements)
+        # FIXME the other way round too? isinstance(other, type(self))?
+        return isinstance(self, type(other)) and list(self.elements) == list(
+            other.elements
+        )
 
 
 class SegmentFactory:
