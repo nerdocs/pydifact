@@ -38,7 +38,7 @@ def parser():
 
 @pytest.fixture
 def default_una_segment():
-    return Segment("UNA", list(":+,? '"))
+    return Segment("UNA", ":+,? '")
 
 
 # def get_control_characters(mocker, parser, message: str, tokenizer=None) -> Characters:
@@ -103,7 +103,7 @@ def _assert_segments(parser, default_una_segment, message: str, segments: list):
     result = list(parser.parse(input_str))
     print("input segments: {}".format(segments[0]))
     print("parser result:  {}".format(result[0]))
-    assert [default_una_segment] + segments, result
+    assert [default_una_segment] + segments == result
 
 
 def test_compare_equal_segments(parser, default_una_segment):
@@ -206,4 +206,25 @@ def test_escape_sequence(parser, default_una_segment):
         default_una_segment,
         "ERC+10:?:?+???' - ?:?+???' - ?:?+???'",
         [Segment("ERC", ["10", ":+?' - :+?' - :+?'"])],
+    )
+
+
+def test_compound_starts_with_skipped(parser, default_una_segment):
+
+    _assert_segments(
+        parser, default_una_segment, "IMD+::A", [Segment("IMD", ["", "", "A"])]
+    )
+
+
+def test_compound_contains_one_skipped(parser, default_una_segment):
+
+    _assert_segments(
+        parser, default_una_segment, "IMD+A::B", [Segment("IMD", ["A", "", "B"])]
+    )
+
+
+def test_compound_contains_two_skipped(parser, default_una_segment):
+
+    _assert_segments(
+        parser, default_una_segment, "IMD+A:::B", [Segment("IMD", ["A", "", "", "B"])]
     )

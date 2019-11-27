@@ -106,6 +106,18 @@ def test_quadruple_escape():
     )
 
 
+def test_starts_with_escape():
+    _assert_tokens(
+        "DTM+?+0'",
+        [
+            Token(Token.Type.CONTENT, "DTM"),
+            Token(Token.Type.DATA_SEPARATOR, "+"),
+            Token(Token.Type.CONTENT, "+0"),
+            Token(Token.Type.TERMINATOR, "'"),
+        ],
+    )
+
+
 # This tests check if line break combinations (CR/LF) after a segment terminator are correctly ignored.
 
 
