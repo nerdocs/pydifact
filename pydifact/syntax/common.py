@@ -46,5 +46,5 @@ class UNASegment(Segment):
     def __init__(self, characters: Characters or str = None):
         if not characters:
             characters = Characters()
-        assert len(str(characters)) == 6
+        assert_an(str(characters), 6)
         super().__init__("UNA", characters)
