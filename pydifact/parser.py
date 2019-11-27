@@ -193,7 +193,12 @@ class Parser:
 
             # here we can be sure that the token value is normal "content"
             # first backfill empty strings for skipped component data (:::)
-            for i in range(1, empty_component_counter):
+            for i in range(
+                1,
+                empty_component_counter
+                if data_element
+                else empty_component_counter + 1,
+            ):
                 data_element.append("")
 
             data_element.append(token.value)

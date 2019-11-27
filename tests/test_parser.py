@@ -207,3 +207,24 @@ def test_escape_sequence(parser, default_una_segment):
         "ERC+10:?:?+???' - ?:?+???' - ?:?+???'",
         [Segment("ERC", ["10", ":+?' - :+?' - :+?'"])],
     )
+
+
+def test_compound_starts_with_skipped(parser, default_una_segment):
+
+    _assert_segments(
+        parser, default_una_segment, "IMD+::A", [Segment("IMD", ["", "", "A"])]
+    )
+
+
+def test_compound_contains_one_skipped(parser, default_una_segment):
+
+    _assert_segments(
+        parser, default_una_segment, "IMD+A::B", [Segment("IMD", ["A", "", "B"])]
+    )
+
+
+def test_compound_contains_two_skipped(parser, default_una_segment):
+
+    _assert_segments(
+        parser, default_una_segment, "IMD+A:::B", [Segment("IMD", ["A", "", "", "B"])]
+    )
