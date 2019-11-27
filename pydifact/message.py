@@ -126,11 +126,11 @@ class Message:
         self.segments.append(segment)
         return self
 
-    def serialize(self) -> str:
-        """Serialize all the segments added to this object."""
-        return Serializer(self.characters).serialize(
-            self.segments, self.has_una_segment
-        )
+    def serialize(self, break_lines: bool = False) -> str:
+        """Serialize all the segments added to this object.
+        :param break_lines: if True, insert line break after each segment terminator.
+        """
+        return Serializer().serialize(self.segments, self.has_una_segment, break_lines)
 
     def __str__(self) -> str:
         """Allow the object to be serialized by casting to a string."""
