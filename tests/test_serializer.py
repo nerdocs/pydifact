@@ -13,6 +13,7 @@
 #
 #    You should have received a copy of the GNU Lesser General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+import copy
 import pytest
 
 from pydifact.message import Message
@@ -99,3 +100,10 @@ def test_escape_sequence(serializer):
         "ERC+10:?:?+???' - ?:?+???' - ?:?+???'",
         [Segment("ERC", ["10", ":+?' - :+?' - :+?'"])],
     )
+
+
+def test_no_mutation(serializer):
+    segments1 = [Segment("ERC", [":+?'"])]
+    segments2 = copy.deepcopy(segments1)
+    serializer.serialize(segments1, with_una_header=True)
+    assert segments1 == segments2

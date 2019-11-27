@@ -69,8 +69,7 @@ class Serializer:
             for element in segment.elements:
                 message_parts += [self.characters.data_separator]
                 if type(element) == list:
-                    for nr, subelement in enumerate(element):
-                        element[nr] = self.escape(subelement)
+                    element = (self.escape(subelement) for subelement in element)
                     message_parts += [self.characters.component_separator.join(element)]
                 else:
                     message_parts += [self.escape(element)]
