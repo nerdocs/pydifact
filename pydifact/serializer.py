@@ -37,12 +37,15 @@ class Serializer:
 
         self.characters = characters
 
-    def serialize(self, segments: List[Segment], with_una_header: bool = True) -> str:
+    def serialize(
+        self, segments: list, with_una_header: bool = False, break_lines=False
+    ) -> str:
         """Serialize all the passed segments.
 
         :param segments: A list of segments to serialize
         :param with_una_header: set to False if you want to skip the UNA segment in the output.
             Defaults to True.
+        :param break_lines: if True, insert line break after each segment terminator.
         """
 
         message_parts = []
@@ -76,6 +79,8 @@ class Serializer:
                     message_parts += [self.escape(element)]
 
             message_parts += [self.characters.segment_terminator]
+            if break_lines:
+                message_parts += ["\n"]
 
         message = "".join(message_parts)
         return message
