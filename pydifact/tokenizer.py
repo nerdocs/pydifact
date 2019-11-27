@@ -111,7 +111,7 @@ class Tokenizer:
         # If we're not escaping this character then see if it's
         # a control character
 
-        token_type = self.token_selector.get(self._char)
+        token_type = not self.isEscaped and self.token_selector.get(self._char)
         if token_type:
             self.store_current_char_and_read_next()
             token = Token(token_type, self.extract_stored_chars())
