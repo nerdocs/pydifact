@@ -48,3 +48,15 @@ class UNASegment(Segment):
             characters = Characters()
         assert_an(str(characters), 6)
         super().__init__("UNA", characters)
+
+
+class InterchangeHeader:
+    def __init__(self, syntax_identifier, version, sender, recipient, date, time):
+
+        assert_n(syntax_identifier, 4)
+        assert_n(version, 1)
+
+        assert_an_max(sender, 35)
+
+        assert_n(date, 6)
+        assert_n(time, 4)
