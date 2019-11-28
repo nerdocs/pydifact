@@ -38,22 +38,22 @@ class Serializer:
         self.characters = characters
 
     def serialize(
-        self, segments: list, with_una_header: bool = False, break_lines=False
+        self, segments: List[Segment], with_una_header: bool = True, break_lines=False
     ) -> str:
         """Serialize all the passed segments.
 
         :param segments: A list of segments to serialize
-        :param with_una_header: set to False if you want to skip the UNA segment in the output.
-            Defaults to True.
+        :param with_una_header: includes/adds an UNA header if set to True (=default)
+            If the segments list contains a UNA header, it is taken, else the default character set
+            is created.
         :param break_lines: if True, insert line break after each segment terminator.
         """
-
         message_parts = []
 
-        # if there is no UNA header, and user requests one...
-        if with_una_header and len(segments) > 0:
+        # first, check if UNA header is wanted.
+        if with_una_header:
             # create an EDIFACT header
-            message_parts = [
+            default_una_header = [
                 "UNA",
                 self.characters.component_separator,
                 self.characters.data_separator,
@@ -62,6 +62,18 @@ class Serializer:
                 self.characters.reserved_character,
                 self.characters.segment_terminator,
             ]
+            if not segments:
+                return "".join(default_una_header)
+
+            if segments[0].tag == "UNA":
+                message_parts += ["UNA", segments[0].elements[0]]
+            else:
+                message_parts += default_una_header
+
+        else:
+            # no una header wanted!
+            if not segments:
+                return ""
 
         # iter through all segments
         for segment in segments:
