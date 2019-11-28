@@ -43,8 +43,6 @@ def test_una_integrity1():
 def test_UNA_integrity2():
     m = Message()
     initstring = ":+.? '"
-    s = Segment("UNA", initstring)
-
     m.add_segment(Segment("UNA", initstring))
     assert m.serialize() == "UNA" + initstring
 
