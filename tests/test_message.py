@@ -13,9 +13,11 @@
 #
 #    You should have received a copy of the GNU Lesser General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+import pytest
+import unittest
+
 from pydifact.message import Message
 from pydifact.segments import Segment
-import unittest
 
 
 class MessageTest(unittest.TestCase):
@@ -54,6 +56,12 @@ class MessageTest(unittest.TestCase):
         message = Message()
         segment = message.get_segment("36CF")
         self.assertIsNone(segment)
+
+
+def test_empty_segment():
+    m = Message()
+    with pytest.raises(ValueError):
+        m.add_segment(Segment("", []))
 
 
 if __name__ == "__main__":

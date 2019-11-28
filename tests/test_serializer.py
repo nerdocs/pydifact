@@ -47,12 +47,6 @@ def test_UNA_integrity2():
     assert m.serialize() == "UNA" + initstring
 
 
-def test_empty_segment():
-    m = Message()
-    with pytest.raises(ValueError):
-        m.add_segment(Segment("", []))
-
-
 def test_empty_segment_list():
     m = Message()
     assert m.serialize() == ""
