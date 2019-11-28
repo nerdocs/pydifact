@@ -13,10 +13,9 @@
 #
 #    You should have received a copy of the GNU Lesser General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
-from pydifact.message import Message
-import unittest
 import os
 
+from pydifact.message import Message
 from pydifact.segments import Segment
 
 path = os.path.dirname(os.path.realpath(__file__)) + "/data"

@@ -15,14 +15,8 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 from pydifact.parser import Parser
 from pydifact.segments import Segment
-from pydifact.tokenizer import Tokenizer
 
 import pytest
-
-# from pytest_mock import mocker
-
-from pydifact.control import Characters
-
 
 # @pytest.fixture
 # def mocked_tokenizer(mocker):

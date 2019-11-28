@@ -1,5 +1,3 @@
-import pytest
-
 from pydifact.segments import Segment
 from pydifact.syntax.common import UNASegment
 
