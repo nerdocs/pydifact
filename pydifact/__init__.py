@@ -31,3 +31,8 @@ from .segments import Segment
 from .serializer import Serializer
 from .token import Token
 from .tokenizer import Tokenizer
+
+# https://ecosio.com/de/blog/aufbau-einer-edifact-datei/
+# https://www.stylusstudio.com/edifact/40102/codelist.htm
+# https://www.hcs.at/wp-content/uploads/2012/12/hcs_AEK_Edifact_Text.pdf
+# https://www.hcs.at/wp-content/uploads/2012/12/hcs_AEK_Edifact_Labor.pdf
