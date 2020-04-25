@@ -53,3 +53,5 @@ docs/_build/
 # PyCharm stuff:
 .idea
 prof
+.kdev4
+.venv

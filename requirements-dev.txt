@@ -1,0 +1,9 @@
+pytest
+pytest-cov
+keyring
+nose
+pytest-profiling
+sphinx
+setuptools
+wheel
+twine
