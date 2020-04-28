@@ -22,7 +22,7 @@
 
 from pydifact import message, parser, segments, serializer, token, tokenizer
 
-__version__ = "0.0.4"
+__version__ = "0.0.5"
 
 from .control.characters import Characters
 from .message import Message
