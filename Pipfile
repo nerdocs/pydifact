@@ -13,6 +13,7 @@ sphinx = "*"
 setuptools = "*"
 wheel = "*"
 black = "*"
+sphinx_rtd_theme = "*"
 
 [packages]
 
