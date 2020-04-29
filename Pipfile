@@ -12,6 +12,7 @@ pytest-profiling = "*"
 sphinx = "*"
 setuptools = "*"
 wheel = "*"
+black = "*"
 
 [packages]
 
