@@ -37,6 +37,21 @@ message = Message()
 message.add_segment(Segment('QTY', ['12', '3']))
 print(message.serialize())
 ```
+
+## Limitations
+
+- No support of high-level EDIFACT containers : Interchange (`UNA`+`UNB`→`UNZ`), Messages (`UNH`/`UNT`), and optional functional groups (`UNG`→`UNE`),
+- No support for data encoded with something else than *ISO-8859*
+
+## Alternatives
+
+In python ecosystem:
+
+- [python-edifact](https://github.com/FriedrichK/python-edifact) - simpler, IMHO less cleaner code, less flexible. may be faster though (not tested). Seems unmaintained.
+- [bots](https://github.com/bots-edi/bots) - huge, with webinterface (bots-monitor), webserver, bots-engine.
+- [edicat](https://github.com/notpeter/edicat) - simple, only for separating lines/segments for CLI-piping.
+
+
 ## Development
 
 To develop pydifact, install the dev requirements with `pipenv install --dev`. This installs all python packages needed for development and testing.
