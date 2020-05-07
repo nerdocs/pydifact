@@ -60,6 +60,14 @@ def test_basic2(serializer):
     assert_segments(serializer, "RFF+PD+50515", [Segment("RFF", "PD", "50515")])
 
 
+def test_with_una_in_segments(serializer):
+    assert_segments(
+        serializer,
+        "RFF+PD+45761",
+        [Segment("UNA", ":+,? '"), Segment("RFF", "PD", "45761")],
+    )
+
+
 def test_escape_character(serializer):
     assert_segments(
         serializer,
