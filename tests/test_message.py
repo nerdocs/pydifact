@@ -14,61 +14,54 @@
 #    You should have received a copy of the GNU Lesser General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import pytest
-import unittest
 
 from pydifact.message import Message
 from pydifact.segments import Segment
 
 
-class MessageTest(unittest.TestCase):
-    def test_from_file(self):
+def test_from_file():
+    with pytest.raises(FileNotFoundError):
+        Message.from_file("/no/such/file")
 
-        with self.assertRaises(FileNotFoundError):
-            Message.from_file("/no/such/file")
 
-    def test_create_with_segments(self):
+def test_create_with_segments():
+    message = Message.from_segments([Segment("36CF")])
+    assert [Segment("36CF")] == message.segments
 
-        message = Message.from_segments([Segment("36CF")])
-        self.assertEqual([Segment("36CF")], message.segments)
 
-    def test_get_segments(self):
+def test_get_segments():
+    message = Message.from_segments(
+        [Segment("36CF", 1), Segment("CPD"), Segment("36CF", 2)]
+    )
+    segments = list(message.get_segments("36CF"))
+    assert [Segment("36CF", 1), Segment("36CF", 2)] == segments
 
-        message = Message.from_segments(
-            [Segment("36CF", 1), Segment("CPD"), Segment("36CF", 2)]
-        )
-        segments = list(message.get_segments("36CF"))
-        self.assertEqual([Segment("36CF", 1), Segment("36CF", 2)], segments)
 
-    def test_get_segments_doesnt_exist(self):
+def test_get_segments_doesnt_exist():
+    message = Message()
+    segments = list(message.get_segments("36CF"))
+    assert [] == segments
 
-        message = Message()
-        segments = list(message.get_segments("36CF"))
-        self.assertEqual([], segments)
 
-    def test_get_segment(self):
+def test_get_segment():
+    message = Message.from_segments([Segment("36CF", 1), Segment("36CF", 2)])
+    segment = message.get_segment("36CF")
+    assert Segment("36CF", 1) == segment
 
-        message = Message.from_segments([Segment("36CF", 1), Segment("36CF", 2)])
-        segment = message.get_segment("36CF")
-        self.assertEqual(Segment("36CF", 1), segment)
 
-    def test_str_serialize(self):
+def test_str_serialize():
+    message = Message.from_segments([Segment("36CF", "1"), Segment("36CF", "2")])
+    string = str(message)
+    assert "36CF+1'36CF+2'" == string
 
-        message = Message.from_segments([Segment("36CF", "1"), Segment("36CF", "2")])
-        string = str(message)
-        self.assertEqual("36CF+1'36CF+2'", string)
 
-    def test_get_segment_doesnt_exist(self):
-
-        message = Message()
-        segment = message.get_segment("36CF")
-        self.assertIsNone(segment)
+def test_get_segment_doesnt_exist():
+    message = Message()
+    segment = message.get_segment("36CF")
+    assert segment is None
 
 
 def test_empty_segment():
     m = Message()
     with pytest.raises(ValueError):
         m.add_segment(Segment("", []))
-
-
-if __name__ == "__main__":
-    unittest.main()
