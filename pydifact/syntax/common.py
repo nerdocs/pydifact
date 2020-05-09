@@ -1,6 +1,30 @@
+"""
+This file contains common used classes described in the EDIFACT syntax.
+
+There are multiple versions (1-4) of the EDIFACT standard, and each differ slightly.
+As one project will probably never use more than one syntax version simultaneously,
+it is splitted into 4 different python files, each which could be imported using
+
+    from pydifact.syntax.v[1..4] import ...
+
+herby providing the same structure.
+"""
+
 import re
 
 from pydifact import Segment, Characters
+
+
+def assert_a(s, length):
+    """checks if s consists of only alphabetical characters, and has a given length."""
+    assert str(s).isalpha()
+    assert len(s) == length
+
+
+def assert_a_max(s, length):
+    """checks if s consists of only alphabetical characters, and has a given maximum length."""
+    assert str(s).isalpha() or s == ""
+    assert len(s) <= length
 
 
 def assert_n(s, length):
@@ -48,15 +72,3 @@ class UNASegment(Segment):
             characters = Characters()
         assert_an(str(characters), 6)
         super().__init__("UNA", characters)
-
-
-class InterchangeHeader:
-    def __init__(self, syntax_identifier, version, sender, recipient, date, time):
-
-        assert_n(syntax_identifier, 4)
-        assert_n(version, 1)
-
-        assert_an_max(sender, 35)
-
-        assert_n(date, 6)
-        assert_n(time, 4)
