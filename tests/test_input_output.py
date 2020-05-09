@@ -33,6 +33,24 @@ def test_wikipedia_file():
     )
 
 
+def test_invoice_file():
+    message = SegmentCollection.from_file("{}/invoice1.edi".format(path))
+    # make some checks
+    assert message.get_segment("UNB") == Segment(
+        "UNB",
+        ["UNOA", "1"],
+        "01010000253001",
+        "O0013000093SCHA-Z59",
+        ["991006", "1902"],
+        "PAYO0012101221",
+    )
+    assert message.get_segment("DTM") == Segment("DTM", ["137", "199910060000", "102"])
+    assert message.get_segment("NAD") == Segment(
+        "NAD", "BT", ["VAUXHALL MOTORS LTD", "", "91"]
+    )
+    assert message.get_segment("RFF") == Segment("RFF", ["VA", "382324067"])
+
+
 # def test_order_file():
 #     _test_file_read("{}/order.edi".format(path))
 #
