@@ -27,7 +27,7 @@ from pydifact.control import Characters
 class Segment:
     """Represent a segment of an EDI interchange."""
 
-    def __init__(self, tag: str, *elements: Union[str, List[str]]) -> "Segment":
+    def __init__(self, tag: str, *elements: Union[str, List[str]]):
         """Create a new instance.
         :param str tag: The code/tag of the segment.
         :param list elements: The data elements for this segment, as list.
