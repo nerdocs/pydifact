@@ -15,14 +15,14 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import os
 
-from pydifact.message import Message
+from pydifact.segmentcollection import SegmentCollection
 from pydifact.segments import Segment
 
 path = os.path.dirname(os.path.realpath(__file__)) + "/data"
 
 
 def test_wikipedia_file():
-    message = Message.from_file("{}/wikipedia.edi".format(path))
+    message = SegmentCollection.from_file("{}/wikipedia.edi".format(path))
     # make some checks
     assert message.get_segment("UNB") == Segment(
         "UNB", ["IATB", "1"], "6XPPC", "LHPPC", ["940101", "0950"], "1"

@@ -1,6 +1,6 @@
 # pydifact
 
-A Python library to parse and serialize UN/EDIFACT messages.
+A Python library to parse and serialize UN/EDIFACT interchanges.
 
 ## Preamble
 
@@ -15,27 +15,27 @@ Feel free to help.
 
 ## Usage
 
-To read a message from a file or from a string, take the `Message` class and
+To read a message from a file or from a string, take the `SegmentsCollection` class and
 iter over the segments:
 
 ```python
-from pydifact.message import Message
-message = Message.from_file("./tests/data/order.edi")
-message = Message.from_str("UNA:+,? 'UNH+1+ORDERS:D:96A:UN:EAN008'")
+from pydifact.segmentcollection import SegmentCollection
+collection = SegmentCollection.from_file("./tests/data/order.edi")
+collection = SegmentCollection.from_str("UNA:+,? 'UNH+1+ORDERS:D:96A:UN:EAN008'")
 
-for segment in message.segments:
+for segment in collection.segments:
     print('Segment tag: {}, content: {}'.format(
         segment.tag, segment.elements))
 ```
 
-Or you can create an EDI message:
+Or you can create an EDI inerchange on he fly:
 
 ```python
-from pydifact.message import Message
+from pydifact.segmentcollection import SegmentCollection
 from pydifact.segments import Segment
-message = Message()
-message.add_segment(Segment('QTY', ['12', '3']))
-print(message.serialize())
+collection = SegmentCollection()
+collection.add_segment(Segment('QTY', ['12', '3']))
+print(collection.serialize())
 ```
 
 ## Limitations

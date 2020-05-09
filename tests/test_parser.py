@@ -35,10 +35,10 @@ def default_una_segment():
     return Segment("UNA", ":+,? '")
 
 
-# def get_control_characters(mocker, parser, message: str, tokenizer=None) -> Characters:
-#     """Returns the control characters from the given message.
+# def get_control_characters(mocker, parser, collection: str, tokenizer=None) -> Characters:
+#     """Returns the control characters from the given collection.
 #
-#     :return: the message without the "UNA123456" header string
+#     :return: the collection without the "UNA123456" header string
 #     """
 #
 #     if tokenizer is None:
@@ -61,13 +61,13 @@ def default_una_segment():
 #             "set_segment_terminator", 6
 #         )
 #     # FIXME: use characters
-#     return parser.get_control_characters(message, tokenizer)
+#     return parser.get_control_characters(collection, tokenizer)
 
 #    def test_setup_special_characters1(self):
 #
 #        tokenizer = mock.MagicMock(spec=Tokenizer)
-#        message = self.get_control_characters("TEST", tokenizer)
-#        self.assertEqual("TEST", message)
+#        collection = self.get_control_characters("TEST", tokenizer)
+#        self.assertEqual("TEST", collection)
 
 
 def test_setup_special_characters_only(parser):
@@ -86,14 +86,14 @@ def test_setup_special_characters_with_crlf(parser):
     assert parser.get_control_characters("UNA123456\r\nTEST") == "123456"
 
 
-def _assert_segments(parser, default_una_segment, message: str, segments: list):
-    """This function asserts that the given message, when parsed with
+def _assert_segments(parser, default_una_segment, collection: str, segments: list):
+    """This function asserts that the given collection, when parsed with
     Parser.parse(), produces exactly the list output given by segments.
-    :param message: The message to parse. The UNA string is added.
+    :param collection: The collection to parse. The UNA string is added.
     :param segments: The expected segments list
     """
 
-    input_str = "UNA:+,? '\n" + message + "'\n"
+    input_str = "UNA:+,? '\n" + collection + "'\n"
     result = list(parser.parse(input_str))
     print("input segments: {}".format(segments[0]))
     print("parser result:  {}".format(result[0]))

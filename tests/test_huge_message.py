@@ -13,14 +13,14 @@
 #
 #    You should have received a copy of the GNU Lesser General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
-from pydifact.message import Message
+from pydifact.segmentcollection import SegmentCollection
 
 
 # This only a performance benchmark, no real test.
 def performance_test_huge_message():
     """Performance test parsing a huge message"""
-    message = Message.from_file("tests/data/huge_file2.edi")
-    assert message
+    collection = SegmentCollection.from_file("tests/data/huge_file2.edi")
+    assert collection
 
 
 if __name__ == "__main__":

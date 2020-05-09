@@ -48,7 +48,7 @@ class Serializer:
             is created.
         :param break_lines: if True, insert line break after each segment terminator.
         """
-        message_parts = []
+        collection_parts = []
 
         # first, check if UNA header is wanted.
         if with_una_header:
@@ -66,9 +66,9 @@ class Serializer:
                 return "".join(default_una_header)
 
             if segments[0].tag == "UNA":
-                message_parts += ["UNA", segments[0].elements[0]]
+                collection_parts += ["UNA", segments[0].elements[0]]
             else:
-                message_parts += default_una_header
+                collection_parts += default_una_header
 
         else:
             # no una header wanted!
@@ -80,21 +80,23 @@ class Serializer:
             # skip the UNA segment as we already have written it if requested
             if segment.tag == "UNA":
                 continue
-            message_parts += [segment.tag]
+            collection_parts += [segment.tag]
             for element in segment.elements:
-                message_parts += [self.characters.data_separator]
+                collection_parts += [self.characters.data_separator]
                 if type(element) == list:
                     element = (self.escape(subelement) for subelement in element)
-                    message_parts += [self.characters.component_separator.join(element)]
+                    collection_parts += [
+                        self.characters.component_separator.join(element)
+                    ]
                 else:
-                    message_parts += [self.escape(element)]
+                    collection_parts += [self.escape(element)]
 
-            message_parts += [self.characters.segment_terminator]
+            collection_parts += [self.characters.segment_terminator]
             if break_lines:
-                message_parts += ["\n"]
+                collection_parts += ["\n"]
 
-        message = "".join(message_parts)
-        return message
+        collection = "".join(collection_parts)
+        return collection
 
     def escape(self, string: Optional[str]) -> str:
         """Escapes control characters.

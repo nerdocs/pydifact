@@ -27,13 +27,13 @@ def tokenizer():
 
 
 def _assert_tokens(
-    message: str, expected: list = None, error_message: str = None
+        collection: str, expected: list = None, error_message: str = None
 ) -> None:
     """Helper function to accelerate tokenizer testing."""
 
     if expected is None:
         expected = []
-    tokens = Tokenizer().get_tokens(message)
+    tokens = Tokenizer().get_tokens(collection)
     if error_message:
         assert expected == tokens, error_message
     else:

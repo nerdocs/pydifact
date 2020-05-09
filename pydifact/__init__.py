@@ -20,12 +20,12 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-from pydifact import message, parser, segments, serializer, token, tokenizer
+from pydifact import segmentcollection, parser, segments, serializer, token, tokenizer
 
 __version__ = "0.0.5"
 
 from .control.characters import Characters
-from .message import Message
+from .segmentcollection import SegmentCollection
 from .parser import Parser
 from .segments import Segment
 from .serializer import Serializer
