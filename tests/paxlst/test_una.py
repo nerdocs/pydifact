@@ -19,8 +19,8 @@ from pydifact.control import Characters
 
 class TestUNASegment(unittest.TestCase):
     def setUp(self):
-        test_segment = "UNA:+.? '"
-        self.cc = Characters.from_str(test_segment)
+        self.una_segment = "UNA:+.? '"
+        self.cc = Characters.from_str(self.una_segment)
         
 
     def test_una_sgement(self):
