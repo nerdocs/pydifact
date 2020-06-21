@@ -14,14 +14,14 @@
 #    You should have received a copy of the GNU Lesser General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import unittest
-
 from pydifact.control import Characters
 
+
 class TestUNASegment(unittest.TestCase):
+
     def setUp(self):
         self.una_segment = "UNA:+.? '"
         self.cc = Characters.from_str(self.una_segment)
-        
 
     def test_una_sgement(self):
         self.assertEqual(self.cc.component_separator, ":")
