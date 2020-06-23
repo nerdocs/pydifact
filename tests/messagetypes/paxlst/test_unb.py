@@ -19,22 +19,25 @@ from pydifact.control import Characters
 from pydifact.segmentcollection import SegmentCollection
 
 
-def setup_module(module):
-    global cc
-    global collection
+class Setup:
+    pass
+
+
+@pytest.fixture
+def setup():
+    setup = Setup()
     unb_segment = "UNB+UNOA:4+APIS*ABE+USADHS+070429:0900+000000001++USADHS'"
     cc = Characters()
-    cc = cc.with_control_character("decimal_point", ".")
-    collection = SegmentCollection.from_str(unb_segment)
-
+    setup.cc = cc.with_control_character("decimal_point", ".")
+    setup.collection = SegmentCollection.from_str(unb_segment)
+    return setup
 
 class TestUNBSegment():
+    def test_una_decimal_point(self, setup):
+        assert setup.cc.decimal_point == "."
 
-    def test_una_decimal_point(self):
-        assert cc.decimal_point == "."
-
-    def test_unb_segement(self):
-        segment = collection.segments[0]
+    def test_unb_segement(self, setup):
+        segment = setup.collection.segments[0]
         assert segment.tag == 'UNB'
         assert segment.elements[0][0] == 'UNOA'
         assert segment.elements[0][1] == '4'

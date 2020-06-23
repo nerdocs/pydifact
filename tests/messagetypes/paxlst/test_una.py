@@ -17,19 +17,23 @@ import pytest
 from pydifact.control import Characters
 
 
-def setup_module(module):
-    global una_segment
-    global cc
+class Setup:
+    pass
+
+
+@pytest.fixture
+def setup():
+    setup = Setup()
     una_segment = "UNA:+.? '"
-    cc = Characters.from_str(una_segment)
+    setup.cc = Characters.from_str(una_segment)
+    return setup
 
 
 class TestUNASegment():
-
-    def test_una_sgement(self):
-        assert cc.component_separator == ":"
-        assert cc.data_separator == "+"
-        assert cc.decimal_point == "."
-        assert cc.escape_character == "?"
-        assert cc.reserved_character == " "
-        assert cc.segment_terminator == "'"
+    def test_una_sgement(self, setup):
+        assert setup.cc.component_separator == ":"
+        assert setup.cc.data_separator == "+"
+        assert setup.cc.decimal_point == "."
+        assert setup.cc.escape_character == "?"
+        assert setup.cc.reserved_character == " "
+        assert setup.cc.segment_terminator == "'"
