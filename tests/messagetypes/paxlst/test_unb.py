@@ -13,31 +13,35 @@
 #
 #    You should have received a copy of the GNU Lesser General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
-import unittest
+import pytest
 
 from pydifact.control import Characters
 from pydifact.segmentcollection import SegmentCollection
 
-class TestUNBSegment(unittest.TestCase):
-    def setUp(self):
-        self.unb_segment = "UNB+UNOA:4+APIS*ABE+USADHS+070429:0900+000000001++USADHS'"
-        self.cc = Characters()
-        self.cc = self.cc.with_control_character("decimal_point", ".")
-        self.collection = SegmentCollection.from_str(self.unb_segment)
-        
+
+def setup_module(module):
+    global cc
+    global collection
+    unb_segment = "UNB+UNOA:4+APIS*ABE+USADHS+070429:0900+000000001++USADHS'"
+    cc = Characters()
+    cc = cc.with_control_character("decimal_point", ".")
+    collection = SegmentCollection.from_str(unb_segment)
+
+
+class TestUNBSegment():
 
     def test_una_decimal_point(self):
-        self.assertEqual(self.cc.decimal_point, ".")
+        assert cc.decimal_point == "."
 
     def test_unb_segement(self):
-        segment = self.collection.segments[0]
-        self.assertEqual(segment.tag, 'UNB')
-        self.assertEqual(segment.elements[0][0], 'UNOA')
-        self.assertEqual(segment.elements[0][1], '4')
-        self.assertEqual(segment.elements[1], 'APIS*ABE')
-        self.assertEqual(segment.elements[2], 'USADHS')
-        self.assertEqual(segment.elements[3][0], '070429')
-        self.assertEqual(segment.elements[3][1], '0900')
-        self.assertEqual(segment.elements[4], '000000001')
-        self.assertEqual(segment.elements[5], '')
-        self.assertEqual(segment.elements[6], 'USADHS')
+        segment = collection.segments[0]
+        assert segment.tag == 'UNB'
+        assert segment.elements[0][0] == 'UNOA'
+        assert segment.elements[0][1] == '4'
+        assert segment.elements[1] == 'APIS*ABE'
+        assert segment.elements[2] == 'USADHS'
+        assert segment.elements[3][0] == '070429'
+        assert segment.elements[3][1] == '0900'
+        assert segment.elements[4] == '000000001'
+        assert segment.elements[5] == ''
+        assert segment.elements[6] == 'USADHS'
