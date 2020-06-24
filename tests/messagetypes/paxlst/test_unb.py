@@ -32,19 +32,20 @@ def setup():
     setup.collection = SegmentCollection.from_str(unb_segment)
     return setup
 
-class TestUNBSegment():
+
+class TestUNBSegment:
     def test_una_decimal_point(self, setup):
         assert setup.cc.decimal_point == "."
 
     def test_unb_segement(self, setup):
         segment = setup.collection.segments[0]
-        assert segment.tag == 'UNB'
-        assert segment.elements[0][0] == 'UNOA'
-        assert segment.elements[0][1] == '4'
-        assert segment.elements[1] == 'APIS*ABE'
-        assert segment.elements[2] == 'USADHS'
-        assert segment.elements[3][0] == '070429'
-        assert segment.elements[3][1] == '0900'
-        assert segment.elements[4] == '000000001'
-        assert segment.elements[5] == ''
-        assert segment.elements[6] == 'USADHS'
+        assert segment.tag == "UNB"
+        assert segment.elements[0][0] == "UNOA"
+        assert segment.elements[0][1] == "4"
+        assert segment.elements[1] == "APIS*ABE"
+        assert segment.elements[2] == "USADHS"
+        assert segment.elements[3][0] == "070429"
+        assert segment.elements[3][1] == "0900"
+        assert segment.elements[4] == "000000001"
+        assert segment.elements[5] == ""
+        assert segment.elements[6] == "USADHS"

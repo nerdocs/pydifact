@@ -29,7 +29,7 @@ def setup():
     return setup
 
 
-class TestUNASegment():
+class TestUNASegment:
     def test_una_sgement(self, setup):
         assert setup.cc.component_separator == ":"
         assert setup.cc.data_separator == "+"

@@ -27,7 +27,7 @@ def tokenizer():
 
 
 def _assert_tokens(
-        collection: str, expected: list = None, error_message: str = None
+    collection: str, expected: list = None, error_message: str = None
 ) -> None:
     """Helper function to accelerate tokenizer testing."""
 
