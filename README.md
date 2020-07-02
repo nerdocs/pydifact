@@ -28,7 +28,7 @@ for segment in collection.segments:
         segment.tag, segment.elements))
 ```
 
-Or you can create an EDI inerchange on he fly:
+Or you can create an EDI interchange on the fly:
 
 ```python
 from pydifact.segmentcollection import SegmentCollection
@@ -54,7 +54,7 @@ In python ecosystem:
 
 ## Development
 
-To develop pydifact, install the dev requirements with `pipenv install --dev`. This installs all python packages needed for development and testing.
+To develop pydifact, install the dev requirements with `pipenv install --dev`. This installs all the python packages needed for development and testing.
 
 Format all python files using [black](https://black.readthedocs.io).
 
