@@ -13,6 +13,22 @@ Because I did not find a decent UN/EDIFACT library for Python, so I decided to p
 ATM this is a Work In Progress, the API is not stable yet.
 Feel free to help.
 
+## Install
+
+As usual, use a virtualenv, and install via pip or pipenv:
+
+```bash
+pip install pydifact
+```
+
+However, it is not stable yet, so the pypi version, including documentation an dcode examples, could differ from the latest git code. If in doubt, use the git version:
+```bash
+git clone https://github.com/nerdocs/pydifact.git
+cd pydifact
+pip install -e .
+```
+
+
 ## Usage
 
 To read a message from a file or from a string, take the `SegmentsCollection` class and
