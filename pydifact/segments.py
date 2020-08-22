@@ -22,20 +22,21 @@
 from typing import Union, List
 
 from pydifact.control import Characters
+from pydifact.syntax import EDISyntaxError
 
 
 class Segment:
     """Represents a low-level segment of an EDI interchange."""
 
     def __init__(self, tag: str, *elements: Union[str, List[str]]):
-        """Create a new instance.
-        :param str tag: The code/tag of the segment.
-        :param list elements: The data elements for this segment, as list.
+        """Create a new Segment instance.
+
+        :param str tag: The code/tag of the segment. Must not be empty.
+        :param list elements: The data elements for this segment, as (possibly empty) list.
+
+        The Segment can assure that the given parameters are correct.
         """
-        if type(tag) != str:
-            raise TypeError(f"'tag' argument must be a str, but is a {type(tag)}")
-        if tag == "":
-            raise ValueError("The tag of a segment must not be empty.")
+        assert tag
         self.tag = tag
 
         # The data elements for this segment.
@@ -73,6 +74,22 @@ class SegmentFactory:
         """
         if not SegmentFactory.characters:
             SegmentFactory.characters = Characters()
+
+        # Basic segment type validation is done here.
+        # The proper validation must be done in the corresponding Segment
+
+        if not name:
+            raise EDISyntaxError("The tag of a segment must not be empty.")
+
+        if type(name) != str:
+            raise EDISyntaxError(
+                f"The tag name of a segment must be a str, but is a {type(name)}: {name}"
+            )
+
+        if not name.isalnum():
+            raise EDISyntaxError(
+                f"Tag '{name}': A tag name must only contain alphanumeric characters."
+            )
 
         # FIXME: characters is not used!
         return Segment(name, *elements)

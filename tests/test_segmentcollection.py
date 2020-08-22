@@ -17,6 +17,7 @@ import pytest
 
 from pydifact.segmentcollection import SegmentCollection
 from pydifact.segments import Segment
+from pydifact.syntax import EDISyntaxError
 
 
 def test_from_file():
@@ -67,5 +68,30 @@ def test_get_segment_doesnt_exist():
 
 def test_empty_segment():
     m = SegmentCollection()
-    with pytest.raises(ValueError):
+    with pytest.raises(AssertionError):
         m.add_segment(Segment("", []))
+
+
+def test_malformed_tag1():
+    with pytest.raises(EDISyntaxError):
+        SegmentCollection.from_str("IMD+F++:::This is 'a :malformed string'")
+
+
+def test_malformed_tag2():
+    with pytest.raises(EDISyntaxError):
+        SegmentCollection.from_str("IMD+F++:::This is '? :malformed string'")
+
+
+def test_malformed_tag3():
+    with pytest.raises(EDISyntaxError):
+        SegmentCollection.from_str("IMD+F++:::This is '?? :malformed string'")
+
+
+def test_malformed_tag4():
+    with pytest.raises(EDISyntaxError):
+        SegmentCollection.from_str("IMD+F++:::This is '??:malformed string'")
+
+
+def test_malformed_tag5():
+    with pytest.raises(EDISyntaxError):
+        SegmentCollection.from_str("IMD+F++:::This is '-:malformed string'")

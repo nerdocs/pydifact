@@ -1,0 +1,2 @@
+class EDISyntaxError(Exception):
+    pass
