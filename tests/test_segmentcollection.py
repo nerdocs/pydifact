@@ -17,7 +17,7 @@ import pytest
 
 from pydifact.segmentcollection import SegmentCollection
 from pydifact.segments import Segment
-from pydifact.syntax import EDISyntaxError
+from pydifact.api import EDISyntaxError
 
 
 def test_from_file():

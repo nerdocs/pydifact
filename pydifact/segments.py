@@ -21,12 +21,27 @@
 # THE SOFTWARE.
 from typing import Union, List
 
+from pydifact.api import EDISyntaxError, PluginMount
 from pydifact.control import Characters
-from pydifact.syntax import EDISyntaxError
+
+
+class SegmentProvider(metaclass=PluginMount):
+    """This is a plugin mount point for Segment plugins which represent a certain EDIFACT Segment.
+
+    Plugins subclassing SegmentProvider shall provide the following methods (besides __init__):
+    ========    ========================================================
+    __str__()   returns the user readable text representation of this
+                segment.
+    validate()  returns True if this Segment is valid, False if not.
+    ========    ========================================================"""
 
 
 class Segment:
-    """Represents a low-level segment of an EDI interchange."""
+    """Represents a low-level segment of an EDI interchange.
+
+    This class is used internally. read-world implementations of specialized should subclass Segment and provide
+    the `tag` and `validate` attributes.
+    """
 
     def __init__(self, tag: str, *elements: Union[str, List[str]]):
         """Create a new Segment instance.
@@ -108,7 +123,13 @@ class SegmentFactory:
                 f"Tag '{name}': A tag name must only contain alphanumeric characters."
             )
 
-        s = Segment(name, *elements)
+        for Plugin in SegmentProvider.plugins:
+            if Plugin().tag == name:
+                s = Plugin(name, *elements)
+        else:
+            # we don't support this kind of EDIFACT segment (yet), so
+            # just create a generic Segment()
+            s = Segment(name, *elements)
 
         if validate:
             if not s.validate():

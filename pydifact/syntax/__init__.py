@@ -1,2 +1,1 @@
-class EDISyntaxError(Exception):
-    pass
+
