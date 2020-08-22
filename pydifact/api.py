@@ -7,8 +7,9 @@ class PluginMount(type):
         if not hasattr(cls, "plugins"):
             cls.plugins = []
         else:
-            cls.plugins.append(cls)
+            if not hasattr(cls, "__omitted__"):
+                cls.plugins.append(cls)
 
 
 class EDISyntaxError(Exception):
-    pass
+    """A Syntax error within the parsed EDIFACT file was found."""
