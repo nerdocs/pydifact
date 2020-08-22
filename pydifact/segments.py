@@ -33,7 +33,7 @@ class Segment:
         :param list elements: The data elements for this segment, as list.
         """
         if type(tag) != str:
-            raise TypeError("'tag' argument must be a str")
+            raise TypeError(f"'tag' argument must be a str, but is a {type(tag)}")
         if tag == "":
             raise ValueError("The tag of a segment must not be empty.")
         self.tag = tag
