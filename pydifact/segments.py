@@ -67,6 +67,7 @@ class Segment:
 
         :return: bool True if given tag and elements are a valid EDIFACT segment, False if not.
         """
+        # FIXME: there should be a way of returning an error message - WHICH kind of validation failed.
 
         if not self.tag:
             return False
@@ -74,7 +75,7 @@ class Segment:
 
 
 class SegmentFactory:
-    """Factory for producing valid segments."""
+    """Factory for producing segments."""
 
     characters = None
 
@@ -92,7 +93,7 @@ class SegmentFactory:
             SegmentFactory.characters = Characters()
 
         # Basic segment type validation is done here.
-        # The proper validation must be done in the corresponding Segment
+        # The more special validation must be done in the corresponding Segment
 
         if not name:
             raise EDISyntaxError("The tag of a segment must not be empty.")
@@ -111,7 +112,9 @@ class SegmentFactory:
 
         if validate:
             if not s.validate():
-                raise EDISyntaxError(f"could not create {name} Segment. Validation failed.")
+                raise EDISyntaxError(
+                    f"could not create '{name}' Segment. Validation failed."
+                )
 
         # FIXME: characters is not used!
-        return s
+        return Segment(name, *elements)
