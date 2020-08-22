@@ -29,11 +29,10 @@ def setup():
     return setup
 
 
-class TestUNASegment:
-    def test_una_sgement(self, setup):
-        assert setup.cc.component_separator == ":"
-        assert setup.cc.data_separator == "+"
-        assert setup.cc.decimal_point == "."
-        assert setup.cc.escape_character == "?"
-        assert setup.cc.reserved_character == " "
-        assert setup.cc.segment_terminator == "'"
+def test_una_segment(setup):
+    assert setup.cc.component_separator == ":"
+    assert setup.cc.data_separator == "+"
+    assert setup.cc.decimal_point == "."
+    assert setup.cc.escape_character == "?"
+    assert setup.cc.reserved_character == " "
+    assert setup.cc.segment_terminator == "'"
