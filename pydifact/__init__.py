@@ -32,14 +32,17 @@ from .serializer import Serializer
 from .token import Token
 from .tokenizer import Tokenizer
 
-# generic EDIFACT implementation tutorial
-# http://www.gxs.co.uk/wp-content/uploads/tutorial_edifact.pdf
+# EDIFACT Syntax Rules
+# http://www.unece.org/fileadmin/DAM/trade/edifact/untdid/d422_s.htm#normative
 
 # UNECE Syntax Implementation Guidelines
 # https://www.unece.org/fileadmin/DAM/trade/untdid/texts/d423.htm
 
 # UNECE Message Design Guidelines
 # https://www.unece.org/fileadmin/DAM/trade/untdid/texts/d424_d.htm
+
+# generic EDIFACT implementation tutorial
+# http://www.gxs.co.uk/wp-content/uploads/tutorial_edifact.pdf
 
 # https://ecosio.com/de/blog/aufbau-einer-edifact-datei/ (German)
 # https://www.stylusstudio.com/edifact/40102/codelist.htm
