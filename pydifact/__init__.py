@@ -32,6 +32,12 @@ from .serializer import Serializer
 from .token import Token
 from .tokenizer import Tokenizer
 
+# up-to-date information for newest standard
+# https://www.unece.org/tradewelcome/un-centre-for-trade-facilitation-and-e-business-uncefact/outputs/standards/unedifact/directories/2011-present.html
+
+# Joint Working Group 1 (JWG 1)
+# https://www.gefeg.com/jswg/
+
 # EDIFACT Syntax Rules
 # http://www.unece.org/fileadmin/DAM/trade/edifact/untdid/d422_s.htm#normative
 
@@ -45,6 +51,6 @@ from .tokenizer import Tokenizer
 # http://www.gxs.co.uk/wp-content/uploads/tutorial_edifact.pdf
 
 # https://ecosio.com/de/blog/aufbau-einer-edifact-datei/ (German)
-# https://www.stylusstudio.com/edifact/40102/codelist.htm
+
 # https://www.hcs.at/wp-content/uploads/2012/12/hcs_AEK_Edifact_Text.pdf (German)
 # https://www.hcs.at/wp-content/uploads/2012/12/hcs_AEK_Edifact_Labor.pdf (German)
