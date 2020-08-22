@@ -73,8 +73,10 @@ class Segment(SegmentProvider):
 
     def __eq__(self, other) -> bool:
         # FIXME the other way round too? isinstance(other, type(self))?
-        return isinstance(self, type(other)) and list(self.elements) == list(
-            other.elements
+        return (
+            isinstance(self, type(other))
+            and self.tag == other.tag
+            and list(self.elements) == list(other.elements)
         )
 
     def validate(self) -> bool:
