@@ -68,8 +68,8 @@ def test_get_segment_doesnt_exist():
 
 def test_empty_segment():
     m = SegmentCollection()
-    with pytest.raises(AssertionError):
-        m.add_segment(Segment("", []))
+    m.add_segment(Segment("", []))
+    assert m
 
 
 def test_malformed_tag1():

@@ -34,9 +34,7 @@ class Segment:
         :param str tag: The code/tag of the segment. Must not be empty.
         :param list elements: The data elements for this segment, as (possibly empty) list.
 
-        The Segment can assure that the given parameters are correct.
         """
-        assert tag
         self.tag = tag
 
         # The data elements for this segment.
@@ -59,18 +57,36 @@ class Segment:
             other.elements
         )
 
+    def validate(self) -> bool:
+        """
+        Segment validation.
+
+        The Segment class is part of the lower level interfaces of pydifact.
+        So it assumes that the given parameters are correct, there is no validation done here.
+        However, in segments derived from this class, there should be validation.
+
+        :return: bool True if given tag and elements are a valid EDIFACT segment, False if not.
+        """
+
+        if not self.tag:
+            return False
+        return True
+
 
 class SegmentFactory:
-    """Factory for producing segments."""
+    """Factory for producing valid segments."""
 
     characters = None
 
     @staticmethod
-    def create_segment(name: str, *elements: Union[str, List[str]]) -> Segment:
+    def create_segment(
+        name: str, *elements: Union[str, List[str]], validate: bool = True
+    ) -> Segment:
         """Create a new instance of the relevant class type.
 
         :param name: The name of the segment
         :param elements: The data elements for this segment
+        :param validate: bool if True, the created segment is validated before return
         """
         if not SegmentFactory.characters:
             SegmentFactory.characters = Characters()
@@ -91,5 +107,11 @@ class SegmentFactory:
                 f"Tag '{name}': A tag name must only contain alphanumeric characters."
             )
 
+        s = Segment(name, *elements)
+
+        if validate:
+            if not s.validate():
+                raise EDISyntaxError(f"could not create {name} Segment. Validation failed.")
+
         # FIXME: characters is not used!
-        return Segment(name, *elements)
+        return s
