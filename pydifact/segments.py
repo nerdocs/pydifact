@@ -28,20 +28,25 @@ from pydifact.control import Characters
 class SegmentProvider(metaclass=PluginMount):
     """This is a plugin mount point for Segment plugins which represent a certain EDIFACT Segment.
 
-    Plugins subclassing SegmentProvider shall provide the following methods (besides __init__):
-    ========    ========================================================
-    __str__()   returns the user readable text representation of this
-                segment.
-    validate()  returns True if this Segment is valid, False if not.
-    ========    ========================================================"""
+    Classes implementing this PluginMount should provide the following attributes:
+    """
+
+    def __str__(self):
+        """Returns the user readable text representation of this segment."""
+
+    def validate(self) -> bool:
+        """Validates the Segment."""
 
 
-class Segment:
+class Segment(SegmentProvider):
     """Represents a low-level segment of an EDI interchange.
 
     This class is used internally. read-world implementations of specialized should subclass Segment and provide
     the `tag` and `validate` attributes.
     """
+
+    # tag is not a class attribute in this case, as each Segment instance could have another tag.
+    __omitted__ = True
 
     def __init__(self, tag: str, *elements: Union[str, List[str]]):
         """Create a new Segment instance.
