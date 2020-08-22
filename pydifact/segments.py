@@ -51,7 +51,7 @@ class Segment:
         )
 
     def __repr__(self) -> str:
-        return "{} segment: {}".format(self.tag, str(self.elements))
+        return f"{self.tag} segment: {str(self.elements)}"
 
     def __eq__(self, other) -> bool:
         # FIXME the other way round too? isinstance(other, type(self))?
