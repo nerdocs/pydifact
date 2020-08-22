@@ -67,6 +67,8 @@ def assert_format(s, fmt_str):
 class UNASegment(Segment):
     """Service String Advice."""
 
+    tag = "UNA"
+
     def __init__(self, characters: Characters or str = None):
         if not characters:
             characters = Characters()
