@@ -21,7 +21,7 @@ As usual, use a virtualenv, and install via pip or pipenv:
 pip install pydifact
 ```
 
-However, it is not stable yet, so the pypi version, including documentation an dcode examples, could differ from the latest git code. If in doubt, use the git version:
+However, it is not stable yet, so the pypi version, including documentation and code examples, could differ from the latest git code. If in doubt, use the git version:
 ```bash
 git clone https://github.com/nerdocs/pydifact.git
 cd pydifact
