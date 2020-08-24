@@ -22,7 +22,7 @@
 
 from pydifact.token import Token
 from pydifact.control.characters import Characters
-from typing import Union, List, Optional
+from typing import List, Optional
 
 
 class Tokenizer:
@@ -93,7 +93,7 @@ class Tokenizer:
             self.isEscaped = True
             self._char = self.get_next_char()
 
-    def get_next_char(self) -> Union[str, None]:
+    def get_next_char(self) -> Optional[str]:
         """Get the next character from the message."""
         try:
             return next(self._message)
