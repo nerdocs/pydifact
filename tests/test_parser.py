@@ -95,9 +95,9 @@ def _assert_segments(parser, default_una_segment, collection: str, segments: lis
 
     input_str = "UNA:+,? '\n" + collection + "'\n"
     result = list(parser.parse(input_str))
-    print("input segments: {}".format(segments[0]))
-    print("parser result:  {}".format(result[0]))
-    assert [default_una_segment] + segments == result
+    # print("input segments: {}".format(segments[0]))
+    # print("parser result:  {}".format(result[0]))
+    assert segments == result
 
 
 def test_compare_equal_segments(parser, default_una_segment):
@@ -113,21 +113,18 @@ def test_compare_equal_segments(parser, default_una_segment):
 def test_una_parser1(parser):
     # UNA headers are a special parsing task and must be processed correctly.
     tokens = parser.parse("UNA:+,? 'TEST'")
-    assert next(tokens) == Segment("UNA", ":+,? '")
     assert next(tokens) == Segment("TEST")
 
 
 def test_una_parser2(parser):
     # UNA headers are a special parsing task and must be processed correctly.
     tokens = parser.parse("UNA123456TEST6")
-    assert next(tokens) == Segment("UNA", "123456")
     assert next(tokens) == Segment("TEST")
 
 
 def test_una_parser3(parser):
     # UNA headers are a special parsing task and must be processed correctly.
     tokens = parser.parse("UNA12345'TEST'")
-    assert next(tokens) == Segment("UNA", "12345'")
     assert next(tokens) == Segment("TEST")
 
 

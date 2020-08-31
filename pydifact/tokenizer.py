@@ -71,13 +71,8 @@ class Tokenizer:
             self.characters.segment_terminator: Token.Type.TERMINATOR,
         }
 
-        tokens = []
-
         while not self.end_of_message():
-            token = self.get_next_token()
-            tokens.append(token)
-
-        return tokens
+            yield self.get_next_token()
 
     def read_next_char(self) -> None:
         """Read the next character from the message.

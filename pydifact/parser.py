@@ -19,7 +19,7 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
-from typing import Optional
+from typing import Optional, Generator, Any
 
 from pydifact.tokenizer import Tokenizer
 from pydifact.token import Token
@@ -37,7 +37,9 @@ class Parser:
         self.factory = factory
         self.characters = Characters()
 
-    def parse(self, message: str, characters: Characters = None) -> list:
+    def parse(
+        self, message: str, characters: Characters = None
+    ) -> Generator[Segment, Any, None]:
         """Parse the message into a list of segments.
 
         :param characters: the control characters to use, if there is no
@@ -46,19 +48,14 @@ class Parser:
         :rtype:
         """
 
-        # FIXME: DRY: use get_control_characters here?
-        tokens = []
-        # If there is a UNA token, take the following 6 characters
-        # unconditionally, save them as token and use it as control characters
+        # If there is a UNA, take the following 6 characters
+        # unconditionally, save them, strip them, and make control Characters()
         # for further parsing
         if message[0:3] == "UNA":
-            control_chars = message[3:9]
-            tokens.append(Token(Token.Type.CONTENT, "UNA"))
-            tokens.append(Token(Token.Type.CTRL_CHARS, control_chars))
+            self.characters = Characters.from_str("UNA" + message[3:9])
 
             # remove the UNA segment from the string
             message = message[9:].lstrip("\r\n")
-            self.characters = Characters.from_str("UNA" + control_chars)
 
         else:
             # if no UNA header present, use default control characters
@@ -66,9 +63,9 @@ class Parser:
                 self.characters = characters
 
         tokenizer = Tokenizer()
-        tokens += tokenizer.get_tokens(message, self.characters)
-        segments = self.convert_tokens_to_segments(tokens, self.characters)
-        return segments
+        return self.convert_tokens_to_segments(
+            tokenizer.get_tokens(message, self.characters), self.characters
+        )
 
     @staticmethod
     def get_control_characters(
@@ -108,9 +105,7 @@ class Parser:
 
         return characters
 
-    def convert_tokens_to_segments(
-        self, tokens: list, characters: Characters, with_una: bool = False
-    ):
+    def convert_tokens_to_segments(self, tokens: list, characters: Characters):
         """Convert the tokenized message into an array of segments.
         :param with_una: whether the UNA segment should be included
         :param tokens: The tokens that make up the message
@@ -123,25 +118,12 @@ class Parser:
         current_segment = []
         data_element = None
         in_segment = False
-        is_una_segment = False
         empty_component_counter = 0
 
         for token in tokens:
 
             # If we're in the middle of a segment, check if we've reached the end
             if in_segment:
-
-                # a UNA control character string is a special case.
-                # It has no data terminator, as the last character DEFINES the
-                # data terminator.
-                # So we must handle the string as content, AND terminator
-                # at the same time.
-                if token.type == Token.Type.CTRL_CHARS:
-                    in_segment = False
-                    current_segment.append(data_element[0])
-                    current_segment.append(token.value)
-                    data_element = []
-                    continue
 
                 if token.type == Token.Type.TERMINATOR:
                     in_segment = False
@@ -164,10 +146,6 @@ class Parser:
                 segments.append(current_segment)
                 data_element = []
                 in_segment = True
-
-                # If we're in the UNA segment, do something special
-                if token.value == "UNA":
-                    is_una_segment = True
 
             # Whenever we reach a data separator (+), we add the currently
             # collected data element to the current segment and reset the
