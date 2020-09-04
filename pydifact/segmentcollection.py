@@ -107,7 +107,10 @@ class SegmentCollection:
     def add_segments(
         self, segments: List[Segment] or collections.Iterable
     ) -> "SegmentCollection":
-        """Add multiple segments to the collection.
+        """Add multiple segments to the collection. Passing a UNA segment means setting/overriding the control
+        characters and setting the serializer to output the Service String Advice. If you wish to change the control
+        characters from the default and not output the Service String Advice, change self.characters instead,
+        without passing a UNA Segment.
 
         :param segments: The segments to add
         :type segments: list or iterable of Segments
@@ -118,13 +121,17 @@ class SegmentCollection:
         return self
 
     def add_segment(self, segment: Segment) -> "SegmentCollection":
-        """Append a segment to the collection.
+        """Append a segment to the collection. Passing a UNA segment means setting/overriding the control
+        characters and setting the serializer to output the Service String Advice. If you wish to change the control
+        characters from the default and not output the Service String Advice, change self.characters instead,
+        without passing a UNA Segment.
 
         :param segment: The segment to add
         """
         if segment.tag == "UNA":
             self.has_una_segment = True
             self.characters = Characters.from_str(segment.elements[0])
+            return self
         self.segments.append(segment)
         return self
 
@@ -132,7 +139,9 @@ class SegmentCollection:
         """Serialize all the segments added to this object.
         :param break_lines: if True, insert line break after each segment terminator.
         """
-        return Serializer().serialize(self.segments, self.has_una_segment, break_lines)
+        return Serializer(self.characters).serialize(
+            self.segments, self.has_una_segment, break_lines
+        )
 
     def __str__(self) -> str:
         """Allow the object to be serialized by casting to a string."""

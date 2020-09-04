@@ -33,7 +33,7 @@ def _assert_tokens(
 
     if expected is None:
         expected = []
-    tokens = Tokenizer().get_tokens(collection)
+    tokens = list(Tokenizer().get_tokens(collection))
     if error_message:
         assert expected == tokens, error_message
     else:
@@ -165,5 +165,5 @@ def test_ignore_long_whitespace(expected_crlf):
 
 def test_no_terminator():
     with pytest.raises(RuntimeError):
-        Tokenizer().get_tokens("TEST", Characters())
+        list(Tokenizer().get_tokens("TEST", Characters()))
         pytest.fail("Unexpected end of EDI message")
