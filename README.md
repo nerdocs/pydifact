@@ -31,7 +31,7 @@ pip install -e .
 
 ## Usage
 
-To read a message from a file or from a string, take the `SegmentsCollection` class and
+To read a message from a file or from a string, take the `SegmentCollection` class and
 iter over the segments:
 
 ```python

@@ -44,7 +44,7 @@ class SegmentCollection:
 
     @classmethod
     def from_file(cls, file: str, encoding: str = "iso8859-1") -> "SegmentCollection":
-        """Create a Message instance from a file.
+        """Create a SegmentCollection instance from a file.
 
         Raises FileNotFoundError if filename is not found.
         :param encoding: an optional string which specifies the encoding. Default is "iso8859-1".
@@ -61,7 +61,7 @@ class SegmentCollection:
 
     @classmethod
     def from_str(cls, string: str) -> "SegmentCollection":
-        """Create a Message instance from a string.
+        """Create a SegmentCollection instance from a string.
         :param string: The EDI content
         :rtype: SegmentCollection
         """
@@ -73,14 +73,14 @@ class SegmentCollection:
     def from_segments(
         cls, segments: list or collections.Iterable
     ) -> "SegmentCollection":
-        """Create a new Message instance from a iterable list of segments.
+        """Create a new SegmentCollection instance from a iterable list of segments.
 
         :param segments: The segments of the EDI interchange
         :type segments: list/iterable of Segment
         :rtype: SegmentCollection
         """
 
-        # create a new instance of Message and return it
+        # create a new instance of SegmentCollection and return it
         # with the added segments
         return cls().add_segments(segments)
 

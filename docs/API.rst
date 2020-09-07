@@ -1,9 +1,9 @@
 API
 ===
 
-Message
--------
-.. automodule:: pydifact.segmentscollection
+SegmentCollection
+------------------
+.. automodule:: pydifact.segmentcollection
     :members:
 
 Parser
