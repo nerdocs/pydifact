@@ -125,6 +125,70 @@ def test_empty_interchange_from_str():
     )
 
 
+def test_interchange_messages():
+    i = Interchange(
+        sender='1234',
+        recipient='3333',
+        timestamp=datetime.datetime(2020,1,2,22,12),
+        control_reference='42',
+        syntax_identifier=('UNOC', 1),
+    )
+
+    m = Message(
+        reference_number='42z42',
+        identifier=('PAORES', 93, 1, 'IA'),
+    )
+
+    assert(len(list(i.get_messages())) == 0)
+
+    i.add_message(m)
+
+    assert(len(list(i.get_messages())) == 1)
+
+    assert str(i) == (
+        "UNB+UNOC:1+1234+3333+200102:2212+42'"
+        "UNH+42z42+PAORES:93:1:IA'"
+        "UNT+42z42+0'"
+        "UNZ+2+42'"
+    )
+
+
+def test_interchange_messages_from_str():
+    i = Interchange.from_str(
+        "UNB+UNOC:1+1234+3333+200102:2212+42'"
+        "UNH+42z42+PAORES:93:1:IA'"
+        "UNT+42z42+0'"
+        "UNZ+2+42'"
+    )
+    assert str(i) == (
+        "UNB+UNOC:1+1234+3333+200102:2212+42'"
+        "UNH+42z42+PAORES:93:1:IA'"
+        "UNT+42z42+0'"
+        "UNZ+2+42'"
+    )
+
+
+def test_faulty_interchange_messages():
+    i = Interchange.from_str(
+        "UNB+UNOC:1+1234+3333+200102:2212+42'"
+        "UNH+42z42+PAORES:93:1:IA'"
+        "UNH+42z42+PAORES:93:1:IA'"
+        "UNZ+2+42'"
+    )
+
+    with pytest.raises(SyntaxError):
+        list(i.get_messages())
+
+    i = Interchange.from_str(
+        "UNB+UNOC:1+1234+3333+200102:2212+42'"
+        "UNT+42z42+0'"
+        "UNZ+2+42'"
+    )
+
+    with pytest.raises(SyntaxError):
+        list(i.get_messages())
+
+
 def test_empty_message():
     m = Message(
         reference_number='42z42',

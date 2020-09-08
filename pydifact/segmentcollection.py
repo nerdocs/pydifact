@@ -215,6 +215,10 @@ class Interchange(AbstractSegmentsContainer):
 
     Functional groups are not yet supported
 
+    Messages are supported, see get_message() and get_message(), but are
+    optional: interchange segments can be accessed without going through
+    messages.
+
     https://www.stylusstudio.com/edifact/40100/UNB_.htm
     https://www.stylusstudio.com/edifact/40100/UNZ_.htm
     """
@@ -251,6 +255,36 @@ class Interchange(AbstractSegmentsContainer):
             str(len(self.segments)),
             self.control_reference,
         )
+
+    def get_messages(self) -> List[Message]:
+        message = None
+        for segment in self.segments:
+            if segment.tag == 'UNH':
+                if not message:
+                    message = Message(segment.elements[0], segment.elements[1])
+                else:
+                    raise SyntaxError(
+                        f"Missing UNT segment before new UNH: {segment}"
+                    )
+            elif segment.tag == 'UNT':
+                if message:
+                    yield message
+                else:
+                    raise SyntaxError(
+                        f'UNT segment without matching UNH: "{segment}"'
+                    )
+            else:
+                if message:
+                    message.add_segment(segment)
+
+    def add_message(self, message: Message) -> "Interchange":
+        segments = (
+            [message.get_header_segment()]
+            + message.segments
+            + [message.get_footer_segment()]
+        )
+        self.add_segments(i for i in segments if i is not None)
+        return self
 
     @classmethod
     def from_segments(
