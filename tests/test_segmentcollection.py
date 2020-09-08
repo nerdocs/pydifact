@@ -13,9 +13,11 @@
 #
 #    You should have received a copy of the GNU Lesser General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+import datetime
+
 import pytest
 
-from pydifact.segmentcollection import SegmentCollection
+from pydifact.segmentcollection import Interchange, Message, SegmentCollection
 from pydifact.segments import Segment
 from pydifact.api import EDISyntaxError
 
@@ -95,3 +97,41 @@ def test_malformed_tag4():
 def test_malformed_tag5():
     with pytest.raises(EDISyntaxError):
         SegmentCollection.from_str("IMD+F++:::This is '-:malformed string'")
+
+
+def test_empty_interchange():
+    i = Interchange(
+        sender='1234',
+        recipient='3333',
+        timestamp=datetime.datetime(2020,1,2,22,12),
+        control_reference='42',
+        syntax_identifier=('UNOC', 1),
+    )
+
+    assert str(i) == (
+        "UNB+UNOC:1+1234+3333+200102:2212+42'"
+        "UNZ+0+42'"
+    )
+
+
+def test_empty_interchange_from_str():
+    i = Interchange.from_str(
+        "UNB+UNOC:1+1234+3333+200102:2212+42'"
+        "UNZ+0+42'"
+    )
+    assert str(i) == (
+        "UNB+UNOC:1+1234+3333+200102:2212+42'"
+        "UNZ+0+42'"
+    )
+
+
+def test_empty_message():
+    m = Message(
+        reference_number='42z42',
+        identifier=('PAORES', 93, 1, 'IA'),
+    )
+
+    assert str(m) == (
+        "UNH+42z42+PAORES:93:1:IA'"
+        "UNT+42z42+0'"
+    )
