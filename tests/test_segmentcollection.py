@@ -99,16 +99,27 @@ def test_malformed_tag5():
         SegmentCollection.from_str("IMD+F++:::This is '-:malformed string'")
 
 
-def test_empty_interchange():
-    i = Interchange(
+@pytest.fixture
+def interchange():
+    return Interchange(
         sender='1234',
         recipient='3333',
-        timestamp=datetime.datetime(2020,1,2,22,12),
+        timestamp=datetime.datetime(2020, 1, 2, 22, 12),
         control_reference='42',
         syntax_identifier=('UNOC', 1),
     )
 
-    assert str(i) == (
+
+@pytest.fixture
+def message():
+    return Message(
+        reference_number='42z42',
+        identifier=('PAORES', 93, 1, 'IA'),
+    )
+
+
+def test_empty_interchange(interchange):
+    assert str(interchange) == (
         "UNB+UNOC:1+1234+3333+200102:2212+42'"
         "UNZ+0+42'"
     )
@@ -125,27 +136,14 @@ def test_empty_interchange_from_str():
     )
 
 
-def test_interchange_messages():
-    i = Interchange(
-        sender='1234',
-        recipient='3333',
-        timestamp=datetime.datetime(2020,1,2,22,12),
-        control_reference='42',
-        syntax_identifier=('UNOC', 1),
-    )
+def test_interchange_messages(interchange, message):
+    assert(len(list(interchange.get_messages())) == 0)
 
-    m = Message(
-        reference_number='42z42',
-        identifier=('PAORES', 93, 1, 'IA'),
-    )
+    interchange.add_message(message)
 
-    assert(len(list(i.get_messages())) == 0)
+    assert(len(list(interchange.get_messages())) == 1)
 
-    i.add_message(m)
-
-    assert(len(list(i.get_messages())) == 1)
-
-    assert str(i) == (
+    assert str(interchange) == (
         "UNB+UNOC:1+1234+3333+200102:2212+42'"
         "UNH+42z42+PAORES:93:1:IA'"
         "UNT+42z42+0'"
@@ -189,13 +187,8 @@ def test_faulty_interchange_messages():
         list(i.get_messages())
 
 
-def test_empty_message():
-    m = Message(
-        reference_number='42z42',
-        identifier=('PAORES', 93, 1, 'IA'),
-    )
-
-    assert str(m) == (
+def test_empty_message(message):
+    assert str(message) == (
         "UNH+42z42+PAORES:93:1:IA'"
         "UNT+42z42+0'"
     )
