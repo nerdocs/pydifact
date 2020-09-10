@@ -21,7 +21,7 @@
 # THE SOFTWARE.
 
 import collections
-from typing import List, Optional, Tuple
+from typing import List, Optional, Tuple, Union
 import datetime
 
 from pydifact.parser import Parser
@@ -34,11 +34,17 @@ import codecs
 class AbstractSegmentsContainer:
     """Represent a collection of EDI Segments for both reading and writing."""
 
-    def __init__(self):
+    def __init__(self, extra_header_elements: List[Union[str, List[str]]] = []):
+        """
+        :param extra_header_elements: a list of elements to be appended at the end
+          of the header segment (same format as Segment() constructor *elements).
+        """
 
         # The segments that make up this message
         self.segments = []
         self.characters = Characters()
+
+        self.extra_header_elements = extra_header_elements
 
         # Flag whether the UNA header is present
         self.has_una_segment = False
@@ -187,8 +193,9 @@ class Message(AbstractSegmentsContainer):
             self,
             reference_number: str,
             identifier: Tuple,
+            *args, **kwargs
     ):
-        super().__init__()
+        super().__init__(*args, **kwargs)
         self.reference_number = reference_number
         self.identifier = identifier
 
@@ -197,6 +204,7 @@ class Message(AbstractSegmentsContainer):
             "UNH",
             self.reference_number,
             [str(i) for i in self.identifier],
+            *self.extra_header_elements,
         )
 
     def get_footer_segment(self) -> Segment:
@@ -230,8 +238,9 @@ class Interchange(AbstractSegmentsContainer):
             syntax_identifier: Tuple[str, int],
             delimiters: Characters = Characters(),
             timestamp: datetime.datetime = None,
+            *args, **kwargs
     ):
-        super().__init__()
+        super().__init__(*args, **kwargs)
         self.sender = sender
         self.recipient = recipient
         self.control_reference = control_reference
@@ -247,6 +256,7 @@ class Interchange(AbstractSegmentsContainer):
             self.recipient,
             [f'{self.timestamp:%y%m%d}', f'{self.timestamp:%H%M}'],
             self.control_reference,
+            *self.extra_header_elements,
         )
 
     def get_footer_segment(self) -> Segment:

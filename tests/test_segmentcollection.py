@@ -125,6 +125,22 @@ def test_empty_interchange(interchange):
     )
 
 
+def test_empty_interchange_w_extra_header(interchange):
+    i = Interchange(
+        sender='1234',
+        recipient='3333',
+        timestamp=datetime.datetime(2020, 1, 2, 22, 12),
+        control_reference='42',
+        syntax_identifier=('UNOC', 1),
+        extra_header_elements=[['66', '2'], 'ZZ']
+    )
+
+    assert str(i) == (
+        "UNB+UNOC:1+1234+3333+200102:2212+42+66:2+ZZ'"
+        "UNZ+0+42'"
+    )
+
+
 def test_empty_interchange_from_str():
     i = Interchange.from_str(
         "UNB+UNOC:1+1234+3333+200102:2212+42'"
