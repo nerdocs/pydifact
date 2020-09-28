@@ -23,6 +23,7 @@
 import collections
 from typing import List, Optional, Tuple, Union
 import datetime
+import warnings
 
 from pydifact.parser import Parser
 from pydifact.segments import Segment
@@ -48,23 +49,6 @@ class AbstractSegmentsContainer:
 
         # Flag whether the UNA header is present
         self.has_una_segment = False
-
-    @classmethod
-    def from_file(cls, file: str, encoding: str = "iso8859-1") -> "AstractSegmentsContainer":
-        """Create a AstractSegmentsContainer instance from a file.
-
-        Raises FileNotFoundError if filename is not found.
-        :param encoding: an optional string which specifies the encoding. Default is "iso8859-1".
-        :param file: The full path to a file that contains an EDI message.
-        :rtype: SegmentCollection
-        """
-
-        # codecs.lookup raises an LookupError if given codec was not found:
-        codecs.lookup(encoding)
-
-        with open(file, encoding=encoding) as f:
-            collection = f.read()
-        return cls.from_str(collection)
 
     @classmethod
     def from_str(cls, string: str) -> "SegmentCollection":
@@ -126,17 +110,10 @@ class AbstractSegmentsContainer:
         return self
 
     def add_segment(self, segment: Segment) -> "AbstractSegmentsContainer":
-        """Append a segment to the collection. Passing a UNA segment means setting/overriding the control
-        characters and setting the serializer to output the Service String Advice. If you wish to change the control
-        characters from the default and not output the Service String Advice, change self.characters instead,
-        without passing a UNA Segment.
+        """Append a segment to the collection.
 
         :param segment: The segment to add
         """
-        if segment.tag == "UNA":
-            self.has_una_segment = True
-            self.characters = Characters.from_str(segment.elements[0])
-            return self
         self.segments.append(segment)
         return self
 
@@ -176,8 +153,96 @@ class AbstractSegmentsContainer:
         return self.serialize()
 
 
-# For backward compatibility
-SegmentCollection = AbstractSegmentsContainer
+class FileSourcableMixin:
+    """
+    For backward compatibility
+
+    For v0.2 drop this class and move from_file() to Interchange class.
+    """
+    @classmethod
+    def from_file(cls, file: str, encoding: str = "iso8859-1") -> "FileSourcableMixin":
+        """Create a Interchange instance from a file.
+
+        Raises FileNotFoundError if filename is not found.
+        :param encoding: an optional string which specifies the encoding. Default is "iso8859-1".
+        :param file: The full path to a file that contains an EDI message.
+        :rtype: FileSourcableMixin
+        """
+        # codecs.lookup raises an LookupError if given codec was not found:
+        codecs.lookup(encoding)
+
+        with open(file, encoding=encoding) as f:
+            collection = f.read()
+        return cls.from_str(collection)
+
+class UNAHandlingMixin:
+    """
+    For backward compatibility
+
+    For v0.2 drop this class and move add_segment() to Interchange class.
+    """
+
+    def add_segment(self, segment: Segment) -> "UNAHandlingMixin":
+        """Append a segment to the collection. Passing a UNA segment means setting/overriding the control
+        characters and setting the serializer to output the Service String Advice. If you wish to change the control
+        characters from the default and not output the Service String Advice, change self.characters instead,
+        without passing a UNA Segment.
+
+        :param segment: The segment to add
+        """
+        if segment.tag == "UNA":
+            self.has_una_segment = True
+            self.characters = Characters.from_str(segment.elements[0])
+            return self
+        return super().add_segment(segment)
+
+
+
+class SegmentCollection(FileSourcableMixin, UNAHandlingMixin, AbstractSegmentsContainer):
+    """
+    For backward compatibility. Drop it in v0.2
+
+    Will be replaced by Interchange or RawSegmentCollection depending on the need.
+    """
+    def __init__(self, *args, **kwargs):
+        warnings.warn(
+            "SegmentCollection is deprecated and will no longer be available in v0.2, "
+            "replace it with Interchange or RawSegmentCollection",
+            DeprecationWarning,
+        )
+        super().__init__(*args, **kwargs)
+
+    @classmethod
+    def from_file(cls, *args, **kwargs) -> "SegmentCollection":
+        warnings.warn(
+            "SegmentCollection.from_file will be removed in v0.2, "
+            "Use Interchange class instead",
+            DeprecationWarning,
+        )
+        return  super().from_file(*args, **kwargs)
+
+    def add_segment(self, segment: Segment) -> "SegmentCollection":
+        if segment.tag == "UNA":
+            warnings.warn(
+                "SegmentCollection will be removed in v0.2, "
+                "For UNA handling, use Interchange class instead",
+                DeprecationWarning,
+            )
+        return super().add_segment(segment)
+
+
+class RawSegmentCollection(AbstractSegmentsContainer):
+    """
+    A way to analyze arbitrary bunch of edifact segments.
+
+    Similar to the deprecated SegmentCollection, but lacking from_file() and UNA support.
+
+    If you are handling an Interchange or a Message, you may want to prefer
+    those classes to RawSegmentCollection, as they offer more features and
+    checks.
+    """
+    pass
+
 
 
 class Message(AbstractSegmentsContainer):
@@ -215,7 +280,7 @@ class Message(AbstractSegmentsContainer):
         )
 
 
-class Interchange(AbstractSegmentsContainer):
+class Interchange(FileSourcableMixin, UNAHandlingMixin, AbstractSegmentsContainer):
     """
     An interchange (started by UNB segment, ended by UNZ segment)
 
