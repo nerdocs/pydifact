@@ -31,15 +31,29 @@ pip install -e .
 
 ## Usage
 
-To read a message from a file or from a string, take the `SegmentCollection` class and
-iter over the segments:
+To read a full Interchange from a file or string, take the `Interchange` class and
+iter over the messages and segments:
+
+```
+from pydifact.segmentcollection import Interchange
+interchange = Interchange.from_file("./tests/data/order.edi")
+interchange = Interchange.from_str(
+  "UNA:+,? 'UNB+UNOC:1+1234+3333+200102:2212+42'UNH+42z42+PAORES:93:1:IA'UNT+42z42+0'UNZ+2+42'"
+)
+for message in interchange.get_messages():
+    for segment in message.get_segments():
+        print('Segment tag: {}, content: {}'.format(
+            segment.tag, segment.elements))
+```
+
+You may also want to iterate directly on segments :
 
 ```python
-from pydifact.segmentcollection import SegmentCollection
-collection = SegmentCollection.from_file("./tests/data/order.edi")
-collection = SegmentCollection.from_str("UNA:+,? 'UNH+1+ORDERS:D:96A:UN:EAN008'")
+from pydifact.segmentcollection import Interchange
+interchange = Interchange.from_file("./tests/data/order.edi")
+interchange = Interchange.from_str("UNA:+,? 'UNH+1+ORDERS:D:96A:UN:EAN008'")
 
-for segment in collection.segments:
+for segment in interchange.segments:
     print('Segment tag: {}, content: {}'.format(
         segment.tag, segment.elements))
 ```
@@ -47,17 +61,29 @@ for segment in collection.segments:
 Or you can create an EDI interchange on the fly:
 
 ```python
-from pydifact.segmentcollection import SegmentCollection
+from pydifact.segmentcollection import Interchange
 from pydifact.segments import Segment
-collection = SegmentCollection()
-collection.add_segment(Segment('QTY', ['12', '3']))
-print(collection.serialize())
+interchange = Interchange()
+interchange.add_segment(Segment('QTY', ['12', '3']))
+print(interchange.serialize())
 ```
+
+You may also want to parse a « raw » segment bunch which is not an interchange :
+
+```
+from pydifact.segmentcollection import RawSegmentCollection
+collection = RawSegmentCollection.from_str("UNH+1+ORDERS:D:96A:UN:EAN008'")
+
+for segment in collection.segments:
+    print('Segment tag: {}, content: {}'.format(
+        segment.tag, segment.elements))
+
+```
+
 
 ## Limitations
 
-- No support of high-level EDIFACT containers : Interchange (`UNA`+`UNB`→`UNZ`), Messages (`UNH`/`UNT`), and optional functional groups (`UNG`→`UNE`),
-- No support for data encoded with something else than *ISO-8859*
+- No support of optional functional groups (`UNG`→`UNE`),
 
 ## Alternatives
 
