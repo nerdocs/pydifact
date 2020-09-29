@@ -25,6 +25,7 @@ from typing import List, Optional, Tuple, Union
 import datetime
 import warnings
 
+from pydifact.api import EDISyntaxError
 from pydifact.parser import Parser
 from pydifact.segments import Segment
 from pydifact.serializer import Serializer
@@ -352,14 +353,14 @@ class Interchange(FileSourcableMixin, UNAHandlingMixin, AbstractSegmentsContaine
                 if not message:
                     message = Message(segment.elements[0], segment.elements[1])
                 else:
-                    raise SyntaxError(
+                    raise EDISyntaxError(
                         f"Missing UNT segment before new UNH: {segment}"
                     )
             elif segment.tag == 'UNT':
                 if message:
                     yield message
                 else:
-                    raise SyntaxError(
+                    raise EDISyntaxError(
                         f'UNT segment without matching UNH: "{segment}"'
                     )
             else:
@@ -387,10 +388,10 @@ class Interchange(FileSourcableMixin, UNAHandlingMixin, AbstractSegmentsContaine
         elif first_segment.tag == 'UNB':
             unb = first_segment
         else:
-            raise SyntaxError('An interchange must start with UNB or UNA and UNB')
+            raise EDISyntaxError('An interchange must start with UNB or UNA and UNB')
         # Loosy syntax check :
         if len(unb.elements) < 4:
-            raise SyntaxError('Missing elements in UNB header')
+            raise EDISyntaxError('Missing elements in UNB header')
 
         datetime_str = '-'.join(unb.elements[3])
         timestamp = datetime.datetime.strptime(datetime_str, '%y%m%d-%H%M')
