@@ -15,5 +15,5 @@ class PluginMount(type):
                 cls.plugins.append(cls)
 
 
-class EDISyntaxError(Exception):
+class EDISyntaxError(SyntaxError):
     """A Syntax error within the parsed EDIFACT file was found."""
