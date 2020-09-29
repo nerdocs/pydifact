@@ -264,6 +264,20 @@ class Message(AbstractSegmentsContainer):
         self.reference_number = reference_number
         self.identifier = identifier
 
+    @property
+    def type(self) -> str:
+        return self.identifier[0]
+
+    @property
+    def version(self) -> str:
+        """
+        Gives version number and release number.
+
+        :return: message version, parsable by pkg_resources.parse_version()
+        """
+        return f'{self.identifier[1]}.{self.identifier[2]}'
+
+
     def get_header_segment(self) -> Segment:
         return Segment(
             "UNH",
