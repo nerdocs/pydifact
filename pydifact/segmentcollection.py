@@ -388,6 +388,9 @@ class Interchange(FileSourcableMixin, UNAHandlingMixin, AbstractSegmentsContaine
             unb = first_segment
         else:
             raise SyntaxError('An interchange must start with UNB or UNA and UNB')
+        # Loosy syntax check :
+        if len(unb.elements) < 4:
+            raise SyntaxError('Missing elements in UNB header')
 
         datetime_str = '-'.join(unb.elements[3])
         timestamp = datetime.datetime.strptime(datetime_str, '%y%m%d-%H%M')
