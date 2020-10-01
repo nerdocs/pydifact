@@ -152,6 +152,19 @@ def test_empty_interchange_from_str():
     )
 
 
+def test_empty_interchange_w_una():
+    i = Interchange.from_segments([
+        Segment("UNA", ":+,? '"),
+        Segment("UNB",["UNOC", "1"], "1234", "3333", ['200102', '2212'], "42"),
+        Segment("UNZ","0","42"),
+    ])
+    assert str(i) == (
+        "UNA:+,? '"
+        "UNB+UNOC:1+1234+3333+200102:2212+42'"
+        "UNZ+0+42'"
+    )
+
+
 def test_interchange_messages(interchange, message):
     assert(len(list(interchange.get_messages())) == 0)
 

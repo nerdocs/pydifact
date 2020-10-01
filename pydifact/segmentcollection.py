@@ -405,7 +405,7 @@ class Interchange(FileSourcableMixin, UNAHandlingMixin, AbstractSegmentsContaine
 
         if first_segment.tag == 'UNA':
             interchange.has_una_segment = True
-            interchange.characters = Characters.from_str(unb.elements[0])
+            interchange.characters = Characters.from_str(first_segment.elements[0])
 
         return interchange.add_segments(
             segment for segment in segments if segment.tag != 'UNZ'
