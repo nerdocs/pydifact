@@ -13,9 +13,11 @@
 #
 #    You should have received a copy of the GNU Lesser General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+import datetime
+
 import pytest
 
-from pydifact.segmentcollection import SegmentCollection
+from pydifact.segmentcollection import Interchange, Message, SegmentCollection
 from pydifact.segments import Segment
 from pydifact.api import EDISyntaxError
 
@@ -95,3 +97,127 @@ def test_malformed_tag4():
 def test_malformed_tag5():
     with pytest.raises(EDISyntaxError):
         SegmentCollection.from_str("IMD+F++:::This is '-:malformed string'")
+
+
+@pytest.fixture
+def interchange():
+    return Interchange(
+        sender='1234',
+        recipient='3333',
+        timestamp=datetime.datetime(2020, 1, 2, 22, 12),
+        control_reference='42',
+        syntax_identifier=('UNOC', 1),
+    )
+
+
+@pytest.fixture
+def message():
+    return Message(
+        reference_number='42z42',
+        identifier=('PAORES', 93, 1, 'IA'),
+    )
+
+
+def test_empty_interchange(interchange):
+    assert str(interchange) == (
+        "UNB+UNOC:1+1234+3333+200102:2212+42'"
+        "UNZ+0+42'"
+    )
+
+
+def test_empty_interchange_w_extra_header(interchange):
+    i = Interchange(
+        sender='1234',
+        recipient='3333',
+        timestamp=datetime.datetime(2020, 1, 2, 22, 12),
+        control_reference='42',
+        syntax_identifier=('UNOC', 1),
+        extra_header_elements=[['66', '2'], 'ZZ']
+    )
+
+    assert str(i) == (
+        "UNB+UNOC:1+1234+3333+200102:2212+42+66:2+ZZ'"
+        "UNZ+0+42'"
+    )
+
+
+def test_empty_interchange_from_str():
+    i = Interchange.from_str(
+        "UNB+UNOC:1+1234+3333+200102:2212+42'"
+        "UNZ+0+42'"
+    )
+    assert str(i) == (
+        "UNB+UNOC:1+1234+3333+200102:2212+42'"
+        "UNZ+0+42'"
+    )
+
+
+def test_empty_interchange_w_una():
+    i = Interchange.from_segments([
+        Segment("UNA", ":+,? '"),
+        Segment("UNB",["UNOC", "1"], "1234", "3333", ['200102', '2212'], "42"),
+        Segment("UNZ","0","42"),
+    ])
+    assert str(i) == (
+        "UNA:+,? '"
+        "UNB+UNOC:1+1234+3333+200102:2212+42'"
+        "UNZ+0+42'"
+    )
+
+
+def test_interchange_messages(interchange, message):
+    assert(len(list(interchange.get_messages())) == 0)
+
+    interchange.add_message(message)
+
+    assert(len(list(interchange.get_messages())) == 1)
+
+    assert str(interchange) == (
+        "UNB+UNOC:1+1234+3333+200102:2212+42'"
+        "UNH+42z42+PAORES:93:1:IA'"
+        "UNT+42z42+0'"
+        "UNZ+2+42'"
+    )
+
+
+def test_interchange_messages_from_str():
+    i = Interchange.from_str(
+        "UNB+UNOC:1+1234+3333+200102:2212+42'"
+        "UNH+42z42+PAORES:93:1:IA'"
+        "UNT+42z42+0'"
+        "UNZ+2+42'"
+    )
+    assert str(i) == (
+        "UNB+UNOC:1+1234+3333+200102:2212+42'"
+        "UNH+42z42+PAORES:93:1:IA'"
+        "UNT+42z42+0'"
+        "UNZ+2+42'"
+    )
+
+
+def test_faulty_interchange_messages():
+    i = Interchange.from_str(
+        "UNB+UNOC:1+1234+3333+200102:2212+42'"
+        "UNH+42z42+PAORES:93:1:IA'"
+        "UNH+42z42+PAORES:93:1:IA'"
+        "UNZ+2+42'"
+    )
+
+    with pytest.raises(SyntaxError):
+        list(i.get_messages())
+
+    i = Interchange.from_str(
+        "UNB+UNOC:1+1234+3333+200102:2212+42'"
+        "UNT+42z42+0'"
+        "UNZ+2+42'"
+    )
+
+    with pytest.raises(SyntaxError):
+        list(i.get_messages())
+
+
+def test_empty_message(message):
+    assert str(message) == (
+        "UNH+42z42+PAORES:93:1:IA'"
+        "UNT+42z42+0'"
+    )
