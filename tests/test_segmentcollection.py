@@ -45,6 +45,17 @@ def test_get_segments_doesnt_exist():
     segments = list(collection.get_segments("36CF"))
     assert [] == segments
 
+def test_get_segments_w_predicate():
+    collection = SegmentCollection.from_segments([
+            Segment("A", '1', 'a'),
+            Segment("A", '2', 'b'),
+            Segment("A", '1', 'c'),
+    ])
+    segments = collection.get_segments("A", lambda x: x[0] == '1')
+    assert [
+        Segment("A", '1', 'a'),
+        Segment("A", '1', 'c'),
+    ] == list(segments)
 
 def test_get_segment():
     collection = SegmentCollection.from_segments(
@@ -52,6 +63,14 @@ def test_get_segment():
     )
     segment = collection.get_segment("36CF")
     assert Segment("36CF", 1) == segment
+
+
+def test_get_segment_w_predicate():
+    collection = SegmentCollection.from_segments(
+        [Segment("36CF", '1'), Segment("36CF", '2')]
+    )
+    segment = collection.get_segment("36CF", lambda x: x[0] == '2')
+    assert segment == Segment("36CF", '2')
 
 
 def test_str_serialize():

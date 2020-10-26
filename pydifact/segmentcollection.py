@@ -21,7 +21,7 @@
 # THE SOFTWARE.
 
 import collections
-from typing import List, Optional, Tuple, Union
+from typing import Callable, List, Optional, Tuple, Union
 import datetime
 import warnings
 
@@ -74,22 +74,34 @@ class AbstractSegmentsContainer:
         # with the added segments
         return cls().add_segments(segments)
 
-    def get_segments(self, name: str) -> list:
+    def get_segments(
+            self, name: str, predicate: Callable[[Segment], bool] = None
+    ) -> list:
         """Get all the segments that match the requested name.
-        :param name: The name of the segment to return
+        :param name: The name of the segments to return
+        :param predicate: Optional predicate that must match on the segments
+           to return
         :rtype: list of Segment
         """
         for segment in self.segments:
-            if segment.tag == name:
+            if (
+                    segment.tag == name
+                    and
+                    (predicate is None or predicate(segment))
+            ):
                 yield segment
 
-    def get_segment(self, name: str) -> Optional[Segment]:
+    def get_segment(
+            self, name: str, predicate: Callable[[Segment], bool] = None
+    ) -> Optional[Segment]:
         """Get the first segment that matches the requested name.
 
         :return: The requested segment, or None if not found
         :param name: The name of the segment to return
+        :param predicate: Optional predicate that must match on the segments
+           to return
         """
-        for segment in self.get_segments(name):
+        for segment in self.get_segments(name, predicate):
             return segment
 
         return None
