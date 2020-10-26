@@ -7,6 +7,7 @@ Changelog for PYDIFACT
 [0.1] - UNRELEASED
 - Deprecate SegmentCollection
 - Add Interchange and Message semantic and featured classes
+- Allow to access AbstractSegmentsContainer elements using `container[i]`
 
 [0.0.5] - 2020-04-29
 - corrected pypi details
