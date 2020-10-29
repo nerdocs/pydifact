@@ -79,6 +79,12 @@ class Segment(SegmentProvider):
             and list(self.elements) == list(other.elements)
         )
 
+    def __getitem__(self, key):
+        return self.elements[key]
+
+    def __setitem__(self, key, value):
+        self.elements[key] = value
+
     def validate(self) -> bool:
         """
         Segment validation.
