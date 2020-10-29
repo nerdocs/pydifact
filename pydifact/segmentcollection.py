@@ -78,9 +78,9 @@ class AbstractSegmentsContainer:
             self, name: str, predicate: Callable[[Segment], bool] = None
     ) -> list:
         """Get all the segments that match the requested name.
+        
         :param name: The name of the segments to return
-        :param predicate: Optional predicate that must match on the segments
-           to return
+        :param predicate: Optional predicate callable that returns True if the given segment matches a condition
         :rtype: list of Segment
         """
         for segment in self.segments:
