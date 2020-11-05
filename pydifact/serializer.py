@@ -36,6 +36,12 @@ class Serializer:
             characters = Characters()
 
         self.characters = characters
+        self.replace_map = characters.escaped_syntax_dic
+
+        # Thanks to "Bor González Usach" for this wonderful piece of code:
+        # https://gist.github.com/bgusach/a967e0587d6e01e889fd1d776c5f3729
+        substrs = sorted(self.replace_map, key=len, reverse=True)
+        self.regexp = re.compile("|".join(map(re.escape, substrs)))
 
     def serialize(
         self, segments: List[Segment], with_una_header: bool = True, break_lines=False
@@ -52,23 +58,10 @@ class Serializer:
 
         # first, check if UNA header is wanted.
         if with_una_header:
-            # create an EDIFACT header
-            default_una_header = [
-                "UNA",
-                self.characters.component_separator,
-                self.characters.data_separator,
-                self.characters.decimal_point,
-                self.characters.escape_character,
-                self.characters.reserved_character,
-                self.characters.segment_terminator,
-            ]
             if not segments:
-                return "".join(default_una_header)
-
-            if segments[0].tag == "UNA":
-                collection_parts += ["UNA", segments[0].elements[0]]
+                return self.characters.service_string_advice
             else:
-                collection_parts += default_una_header
+                collection_parts += self.characters.service_string_advice
 
         else:
             # no una header wanted!
@@ -80,20 +73,21 @@ class Serializer:
             # skip the UNA segment as we already have written it if requested
             if segment.tag == "UNA":
                 continue
-            collection_parts += [segment.tag]
+            collection_parts += segment.tag
             for element in segment.elements:
-                collection_parts += [self.characters.data_separator]
+                collection_parts += self.characters.data_separator
                 if type(element) == list:
                     element = (self.escape(subelement) for subelement in element)
-                    collection_parts += [
-                        self.characters.component_separator.join(element)
-                    ]
-                else:
-                    collection_parts += [self.escape(element)]
+                    collection_parts += self.characters.component_separator.join(
+                        element
+                    )
 
-            collection_parts += [self.characters.segment_terminator]
+                else:
+                    collection_parts += self.escape(element)
+
+            collection_parts += self.characters.segment_terminator
             if break_lines:
-                collection_parts += ["\n"]
+                collection_parts += "\n"
 
         collection = "".join(collection_parts)
         return collection
@@ -108,19 +102,4 @@ class Serializer:
             return ""
         assert type(string) == str, "%s is not a str, it is %s" % (string, type(string))
 
-        characters = [
-            self.characters.escape_character,
-            self.characters.component_separator,
-            self.characters.data_separator,
-            self.characters.segment_terminator,
-        ]
-        replace_map = {}
-        for character in characters:
-            replace_map[character] = self.characters.escape_character + character
-
-        # Thanks to "Bor González Usach" for this wonderful piece of code:
-        # https://gist.github.com/bgusach/a967e0587d6e01e889fd1d776c5f3729
-        substrs = sorted(replace_map, key=len, reverse=True)
-        regexp = re.compile("|".join(map(re.escape, substrs)))
-
-        return regexp.sub(lambda match: replace_map[match.group(0)], string)
+        return self.regexp.sub(lambda match: self.replace_map[match.group(0)], string)
