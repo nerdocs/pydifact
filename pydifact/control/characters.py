@@ -91,6 +91,19 @@ class Characters:
         # return clone
         return other
 
+    @property
+    def service_string_advice(self) -> str:
+        return "UNA" + str(self)
+
+    @property
+    def escaped_syntax_dic(self):
+        return {
+            self.escape_character: self.escape_character + self.escape_character,
+            self.component_separator: self.escape_character + self.component_separator,
+            self.data_separator: self.escape_character + self.data_separator,
+            self.segment_terminator: self.escape_character + self.segment_terminator,
+        }
+
     def __str__(self) -> str:
         return str(
             self.component_separator
