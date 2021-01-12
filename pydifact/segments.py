@@ -69,7 +69,10 @@ class Segment(SegmentProvider):
         )
 
     def __repr__(self) -> str:
-        return f"{self.tag} segment: {str(self.elements)}"
+        return "{} segment: {}".format(
+            self.tag,
+            str(self.elements)
+        )
 
     def __eq__(self, other) -> bool:
         # FIXME the other way round too? isinstance(other, type(self))?
@@ -128,12 +131,17 @@ class SegmentFactory:
 
         if type(name) != str:
             raise EDISyntaxError(
-                f"The tag name of a segment must be a str, but is a {type(name)}: {name}"
+                "The tag name of a segment must be a str, but is a {}: {}".format(
+                    type(name),
+                    name
+                )
             )
 
         if not name.isalnum():
             raise EDISyntaxError(
-                f"Tag '{name}': A tag name must only contain alphanumeric characters."
+                "Tag '{}': A tag name must only contain alphanumeric characters.".format(
+                    name
+                )
             )
 
         for Plugin in SegmentProvider.plugins:
@@ -147,7 +155,9 @@ class SegmentFactory:
         if validate:
             if not s.validate():
                 raise EDISyntaxError(
-                    f"could not create '{name}' Segment. Validation failed."
+                    "could not create '{}' Segment. Validation failed.".format(
+                        name
+                    )
                 )
 
         # FIXME: characters is not used!

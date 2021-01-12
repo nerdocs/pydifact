@@ -288,7 +288,10 @@ class Message(AbstractSegmentsContainer):
 
         :return: message version, parsable by pkg_resources.parse_version()
         """
-        return f'{self.identifier[1]}.{self.identifier[2]}'
+        return "{}.{}".format(
+            self.identifier[1],
+            self.identifier[2]
+        )
 
 
     def get_header_segment(self) -> Segment:
@@ -346,7 +349,10 @@ class Interchange(FileSourcableMixin, UNAHandlingMixin, AbstractSegmentsContaine
             [str(i) for i in self.syntax_identifier],
             self.sender,
             self.recipient,
-            [f'{self.timestamp:%y%m%d}', f'{self.timestamp:%H%M}'],
+            [
+                "{:%y%m%d}".format(self.timestamp),
+                "{:%H%M}".format(self.timestamp)
+            ],
             self.control_reference,
             *self.extra_header_elements,
         )
@@ -366,14 +372,14 @@ class Interchange(FileSourcableMixin, UNAHandlingMixin, AbstractSegmentsContaine
                     message = Message(segment.elements[0], segment.elements[1])
                 else:
                     raise EDISyntaxError(
-                        f"Missing UNT segment before new UNH: {segment}"
+                        "Missing UNT segment before new UNH: {}".format(segment)
                     )
             elif segment.tag == 'UNT':
                 if message:
                     yield message
                 else:
                     raise EDISyntaxError(
-                        f'UNT segment without matching UNH: "{segment}"'
+                        'UNT segment without matching UNH: "{}"'.format(segment)
                     )
             else:
                 if message:
