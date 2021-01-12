@@ -69,10 +69,7 @@ class Segment(SegmentProvider):
         )
 
     def __repr__(self) -> str:
-        return "{} segment: {}".format(
-            self.tag,
-            str(self.elements)
-        )
+        return "{} segment: {}".format(self.tag, str(self.elements))
 
     def __eq__(self, other) -> bool:
         # FIXME the other way round too? isinstance(other, type(self))?
@@ -132,8 +129,7 @@ class SegmentFactory:
         if type(name) != str:
             raise EDISyntaxError(
                 "The tag name of a segment must be a str, but is a {}: {}".format(
-                    type(name),
-                    name
+                    type(name), name
                 )
             )
 
@@ -155,9 +151,7 @@ class SegmentFactory:
         if validate:
             if not s.validate():
                 raise EDISyntaxError(
-                    "could not create '{}' Segment. Validation failed.".format(
-                        name
-                    )
+                    "could not create '{}' Segment. Validation failed.".format(name)
                 )
 
         # FIXME: characters is not used!
