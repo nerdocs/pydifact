@@ -75,24 +75,20 @@ class AbstractSegmentsContainer:
         return cls().add_segments(segments)
 
     def get_segments(
-            self, name: str, predicate: Callable[[Segment], bool] = None
+        self, name: str, predicate: Callable[[Segment], bool] = None
     ) -> list:
         """Get all the segments that match the requested name.
-        
+
         :param name: The name of the segments to return
         :param predicate: Optional predicate callable that returns True if the given segment matches a condition
         :rtype: list of Segment
         """
         for segment in self.segments:
-            if (
-                    segment.tag == name
-                    and
-                    (predicate is None or predicate(segment))
-            ):
+            if segment.tag == name and (predicate is None or predicate(segment)):
                 yield segment
 
     def get_segment(
-            self, name: str, predicate: Callable[[Segment], bool] = None
+        self, name: str, predicate: Callable[[Segment], bool] = None
     ) -> Optional[Segment]:
         """Get the first segment that matches the requested name.
 
@@ -158,7 +154,9 @@ class AbstractSegmentsContainer:
             out.append(footer)
 
         return Serializer(self.characters).serialize(
-            out, self.has_una_segment, break_lines,
+            out,
+            self.has_una_segment,
+            break_lines,
         )
 
     def __str__(self) -> str:
@@ -172,6 +170,7 @@ class FileSourcableMixin:
 
     For v0.2 drop this class and move from_file() to Interchange class.
     """
+
     @classmethod
     def from_file(cls, file: str, encoding: str = "iso8859-1") -> "FileSourcableMixin":
         """Create a Interchange instance from a file.
@@ -187,6 +186,7 @@ class FileSourcableMixin:
         with open(file, encoding=encoding) as f:
             collection = f.read()
         return cls.from_str(collection)
+
 
 class UNAHandlingMixin:
     """
@@ -210,13 +210,15 @@ class UNAHandlingMixin:
         return super().add_segment(segment)
 
 
-
-class SegmentCollection(FileSourcableMixin, UNAHandlingMixin, AbstractSegmentsContainer):
+class SegmentCollection(
+    FileSourcableMixin, UNAHandlingMixin, AbstractSegmentsContainer
+):
     """
     For backward compatibility. Drop it in v0.2
 
     Will be replaced by Interchange or RawSegmentCollection depending on the need.
     """
+
     def __init__(self, *args, **kwargs):
         warnings.warn(
             "SegmentCollection is deprecated and will no longer be available in v0.2, "
@@ -232,7 +234,7 @@ class SegmentCollection(FileSourcableMixin, UNAHandlingMixin, AbstractSegmentsCo
             "Use Interchange class instead",
             DeprecationWarning,
         )
-        return  super().from_file(*args, **kwargs)
+        return super().from_file(*args, **kwargs)
 
     def add_segment(self, segment: Segment) -> "SegmentCollection":
         if segment.tag == "UNA":
@@ -254,8 +256,8 @@ class RawSegmentCollection(AbstractSegmentsContainer):
     those classes to RawSegmentCollection, as they offer more features and
     checks.
     """
-    pass
 
+    pass
 
 
 class Message(AbstractSegmentsContainer):
@@ -267,12 +269,8 @@ class Message(AbstractSegmentsContainer):
     https://www.stylusstudio.com/edifact/40100/UNH_.htm
     https://www.stylusstudio.com/edifact/40100/UNT_.htm
     """
-    def __init__(
-            self,
-            reference_number: str,
-            identifier: Tuple,
-            *args, **kwargs
-    ):
+
+    def __init__(self, reference_number: str, identifier: Tuple, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.reference_number = reference_number
         self.identifier = identifier
@@ -288,8 +286,7 @@ class Message(AbstractSegmentsContainer):
 
         :return: message version, parsable by pkg_resources.parse_version()
         """
-        return f'{self.identifier[1]}.{self.identifier[2]}'
-
+        return "{}.{}".format(self.identifier[1], self.identifier[2])
 
     def get_header_segment(self) -> Segment:
         return Segment(
@@ -322,15 +319,17 @@ class Interchange(FileSourcableMixin, UNAHandlingMixin, AbstractSegmentsContaine
     https://www.stylusstudio.com/edifact/40100/UNB_.htm
     https://www.stylusstudio.com/edifact/40100/UNZ_.htm
     """
+
     def __init__(
-            self,
-            sender: str,
-            recipient: str,
-            control_reference: str,
-            syntax_identifier: Tuple[str, int],
-            delimiters: Characters = Characters(),
-            timestamp: datetime.datetime = None,
-            *args, **kwargs
+        self,
+        sender: str,
+        recipient: str,
+        control_reference: str,
+        syntax_identifier: Tuple[str, int],
+        delimiters: Characters = Characters(),
+        timestamp: datetime.datetime = None,
+        *args,
+        **kwargs
     ):
         super().__init__(*args, **kwargs)
         self.sender = sender
@@ -346,7 +345,7 @@ class Interchange(FileSourcableMixin, UNAHandlingMixin, AbstractSegmentsContaine
             [str(i) for i in self.syntax_identifier],
             self.sender,
             self.recipient,
-            [f'{self.timestamp:%y%m%d}', f'{self.timestamp:%H%M}'],
+            ["{:%y%m%d}".format(self.timestamp), "{:%H%M}".format(self.timestamp)],
             self.control_reference,
             *self.extra_header_elements,
         )
@@ -361,19 +360,19 @@ class Interchange(FileSourcableMixin, UNAHandlingMixin, AbstractSegmentsContaine
     def get_messages(self) -> List[Message]:
         message = None
         for segment in self.segments:
-            if segment.tag == 'UNH':
+            if segment.tag == "UNH":
                 if not message:
                     message = Message(segment.elements[0], segment.elements[1])
                 else:
                     raise EDISyntaxError(
-                        f"Missing UNT segment before new UNH: {segment}"
+                        "Missing UNT segment before new UNH: {}".format(segment)
                     )
-            elif segment.tag == 'UNT':
+            elif segment.tag == "UNT":
                 if message:
                     yield message
                 else:
                     raise EDISyntaxError(
-                        f'UNT segment without matching UNH: "{segment}"'
+                        'UNT segment without matching UNH: "{}"'.format(segment)
                     )
             else:
                 if message:
@@ -389,24 +388,22 @@ class Interchange(FileSourcableMixin, UNAHandlingMixin, AbstractSegmentsContaine
         return self
 
     @classmethod
-    def from_segments(
-        cls, segments: list or collections.Iterable
-    ) -> "Interchange":
+    def from_segments(cls, segments: list or collections.Iterable) -> "Interchange":
         segments = iter(segments)
 
         first_segment = next(segments)
-        if first_segment.tag == 'UNA':
+        if first_segment.tag == "UNA":
             unb = next(segments)
-        elif first_segment.tag == 'UNB':
+        elif first_segment.tag == "UNB":
             unb = first_segment
         else:
-            raise EDISyntaxError('An interchange must start with UNB or UNA and UNB')
+            raise EDISyntaxError("An interchange must start with UNB or UNA and UNB")
         # Loosy syntax check :
         if len(unb.elements) < 4:
-            raise EDISyntaxError('Missing elements in UNB header')
+            raise EDISyntaxError("Missing elements in UNB header")
 
-        datetime_str = '-'.join(unb.elements[3])
-        timestamp = datetime.datetime.strptime(datetime_str, '%y%m%d-%H%M')
+        datetime_str = "-".join(unb.elements[3])
+        timestamp = datetime.datetime.strptime(datetime_str, "%y%m%d-%H%M")
         interchange = Interchange(
             syntax_identifier=unb.elements[0],
             sender=unb.elements[1],
@@ -415,10 +412,10 @@ class Interchange(FileSourcableMixin, UNAHandlingMixin, AbstractSegmentsContaine
             control_reference=unb.elements[4],
         )
 
-        if first_segment.tag == 'UNA':
+        if first_segment.tag == "UNA":
             interchange.has_una_segment = True
             interchange.characters = Characters.from_str(first_segment.elements[0])
 
         return interchange.add_segments(
-            segment for segment in segments if segment.tag != 'UNZ'
+            segment for segment in segments if segment.tag != "UNZ"
         )
