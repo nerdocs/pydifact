@@ -32,6 +32,8 @@ from .serializer import Serializer
 from .token import Token
 from .tokenizer import Tokenizer
 
+from . import mapping
+
 # generic EDIFACT implementation tutorial
 # http://www.gxs.co.uk/wp-content/uploads/tutorial_edifact.pdf
 
