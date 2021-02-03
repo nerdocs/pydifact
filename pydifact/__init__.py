@@ -40,6 +40,10 @@ from .tokenizer import Tokenizer
 
 # EDIFACT Syntax Rules
 # http://www.unece.org/fileadmin/DAM/trade/edifact/untdid/d422_s.htm#normative
+from . import mapping
+
+# generic EDIFACT implementation tutorial
+# http://www.gxs.co.uk/wp-content/uploads/tutorial_edifact.pdf
 
 # UNECE Syntax Implementation Guidelines
 # https://www.unece.org/fileadmin/DAM/trade/untdid/texts/d423.htm
