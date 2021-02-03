@@ -1,6 +1,5 @@
 from pydifact.segmentcollection import Interchange
-from pydifact.segments import Segment
-import pydifact.mapping as mapping
+from pydifact import Segment, mapping, serializer
 
 
 class BGM(Segment):
@@ -46,7 +45,7 @@ PRI+AAA:100.00'
 RFF+LI:1'
 UNS+S'
 CNT+2:1'
-UNT+32+1'
+UNT+1+27'
 UNZ+1+0001'"""
 )
 
@@ -84,23 +83,35 @@ class Order(mapping.SegmentGroup):
 
 TYPE_TO_PARSER_DICT = {"ORDERS": Order}
 
-for message in interchange.get_messages():
-    cls = TYPE_TO_PARSER_DICT.get(message.type)
-    if not cls:
-        raise NotImplementedError("Unsupported message type '{}'".format(message.type))
+message = next(interchange.get_messages())
 
-    obj = cls()
-    obj.from_message(message)
+cls = TYPE_TO_PARSER_DICT.get(message.type)
+if not cls:
+    raise NotImplementedError("Unsupported message type '{}'".format(message.type))
 
-    reconstituted = obj.to_message(message.reference_number, message.identifier)
+obj = cls()
+obj.from_message(message)
 
-    # print(str(obj))
-    # print(obj.purchase_order_id[0])
+reconstituted = obj.to_message(message.reference_number, message.identifier)
 
-    assert isinstance(obj.purchase_order_id._to_segments(), BGM)
+# print(str(obj))
+# print(obj.purchase_order_id[0])
 
-    # print(message.segments)
+assert isinstance(obj.purchase_order_id._to_segments(), BGM)
 
-    assert str(message) == str(
-        reconstituted
-    ), "Original message should match reconstituted message"
+# print(message.segments)
+
+assert str(message) == str(
+    reconstituted
+), "Original message should match reconstituted message"
+
+reconstituted_interchange = Interchange(
+    interchange.sender, interchange.recipient,
+    interchange.control_reference,
+    interchange.syntax_identifier,
+    interchange.delimiters,
+    interchange.timestamp
+)
+reconstituted_interchange.add_message(reconstituted)
+
+assert reconstituted_interchange.serialize() == interchange.serialize(), "Original interchange should match reconstituted interchange"
