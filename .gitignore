@@ -57,3 +57,6 @@ prof
 .kdev4
 .venv
 Pipfile.lock
+
+# vim stuff
+.vim

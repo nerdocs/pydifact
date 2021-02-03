@@ -1,22 +1,44 @@
+# Pydifact - a python edifact library
+#
+# Copyright (c) 2021 Karl Southern
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy of
+# this software and associated documentation files (the "Software"), to deal in
+# the Software without restriction, including without limitation the rights to
+# use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+# THE SOFTWARE.
+
 import collections
-import itertools
-from typing import Callable, List, Optional, Tuple, Union
+from typing import List, Tuple, Iterator
 
 from pydifact.segmentcollection import Message
-from pydifact.api import PluginMount, EDISyntaxError
+from pydifact.api import EDISyntaxError
 from pydifact.segments import Segment as Seg, SegmentFactory
 
 
-class BiDirectionalIterator(object):
+class BiDirectionalIterator:
     """
-    Bi-directional iterator. Used as a convenience when parsing messages
+    Bi-directional iterator. Used as a convenience when parsing Message
+    Segments.
     """
 
-    def __init__(self, collection):
+    def __init__(self, collection: List):
         self.collection = collection
         self.index = 0
 
-    def next(self):
+    def __next__(self):
         try:
             result = self.collection[self.index]
             self.index += 1
@@ -24,11 +46,26 @@ class BiDirectionalIterator(object):
             raise StopIteration
         return result
 
-    def prev(self):
+    def __prev__(self):
         self.index -= 1
         if self.index < 0:
             raise StopIteration
         return self.collection[self.index]
+
+    def __getitem__(self, key):
+        return self.collection[key]
+
+    def next(self):
+        """
+        Alias for __next__ method.
+        """
+        return self.__next__()
+
+    def prev(self):
+        """
+        Alias to __prev__ method.
+        """
+        return self.__prev__()
 
     def __iter__(self):
         return self
@@ -43,11 +80,25 @@ class AbstractMappingComponent:
     def __init__(self, **kwargs):
         self.mandatory = kwargs.get("mandatory", False)
 
-    def _from_segments(self, messages):
+    def from_segments(self, iterator: BiDirectionalIterator):
+        """
+        Convert a BiDirectionalIterator of Segment instances into this mapping
+        component.
+        """
         raise NotImplementedError()
 
-    def _to_segments(self):
+    def to_segments(self) -> List[Seg]:
+        """
+        Converts a mapping component to a list of Segment.
+        """
         raise NotImplementedError()
+
+    # pylint: disable=no-self-use
+    def validate(self) -> bool:
+        """
+        Mapping component validation.
+        """
+        return True
 
 
 class Segment(AbstractMappingComponent):
@@ -59,13 +110,15 @@ class Segment(AbstractMappingComponent):
     def __init__(self, tag: str, *elements, **kwargs):
         super(Segment, self).__init__(**kwargs)
 
-        self.__component__ = SegmentFactory.create_segment(tag, [], validate=False)
+        self.__component__ = SegmentFactory.create_segment(
+            tag, *elements, validate=False
+        )
 
     @property
-    def tag(self):
+    def tag(self) -> str:
         return self.__component__.tag
 
-    def __str__(self):
+    def __str__(self) -> str:
         return "{} {}".format(type(self.__component__), str(self.__component__))
 
     def __getitem__(self, key):
@@ -77,7 +130,7 @@ class Segment(AbstractMappingComponent):
     def validate(self) -> bool:
         return self.__component__.validate()
 
-    def _from_segments(self, iterator):
+    def from_segments(self, iterator: BiDirectionalIterator):
         segment = iterator.next()
 
         if self.tag == segment.tag:
@@ -89,7 +142,7 @@ class Segment(AbstractMappingComponent):
 
         iterator.prev()
 
-    def _to_segments(self):
+    def to_segments(self):
         return self.__component__
 
 
@@ -101,7 +154,7 @@ class SegmentGroupMetaClass(type):
     """
 
     @classmethod
-    def __prepare__(cls, name, bases):
+    def __prepare__(cls, _name, _bases):
         return collections.OrderedDict()
 
     def __new__(cls, name, bases, classdict):
@@ -121,25 +174,23 @@ class SegmentGroup(AbstractMappingComponent, metaclass=SegmentGroupMetaClass):
     Describes a group of AbstractMappingComponent
     """
 
-    def _from_segments(self, isegment):
-        i = 0
-
+    def from_segments(self, iterator: Iterator):
         icomponent = iter(self.__components__)
 
         try:
             while True:
                 component_name = next(icomponent)
                 component = getattr(self, component_name)
-                component._from_segments(isegment)
+                component.from_segments(iterator)
         except StopIteration:
             pass
 
-    def _to_segments(self):
+    def to_segments(self):
         segments = []
 
         for component_name in self.__components__:
             component = getattr(self, component_name)
-            component_segments = component._to_segments()
+            component_segments = component.to_segments()
 
             if isinstance(component_segments, list):
                 segments += component_segments
@@ -148,15 +199,21 @@ class SegmentGroup(AbstractMappingComponent, metaclass=SegmentGroupMetaClass):
 
         return segments
 
-    def from_message(self, message):
-        imessage = BiDirectionalIterator(message.segments)
-        self._from_segments(imessage)
+    def from_message(self, message: Message):
+        """
+        Create a mapping from a Message.
+        """
+        iterator = BiDirectionalIterator(message.segments)
+        self.from_segments(iterator)
 
     def to_message(self, reference_number: str, identifier: Tuple):
-        segments = self._to_segments()
+        """
+        Convert this mapping component into a new Message
+        """
+        segments = self.to_segments()
         return Message.from_segments(reference_number, identifier, segments)
 
-    def __str__(self):
+    def __str__(self) -> str:
         res = []
         for component_name in iter(self.__components__):
             component = getattr(self, component_name)
@@ -183,16 +240,16 @@ class Loop(AbstractMappingComponent):
         self.__component__ = component
         self.value = []
 
-    def _from_segments(self, isegment):
+    def from_segments(self, iterator: BiDirectionalIterator):
         i = 0
         while i < self.max:
 
             try:
                 component = self.__component__()
-                component._from_segments(isegment)
+                component.from_segments(iterator)
                 self.value.append(component)
             except EDISyntaxError:
-                isegment.prev()
+                iterator.prev()
                 if self.mandatory and i < self.min:
                     raise EDISyntaxError("Missing %s" % (self.__component__.__name__))
                 break
@@ -202,15 +259,15 @@ class Loop(AbstractMappingComponent):
         if i < self.min:
             raise EDISyntaxError("Minimum required not met")
 
-    def _to_segments(self):
+    def to_segments(self):
         segments = []
 
         for value in self.value:
-            segments += value._to_segments()
+            segments += value.to_segments()
 
         return segments
 
-    def __str__(self):
+    def __str__(self) -> str:
         res = []
         for v in self.value:
             res.append(str(v))
