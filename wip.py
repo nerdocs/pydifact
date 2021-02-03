@@ -97,7 +97,7 @@ reconstituted = obj.to_message(message.reference_number, message.identifier)
 # print(str(obj))
 # print(obj.purchase_order_id[0])
 
-assert isinstance(obj.purchase_order_id._to_segments(), BGM)
+assert isinstance(obj.purchase_order_id.to_segments(), BGM)
 
 # print(message.segments)
 
