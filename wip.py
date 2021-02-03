@@ -1,5 +1,5 @@
 from pydifact.segmentcollection import Interchange
-from pydifact.segments import Segment 
+from pydifact.segments import Segment
 import pydifact.mapping as mapping
 
 
@@ -15,7 +15,8 @@ class LIN(Segment):
     tag = "LIN"
 
 
-interchange = Interchange.from_str("""UNA:+.?*'
+interchange = Interchange.from_str(
+    """UNA:+.?*'
 UNB+UNOA:4+5021376940009:14+1111111111111:14+200421:1000+0001+ORDERS'
 UNH+1+ORDERS:D:01B:UN:EAN010'
 BGM+220+123456+9'
@@ -46,7 +47,8 @@ RFF+LI:1'
 UNS+S'
 CNT+2:1'
 UNT+32+1'
-UNZ+1+0001'""")
+UNZ+1+0001'"""
+)
 
 
 class OrderLine(mapping.SegmentGroup):
@@ -74,19 +76,13 @@ class Order(mapping.SegmentGroup):
     cux = mapping.Segment("CUX", mandatory=True)
     tdt = mapping.Segment("TDT", mandatory=True)
 
-    lines = mapping.Loop(
-        OrderLine,
-        max=99,
-        mandatory=True
-    )
+    lines = mapping.Loop(OrderLine, max=99, mandatory=True)
 
     uns = mapping.Segment("UNS", mandatory=True)
     cnt = mapping.Segment("CNT", mandatory=True)
 
 
-TYPE_TO_PARSER_DICT = {
-    "ORDERS": Order
-}
+TYPE_TO_PARSER_DICT = {"ORDERS": Order}
 
 for message in interchange.get_messages():
     cls = TYPE_TO_PARSER_DICT.get(message.type)
@@ -98,11 +94,13 @@ for message in interchange.get_messages():
 
     reconstituted = obj.to_message(message.reference_number, message.identifier)
 
-    #print(str(obj))
-    #print(obj.purchase_order_id[0])
+    # print(str(obj))
+    # print(obj.purchase_order_id[0])
 
     assert isinstance(obj.purchase_order_id._to_segments(), BGM)
 
-    #print(message.segments)
+    # print(message.segments)
 
-    assert str(message) == str(reconstituted), "Original message should match reconstituted message"
+    assert str(message) == str(
+        reconstituted
+    ), "Original message should match reconstituted message"

@@ -11,6 +11,7 @@ class BiDirectionalIterator(object):
     """
     Bi-directional iterator. Used as a convenience when parsing messages
     """
+
     def __init__(self, collection):
         self.collection = collection
         self.index = 0
@@ -38,6 +39,7 @@ class AbstractMappingComponent:
     Abstract EDIFact Component, used as a base for Segments, SegmentGroups,
     Loops
     """
+
     def __init__(self, **kwargs):
         self.mandatory = kwargs.get("mandatory", False)
 
@@ -53,28 +55,18 @@ class Segment(AbstractMappingComponent):
     EDIFact Component.
     A simple wrapper for Segment
     """
-    def __init__(
-        self,
-        tag: str,
-        *elements,
-        **kwargs
-    ):
+
+    def __init__(self, tag: str, *elements, **kwargs):
         super(Segment, self).__init__(**kwargs)
 
-        self.__component__ = SegmentFactory.create_segment(
-            tag, [],
-            validate=False
-        )
+        self.__component__ = SegmentFactory.create_segment(tag, [], validate=False)
 
     @property
     def tag(self):
         return self.__component__.tag
 
     def __str__(self):
-        return "{} {}".format(
-            type(self.__component__),
-            str(self.__component__)
-        )
+        return "{} {}".format(type(self.__component__), str(self.__component__))
 
     def __getitem__(self, key):
         return self.__component__[key]
@@ -107,6 +99,7 @@ class SegmentGroupMetaClass(type):
     Required for compatibility with Python 3.5. In 3.6 the
     properties of a class are strictly ordered.
     """
+
     @classmethod
     def __prepare__(cls, name, bases):
         return collections.OrderedDict()
@@ -127,6 +120,7 @@ class SegmentGroup(AbstractMappingComponent, metaclass=SegmentGroupMetaClass):
     """
     Describes a group of AbstractMappingComponent
     """
+
     def _from_segments(self, isegment):
         i = 0
 
@@ -174,6 +168,7 @@ class Loop(AbstractMappingComponent):
     """
     Describes a repeating SegmentGroup
     """
+
     def __init__(self, component, **kwargs):
         super(Loop, self).__init__(**kwargs)
         self.min = kwargs.get("min", 0)
@@ -219,14 +214,10 @@ class Loop(AbstractMappingComponent):
         res = []
         for v in self.value:
             res.append(str(v))
-        return "{} = {}".format(
-            self.__component__.__name__,
-            str(res)
-        )
+        return "{} = {}".format(self.__component__.__name__, str(res))
 
     def __getitem__(self, key):
         return self.value[key]
 
     def __setitem__(self, key, value):
         self.value[key] = value
-
