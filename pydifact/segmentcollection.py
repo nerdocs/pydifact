@@ -381,6 +381,19 @@ class Message(AbstractSegmentsContainer):
         """
 
         pass
+    @classmethod
+    def from_segments(
+        cls, reference_number, identifier, segments: list or collections.Iterable
+    ) -> "AbstractSegmentsContainer":
+        """Create a new AbstractSegmentsContainer instance from a iterable list of segments.
+
+        :param reference_number: Reference number
+        :param identifier: Identifier
+        :param segments: The segments of the EDI interchange
+        :type segments: list/iterable of Segment
+        """
+
+        return cls(reference_number, identifier).add_segments(segments)
 
 
 class Interchange(FileSourcableMixin, UNAHandlingMixin, AbstractSegmentsContainer):
