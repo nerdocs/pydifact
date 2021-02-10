@@ -395,6 +395,25 @@ class Message(AbstractSegmentsContainer):
 
         return cls(reference_number, identifier).add_segments(segments)
 
+    @classmethod
+    def from_str(cls, string: str) -> "AbstractSegmentsContainer":
+        segments = Parser().parse(string)
+
+        unh = None
+        todo = []
+
+        for segment in segments:
+            if segment.tag == "UNH":
+                unh = segment
+                continue
+            if segment.tag == "UNT":
+                continue
+            todo.append(segment)
+
+        if not unh:
+            raise EDISyntaxError("Missing header in message")
+        return cls.from_segments(unh[0], unh[1], todo)
+
 
 class Interchange(FileSourcableMixin, UNAHandlingMixin, AbstractSegmentsContainer):
     """
