@@ -100,6 +100,13 @@ class AbstractMappingComponent:
         """
         return True
 
+    @property
+    def present(self) -> bool:
+        """
+        Is the mapping component present?
+        """
+        raise NotImplementedError()
+
 
 class Segment(AbstractMappingComponent):
     """
@@ -113,6 +120,7 @@ class Segment(AbstractMappingComponent):
         self.__component__ = SegmentFactory.create_segment(
             tag, *elements, validate=False
         )
+        self.__present__ = True
 
     @property
     def tag(self) -> str:
@@ -126,6 +134,8 @@ class Segment(AbstractMappingComponent):
 
     def __setitem__(self, key, value):
         self.__component__[key] = value
+        if not self.__present__:
+            self.__present__ = True
 
     def validate(self) -> bool:
         return self.__component__.validate()
@@ -135,15 +145,22 @@ class Segment(AbstractMappingComponent):
 
         if self.tag == segment.tag:
             self.__component__ = segment
+            self.__present__ = True
             return
 
         if self.mandatory:
             raise EDISyntaxError("Missing %s, found %s" % (self.tag, segment))
 
+        self.__present__ = False
+
         iterator.prev()
 
     def to_segments(self):
         return self.__component__
+
+    @property
+    def present(self) -> bool:
+        return self.__present__
 
 
 class SegmentGroupMetaClass(type):
@@ -220,6 +237,10 @@ class SegmentGroup(AbstractMappingComponent, metaclass=SegmentGroupMetaClass):
             res.append(str(component))
         return "\n".join(res)
 
+    @property
+    def present(self) -> bool:
+        return any(getattr(self, component_name).present for component_name in self.__components__)
+
 
 class Loop(AbstractMappingComponent):
     """
@@ -284,3 +305,7 @@ class Loop(AbstractMappingComponent):
         Append an item to the loop
         """
         self.value.append(value)
+
+    @property
+    def present(self) -> bool:
+        return any(value.present for value in self.value)
