@@ -278,3 +278,9 @@ class Loop(AbstractMappingComponent):
 
     def __setitem__(self, key, value):
         self.value[key] = value
+
+    def append(self, value: AbstractMappingComponent):
+        """
+        Append an item to the loop
+        """
+        self.value.append(value)
