@@ -216,6 +216,40 @@ class SegmentGroup(AbstractMappingComponent, metaclass=SegmentGroupMetaClass):
 
         return segments
 
+    def to_segment_dict(self) -> dict:
+        seg_dict: dict = {}
+        for component_name in self.__components__:
+            component = getattr(self, component_name)
+            if isinstance(component, Loop):
+                component_segments = component.to_segment_dict()
+                seg_dict[component_name] = component_segments
+            else:
+                component_segments = component.to_segments()
+                seg_dict[component_name] = {}
+
+                if isinstance(component_segments, list):
+                    seg_dict[component_name]["tag"] = component_name
+                    seg_dict[component_name]["elements"] = {}
+                    for line_comp in component_segments:
+                        seg_dict[component_name]["elements"]["tag"] = line_comp.tag
+                        seg_dict[component_name]["elements"][
+                            "elements"
+                        ] = line_comp.elements
+                else:
+                    seg_dict[component_name]["tag"] = component_segments.tag
+                    seg_dict[component_name]["elements"] = []
+
+                    if isinstance(component_segments.elements, list):
+                        seg_dict[component_name][
+                            "elements"
+                        ] = component_segments.elements
+                    else:
+                        seg_dict[component_name]["elements"].append(
+                            component_segments.elements
+                        )
+
+        return seg_dict
+
     def from_message(self, message: Message):
         """
         Create a mapping from a Message.
@@ -287,6 +321,13 @@ class Loop(AbstractMappingComponent):
             segments += value.to_segments()
 
         return segments
+
+    def to_segment_dict(self) -> dict:
+        seg_dict: dict = {}
+        for idx, value in enumerate(self.value):
+            seg_dict[idx] = value.to_segment_dict()
+
+        return seg_dict
 
     def __str__(self) -> str:
         res = []
