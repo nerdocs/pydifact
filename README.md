@@ -34,14 +34,14 @@ pip install -e .
 To read a full Interchange from a file or string, take the `Interchange` class and
 iter over the messages and segments:
 
-```
+```python
 from pydifact.segmentcollection import Interchange
 interchange = Interchange.from_file("./tests/data/order.edi")
 interchange = Interchange.from_str(
   "UNA:+,? 'UNB+UNOC:1+1234+3333+200102:2212+42'UNH+42z42+PAORES:93:1:IA'UNT+42z42+0'UNZ+2+42'"
 )
 for message in interchange.get_messages():
-    for segment in message.get_segments():
+    for segment in message.segments:
         print('Segment tag: {}, content: {}'.format(
             segment.tag, segment.elements))
 ```
