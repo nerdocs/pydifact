@@ -11,7 +11,7 @@ class PluginMount(type):
         if not hasattr(cls, "plugins"):
             cls.plugins = []
         else:
-            if not hasattr(cls, "__omitted__"):
+            if not getattr(cls, "__omitted__", False):
                 cls.plugins.append(cls)
 
 
