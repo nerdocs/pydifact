@@ -273,7 +273,12 @@ class SegmentGroup(AbstractMappingComponent, metaclass=SegmentGroupMetaClass):
 
     @property
     def present(self) -> bool:
-        return any(getattr(self, component_name).present for component_name in self.__components__)
+        return any(
+            getattr(self, component_name).present
+            for component_name in self.__components__
+        )
+
+
 
 
 class Loop(AbstractMappingComponent):
