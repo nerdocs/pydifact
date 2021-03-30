@@ -21,6 +21,7 @@
 # THE SOFTWARE.
 
 import collections
+from copy import deepcopy
 from typing import List, Tuple, Iterator
 
 from pydifact.segmentcollection import Message
@@ -279,6 +280,16 @@ class SegmentGroup(AbstractMappingComponent, metaclass=SegmentGroupMetaClass):
         )
 
 
+def deepcopy_obj(obj_in):
+    """Quick hack to deepcopy an object in a loop. Otherwise, reading the 2nd
+    loop object would overwrite the data read in at the first loop operation.
+    """
+    obj_out = deepcopy(obj_in)
+    for comp_name in iter(obj_in.__components__):
+        component = getattr(obj_in, comp_name)
+        new_comp = deepcopy(component)
+        setattr(obj_out, comp_name, new_comp)
+    return deepcopy(obj_out)
 
 
 class Loop(AbstractMappingComponent):
@@ -301,13 +312,19 @@ class Loop(AbstractMappingComponent):
         self.value = []
 
     def from_segments(self, iterator: BiDirectionalIterator):
+        # TODO: really bad hack to reset the deeply copied value list.
+        # Occours if two EDI messages are parsed and the second one contains
+        # more order items than the first. Then, the 2nd message will contain
+        # the first's order items plus their own.
+        self.value = []
+        ##### hack end
         i = 0
         while i < self.max:
 
             try:
                 component = self.__component__()
                 component.from_segments(iterator)
-                self.value.append(component)
+                self.value.append(deepcopy_obj(component))
             except EDISyntaxError:
                 iterator.prev()
                 if self.mandatory and i < self.min:
