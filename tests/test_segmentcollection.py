@@ -45,17 +45,21 @@ def test_get_segments_doesnt_exist():
     segments = list(collection.get_segments("36CF"))
     assert [] == segments
 
+
 def test_get_segments_w_predicate():
-    collection = SegmentCollection.from_segments([
-            Segment("A", '1', 'a'),
-            Segment("A", '2', 'b'),
-            Segment("A", '1', 'c'),
-    ])
-    segments = collection.get_segments("A", lambda x: x[0] == '1')
+    collection = SegmentCollection.from_segments(
+        [
+            Segment("A", "1", "a"),
+            Segment("A", "2", "b"),
+            Segment("A", "1", "c"),
+        ]
+    )
+    segments = collection.get_segments("A", lambda x: x[0] == "1")
     assert [
-        Segment("A", '1', 'a'),
-        Segment("A", '1', 'c'),
+        Segment("A", "1", "a"),
+        Segment("A", "1", "c"),
     ] == list(segments)
+
 
 def test_get_segment():
     collection = SegmentCollection.from_segments(
@@ -67,10 +71,10 @@ def test_get_segment():
 
 def test_get_segment_w_predicate():
     collection = SegmentCollection.from_segments(
-        [Segment("36CF", '1'), Segment("36CF", '2')]
+        [Segment("36CF", "1"), Segment("36CF", "2")]
     )
-    segment = collection.get_segment("36CF", lambda x: x[0] == '2')
-    assert segment == Segment("36CF", '2')
+    segment = collection.get_segment("36CF", lambda x: x[0] == "2")
+    assert segment == Segment("36CF", "2")
 
 
 def test_str_serialize():
@@ -121,75 +125,61 @@ def test_malformed_tag5():
 @pytest.fixture
 def interchange():
     return Interchange(
-        sender='1234',
-        recipient='3333',
+        sender="1234",
+        recipient="3333",
         timestamp=datetime.datetime(2020, 1, 2, 22, 12),
-        control_reference='42',
-        syntax_identifier=('UNOC', 1),
+        control_reference="42",
+        syntax_identifier=("UNOC", 1),
     )
 
 
 @pytest.fixture
 def message():
     return Message(
-        reference_number='42z42',
-        identifier=('PAORES', 93, 1, 'IA'),
+        reference_number="42z42",
+        identifier=("PAORES", 93, 1, "IA"),
     )
 
 
 def test_empty_interchange(interchange):
-    assert str(interchange) == (
-        "UNB+UNOC:1+1234+3333+200102:2212+42'"
-        "UNZ+0+42'"
-    )
+    assert str(interchange) == ("UNB+UNOC:1+1234+3333+200102:2212+42'" "UNZ+0+42'")
 
 
 def test_empty_interchange_w_extra_header(interchange):
     i = Interchange(
-        sender='1234',
-        recipient='3333',
+        sender="1234",
+        recipient="3333",
         timestamp=datetime.datetime(2020, 1, 2, 22, 12),
-        control_reference='42',
-        syntax_identifier=('UNOC', 1),
-        extra_header_elements=[['66', '2'], 'ZZ']
+        control_reference="42",
+        syntax_identifier=("UNOC", 1),
+        extra_header_elements=[["66", "2"], "ZZ"],
     )
 
-    assert str(i) == (
-        "UNB+UNOC:1+1234+3333+200102:2212+42+66:2+ZZ'"
-        "UNZ+0+42'"
-    )
+    assert str(i) == ("UNB+UNOC:1+1234+3333+200102:2212+42+66:2+ZZ'" "UNZ+0+42'")
 
 
 def test_empty_interchange_from_str():
-    i = Interchange.from_str(
-        "UNB+UNOC:1+1234+3333+200102:2212+42'"
-        "UNZ+0+42'"
-    )
-    assert str(i) == (
-        "UNB+UNOC:1+1234+3333+200102:2212+42'"
-        "UNZ+0+42'"
-    )
+    i = Interchange.from_str("UNB+UNOC:1+1234+3333+200102:2212+42'" "UNZ+0+42'")
+    assert str(i) == ("UNB+UNOC:1+1234+3333+200102:2212+42'" "UNZ+0+42'")
 
 
 def test_empty_interchange_w_una():
-    i = Interchange.from_segments([
-        Segment("UNA", ":+,? '"),
-        Segment("UNB",["UNOC", "1"], "1234", "3333", ['200102', '2212'], "42"),
-        Segment("UNZ","0","42"),
-    ])
-    assert str(i) == (
-        "UNA:+,? '"
-        "UNB+UNOC:1+1234+3333+200102:2212+42'"
-        "UNZ+0+42'"
+    i = Interchange.from_segments(
+        [
+            Segment("UNA", ":+,? '"),
+            Segment("UNB", ["UNOC", "1"], "1234", "3333", ["200102", "2212"], "42"),
+            Segment("UNZ", "0", "42"),
+        ]
     )
+    assert str(i) == ("UNA:+,? '" "UNB+UNOC:1+1234+3333+200102:2212+42'" "UNZ+0+42'")
 
 
 def test_interchange_messages(interchange, message):
-    assert(len(list(interchange.get_messages())) == 0)
+    assert len(list(interchange.get_messages())) == 0
 
     interchange.add_message(message)
 
-    assert(len(list(interchange.get_messages())) == 1)
+    assert len(list(interchange.get_messages())) == 1
 
     assert str(interchange) == (
         "UNB+UNOC:1+1234+3333+200102:2212+42'"
@@ -226,9 +216,7 @@ def test_faulty_interchange_messages():
         list(i.get_messages())
 
     i = Interchange.from_str(
-        "UNB+UNOC:1+1234+3333+200102:2212+42'"
-        "UNT+42z42+0'"
-        "UNZ+2+42'"
+        "UNB+UNOC:1+1234+3333+200102:2212+42'" "UNT+42z42+0'" "UNZ+2+42'"
     )
 
     with pytest.raises(SyntaxError):
@@ -236,7 +224,4 @@ def test_faulty_interchange_messages():
 
 
 def test_empty_message(message):
-    assert str(message) == (
-        "UNH+42z42+PAORES:93:1:IA'"
-        "UNT+42z42+0'"
-    )
+    assert str(message) == ("UNH+42z42+PAORES:93:1:IA'" "UNT+42z42+0'")
