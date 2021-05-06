@@ -5,7 +5,9 @@ Changelog for PYDIFACT
 - BREAKING CHANGE : Remove SegmentCollection
 
 [0.1] - UNRELEASED
-- Deprecate SegmentCollection
+
+[0.0.6] - 2021-04-06
+- Deprecate SegmentCollection in favour of Interchange
 - Add Interchange and Message semantic and featured classes
 - Add an optional predicate filter to `get_segment` and `get_segments` methods
 - Allow to access AbstractSegmentsContainer elements using `container[i]`
