@@ -388,7 +388,9 @@ class Interchange(FileSourcableMixin, UNAHandlingMixin, AbstractSegmentsContaine
         return self
 
     @classmethod
-    def from_segments(cls, segments: list or collections.Iterable) -> "Interchange":
+    def from_segments(
+        cls, segments: Union[list, collections.Iterable]
+    ) -> "Interchange":
         segments = iter(segments)
 
         first_segment = next(segments)
