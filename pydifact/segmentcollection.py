@@ -21,7 +21,7 @@
 # THE SOFTWARE.
 
 import collections
-from typing import Callable, List, Optional, Tuple, Union
+from typing import Callable, Iterable, List, Optional, Tuple, Union
 import datetime
 import warnings
 
@@ -101,6 +101,38 @@ class AbstractSegmentsContainer:
             return segment
 
         return None
+
+    def split_by(
+            self,
+            start_segment_tag: str,
+    ) -> Iterable['RawSegmentCollection']:
+        """Split a segment collection by tag.
+
+        Everything before the first start segment is ignored, so if no matching
+        start segment is found at all, returned result is empty.
+
+
+        :param start_segment_tag:
+          the segment tag we want to use as separator
+
+        :return: generator of segment collections. The start tag is included in
+          each yielded collection
+        """
+        current_list = None
+
+        for segment in self.segments:
+            if segment.tag == start_segment_tag:
+                if current_list:
+                    yield current_list
+                current_list = RawSegmentCollection.from_segments([segment])
+            else:
+                if current_list is not None:
+                    current_list.add_segment(segment)
+                else:
+                    continue # we are not yet inside a group
+        if current_list is not None:
+            yield current_list
+
 
     def add_segments(
         self, segments: List[Segment] or collections.Iterable

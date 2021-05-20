@@ -5,6 +5,7 @@ Changelog for PYDIFACT
 - BREAKING CHANGE : Remove SegmentCollection
 
 [0.1] - UNRELEASED
+- Add a `split_by(tag_name)` helper to manually split segment collections
 
 [0.0.6] - 2021-04-06
 - Deprecate SegmentCollection in favour of Interchange
