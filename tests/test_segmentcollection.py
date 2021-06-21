@@ -17,23 +17,23 @@ import datetime
 
 import pytest
 
-from pydifact.segmentcollection import Interchange, Message, SegmentCollection
+from pydifact.segmentcollection import Interchange, Message, RawSegmentCollection
 from pydifact.segments import Segment
 from pydifact.api import EDISyntaxError
 
 
 def test_from_file():
     with pytest.raises(FileNotFoundError):
-        SegmentCollection.from_file("/no/such/file")
+        Interchange.from_file("/no/such/file")
 
 
 def test_create_with_segments():
-    collection = SegmentCollection.from_segments([Segment("36CF")])
+    collection = RawSegmentCollection.from_segments([Segment("36CF")])
     assert [Segment("36CF")] == collection.segments
 
 
 def test_get_segments():
-    collection = SegmentCollection.from_segments(
+    collection = RawSegmentCollection.from_segments(
         [Segment("36CF", 1), Segment("CPD"), Segment("36CF", 2)]
     )
     segments = list(collection.get_segments("36CF"))
@@ -41,13 +41,13 @@ def test_get_segments():
 
 
 def test_get_segments_doesnt_exist():
-    collection = SegmentCollection()
+    collection = RawSegmentCollection()
     segments = list(collection.get_segments("36CF"))
     assert [] == segments
 
 
 def test_get_segments_w_predicate():
-    collection = SegmentCollection.from_segments(
+    collection = RawSegmentCollection.from_segments(
         [
             Segment("A", "1", "a"),
             Segment("A", "2", "b"),
@@ -62,7 +62,7 @@ def test_get_segments_w_predicate():
 
 
 def test_get_segment():
-    collection = SegmentCollection.from_segments(
+    collection = RawSegmentCollection.from_segments(
         [Segment("36CF", 1), Segment("36CF", 2)]
     )
     segment = collection.get_segment("36CF")
@@ -70,7 +70,7 @@ def test_get_segment():
 
 
 def test_get_segment_w_predicate():
-    collection = SegmentCollection.from_segments(
+    collection = RawSegmentCollection.from_segments(
         [Segment("36CF", "1"), Segment("36CF", "2")]
     )
     segment = collection.get_segment("36CF", lambda x: x[0] == "2")
@@ -78,7 +78,7 @@ def test_get_segment_w_predicate():
 
 
 def test_str_serialize():
-    collection = SegmentCollection.from_segments(
+    collection = RawSegmentCollection.from_segments(
         [Segment("36CF", "1"), Segment("36CF", "2")]
     )
     string = str(collection)
@@ -86,40 +86,40 @@ def test_str_serialize():
 
 
 def test_get_segment_doesnt_exist():
-    collection = SegmentCollection()
+    collection = RawSegmentCollection()
     segment = collection.get_segment("36CF")
     assert segment is None
 
 
 def test_empty_segment():
-    m = SegmentCollection()
+    m = RawSegmentCollection()
     m.add_segment(Segment("", []))
     assert m
 
 
 def test_malformed_tag1():
     with pytest.raises(EDISyntaxError):
-        SegmentCollection.from_str("IMD+F++:::This is 'a :malformed string'")
+        RawSegmentCollection.from_str("IMD+F++:::This is 'a :malformed string'")
 
 
 def test_malformed_tag2():
     with pytest.raises(EDISyntaxError):
-        SegmentCollection.from_str("IMD+F++:::This is '? :malformed string'")
+        RawSegmentCollection.from_str("IMD+F++:::This is '? :malformed string'")
 
 
 def test_malformed_tag3():
     with pytest.raises(EDISyntaxError):
-        SegmentCollection.from_str("IMD+F++:::This is '?? :malformed string'")
+        RawSegmentCollection.from_str("IMD+F++:::This is '?? :malformed string'")
 
 
 def test_malformed_tag4():
     with pytest.raises(EDISyntaxError):
-        SegmentCollection.from_str("IMD+F++:::This is '??:malformed string'")
+        RawSegmentCollection.from_str("IMD+F++:::This is '??:malformed string'")
 
 
 def test_malformed_tag5():
     with pytest.raises(EDISyntaxError):
-        SegmentCollection.from_str("IMD+F++:::This is '-:malformed string'")
+        RawSegmentCollection.from_str("IMD+F++:::This is '-:malformed string'")
 
 
 @pytest.fixture

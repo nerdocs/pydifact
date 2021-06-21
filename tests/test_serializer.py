@@ -14,9 +14,10 @@
 #    You should have received a copy of the GNU Lesser General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import copy
+import datetime
 import pytest
 
-from pydifact.segmentcollection import SegmentCollection
+from pydifact.segmentcollection import RawSegmentCollection, Interchange
 from pydifact.segments import Segment
 from pydifact.serializer import Serializer
 
@@ -26,6 +27,17 @@ def serializer():
     return Serializer()
 
 
+@pytest.fixture
+def interchange():
+    return Interchange(
+        sender="1234",
+        recipient="3333",
+        timestamp=datetime.datetime(2020, 1, 2, 22, 12),
+        control_reference="42",
+        syntax_identifier=("UNOC", 1),
+    )
+
+
 def assert_segments(serializer, expected: str, segments: list):
     """Helper function add default UNA header and terminator, and compare string to segment"""
     expected = "UNA:+,? '" + expected + "'"
@@ -33,22 +45,20 @@ def assert_segments(serializer, expected: str, segments: list):
     assert expected == collection
 
 
-def test_una_integrity1():
-    m = SegmentCollection()
+def test_una_integrity1(interchange):
     initstring = ":+,? '"
-    m.add_segment(Segment("UNA", initstring))
-    assert m.serialize() == "UNA" + initstring
+    interchange.add_segment(Segment("UNA", initstring))
+    assert interchange.serialize().startswith("UNA" + initstring)
 
 
-def test_UNA_integrity2():
-    m = SegmentCollection()
+def test_UNA_integrity2(interchange):
     initstring = ":+.? '"
-    m.add_segment(Segment("UNA", initstring))
-    assert m.serialize() == "UNA" + initstring
+    interchange.add_segment(Segment("UNA", initstring))
+    assert interchange.serialize().startswith("UNA" + initstring)
 
 
 def test_empty_segment_list():
-    m = SegmentCollection()
+    m = RawSegmentCollection()
     assert m.serialize() == ""
 
 

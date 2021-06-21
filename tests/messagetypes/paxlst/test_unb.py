@@ -16,7 +16,7 @@
 import pytest
 
 from pydifact.control import Characters
-from pydifact.segmentcollection import SegmentCollection
+from pydifact.segmentcollection import RawSegmentCollection
 
 
 class Setup:
@@ -29,7 +29,7 @@ def setup():
     unb_segment = "UNB+UNOA:4+APIS*ABE+USADHS+070429:0900+000000001++USADHS'"
     cc = Characters()
     setup.cc = cc.with_control_character("decimal_point", ".")
-    setup.collection = SegmentCollection.from_str(unb_segment)
+    setup.collection = RawSegmentCollection.from_str(unb_segment)
     return setup
 
 
