@@ -4,7 +4,10 @@ Changelog for PYDIFACT
 [0.2] - UNRELEASED
 - BREAKING CHANGE : Remove SegmentCollection
 
-[0.1] - UNRELEASED
+[0.1.1] - 2031-06-27
+- fix missing pydifact.syntax package
+
+[0.1] - 2031-06-27
 - Add a `split_by(tag_name)` helper to manually split segment collections
 
 [0.0.6] - 2021-04-06
