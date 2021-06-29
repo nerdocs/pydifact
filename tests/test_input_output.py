@@ -15,16 +15,16 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import os
 
-from pydifact.segmentcollection import SegmentCollection
+from pydifact.segmentcollection import Interchange
 from pydifact.segments import Segment
 
 path = os.path.dirname(os.path.realpath(__file__)) + "/data"
 
 
 def test_wikipedia_file():
-    message = SegmentCollection.from_file("{}/wikipedia.edi".format(path))
+    message = Interchange.from_file("{}/wikipedia.edi".format(path))
     # make some checks
-    assert message.get_segment("UNB") == Segment(
+    assert message.get_header_segment() == Segment(
         "UNB", ["IATB", "1"], "6XPPC", "LHPPC", ["940101", "0950"], "1"
     )
     assert message.get_segment("IFT") == Segment("IFT", "3", "XYZCOMPANY AVAILABILITY")
@@ -34,9 +34,9 @@ def test_wikipedia_file():
 
 
 def test_invoice_file():
-    message = SegmentCollection.from_file("{}/invoice1.edi".format(path))
+    message = Interchange.from_file("{}/invoice1.edi".format(path))
     # make some checks
-    assert message.get_segment("UNB") == Segment(
+    assert message.get_header_segment() == Segment(
         "UNB",
         ["UNOA", "1"],
         "01010000253001",
