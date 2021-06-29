@@ -14,6 +14,7 @@
 #    You should have received a copy of the GNU Lesser General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import datetime
+from typing import Iterable, List
 
 import pytest
 
@@ -75,6 +76,43 @@ def test_get_segment_w_predicate():
     )
     segment = collection.get_segment("36CF", lambda x: x[0] == "2")
     assert segment == Segment("36CF", "2")
+
+
+def test_split_by():
+    def _serialize(
+            collections: Iterable[RawSegmentCollection]
+    ) -> List[List[str]]:
+        lst = []
+        global_lst = []
+        for collection in collections:
+            if lst:
+                global_lst.append(lst)
+                lst = []
+            for segment in collection.segments:
+                lst.append(segment.tag)
+        if lst:
+            global_lst.append(lst)
+        return global_lst
+
+    assert (
+        _serialize(RawSegmentCollection.from_segments([]).split_by('A'))
+        ==
+        []
+    )
+    collection = RawSegmentCollection.from_segments(
+        Segment(i) for i in ["A", "B", "A", "A", "B", "D"]
+    )
+    assert _serialize(collection.split_by('Z')) == []
+    assert (
+        _serialize(collection.split_by('A'))
+        ==
+        [['A', 'B'], ['A'], ['A', 'B', 'D']]
+    )
+    assert (
+        _serialize(collection.split_by('A'))
+        ==
+        [['A', 'B'], ['A'], ['A', 'B', 'D']]
+    )
 
 
 def test_str_serialize():
