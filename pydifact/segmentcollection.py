@@ -402,6 +402,7 @@ class Interchange(FileSourcableMixin, UNAHandlingMixin, AbstractSegmentsContaine
             elif segment.tag == "UNT":
                 if message:
                     yield message
+                    message = None
                 else:
                     raise EDISyntaxError(
                         'UNT segment without matching UNH: "{}"'.format(segment)
