@@ -79,9 +79,7 @@ def test_get_segment_w_predicate():
 
 
 def test_split_by():
-    def _serialize(
-            collections: Iterable[RawSegmentCollection]
-    ) -> List[List[str]]:
+    def _serialize(collections: Iterable[RawSegmentCollection]) -> List[List[str]]:
         lst = []
         global_lst = []
         for collection in collections:
@@ -94,25 +92,13 @@ def test_split_by():
             global_lst.append(lst)
         return global_lst
 
-    assert (
-        _serialize(RawSegmentCollection.from_segments([]).split_by('A'))
-        ==
-        []
-    )
+    assert _serialize(RawSegmentCollection.from_segments([]).split_by("A")) == []
     collection = RawSegmentCollection.from_segments(
         Segment(i) for i in ["A", "B", "A", "A", "B", "D"]
     )
-    assert _serialize(collection.split_by('Z')) == []
-    assert (
-        _serialize(collection.split_by('A'))
-        ==
-        [['A', 'B'], ['A'], ['A', 'B', 'D']]
-    )
-    assert (
-        _serialize(collection.split_by('A'))
-        ==
-        [['A', 'B'], ['A'], ['A', 'B', 'D']]
-    )
+    assert _serialize(collection.split_by("Z")) == []
+    assert _serialize(collection.split_by("A")) == [["A", "B"], ["A"], ["A", "B", "D"]]
+    assert _serialize(collection.split_by("A")) == [["A", "B"], ["A"], ["A", "B", "D"]]
 
 
 def test_str_serialize():
@@ -225,6 +211,7 @@ def test_interchange_messages(interchange, message):
         "UNT+42z42+0'"
         "UNZ+2+42'"
     )
+
 
 def test_interchange_from_str_multi_messages():
     i = Interchange.from_str(

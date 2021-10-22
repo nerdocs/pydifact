@@ -103,9 +103,9 @@ class AbstractSegmentsContainer:
         return None
 
     def split_by(
-            self,
-            start_segment_tag: str,
-    ) -> Iterable['RawSegmentCollection']:
+        self,
+        start_segment_tag: str,
+    ) -> Iterable["RawSegmentCollection"]:
         """Split a segment collection by tag.
 
         Everything before the first start segment is ignored, so if no matching
@@ -129,10 +129,9 @@ class AbstractSegmentsContainer:
                 if current_list is not None:
                     current_list.add_segment(segment)
                 else:
-                    continue # we are not yet inside a group
+                    continue  # we are not yet inside a group
         if current_list is not None:
             yield current_list
-
 
     def add_segments(
         self, segments: List[Segment] or collections.Iterable
