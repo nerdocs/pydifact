@@ -145,6 +145,7 @@ class Parser:
                 current_segment = []
                 segments.append(current_segment)
                 data_element = []
+                empty_component_counter = 0
                 in_segment = True
 
             # Whenever we reach a data separator (+), we add the currently
