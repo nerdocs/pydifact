@@ -199,6 +199,16 @@ class AbstractSegmentsContainer:
             break_lines,
         )
 
+    def validate(self):
+        """Validates this container.
+
+        This method must be overridden in implementing subclasses, and should make sure that
+        the container is implemented correctly.
+
+        It does not return anything and should raise an Exception in case of errors.
+        """
+        raise NotImplementedError
+
     def __str__(self) -> str:
         """Allow the object to be serialized by casting to a string."""
 
@@ -298,7 +308,9 @@ class RawSegmentCollection(AbstractSegmentsContainer):
     checks.
     """
 
-    pass
+    def validate(self):
+        """This is just a stub method, no validation done here."""
+        pass
 
 
 class Message(AbstractSegmentsContainer):
@@ -343,6 +355,14 @@ class Message(AbstractSegmentsContainer):
             str(len(self.segments) + 2),
             self.reference_number,
         )
+
+    def validate(self):
+        """Validates the message.
+
+        :raises EDISyntaxError in case of syntax errors in the code
+        """
+
+        pass
 
 
 class Interchange(FileSourcableMixin, UNAHandlingMixin, AbstractSegmentsContainer):
@@ -463,3 +483,7 @@ class Interchange(FileSourcableMixin, UNAHandlingMixin, AbstractSegmentsContaine
         return interchange.add_segments(
             segment for segment in segments if segment.tag != "UNZ"
         )
+
+    def validate(self):
+        # TODO: proper validation
+        pass

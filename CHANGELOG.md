@@ -5,7 +5,8 @@ Changelog for PYDIFACT
 - BREAKING CHANGE : Remove SegmentCollection
 
 [0.1.2] - UNRELEASED
--  Fix multi-message interchange parsing #43 
+- Fix multi-message interchange parsing (bug #43)
+- add validation to AbstractSegmentsCollection
 
 [0.1.1] - 2021-06-27
 - fix missing pydifact.syntax package
