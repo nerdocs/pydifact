@@ -36,7 +36,11 @@ import codecs
 class AbstractSegmentsContainer:
     """Represent a collection of EDI Segments for both reading and writing.
 
-    You should not instantiate AbstractSegmentsContainer itself, but subclass it use that."""
+    You should not instantiate AbstractSegmentsContainer itself, but subclass it use that.
+
+    The segments list in AbstractSegmentsContainer includes header and footer segments too.
+    Inheriting envelopes must NOT include these elements in .segments, as get_header_element() and
+    get_footer_element() should provide these elements on-the-fly.
 
     def __init__(self, extra_header_elements: List[Union[str, List[str]]] = []):
     def __init__(self, extra_header_elements: List[Union[str, List[str]]] = None):
