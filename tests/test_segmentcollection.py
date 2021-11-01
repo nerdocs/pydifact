@@ -208,7 +208,7 @@ def test_interchange_messages(interchange, message):
     assert str(interchange) == (
         "UNB+UNOC:1+1234+3333+200102:2212+42'"
         "UNH+42z42+PAORES:93:1:IA'"
-        "UNT+42z42+0'"
+        "UNT+2+42z42'"
         "UNZ+2+42'"
     )
 
@@ -217,9 +217,9 @@ def test_interchange_from_str_multi_messages():
     i = Interchange.from_str(
         "UNB+UNOC:1+1234+3333+200102:2212+42'"
         "UNH+42z42+PAORES:93:1:IA'"
-        "UNT+42z42+0'"
+        "UNT+2+42z42'"
         "UNH+43z43+PAORES:93:1:IA'"
-        "UNT+43z43+0'"
+        "UNT+2+43z43'"
         "UNZ+2+42'"
     )
 
@@ -230,13 +230,13 @@ def test_interchange_messages_from_str():
     i = Interchange.from_str(
         "UNB+UNOC:1+1234+3333+200102:2212+42'"
         "UNH+42z42+PAORES:93:1:IA'"
-        "UNT+42z42+0'"
+        "UNT+2+42z42'"
         "UNZ+2+42'"
     )
     assert str(i) == (
         "UNB+UNOC:1+1234+3333+200102:2212+42'"
         "UNH+42z42+PAORES:93:1:IA'"
-        "UNT+42z42+0'"
+        "UNT+2+42z42'"
         "UNZ+2+42'"
     )
 
@@ -253,7 +253,7 @@ def test_faulty_interchange_messages():
         list(i.get_messages())
 
     i = Interchange.from_str(
-        "UNB+UNOC:1+1234+3333+200102:2212+42'" "UNT+42z42+0'" "UNZ+2+42'"
+        "UNB+UNOC:1+1234+3333+200102:2212+42'" "UNT+2+42z42'" "UNZ+2+42'"
     )
 
     with pytest.raises(SyntaxError):
@@ -261,4 +261,4 @@ def test_faulty_interchange_messages():
 
 
 def test_empty_message(message):
-    assert str(message) == ("UNH+42z42+PAORES:93:1:IA'" "UNT+42z42+0'")
+    assert str(message) == ("UNH+42z42+PAORES:93:1:IA'" "UNT+2+42z42'")

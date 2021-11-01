@@ -330,8 +330,8 @@ class Message(AbstractSegmentsContainer):
     def get_footer_segment(self) -> Segment:
         return Segment(
             "UNT",
+            str(len(self.segments) + 2),
             self.reference_number,
-            str(len(self.segments)),
         )
 
 
