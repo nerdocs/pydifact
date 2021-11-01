@@ -170,12 +170,14 @@ class AbstractSegmentsContainer:
 
     def get_footer_segment(self) -> Optional[Segment]:
         """Craft and return this container footer segment (if any)
+
         :returns: None if there is no footer for that container
         """
         return None
 
     def serialize(self, break_lines: bool = False) -> str:
         """Serialize all the segments added to this object.
+
         :param break_lines: if True, insert line break after each segment terminator.
         """
         header = self.get_header_segment()
@@ -196,6 +198,7 @@ class AbstractSegmentsContainer:
 
     def __str__(self) -> str:
         """Allow the object to be serialized by casting to a string."""
+
         return self.serialize()
 
 
