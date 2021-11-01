@@ -39,6 +39,7 @@ class AbstractSegmentsContainer:
     You should not instantiate AbstractSegmentsContainer itself, but subclass it use that."""
 
     def __init__(self, extra_header_elements: List[Union[str, List[str]]] = []):
+    def __init__(self, extra_header_elements: List[Union[str, List[str]]] = None):
         """
         :param extra_header_elements: a list of elements to be appended at the end
           of the header segment (same format as Segment() constructor *elements).
@@ -48,7 +49,9 @@ class AbstractSegmentsContainer:
         self.segments = []
         self.characters = Characters()
 
-        self.extra_header_elements = extra_header_elements
+        self.extra_header_elements = (
+            extra_header_elements if extra_header_elements else []
+        )
 
         # Flag whether the UNA header is present
         self.has_una_segment = False
