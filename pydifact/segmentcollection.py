@@ -423,11 +423,20 @@ class Interchange(FileSourcableMixin, UNAHandlingMixin, AbstractSegmentsContaine
         )
 
     def get_messages(self) -> List[Message]:
+        """parses a list of messages out of the internal segments.
+
+        :raises EDISyntaxError if constraints are not met (e.g. UNH/UNT both correct)
+
+        TODO: parts of this here are better done in the validate() method
+        """
+
         message = None
+        last_segment = None
         for segment in self.segments:
             if segment.tag == "UNH":
                 if not message:
                     message = Message(segment.elements[0], segment.elements[1])
+                    last_segment = segment
                 else:
                     raise EDISyntaxError(
                         "Missing UNT segment before new UNH: {}".format(segment)
@@ -436,6 +445,7 @@ class Interchange(FileSourcableMixin, UNAHandlingMixin, AbstractSegmentsContaine
                 if message:
                     yield message
                     message = None
+                    last_segment = segment
                 else:
                     raise EDISyntaxError(
                         'UNT segment without matching UNH: "{}"'.format(segment)
@@ -443,6 +453,10 @@ class Interchange(FileSourcableMixin, UNAHandlingMixin, AbstractSegmentsContaine
             else:
                 if message:
                     message.add_segment(segment)
+                last_segment = segment
+        if last_segment:
+            if not last_segment.tag == "UNT":
+                raise EDISyntaxError("UNH segment was not closed with a UNT segment.")
 
     def add_message(self, message: Message) -> "Interchange":
         segments = (

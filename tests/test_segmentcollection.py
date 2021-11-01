@@ -249,14 +249,14 @@ def test_faulty_interchange_messages():
         "UNZ+2+42'"
     )
 
-    with pytest.raises(SyntaxError):
+    with pytest.raises(EDISyntaxError):
         list(i.get_messages())
 
     i = Interchange.from_str(
         "UNB+UNOC:1+1234+3333+200102:2212+42'" "UNT+2+42z42'" "UNZ+2+42'"
     )
 
-    with pytest.raises(SyntaxError):
+    with pytest.raises(EDISyntaxError):
         list(i.get_messages())
 
 
