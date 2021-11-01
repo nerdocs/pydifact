@@ -363,7 +363,7 @@ class Message(AbstractSegmentsContainer):
     def validate(self):
         """Validates the message.
 
-        :raises EDISyntaxError in case of syntax errors in the code
+        :raises EDISyntaxError in case of syntax errors in the segments
         """
 
         pass
