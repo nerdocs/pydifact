@@ -34,7 +34,9 @@ import codecs
 
 
 class AbstractSegmentsContainer:
-    """Represent a collection of EDI Segments for both reading and writing."""
+    """Represent a collection of EDI Segments for both reading and writing.
+
+    You should not instantiate AbstractSegmentsContainer itself, but subclass it use that."""
 
     def __init__(self, extra_header_elements: List[Union[str, List[str]]] = []):
         """
@@ -52,8 +54,10 @@ class AbstractSegmentsContainer:
         self.has_una_segment = False
 
     @classmethod
-    def from_str(cls, string: str) -> "SegmentCollection":
-        """Create a SegmentCollection instance from a string.
+    def from_str(cls, string: str) -> "AbstractSegmentsContainer":
+        """Create an instance from a string.
+
+        This method is intended for usage in inheriting classes, not it AbstractSegmentsContainer itself.
         :param string: The EDI content
         """
         segments = Parser().parse(string)
