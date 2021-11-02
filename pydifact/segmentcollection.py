@@ -20,7 +20,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-import collections
+import collections.abc as collections
 from typing import Callable, Iterable, List, Optional, Tuple, Union
 import datetime
 import warnings
