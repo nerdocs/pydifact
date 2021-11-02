@@ -56,4 +56,7 @@ docs/_build/
 prof
 .kdev4
 .venv
+venv/
+.env
+env/
 Pipfile.lock
