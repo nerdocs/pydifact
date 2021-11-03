@@ -63,3 +63,6 @@ Pipfile.lock
 
 # vim stuff
 .vim
+.pylintrc
+.vscode
+.pytest_cache
