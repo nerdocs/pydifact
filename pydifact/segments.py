@@ -102,6 +102,18 @@ class Segment(SegmentProvider):
         return True
 
 
+class EDIenergySegment(Segment):
+
+    def __init__(self, tag: str, *elements: Union[str, List[str]]):
+        super().__init__(tag, *elements)
+
+    def validate(self) -> bool:
+        if not super().validate():
+            return False
+        else:
+            # TODO add validation method for EDI@Energy
+            pass
+
 class SegmentFactory:
     """Factory for producing segments."""
 
@@ -141,8 +153,9 @@ class SegmentFactory:
             )
 
         for Plugin in SegmentProvider.plugins:
-            if Plugin().tag == name:
+            if getattr(Plugin, "tag", "") == name:
                 s = Plugin(name, *elements)
+                break
         else:
             # we don't support this kind of EDIFACT segment (yet), so
             # just create a generic Segment()
@@ -155,4 +168,4 @@ class SegmentFactory:
                 )
 
         # FIXME: characters is not used!
-        return Segment(name, *elements)
+        return s
