@@ -34,9 +34,21 @@ import codecs
 
 
 class AbstractSegmentsContainer:
-    """Represent a collection of EDI Segments for both reading and writing."""
+    """Represent a collection of EDI Segments for both reading and writing.
 
-    def __init__(self, extra_header_elements: List[Union[str, List[str]]] = []):
+    You should not instantiate AbstractSegmentsContainer itself, but subclass it use that.
+
+    The segments list in AbstractSegmentsContainer includes header and footer segments too.
+    Inheriting envelopes must NOT include these elements in .segments, as get_header_element() and
+    get_footer_element() should provide these elements on-the-fly.
+
+    Inheriting classes must set HEADER_TAG and FOOTER_TAG
+    """
+
+    HEADER_TAG: str = None
+    FOOTER_TAG: str = None
+
+    def __init__(self, extra_header_elements: List[Union[str, List[str]]] = None):
         """
         :param extra_header_elements: a list of elements to be appended at the end
           of the header segment (same format as Segment() constructor *elements).
@@ -46,14 +58,18 @@ class AbstractSegmentsContainer:
         self.segments = []
         self.characters = Characters()
 
-        self.extra_header_elements = extra_header_elements
+        self.extra_header_elements = (
+            extra_header_elements if extra_header_elements else []
+        )
 
         # Flag whether the UNA header is present
         self.has_una_segment = False
 
     @classmethod
-    def from_str(cls, string: str) -> "SegmentCollection":
-        """Create a SegmentCollection instance from a string.
+    def from_str(cls, string: str) -> "AbstractSegmentsContainer":
+        """Create an instance from a string.
+
+        This method is intended for usage in inheriting classes, not it AbstractSegmentsContainer itself.
         :param string: The EDI content
         """
         segments = Parser().parse(string)
@@ -152,9 +168,11 @@ class AbstractSegmentsContainer:
     def add_segment(self, segment: Segment) -> "AbstractSegmentsContainer":
         """Append a segment to the collection.
 
+        Note: skips segments that are header oder footer tags of this segment container type.
         :param segment: The segment to add
         """
-        self.segments.append(segment)
+        if not segment.tag in (self.HEADER_TAG, self.FOOTER_TAG):
+            self.segments.append(segment)
         return self
 
     def get_header_segment(self) -> Optional[Segment]:
@@ -166,12 +184,14 @@ class AbstractSegmentsContainer:
 
     def get_footer_segment(self) -> Optional[Segment]:
         """Craft and return this container footer segment (if any)
+
         :returns: None if there is no footer for that container
         """
         return None
 
     def serialize(self, break_lines: bool = False) -> str:
         """Serialize all the segments added to this object.
+
         :param break_lines: if True, insert line break after each segment terminator.
         """
         header = self.get_header_segment()
@@ -190,8 +210,19 @@ class AbstractSegmentsContainer:
             break_lines,
         )
 
+    def validate(self):
+        """Validates this container.
+
+        This method must be overridden in implementing subclasses, and should make sure that
+        the container is implemented correctly.
+
+        It does not return anything and should raise an Exception in case of errors.
+        """
+        raise NotImplementedError
+
     def __str__(self) -> str:
         """Allow the object to be serialized by casting to a string."""
+
         return self.serialize()
 
 
@@ -288,7 +319,9 @@ class RawSegmentCollection(AbstractSegmentsContainer):
     checks.
     """
 
-    pass
+    def validate(self):
+        """This is just a stub method, no validation done here."""
+        pass
 
 
 class Message(AbstractSegmentsContainer):
@@ -300,6 +333,9 @@ class Message(AbstractSegmentsContainer):
     https://www.stylusstudio.com/edifact/40100/UNH_.htm
     https://www.stylusstudio.com/edifact/40100/UNT_.htm
     """
+
+    HEADER_TAG = "UNH"
+    FOOTER_TAG = "UNT"
 
     def __init__(self, reference_number: str, identifier: Tuple, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -321,7 +357,7 @@ class Message(AbstractSegmentsContainer):
 
     def get_header_segment(self) -> Segment:
         return Segment(
-            "UNH",
+            self.HEADER_TAG,
             self.reference_number,
             [str(i) for i in self.identifier],
             *self.extra_header_elements,
@@ -329,7 +365,7 @@ class Message(AbstractSegmentsContainer):
 
     def get_footer_segment(self) -> Segment:
         return Segment(
-            "UNT",
+            self.FOOTER_TAG,
             str(len(self.segments) + 2),
             self.reference_number,
         )
@@ -366,6 +402,13 @@ class Message(AbstractSegmentsContainer):
         if not unh:
             raise EDISyntaxError("Missing header in message")
         return cls.from_segments(unh[0], unh[1], todo)
+    def validate(self):
+        """Validates the message.
+
+        :raises EDISyntaxError in case of syntax errors in the segments
+        """
+
+        pass
 
 
 class Interchange(FileSourcableMixin, UNAHandlingMixin, AbstractSegmentsContainer):
@@ -383,6 +426,9 @@ class Interchange(FileSourcableMixin, UNAHandlingMixin, AbstractSegmentsContaine
     https://www.stylusstudio.com/edifact/40100/UNB_.htm
     https://www.stylusstudio.com/edifact/40100/UNZ_.htm
     """
+
+    HEADER_TAG = "UNB"
+    FOOTER_TAG = "UNZ"
 
     def __init__(
         self,
@@ -405,7 +451,7 @@ class Interchange(FileSourcableMixin, UNAHandlingMixin, AbstractSegmentsContaine
 
     def get_header_segment(self) -> Segment:
         return Segment(
-            "UNB",
+            self.HEADER_TAG,
             [str(i) for i in self.syntax_identifier],
             self.sender,
             self.recipient,
@@ -415,18 +461,40 @@ class Interchange(FileSourcableMixin, UNAHandlingMixin, AbstractSegmentsContaine
         )
 
     def get_footer_segment(self) -> Segment:
+        """:returns a (UNZ) footer segment with correct segment count and control reference.
+
+        It counts either of the number of messages or, if used, of the number of functional groups
+        in an interchange (TODO)."""
+
+        # FIXME: count functional groups (UNG/UNE) correctly
+        cnt = 0
+        for segment in self.segments:
+            if segment.tag == Message.HEADER_TAG:
+                cnt += 1
+        if cnt == 0:
+            cnt = len(self.segments)
+
         return Segment(
-            "UNZ",
-            str(len(self.segments)),
+            self.FOOTER_TAG,
+            str(cnt),
             self.control_reference,
         )
 
     def get_messages(self) -> List[Message]:
+        """parses a list of messages out of the internal segments.
+
+        :raises EDISyntaxError if constraints are not met (e.g. UNH/UNT both correct)
+
+        TODO: parts of this here are better done in the validate() method
+        """
+
         message = None
+        last_segment = None
         for segment in self.segments:
             if segment.tag == "UNH":
                 if not message:
                     message = Message(segment.elements[0], segment.elements[1])
+                    last_segment = segment
                 else:
                     raise EDISyntaxError(
                         "Missing UNT segment before new UNH: {}".format(segment)
@@ -435,6 +503,7 @@ class Interchange(FileSourcableMixin, UNAHandlingMixin, AbstractSegmentsContaine
                 if message:
                     yield message
                     message = None
+                    last_segment = segment
                 else:
                     raise EDISyntaxError(
                         'UNT segment without matching UNH: "{}"'.format(segment)
@@ -442,6 +511,10 @@ class Interchange(FileSourcableMixin, UNAHandlingMixin, AbstractSegmentsContaine
             else:
                 if message:
                     message.add_segment(segment)
+                last_segment = segment
+        if last_segment:
+            if not last_segment.tag == "UNT":
+                raise EDISyntaxError("UNH segment was not closed with a UNT segment.")
 
     def add_message(self, message: Message) -> "Interchange":
         segments = (
@@ -483,6 +556,8 @@ class Interchange(FileSourcableMixin, UNAHandlingMixin, AbstractSegmentsContaine
             interchange.has_una_segment = True
             interchange.characters = Characters.from_str(first_segment.elements[0])
 
-        return interchange.add_segments(
-            segment for segment in segments if segment.tag != "UNZ"
-        )
+        return interchange.add_segments(segments)
+
+    def validate(self):
+        # TODO: proper validation
+        pass

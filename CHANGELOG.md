@@ -2,15 +2,22 @@ Changelog for PYDIFACT
 
 
 [0.2] - UNRELEASED
-- BREAKING CHANGE : Remove SegmentCollection
+- BREAKING CHANGE: Remove SegmentCollection
+- BREAKING CHANGE: Remove FileSourcableMixin
 
-[0.1.2] - UNRELEASED
--  Fix multi-message interchange parsing #43 
+[0.1.3] - 2021-11-03
+- Fix multi-message interchange parsing (bug #43)
+- Fix correct handling of UNT segments (bug #44)
+- Add validation to AbstractSegmentsCollection
 
-[0.1.1] - 2031-06-27
+[0.1.2] - 2021-10-25
+- Fix parsing of colon at line endings
+- Fix multi-message interchange parsing
+
+[0.1.1] - 2021-06-27
 - fix missing pydifact.syntax package
 
-[0.1] - 2031-06-27
+[0.1] - 2021-06-27
 - Add a `split_by(tag_name)` helper to manually split segment collections
 
 [0.0.6] - 2021-04-06
