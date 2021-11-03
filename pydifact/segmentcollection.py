@@ -334,6 +334,39 @@ class Message(AbstractSegmentsContainer):
             self.reference_number,
         )
 
+    @classmethod
+    def from_segments(
+        cls, reference_number, identifier, segments: list or collections.Iterable
+    ) -> "AbstractSegmentsContainer":
+        """Create a new AbstractSegmentsContainer instance from a iterable list of segments.
+
+        :param reference_number: Reference number
+        :param identifier: Identifier
+        :param segments: The segments of the EDI interchange
+        :type segments: list/iterable of Segment
+        """
+
+        return cls(reference_number, identifier).add_segments(segments)
+
+    @classmethod
+    def from_str(cls, string: str) -> "AbstractSegmentsContainer":
+        segments = Parser().parse(string)
+
+        unh = None
+        todo = []
+
+        for segment in segments:
+            if segment.tag == "UNH":
+                unh = segment
+                continue
+            if segment.tag == "UNT":
+                continue
+            todo.append(segment)
+
+        if not unh:
+            raise EDISyntaxError("Missing header in message")
+        return cls.from_segments(unh[0], unh[1], todo)
+
 
 class Interchange(FileSourcableMixin, UNAHandlingMixin, AbstractSegmentsContainer):
     """
