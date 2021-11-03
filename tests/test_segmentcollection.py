@@ -18,6 +18,7 @@ from typing import Iterable, List
 
 import pytest
 
+from pydifact import Serializer
 from pydifact.segmentcollection import Interchange, Message, RawSegmentCollection
 from pydifact.segments import Segment
 from pydifact.api import EDISyntaxError
@@ -209,7 +210,7 @@ def test_interchange_messages(interchange, message):
         "UNB+UNOC:1+1234+3333+200102:2212+42'"
         "UNH+42z42+PAORES:93:1:IA'"
         "UNT+2+42z42'"
-        "UNZ+2+42'"
+        "UNZ+1+42'"
     )
 
 
@@ -231,17 +232,28 @@ def test_interchange_messages_from_str():
         "UNB+UNOC:1+1234+3333+200102:2212+42'"
         "UNH+42z42+PAORES:93:1:IA'"
         "UNT+2+42z42'"
-        "UNZ+2+42'"
+        "UNZ+1+42'"
     )
     assert str(i) == (
         "UNB+UNOC:1+1234+3333+200102:2212+42'"
         "UNH+42z42+PAORES:93:1:IA'"
         "UNT+2+42z42'"
-        "UNZ+2+42'"
+        "UNZ+1+42'"
     )
 
 
-def test_faulty_interchange_messages():
+def test_faulty_interchange__UNH_not_closed():
+    """creates a message with an opening UNH message, without closing UNT"""
+    i = Interchange.from_str(
+        "UNB+UNOC:1+1234+3333+200102:2212+42'" "UNH+42z42+PAORES:93:1:IA'" "UNZ+2+42'"
+    )
+
+    with pytest.raises(EDISyntaxError):
+        list(i.get_messages())
+
+
+def test_faulty_interchange__nested_UNH_not_closed():
+    """creates a message with 2 nested UNH, one of them not closed"""
     i = Interchange.from_str(
         "UNB+UNOC:1+1234+3333+200102:2212+42'"
         "UNH+42z42+PAORES:93:1:IA'"
@@ -252,6 +264,9 @@ def test_faulty_interchange_messages():
     with pytest.raises(EDISyntaxError):
         list(i.get_messages())
 
+
+def test_faulty_interchange__UNT_without_UNH():
+    """creates a message with an cloding UNT, without UNH"""
     i = Interchange.from_str(
         "UNB+UNOC:1+1234+3333+200102:2212+42'" "UNT+2+42z42'" "UNZ+2+42'"
     )
@@ -262,3 +277,21 @@ def test_faulty_interchange_messages():
 
 def test_empty_message(message):
     assert str(message) == ("UNH+42z42+PAORES:93:1:IA'" "UNT+2+42z42'")
+
+
+def test_add_another_footer_element(message):
+    """make sure that adding another UNZ footer is ignored."""
+    assert message.add_segment(Segment("UNZ", "1", "234z45")) == message
+
+
+def test_counting_of_messages(interchange, message):
+    edi_str = (
+        "UNB+UNOC:1+1234+3333+200102:2212+42'"
+        "UNH+42z42+PAORES:93:1:IA'"
+        "UNT+2+42z42'"
+        "UNH+42z43+PAORES:93:1:IA'"
+        "UNT+2+42z43'"
+        "UNZ+2+42'"
+    )
+    i = Interchange.from_str(edi_str)
+    assert i.serialize() == edi_str

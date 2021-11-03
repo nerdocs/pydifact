@@ -42,7 +42,12 @@ class AbstractSegmentsContainer:
     Inheriting envelopes must NOT include these elements in .segments, as get_header_element() and
     get_footer_element() should provide these elements on-the-fly.
 
-    def __init__(self, extra_header_elements: List[Union[str, List[str]]] = []):
+    Inheriting classes must set HEADER_TAG and FOOTER_TAG
+    """
+
+    HEADER_TAG: str = None
+    FOOTER_TAG: str = None
+
     def __init__(self, extra_header_elements: List[Union[str, List[str]]] = None):
         """
         :param extra_header_elements: a list of elements to be appended at the end
@@ -163,9 +168,11 @@ class AbstractSegmentsContainer:
     def add_segment(self, segment: Segment) -> "AbstractSegmentsContainer":
         """Append a segment to the collection.
 
+        Note: skips segments that are header oder footer tags of this segment container type.
         :param segment: The segment to add
         """
-        self.segments.append(segment)
+        if not segment.tag in (self.HEADER_TAG, self.FOOTER_TAG):
+            self.segments.append(segment)
         return self
 
     def get_header_segment(self) -> Optional[Segment]:
@@ -327,6 +334,9 @@ class Message(AbstractSegmentsContainer):
     https://www.stylusstudio.com/edifact/40100/UNT_.htm
     """
 
+    HEADER_TAG = "UNH"
+    FOOTER_TAG = "UNT"
+
     def __init__(self, reference_number: str, identifier: Tuple, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.reference_number = reference_number
@@ -347,7 +357,7 @@ class Message(AbstractSegmentsContainer):
 
     def get_header_segment(self) -> Segment:
         return Segment(
-            "UNH",
+            self.HEADER_TAG,
             self.reference_number,
             [str(i) for i in self.identifier],
             *self.extra_header_elements,
@@ -355,7 +365,7 @@ class Message(AbstractSegmentsContainer):
 
     def get_footer_segment(self) -> Segment:
         return Segment(
-            "UNT",
+            self.FOOTER_TAG,
             str(len(self.segments) + 2),
             self.reference_number,
         )
@@ -385,6 +395,9 @@ class Interchange(FileSourcableMixin, UNAHandlingMixin, AbstractSegmentsContaine
     https://www.stylusstudio.com/edifact/40100/UNZ_.htm
     """
 
+    HEADER_TAG = "UNB"
+    FOOTER_TAG = "UNZ"
+
     def __init__(
         self,
         sender: str,
@@ -406,7 +419,7 @@ class Interchange(FileSourcableMixin, UNAHandlingMixin, AbstractSegmentsContaine
 
     def get_header_segment(self) -> Segment:
         return Segment(
-            "UNB",
+            self.HEADER_TAG,
             [str(i) for i in self.syntax_identifier],
             self.sender,
             self.recipient,
@@ -416,9 +429,22 @@ class Interchange(FileSourcableMixin, UNAHandlingMixin, AbstractSegmentsContaine
         )
 
     def get_footer_segment(self) -> Segment:
+        """:returns a (UNZ) footer segment with correct segment count and control reference.
+
+        It counts either of the number of messages or, if used, of the number of functional groups
+        in an interchange (TODO)."""
+
+        # FIXME: count functional groups (UNG/UNE) correctly
+        cnt = 0
+        for segment in self.segments:
+            if segment.tag == Message.HEADER_TAG:
+                cnt += 1
+        if cnt == 0:
+            cnt = len(self.segments)
+
         return Segment(
-            "UNZ",
-            str(len(self.segments)),
+            self.FOOTER_TAG,
+            str(cnt),
             self.control_reference,
         )
 
@@ -498,9 +524,7 @@ class Interchange(FileSourcableMixin, UNAHandlingMixin, AbstractSegmentsContaine
             interchange.has_una_segment = True
             interchange.characters = Characters.from_str(first_segment.elements[0])
 
-        return interchange.add_segments(
-            segment for segment in segments if segment.tag != "UNZ"
-        )
+        return interchange.add_segments(segments)
 
     def validate(self):
         # TODO: proper validation
