@@ -21,7 +21,8 @@
 # THE SOFTWARE.
 
 import collections
-from typing import Callable, Iterable, List, Optional, Tuple, Union
+from collections.abc import Callable, Iterable
+from typing import List, Optional, Tuple, Union
 import datetime
 import warnings
 
@@ -78,7 +79,7 @@ class AbstractSegmentsContainer:
 
     @classmethod
     def from_segments(
-        cls, segments: list or collections.Iterable
+        cls, segments: Union[List, Iterable]
     ) -> "AbstractSegmentsContainer":
         """Create a new AbstractSegmentsContainer instance from a iterable list of segments.
 
@@ -150,7 +151,7 @@ class AbstractSegmentsContainer:
             yield current_list
 
     def add_segments(
-        self, segments: List[Segment] or collections.Iterable
+        self, segments: Union[List[Segment], Iterable]
     ) -> "AbstractSegmentsContainer":
         """Add multiple segments to the collection. Passing a UNA segment means setting/overriding the control
         characters and setting the serializer to output the Service String Advice. If you wish to change the control
@@ -494,9 +495,7 @@ class Interchange(FileSourcableMixin, UNAHandlingMixin, AbstractSegmentsContaine
         return self
 
     @classmethod
-    def from_segments(
-        cls, segments: Union[list, collections.Iterable]
-    ) -> "Interchange":
+    def from_segments(cls, segments: Union[list, Iterable]) -> "Interchange":
         segments = iter(segments)
 
         first_segment = next(segments)
