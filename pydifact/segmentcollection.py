@@ -20,7 +20,6 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-import collections
 from collections.abc import Callable, Iterable
 from typing import List, Optional, Tuple, Union
 import datetime
@@ -92,7 +91,7 @@ class AbstractSegmentsContainer:
         return cls().add_segments(segments)
 
     def get_segments(
-        self, name: str, predicate: Callable[[Segment], bool] = None
+        self, name: str, predicate: Callable = None  # Python3.9+ Callable[[Segment], bool]
     ) -> list:
         """Get all the segments that match the requested name.
 
@@ -105,7 +104,7 @@ class AbstractSegmentsContainer:
                 yield segment
 
     def get_segment(
-        self, name: str, predicate: Callable[[Segment], bool] = None
+        self, name: str, predicate: Callable = None  # Python3.9+ Callable[[Segment], bool]
     ) -> Optional[Segment]:
         """Get the first segment that matches the requested name.
 
@@ -122,7 +121,7 @@ class AbstractSegmentsContainer:
     def split_by(
         self,
         start_segment_tag: str,
-    ) -> Iterable["RawSegmentCollection"]:
+    ) -> Iterable:  # Python3.9+ Iterable["RawSegmentCollection"]
         """Split a segment collection by tag.
 
         Everything before the first start segment is ignored, so if no matching
