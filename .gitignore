@@ -55,5 +55,5 @@ docs/_build/
 .idea
 prof
 .kdev4
-.venv
+.venv*
 Pipfile.lock
