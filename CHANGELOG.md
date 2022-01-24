@@ -5,6 +5,9 @@ Changelog for PYDIFACT
 - BREAKING CHANGE: Remove SegmentCollection
 - BREAKING CHANGE: Remove FileSourcableMixin
 
+[0.1.5] - 2022-01-24
+- fix compatibility with Python <3.9
+- 
 [0.1.4] - 2021-12-14
 - fix compatibility with Python 3.10
 
