@@ -103,7 +103,6 @@ class Segment(SegmentProvider):
 
 
 class EDIenergySegment(Segment):
-
     def __init__(self, tag: str, *elements: Union[str, List[str]]):
         super().__init__(tag, *elements)
 
@@ -113,6 +112,7 @@ class EDIenergySegment(Segment):
         else:
             # TODO add validation method for EDI@Energy
             pass
+
 
 class SegmentFactory:
     """Factory for producing segments."""

@@ -96,7 +96,6 @@ UNZ+1+0001'"""
 
 
 class MappingTest(unittest.TestCase):
-
     def test_read_interchange(self):
         interchange = Interchange.from_str(SAMPLE)
         message = next(interchange.get_messages())
@@ -106,9 +105,7 @@ class MappingTest(unittest.TestCase):
             obj.from_message(message)
         except Exception as err:
             raise AssertionError(
-                "Could not read Message into Order mapping! {}".format(
-                    repr(err)
-                )
+                "Could not read Message into Order mapping! {}".format(repr(err))
             )
 
     def test_ensure_mapped_bgm_segment(self):

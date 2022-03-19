@@ -91,7 +91,9 @@ class AbstractSegmentsContainer:
         return cls().add_segments(segments)
 
     def get_segments(
-        self, name: str, predicate: Callable = None  # Python3.9+ Callable[[Segment], bool]
+        self,
+        name: str,
+        predicate: Callable = None,  # Python3.9+ Callable[[Segment], bool]
     ) -> list:
         """Get all the segments that match the requested name.
 
@@ -104,7 +106,9 @@ class AbstractSegmentsContainer:
                 yield segment
 
     def get_segment(
-        self, name: str, predicate: Callable = None  # Python3.9+ Callable[[Segment], bool]
+        self,
+        name: str,
+        predicate: Callable = None,  # Python3.9+ Callable[[Segment], bool]
     ) -> Optional[Segment]:
         """Get the first segment that matches the requested name.
 
@@ -402,6 +406,7 @@ class Message(AbstractSegmentsContainer):
         if not unh:
             raise EDISyntaxError("Missing header in message")
         return cls.from_segments(unh[0], unh[1], todo)
+
     def validate(self):
         """Validates the message.
 
