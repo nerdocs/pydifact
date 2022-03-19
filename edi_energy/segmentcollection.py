@@ -31,7 +31,7 @@ from pydifact.control import Characters
 import codecs
 
 from .energy_segments import EDISegment
-from .segments import Segment
+from ..pydifact.segments import Segment
 
 
 class AbstractSegmentsContainer:

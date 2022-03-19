@@ -1,6 +1,6 @@
 from typing import Callable, Union
 
-from .segments import Segment
+from ..pydifact.segments import Segment
 
 from ..utils.dev import deprecation_warning
 
@@ -8,6 +8,9 @@ from ..utils.dev import deprecation_warning
 class EDISegment(Segment):
 
     tag: str
+
+    # tag is not a class attribute in this case, as each Segment instance could have another tag.
+    __omitted__ = True
 
     def __init__(self, segment: Segment):
         for key, val in vars(segment).items():

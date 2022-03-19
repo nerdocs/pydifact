@@ -21,7 +21,7 @@
 # THE SOFTWARE.
 
 import collections.abc as collections
-from typing import Callable, Iterable, List, Optional, Tuple, Union
+from typing import Callable, Generator, Iterable, List, Optional, Tuple, Union
 import datetime
 import warnings
 
@@ -94,7 +94,7 @@ class AbstractSegmentsContainer:
         self,
         name: str,
         predicate: Callable = None,  # Python3.9+ Callable[[Segment], bool]
-    ) -> list:
+    ) -> Generator[Segment, None, None]:
         """Get all the segments that match the requested name.
 
         :param name: The name of the segments to return
