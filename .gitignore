@@ -59,6 +59,7 @@ prof
 venv/
 .env
 env/
+.venv*
 Pipfile.lock
 
 # vim stuff

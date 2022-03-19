@@ -22,7 +22,7 @@
 
 from pydifact import segmentcollection, parser, segments, serializer, token, tokenizer
 
-__version__ = "0.1.3"
+__version__ = "0.1.5"
 
 from . import mapping
 from .control.characters import Characters

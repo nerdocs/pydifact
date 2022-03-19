@@ -78,7 +78,7 @@ class AbstractSegmentsContainer:
 
     @classmethod
     def from_segments(
-        cls, segments: list or collections.Iterable
+        cls, segments: Union[List, Iterable]
     ) -> "AbstractSegmentsContainer":
         """Create a new AbstractSegmentsContainer instance from a iterable list of segments.
 
@@ -91,7 +91,7 @@ class AbstractSegmentsContainer:
         return cls().add_segments(segments)
 
     def get_segments(
-        self, name: str, predicate: Callable[[Segment], bool] = None
+        self, name: str, predicate: Callable = None  # Python3.9+ Callable[[Segment], bool]
     ) -> list:
         """Get all the segments that match the requested name.
 
@@ -104,7 +104,7 @@ class AbstractSegmentsContainer:
                 yield segment
 
     def get_segment(
-        self, name: str, predicate: Callable[[Segment], bool] = None
+        self, name: str, predicate: Callable = None  # Python3.9+ Callable[[Segment], bool]
     ) -> Optional[Segment]:
         """Get the first segment that matches the requested name.
 
@@ -121,7 +121,7 @@ class AbstractSegmentsContainer:
     def split_by(
         self,
         start_segment_tag: str,
-    ) -> Iterable["RawSegmentCollection"]:
+    ) -> Iterable:  # Python3.9+ Iterable["RawSegmentCollection"]
         """Split a segment collection by tag.
 
         Everything before the first start segment is ignored, so if no matching
@@ -150,7 +150,7 @@ class AbstractSegmentsContainer:
             yield current_list
 
     def add_segments(
-        self, segments: List[Segment] or collections.Iterable
+        self, segments: Union[List[Segment], Iterable]
     ) -> "AbstractSegmentsContainer":
         """Add multiple segments to the collection. Passing a UNA segment means setting/overriding the control
         characters and setting the serializer to output the Service String Advice. If you wish to change the control
@@ -526,9 +526,7 @@ class Interchange(FileSourcableMixin, UNAHandlingMixin, AbstractSegmentsContaine
         return self
 
     @classmethod
-    def from_segments(
-        cls, segments: Union[list, collections.Iterable]
-    ) -> "Interchange":
+    def from_segments(cls, segments: Union[list, Iterable]) -> "Interchange":
         segments = iter(segments)
 
         first_segment = next(segments)

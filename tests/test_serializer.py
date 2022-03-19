@@ -45,6 +45,12 @@ def assert_segments(serializer, expected: str, segments: list):
     assert expected == collection
 
 
+def test_una_breakline(interchange):
+    initstring = ":+,? '"
+    interchange.add_segment(Segment("UNA", initstring))
+    assert interchange.serialize(break_lines=True).startswith("UNA" + initstring + "\n")
+
+
 def test_una_integrity1(interchange):
     initstring = ":+,? '"
     interchange.add_segment(Segment("UNA", initstring))

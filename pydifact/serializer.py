@@ -62,6 +62,8 @@ class Serializer:
                 return self.characters.service_string_advice
             else:
                 collection_parts += self.characters.service_string_advice
+                if break_lines:
+                    collection_parts += "\n"
 
         else:
             # no una header wanted!
