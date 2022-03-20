@@ -12,10 +12,10 @@ from typing import Generator, Iterable, List, Tuple, Union
 
 from pydifact.parser import Parser
 
-from .energy_collections import EnergySegmentsContainer, LINGroup
-from .energy_segments import CCI, DTM, IDE, LIN, LOC, NAD, PIA, RFF, UNB, EDISegment
-from .errors import MessageError
-from .segmentcollection import Interchange
+from edi_energy.energy_collections import EnergySegmentsContainer, LINGroup
+from edi_energy.energy_segments import CCI, DTM, IDE, LIN, LOC, NAD, PIA, RFF, UNB, EDISegment
+from edi_energy.errors import MessageError
+from edi_energy.segmentcollection import Interchange
 
 
 class EDIenergy(Interchange):

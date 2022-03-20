@@ -18,11 +18,9 @@ from typing import Iterable, List
 
 import pytest
 
-from pydifact import Serializer
-# from pydifact.segmentcollection import Interchange, Message, RawSegmentCollection
-from edi_energy.segmentcollection import Message#Interchange, RawSegmentCollection
 from edi_energy.energy_collections import EnergySegmentsContainer as  RawSegmentCollection
 from edi_energy.energy_collections import EDIEnergyInterchange as  Interchange
+from edi_energy.energy_collections import EDIEnergyMessage as  Message
 from pydifact.segments import Segment
 from pydifact.api import EDISyntaxError
 

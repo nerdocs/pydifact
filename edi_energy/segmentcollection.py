@@ -20,7 +20,6 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-import collections
 from typing import Callable, Iterable, List, Optional, Tuple, Union, Generator
 import datetime
 
@@ -30,8 +29,8 @@ from pydifact.serializer import Serializer
 from pydifact.control import Characters
 import codecs
 
-from .energy_segments import EDISegment
-from ..pydifact.segments import Segment
+from edi_energy.energy_segments import EDISegment
+from pydifact.segments import Segment
 
 
 class AbstractSegmentsContainer:
@@ -111,17 +110,8 @@ class AbstractSegmentsContainer:
             list of Segment
         """
         for segment in self.segments:
-            # if segment.tag == name and (predicate is None or predicate(segment)):
-            if segment.tag == name:
-                if flag:
-                    segment = EDISegment(segment)
-                    if segment.qualifier == flag:
-                        yield segment
-                        continue
-                    else:
-                        continue
-                else:
-                    yield segment
+            if segment.tag == name and (predicate is None or predicate(segment)):
+                yield segment
 
     def get_segment(
         self, name: str, predicate: Callable[[EDISegment], bool] = None, flag: str = ""
@@ -214,7 +204,7 @@ class AbstractSegmentsContainer:
             yield current_list
 
     def add_segments(
-        self, segments: List[Segment] or collections.Iterable
+        self, segments: List[Segment] or Iterable
     ) -> "AbstractSegmentsContainer":
         """Add multiple segments to the collection. Passing a UNA segment means setting/overriding the control
         characters and setting the serializer to output the Service String Advice. If you wish to change the control
@@ -403,9 +393,12 @@ class Interchange(AbstractSegmentsContainer):
     def get_header_segment(self) -> Segment:
         ##  lazy hack to ensure iterable from overriden attribute
         #
-        extra_header_elements = (
-            [] if self.extra_header_elements is not list else self.extra_header_elements
-        )
+        ##  don't know where this was used - maybe for lazy prints in early implementations?
+        ##  could be deleted...
+        #
+        # extra_header_elements = (
+        #     [] if self.extra_header_elements is not list else self.extra_header_elements
+        # )
         #
         ## hack end
         return Segment(
@@ -415,7 +408,7 @@ class Interchange(AbstractSegmentsContainer):
             self.recipient,
             ["{:%y%m%d}".format(self.timestamp), "{:%H%M}".format(self.timestamp)],
             self.control_reference,
-            *extra_header_elements,
+            *self.extra_header_elements,
         )
 
     def get_footer_segment(self) -> Segment:
@@ -499,7 +492,7 @@ class Interchange(AbstractSegmentsContainer):
 
     @classmethod
     def from_segments(
-        cls, segments: Union[list, collections.Iterable]
+        cls, segments: Union[list, Iterable]
     ) -> "Interchange":
         segments = iter(segments)
 
@@ -533,6 +526,8 @@ class Interchange(AbstractSegmentsContainer):
     @classmethod
     def from_file(cls, file: str, encoding: str = "iso8859-1") -> "Interchange":
         """Create a Interchange instance from a file.
+
+        Method was previously in FileSourcableMixin. 
 
         Raises FileNotFoundError if filename is not found.
         :param encoding: an optional string which specifies the encoding. Default is "iso8859-1".

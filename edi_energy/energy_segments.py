@@ -1,8 +1,8 @@
 from typing import Callable, Union
 
-from ..pydifact.segments import Segment
+from pydifact.segments import Segment
 
-from ..utils.dev import deprecation_warning
+from utils.dev import deprecation_warning
 
 
 class EDISegment(Segment):
@@ -12,9 +12,31 @@ class EDISegment(Segment):
     # tag is not a class attribute in this case, as each Segment instance could have another tag.
     __omitted__ = True
 
-    def __init__(self, segment: Segment):
-        for key, val in vars(segment).items():
-            setattr(self, key, val)
+    def __init__(self, segment: Union[Segment,str],*args, **kwargs):
+        """Constructs an EDISegment instance from a low level Segment instance or given tag and elements
+
+        Parameters
+        ----------
+        segment : Segment, str
+            a Segment instance or a tag, then the elements for this segment must be provided as well
+
+        Exapmle
+        -------
+        >>> s = Segment("A", "1", "a")
+        >>> edi_segment = EDISegment(s)
+
+        or directly with a tag and data elements:
+        >>> edi_segment = EDISegment("A", "1", "a")
+
+
+        """
+        
+        if isinstance(segment,Segment):
+            for key, val in vars(segment).items():
+                setattr(self, key, val)
+            return
+
+        super().__init__(segment,*args,**kwargs)
 
     @property
     def qualifier(self):
