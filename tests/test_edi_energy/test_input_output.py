@@ -21,6 +21,7 @@ import conftest
 
 path = conftest.data_path
 
+
 def test_wikipedia_file():
     message = Interchange.from_file("{}/wikipedia.edi".format(path))
     # make some checks

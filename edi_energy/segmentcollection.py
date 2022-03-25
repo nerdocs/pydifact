@@ -491,9 +491,7 @@ class Interchange(AbstractSegmentsContainer):
         return super().add_segment(segment)
 
     @classmethod
-    def from_segments(
-        cls, segments: Union[list, Iterable]
-    ) -> "Interchange":
+    def from_segments(cls, segments: Union[list, Iterable]) -> "Interchange":
         segments = iter(segments)
 
         first_segment = next(segments)
@@ -527,7 +525,7 @@ class Interchange(AbstractSegmentsContainer):
     def from_file(cls, file: str, encoding: str = "iso8859-1") -> "Interchange":
         """Create a Interchange instance from a file.
 
-        Method was previously in FileSourcableMixin. 
+        Method was previously in FileSourcableMixin.
 
         Raises FileNotFoundError if filename is not found.
         :param encoding: an optional string which specifies the encoding. Default is "iso8859-1".

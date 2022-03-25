@@ -40,14 +40,15 @@ def test_energy_interchange():
 
     # verify creation type
     print(energy_seg_interchange.segments)
-    assert isinstance(energy_seg_interchange,EDIEnergyInterchange)
-    assert isinstance(energy_seg_interchange.segments[0],EDISegment)
+    assert isinstance(energy_seg_interchange, EDIEnergyInterchange)
+    assert isinstance(energy_seg_interchange.segments[0], EDISegment)
     # has qulifier
     assert energy_seg_interchange.segments[0].qualifier == "1"
     # underlying segment type
     assert energy_seg_interchange.segments[0]
     assert isinstance(energy_seg_interchange.segments[0], Segment)
     assert isinstance(energy_seg_interchange.segments[2], EDISegment)
+
 
 def test_interchange_attr():
     assert energy_seg_interchange.sender == "01010000253001"

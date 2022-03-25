@@ -13,7 +13,7 @@ class EDISegment(Segment):
     # tag is not a class attribute in this case, as each Segment instance could have another tag.
     __omitted__ = True
 
-    def __init__(self, segment: Union[Segment,str],*args, **kwargs):
+    def __init__(self, segment: Union[Segment, str], *args, **kwargs):
         """Constructs an EDISegment instance from a low level Segment instance or given tag and elements
 
         Parameters
@@ -31,13 +31,13 @@ class EDISegment(Segment):
 
 
         """
-        
-        if isinstance(segment,Segment):
+
+        if isinstance(segment, Segment):
             for key, val in vars(segment).items():
                 setattr(self, key, val)
             return
 
-        super().__init__(segment,*args,**kwargs)
+        super().__init__(segment, *args, **kwargs)
 
     @property
     def qualifier(self):
