@@ -8,12 +8,23 @@ like ALOCAT or TSIMSG are implemented.
 
 import codecs
 import datetime
-from typing import Generator, Iterable, List, Tuple, Union
+from typing import Generator, Iterable, List, Tuple, Union, Callable
 
 from pydifact.parser import Parser
 
 from edi_energy.energy_collections import EnergySegmentsContainer, LINGroup
-from edi_energy.energy_segments import CCI, DTM, IDE, LIN, LOC, NAD, PIA, RFF, UNB, EDISegment
+from edi_energy.energy_segments import (
+    CCI,
+    DTM,
+    IDE,
+    LIN,
+    LOC,
+    NAD,
+    PIA,
+    RFF,
+    UNB,
+    EDISegment,
+)
 from edi_energy.errors import MessageError
 from edi_energy.segmentcollection import Interchange
 
@@ -50,9 +61,7 @@ class EDIenergy(Interchange):
         for key, val in vars(edi_message).items():
             setattr(self, key, val)
 
-        self.rff = [
-            RFF(r).get() for r in self.get_segments(RFF.tag, RFF.is_Z13)
-        ]
+        self.rff = [RFF(r).get() for r in self.get_segments(RFF.tag, RFF.is_Z13)]
 
     def get_message_info(self) -> Tuple[str, str, datetime.datetime, str]:
         """returns the UNB header as readable tuple
@@ -257,7 +266,10 @@ class EDIenergy(Interchange):
             print(self.serialize(True))
 
     def compare_whitelist_info(
-        self, class_edi_seg: EDISegment, whitelist: List[str], predicate: Callable[[EDISegment], bool]=None
+        self,
+        class_edi_seg: EDISegment,
+        whitelist: List[str],
+        predicate: Callable[[EDISegment], bool] = None,
     ):
         """check if given segment types are in whitelist
 
