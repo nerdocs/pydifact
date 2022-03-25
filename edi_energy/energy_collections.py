@@ -291,8 +291,8 @@ class EDIEnergyInterchange(EnergySegmentsContainer, Interchange):
         extra_header_elements: List[Union[str, List[str]]] = None,
     ):
         super().__init__(
-            extra_header_elements=extra_header_elements,
-            sender=sender,
+            extra_header_elements=extra_header_elements,  # param of AbstractSegmentContainer
+            sender=sender,  # inputs of Interchange
             recipient=recipient,
             control_reference=control_reference,
             syntax_identifier=syntax_identifier,
@@ -382,7 +382,7 @@ class EDIEnergyInterchange(EnergySegmentsContainer, Interchange):
         Returns
         -------
         EDIEnergyInterchange
-            
+
         """
         # cast segments to edi segments
         segments = [EDISegment(seg) for seg in segments]
@@ -405,7 +405,7 @@ class EDIEnergyInterchange(EnergySegmentsContainer, Interchange):
         Returns
         -------
         EDIEnergyInterchange
-        
+
         """
 
         return super().from_file(file, encoding)

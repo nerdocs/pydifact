@@ -1,3 +1,4 @@
+from abc import abstractmethod
 from typing import Callable, Union
 
 from pydifact.segments import Segment
@@ -55,8 +56,23 @@ class EDISegment(Segment):
     def matches(self, qualifier) -> bool:
         return self.qualifier == qualifier
 
+    @abstractmethod
     def get(self):
-        pass
+        """Return the underlying value of this segment.
+
+        Must be implemented in any inheriting classes.
+        """
+
+    @classmethod
+    def __predicate(cls, obj: "EDISegment") -> bool:
+        """Sample implementaion of a predicate.
+
+        Optional predicate callable that returns True if the given segment
+        matches a condition. E.g. this segment class may have a qualifier Z13
+        which is defined in a class attribute qual_Z13 = "Z13"
+
+        """
+        return obj.qualifier == cls.qual_Z13
 
 
 class UNB(EDISegment):
@@ -162,13 +178,17 @@ class NAD(EDISegment):
     def get(self):
         return self[1][0]
 
+    @classmethod
+    def is_zeu(cls, obj: EDISegment) -> bool:
+        return obj.qualifier == cls.flag_balancing_group
+
 
 class RFF(EDISegment):
     """Segment containing the Prüfidentifikator"""
 
     tag = "RFF"
     name = "Pruefidentifikator"
-    qualifier = "Z13"
+    qual_Z13 = "Z13"
 
     def __init__(self, segment: EDISegment):
         for key, val in vars(segment).items():
@@ -181,6 +201,10 @@ class RFF(EDISegment):
     def get(self):
         return self[0][1]
 
+    @classmethod
+    def is_Z13(cls, obj: EDISegment) -> bool:
+        return obj.qualifier == cls.qual_Z13
+
 
 class DTM(EDISegment):
     """Segment containing the date"""
@@ -188,7 +212,7 @@ class DTM(EDISegment):
     tag = "DTM"
     name = "Datum"
 
-    flag_137 = "137"
+    qual_137 = "137"
 
     def __init__(self, segment: EDISegment):
         for key, val in vars(segment).items():
@@ -198,12 +222,17 @@ class DTM(EDISegment):
     def get(self):
         return self[0][1]
 
+    @classmethod
+    def is_137(cls, obj: EDISegment) -> bool:
+        return obj.qualifier == cls.qual_137
+
 
 class LOC(EDISegment):
     """Segment containing the MeLo or MaLo"""
 
     tag = "LOC"
     name = "MeLo_MaLo_ID"
+    qual_172 = "172"
 
     def __init__(self, segment: EDISegment):
         for key, val in vars(segment).items():
@@ -215,6 +244,10 @@ class LOC(EDISegment):
 
     def get(self):
         return self[1]
+
+    @classmethod
+    def is_172(cls, obj: EDISegment) -> bool:
+        return obj.qualifier == cls.qual_172
 
 
 class PIA(EDISegment):
@@ -254,8 +287,8 @@ class CCI(EDISegment):
     """Segment containing the EIC-Code or equal"""
 
     tag = "CCI"
-    bk_flag = "Z19"
     name = "EIC-Code"
+    qual_balancing_group = "Z19"
 
     def __init__(self, segment: EDISegment):
         for key, val in vars(segment).items():
@@ -267,6 +300,10 @@ class CCI(EDISegment):
 
     def get(self):
         return self[2]
+
+    @classmethod
+    def is_Z19(cls, obj: EDISegment) -> bool:
+        return obj.qualifier == cls.qual_balancing_group
 
 
 def match_qualifier(qualifier: Union[str, int]) -> Callable[[EDISegment], bool]:

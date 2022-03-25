@@ -51,7 +51,7 @@ class EDIenergy(Interchange):
             setattr(self, key, val)
 
         self.rff = [
-            RFF(r).get() for r in self.get_segments(RFF.tag, flag=RFF.qualifier)
+            RFF(r).get() for r in self.get_segments(RFF.tag, RFF.is_Z13)
         ]
 
     def get_message_info(self) -> Tuple[str, str, datetime.datetime, str]:
@@ -257,7 +257,7 @@ class EDIenergy(Interchange):
             print(self.serialize(True))
 
     def compare_whitelist_info(
-        self, class_edi_seg: EDISegment, whitelist: List[str], flag: str = ""
+        self, class_edi_seg: EDISegment, whitelist: List[str], predicate: Callable[[EDISegment], bool]=None
     ):
         """check if given segment types are in whitelist
 
@@ -273,7 +273,7 @@ class EDIenergy(Interchange):
         """
         # TODO verify whitelist is list[str]
         segments_with_tag = [
-            seg for seg in self.get_segments(class_edi_seg.tag, flag=flag)
+            seg for seg in self.get_segments(class_edi_seg.tag, predicate)
         ]
         ids_of_segments = [class_edi_seg(seg).get() for seg in segments_with_tag]
         for id in set(ids_of_segments):
@@ -331,7 +331,7 @@ class EDIenergy(Interchange):
 
             container = EnergySegmentsContainer.from_segments(bgm.segments)
 
-            rff = container.get_segments(RFF.tag, flag=RFF.qualifier)
+            rff = container.get_segments(RFF.tag, RFF.is_Z13)
             structure.extend([str(r) for r in rff])
             structure.append("\n\t")
 
@@ -343,9 +343,9 @@ class EDIenergy(Interchange):
             for gr in segment_groups:
 
                 lin = gr.get_segment(LIN.tag)
-                loc = gr.get_segment(LOC.tag, flag="172")
-                nad = gr.get_segment(NAD.tag, flag=NAD.flag_balancing_group)
-                dtm = gr.get_segments(DTM.tag, flag=DTM.flag_137)
+                loc = gr.get_segment(LOC.tag, LOC.is_172)
+                nad = gr.get_segment(NAD.tag, NAD.is_zeu)
+                dtm = gr.get_segments(DTM.tag, DTM.is_137)
 
                 info_segments = (lin, loc, nad)
                 for e, el in enumerate(info_segments):
@@ -510,7 +510,7 @@ class TSIMSG(UTILMD):
 
     @property
     def eic_codes(self):
-        return [CCI(bk).get() for bk in self.get_segments(CCI.tag, flag=CCI.bk_flag)]
+        return [CCI(bk).get() for bk in self.get_segments(CCI.tag, CCI.is_Z19)]
 
 
 class MSCONS(EDIenergy):
@@ -569,7 +569,7 @@ class MSCONS(EDIenergy):
 
                 container = EnergySegmentsContainer.from_segments(bgm.segments)
 
-                rff = container.get_segments(RFF.tag, flag=RFF.qualifier)
+                rff = container.get_segments(RFF.tag, RFF.is_Z13)
                 output.extend([str(r) for r in rff])
                 output.append("\n\t")
 
@@ -583,9 +583,9 @@ class MSCONS(EDIenergy):
                 for gr in segment_groups:
 
                     lin = gr.get_segment(LIN.tag)
-                    loc = gr.get_segment(LOC.tag, flag="172")
-                    nad = gr.get_segment(NAD.tag, flag=NAD.flag_balancing_group)
-                    dtm = gr.get_segments(DTM.tag, flag=DTM.flag_137)
+                    loc = gr.get_segment(LOC.tag, LOC.is_172)
+                    nad = gr.get_segment(NAD.tag, NAD.is_zeu)
+                    dtm = gr.get_segments(DTM.tag, DTM.is_137)
 
                     info_segments = (lin, loc, nad)
                     for e, el in enumerate(info_segments):

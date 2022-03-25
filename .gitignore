@@ -67,3 +67,7 @@ Pipfile.lock
 .pylintrc
 .vscode
 .pytest_cache
+
+
+
+data/**
