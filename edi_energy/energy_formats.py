@@ -633,16 +633,23 @@ class MSCONS(EDIenergy):
                 print(qty)
 
 
-FORMAT_CATALOG = (EDIenergy, ORDRSP, ALOCAT, IMBNOT, UTILMD, TSIMSG, MSCONS)
+BASE_FORMAT = EDIenergy
+
+implemented_edi_energy_formats = (ORDRSP, ALOCAT, IMBNOT, UTILMD, TSIMSG, MSCONS)
+
+FORMAT_CATALOG = dict(
+    zip(
+        list(f.__name__ for f in implemented_edi_energy_formats),
+        implemented_edi_energy_formats,
+    )
+)
 
 
 def format_selector(unh_bgm: List[EDISegment]) -> EDIenergy:
-    return 
+    return
 
 
 def read_edi_energy_from_file(file: str, encoding: str = "iso8859-1") -> EDIenergy:
-    formats = dict(zip(list(f.__name__ for f in FORMAT_CATALOG),FORMAT_CATALOG))
-
-    return formats["MSCONS"].from_file(file=file,encoding=encoding)
-
-
+    tag = "MSCONS"
+    format_to_use = FORMAT_CATALOG[tag] if tag in FORMAT_CATALOG.keys() else BASE_FORMAT
+    return format_to_use.from_file(file=file, encoding=encoding)

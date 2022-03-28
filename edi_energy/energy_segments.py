@@ -2,6 +2,7 @@ from abc import abstractmethod
 from typing import Callable, Union
 
 from pydifact.segments import Segment
+from pydifact.parser import Parser
 
 from utils.dev import deprecation_warning
 
@@ -74,6 +75,10 @@ class EDISegment(Segment):
         """
         return obj.qualifier == cls.qual_Z13
 
+    @classmethod
+    def from_str(cls, string) -> "EDISegment":
+        return cls(next(Parser().parse(string)))
+
 
 class UNB(EDISegment):
     """Header Segment"""
@@ -102,6 +107,96 @@ class UNB(EDISegment):
     @property
     def ref_id(self):
         return self[4]
+
+
+class UNH(EDISegment):
+    """UNH service segment
+
+
+    Parameters
+    ----------
+    EDISegment : _type_
+        _description_
+
+    """
+
+    tag = "UNH"
+
+    def __init__(self, segment: EDISegment):
+        for key, val in vars(segment).items():
+            setattr(self, key, val)
+
+    def get(self) -> str:
+        """segment count of this message
+
+        Returns
+        -------
+        str
+            stored segment count
+        """
+        return self[0]
+
+    @property
+    def message_type(self) -> str:
+        """get type of message as MSCONS, UTILMD
+
+        Returns
+        -------
+        str
+        """
+        return self[1][0]
+
+    @property
+    def usage_code_organisation(self) -> str:
+        """version number of organisation
+
+        e.g. 2.3c for BDEW or DVGW18
+
+        Returns
+        -------
+        str
+        """
+        # -1 is not used, because UNH may contain an optional
+        return self[1][4]
+
+    @property
+    def is_subformat(self):
+        return "DVGW" in self.usage_code_organisation and self.message_type in [
+            "ORDRSP"
+        ]
+
+
+class BGM(EDISegment):
+    """BGM service segment
+
+
+    Parameters
+    ----------
+    EDISegment : _type_
+        _description_
+
+    """
+
+    tag = "BGM"
+
+    # TODO implement some kind of switch to return the BGM ID or message type
+    # mostlikely due to element format...
+    # BGM+14G::332+IMBNOT123456'  -> BGM segment: [['X4G', '', '332'], 'ALOCAT438978899']
+    # BGM+Z48+100698719676+9'  -> BGM segment: ['7', '502887849FB14868870CD84693576199', '1']
+
+    def __init__(self, segment: EDISegment):
+        for key, val in vars(segment).items():
+            setattr(self, key, val)
+
+    def get(self) -> str:
+        """segment count of this message
+
+        Returns
+        -------
+        str
+            stored segment count
+        """
+        return self[0]
 
 
 class UNT(EDISegment):
@@ -311,7 +406,9 @@ BASE_SEGMENT = EDISegment
 
 implemented_segment_types = (
     UNB,
+    UNH,
     UNT,
+    BGM,
     IDE,
     NAD,
     RFF,
@@ -319,11 +416,14 @@ implemented_segment_types = (
     LOC,
     PIA,
     LIN,
-    CCI
+    CCI,
 )
 
 
-SEGMENTS_CATALOG = dict(zip(list(s.tag for s in implemented_segment_types),implemented_segment_types))
+SEGMENT_CATALOG = dict(
+    zip(list(s.tag for s in implemented_segment_types), implemented_segment_types)
+)
+
 
 def choose_segment_from_catalog(segment: Segment) -> EDISegment:
     """looks for matching tag in segment catalog and constructs a new instance
@@ -340,8 +440,13 @@ def choose_segment_from_catalog(segment: Segment) -> EDISegment:
     EDISegment
         instance from catalog class or EDISegment
     """
-    class_to_use = SEGMENTS_CATALOG[segment.tag] if segment.tag in SEGMENTS_CATALOG.keys() else BASE_SEGMENT
+    class_to_use = (
+        SEGMENT_CATALOG[segment.tag]
+        if segment.tag in SEGMENT_CATALOG.keys()
+        else BASE_SEGMENT
+    )
     return class_to_use(segment)
+
 
 def match_qualifier(qualifier: Union[str, int]) -> Callable[[EDISegment], bool]:
     def func(segment: EDISegment) -> bool:

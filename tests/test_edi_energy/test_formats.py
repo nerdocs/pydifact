@@ -85,12 +85,12 @@ def test_message_creator(seg_str, format):
 
 
 class TestBase:
-    @pytest.mark.parametrize("cls", FORMAT_CATALOG)
+    @pytest.mark.parametrize("cls", FORMAT_CATALOG.values())
     def test_from_file(self, cls: Interchange):
         with pytest.raises(FileNotFoundError):
             cls.from_file("/no/such/file")
 
-    @pytest.mark.parametrize("cls", FORMAT_CATALOG)
+    @pytest.mark.parametrize("cls", FORMAT_CATALOG.values())
     def test_empty_interchange(self, cls):
         assert str(get_interchange_instance(cls)) == (
             "UNB+UNOC:1+1234+3333+200102:2212+42'" "UNZ+0+42'"
