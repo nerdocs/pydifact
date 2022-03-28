@@ -1,7 +1,7 @@
 from typing import Callable, Generator, Iterable, List, Optional, Tuple, Union
 
-from edi_energy.energy_segments import IDE, EDISegment, LIN, CCI
-from edi_energy.segmentcollection import AbstractSegmentsContainer, Interchange, Message
+from edi_energy.energy_segments import IDE, EDISegment, LIN, CCI, choose_segment_from_catalog
+from pydifact.segmentcollection import AbstractSegmentsContainer, Interchange, Message
 
 from pydifact.control import Characters
 from pydifact.segments import Segment
@@ -104,7 +104,10 @@ class EnergySegmentsContainer(AbstractSegmentsContainer):
         :type segments: list or iterable of Segments
         """
         for segment in segments:
-            self.add_segment(EDISegment(segment))
+            
+            if not isinstance(segment, EDISegment):
+                segment = choose_segment_from_catalog(segment)
+            self.add_segment(segment)
 
         return self
 
@@ -291,7 +294,7 @@ class EDIEnergyInterchange(EnergySegmentsContainer, Interchange):
         extra_header_elements: List[Union[str, List[str]]] = None,
     ):
         super().__init__(
-            extra_header_elements=extra_header_elements,  # param of AbstractSegmentContainer
+            extra_header_elements=extra_header_elements,  # if extra_header_elements else [],  # param of AbstractSegmentContainer
             sender=sender,  # inputs of Interchange
             recipient=recipient,
             control_reference=control_reference,
@@ -385,7 +388,7 @@ class EDIEnergyInterchange(EnergySegmentsContainer, Interchange):
 
         """
         # cast segments to edi segments
-        segments = [EDISegment(seg) for seg in segments]
+        segments = [choose_segment_from_catalog(s) for s in segments]
         # create base interchange from edi segments and set inherited attributes
         return cls.from_interchange(Interchange.from_segments(segments))
 

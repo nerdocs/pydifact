@@ -306,6 +306,43 @@ class CCI(EDISegment):
         return obj.qualifier == cls.qual_balancing_group
 
 
+BASE_SEGMENT = EDISegment
+# BASE_SEGMENT = Segment
+
+implemented_segment_types = (
+    UNB,
+    UNT,
+    IDE,
+    NAD,
+    RFF,
+    DTM,
+    LOC,
+    PIA,
+    LIN,
+    CCI
+)
+
+
+SEGMENTS_CATALOG = dict(zip(list(s.tag for s in implemented_segment_types),implemented_segment_types))
+
+def choose_segment_from_catalog(segment: Segment) -> EDISegment:
+    """looks for matching tag in segment catalog and constructs a new instance
+
+    If the given tag is not implemented an EDISegment instance is returned.
+
+    Parameters
+    ----------
+    segment : Segment
+        Segment to use
+
+    Returns
+    -------
+    EDISegment
+        instance from catalog class or EDISegment
+    """
+    class_to_use = SEGMENTS_CATALOG[segment.tag] if segment.tag in SEGMENTS_CATALOG.keys() else BASE_SEGMENT
+    return class_to_use(segment)
+
 def match_qualifier(qualifier: Union[str, int]) -> Callable[[EDISegment], bool]:
     def func(segment: EDISegment) -> bool:
         if not isinstance(segment, EDISegment):

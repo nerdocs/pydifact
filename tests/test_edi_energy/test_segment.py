@@ -15,7 +15,7 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import pytest
 
-from pydifact.segments import Segment
+from edi_energy.energy_segments import EDISegment as Segment
 
 
 elements = ["field1", ["field2", "extra"], "stuff"]
@@ -45,3 +45,8 @@ def test_get_non_existing_element():
     segment = Segment("OMD", *elements)
     with pytest.raises(IndexError):
         segment.elements[7]
+
+
+# def test_predicate():
+
+#     elements = ["field1", ["field2", "extra"], "stuff"]

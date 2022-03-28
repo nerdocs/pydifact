@@ -8,11 +8,15 @@ like ALOCAT or TSIMSG are implemented.
 
 import codecs
 import datetime
-from typing import Generator, Iterable, List, Tuple, Union, Callable
+from typing import Callable, Generator, Iterable, List, Tuple, Union
 
 from pydifact.parser import Parser
 
-from edi_energy.energy_collections import EnergySegmentsContainer, LINGroup
+from edi_energy.energy_collections import (
+    EDIEnergyInterchange,
+    EnergySegmentsContainer,
+    LINGroup,
+)
 from edi_energy.energy_segments import (
     CCI,
     DTM,
@@ -26,10 +30,9 @@ from edi_energy.energy_segments import (
     EDISegment,
 )
 from edi_energy.errors import MessageError
-from edi_energy.segmentcollection import Interchange
 
 
-class EDIenergy(Interchange):
+class EDIenergy(EDIEnergyInterchange):
     """
     EDI@Energy Messages are Edifact Interchanges which contain Messages.
 
@@ -45,7 +48,7 @@ class EDIenergy(Interchange):
     BLOCK_TAG = ""
     BLOCK_TAG_END = ""
 
-    def __init__(self, edi_message: Interchange = None, casted: bool = False) -> None:
+    def __init__(self, edi_message: EDIEnergyInterchange = None, **kwargs) -> None:
         """creates an instance of class EDIenergy
 
         Args:
@@ -61,7 +64,7 @@ class EDIenergy(Interchange):
         for key, val in vars(edi_message).items():
             setattr(self, key, val)
 
-        self.rff = [RFF(r).get() for r in self.get_segments(RFF.tag, RFF.is_Z13)]
+        self.rff = [r.get() for r in self.get_segments(RFF.tag, RFF.is_Z13)]
 
     def get_message_info(self) -> Tuple[str, str, datetime.datetime, str]:
         """returns the UNB header as readable tuple
@@ -529,8 +532,7 @@ class MSCONS(EDIenergy):
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
         self.validate()
-
-        self.extra_header_elements = self.get_first_index(self.BLOCK_TAG)
+        # self.extra_header_elements = self.get_first_index(self.BLOCK_TAG)
 
         self.loc = [LOC(l).get() for l in self.get_segments(LOC.tag)]
         self.pia = [PIA(p).get() for p in self.get_segments(PIA.tag)]
@@ -546,7 +548,7 @@ class MSCONS(EDIenergy):
         # TODO reading an empty file or corrupt msconfig leads to script errors
         # there fore a skip and warning message should be implemented!
         interchange = super().from_file(*args, **kwargs)
-        return cls(interchange, casted=True)
+        return cls(interchange)
 
     def print_info(self, with_dates: bool = True):
 
@@ -623,3 +625,24 @@ class MSCONS(EDIenergy):
             output.append("\n\n")
 
             print("".join(output))
+
+    def get_time_series(self):
+        for lin in self.split_by(LIN.tag):
+            print(lin.get_segment(PIA.tag))
+            for qty in lin.split_by("QTY"):
+                print(qty)
+
+
+FORMAT_CATALOG = (EDIenergy, ORDRSP, ALOCAT, IMBNOT, UTILMD, TSIMSG, MSCONS)
+
+
+def format_selector(unh_bgm: List[EDISegment]) -> EDIenergy:
+    return 
+
+
+def read_edi_energy_from_file(file: str, encoding: str = "iso8859-1") -> EDIenergy:
+    formats = dict(zip(list(f.__name__ for f in FORMAT_CATALOG),FORMAT_CATALOG))
+
+    return formats["MSCONS"].from_file(file=file,encoding=encoding)
+
+
