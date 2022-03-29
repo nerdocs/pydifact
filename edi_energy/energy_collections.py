@@ -1,6 +1,12 @@
 from typing import Callable, Generator, Iterable, List, Optional, Tuple, Union
 
-from edi_energy.energy_segments import IDE, EDISegment, LIN, CCI, choose_segment_from_catalog
+from edi_energy.energy_segments import (
+    IDE,
+    EDISegment,
+    LIN,
+    CCI,
+    choose_segment_from_catalog,
+)
 from pydifact.segmentcollection import AbstractSegmentsContainer, Interchange, Message
 
 from pydifact.control import Characters
@@ -104,7 +110,7 @@ class EnergySegmentsContainer(AbstractSegmentsContainer):
         :type segments: list or iterable of Segments
         """
         for segment in segments:
-            
+
             if not isinstance(segment, EDISegment):
                 segment = choose_segment_from_catalog(segment)
             self.add_segment(segment)

@@ -80,37 +80,37 @@ def test_UNH(seg_str, output):
     seg = Segment.from_str(seg_str)
     assert UNH(seg).usage_code_organisation == output
 
+
 @pytest.mark.parametrize(
     "seg_str,out",
     [
         ("UNH+1+MSCONS:D:04B:UN:2.3c+UNB_DE0020_nr_1+1:C'", False),
-        ("UNH+2+MSCONS:D:04B:UN:2.3c+UNB_DE0020_nr_1+2'",False),
-        ("UNH+3+MSCONS:D:04B:UN:2.3c+UNB_DE0020_nr_1+3:F'",False),
-        ("UNH+4+MSCONS:D:04B:UN:2.3c'",False),
-        ("UNH+1+ORDRSP:D:07A:UN:DVGW17'",True),
-        ("UNH+438978899+ORDRSP:D:07A:UN:DVGW18'",True),
+        ("UNH+2+MSCONS:D:04B:UN:2.3c+UNB_DE0020_nr_1+2'", False),
+        ("UNH+3+MSCONS:D:04B:UN:2.3c+UNB_DE0020_nr_1+3:F'", False),
+        ("UNH+4+MSCONS:D:04B:UN:2.3c'", False),
+        ("UNH+1+ORDRSP:D:07A:UN:DVGW17'", True),
+        ("UNH+438978899+ORDRSP:D:07A:UN:DVGW18'", True),
     ],
 )
-def test_UNH(seg_str,out):
+def test_UNH(seg_str, out):
     seg = Segment.from_str(seg_str)
     assert UNH(seg).is_subformat == out
+
 
 @pytest.mark.parametrize(
     "seg_str,out",
     [
         ("BGM+Z48+100698719676+9'", False),
-        ("BGM+Z24+TEST00000517+9'",False),
-        ("BGM+7+502887849FB14868870CD84693576199+1'",False),
-        ("BGM+X4G::332+ALOCAT438978899'",False),
-        ("BGM+14G::332+IMBNOT436521948'",True),
-        ("BGM+Z36+041128914202'",True),
+        ("BGM+Z24+TEST00000517+9'", False),
+        ("BGM+7+502887849FB14868870CD84693576199+1'", False),
+        ("BGM+X4G::332+ALOCAT438978899'", False),
+        ("BGM+14G::332+IMBNOT436521948'", True),
+        ("BGM+Z36+041128914202'", True),
     ],
 )
-def test_UNH(seg_str,out):
+def test_UNH(seg_str, out):
     seg = Segment.from_str(seg_str)
     assert BGM(seg)
-
-
 
 
 @pytest.mark.parametrize(

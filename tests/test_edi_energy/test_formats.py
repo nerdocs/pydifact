@@ -71,17 +71,23 @@ def get_message_instance(cls):
 
 
 @pytest.mark.parametrize(
-    "seg_str,format",[
+    "seg_str,format",
+    [
         ("UNH+100698719676+MSCONS:D:04B:UN:2.3c'BGM+Z48+100698719676+9'", "MSCONS"),
-        ("UNH+438978899+ORDRSP:D:07A:UN:DVGW18'BGM+X4G::332+ALOCAT438978899'", "ALOCAT"),
+        (
+            "UNH+438978899+ORDRSP:D:07A:UN:DVGW18'BGM+X4G::332+ALOCAT438978899'",
+            "ALOCAT",
+        ),
         ("UNH+1+UTILMD:D:11A:UN:5.2c'BGM+Z07+EC38480624A-1'", "UTILMD"),
-        ("UNH+1+MSCONS:D:04B:UN:2.3c'BGM+7+502887849FB14868870CD84693576199+1'", "MSCONS"),
-    ]
+        (
+            "UNH+1+MSCONS:D:04B:UN:2.3c'BGM+7+502887849FB14868870CD84693576199+1'",
+            "MSCONS",
+        ),
+    ],
 )
 def test_message_creator(seg_str, format):
     con = EnergySegmentsContainer.from_str(seg_str)
     format_selector(con.segments)
-
 
 
 class TestBase:
