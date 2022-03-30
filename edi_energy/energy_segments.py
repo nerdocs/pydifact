@@ -262,6 +262,8 @@ class NAD(EDISegment):
     tag = "NAD"
     flag_balancing_group = "ZEU"
 
+    flag_grid_operator = "VY"
+
     def __init__(self, segment: EDISegment):
         for key, val in vars(segment).items():
             setattr(self, key, val)
@@ -276,6 +278,10 @@ class NAD(EDISegment):
     @classmethod
     def is_zeu(cls, obj: EDISegment) -> bool:
         return obj.qualifier == cls.flag_balancing_group
+
+    @classmethod
+    def is_vy(cls, obj: EDISegment) -> bool:
+        return obj.qualifier == cls.flag_grid_operator
 
 
 class RFF(EDISegment):

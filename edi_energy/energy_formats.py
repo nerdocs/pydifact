@@ -525,7 +525,21 @@ class TSIMSG(UTILMD):
 
     @property
     def eic_codes(self):
-        return [CCI(bk).get() for bk in self.get_segments(CCI.tag, CCI.is_Z19)]
+        return set(CCI(bk).get() for bk in self.get_segments(CCI.tag, CCI.is_Z19))
+
+    def get_declarated_profiles(self) -> List[Tuple]:
+
+        profiles = []
+
+        for ide in self.split_by(IDE.tag):
+
+            if not ide.get_segment(DTM.tag):
+                continue  # profile has no dtm tags and was not declarated !
+
+            ide = ide.get_segment(IDE.tag)
+            nad = ide.get_segment(NAD.tag, NAD.is_vy)
+
+            profiles.append((nad.get(), ide[1]))
 
 
 class MSCONS(EDIenergy):
