@@ -10,7 +10,7 @@ from pydifact.segmentcollection import Interchange
 
 import conftest
 
-invoice = conftest.data_path / "invoice1.edi"
+invoice = conftest.data_path_test / "invoice1.edi"
 energy_seg_container = EnergySegmentsContainer.from_file(invoice)
 energy_seg_mesage = EDIEnergyMessage.from_file(invoice)
 energy_seg_interchange = EDIEnergyInterchange.from_file(invoice)

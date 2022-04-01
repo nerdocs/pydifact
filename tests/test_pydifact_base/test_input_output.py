@@ -20,7 +20,7 @@ from pydifact.segments import Segment
 
 import conftest
 
-path = conftest.data_path
+path = conftest.data_path_test
 
 
 def test_wikipedia_file():
