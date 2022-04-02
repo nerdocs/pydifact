@@ -19,11 +19,11 @@ from edi_energy.energy_segments import EDISegment as Segment
 
 import conftest
 
-path = conftest.data_path
+path = conftest.data_path_test
 
 
 def test_wikipedia_file():
-    message = Interchange.from_file("{}/wikipedia.edi".format(path))
+    message = Interchange.from_file(path/"wikipedia.edi")
     # make some checks
     assert message.get_header_segment() == Segment(
         "UNB", ["IATB", "1"], "6XPPC", "LHPPC", ["940101", "0950"], "1"
@@ -35,7 +35,7 @@ def test_wikipedia_file():
 
 
 def test_invoice_file():
-    message = Interchange.from_file("{}/invoice1.edi".format(path))
+    message = Interchange.from_file(path/"invoice1.edi")
     # make some checks
     assert message.get_header_segment() == Segment(
         "UNB",
