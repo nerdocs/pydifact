@@ -1,9 +1,9 @@
 import conftest
 import pytest
 
-from edi_analyzer.analyze import Index, compare_segments_to_index
-from edi_energy.energy_formats import EDIenergy
-from edi_energy.energy_segments import RFF, EDISegment
+from pydifact.edi_analyzer.analyze import Index, compare_segments_to_index
+from pydifact.edi_energy.energy_formats import EDIenergy
+from pydifact.edi_energy.energy_segments import RFF, EDISegment
 
 file_path = (
     conftest.data_path

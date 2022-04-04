@@ -1,6 +1,6 @@
 from typing import Callable, Dict, List, Tuple, Union
 
-from edi_energy import EDISegment, EDIenergy
+from pydifact.edi_energy import EDISegment, EDIenergy
 
 
 def ensure_str(iterable) -> list:
@@ -140,7 +140,7 @@ def compare_segments_to_index(
     ]
     ids_of_segments = [class_edi_seg(seg).get() for seg in segments_with_tag]
 
-    # create output str 
+    # create output str
     output_str = []
     for id in set(ids_of_segments):
 

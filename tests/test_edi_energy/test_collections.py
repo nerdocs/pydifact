@@ -1,10 +1,10 @@
-from edi_energy.energy_collections import (
+from pydifact.edi_energy.energy_collections import (
     EDIEnergyInterchange,
     EDIEnergyMessage,
     EnergySegmentsContainer,
 )
-from edi_energy.energy_segments import EDISegment
-from edi_energy.segmentcollection import AbstractSegmentsContainer
+from pydifact.edi_energy.energy_segments import EDISegment
+from pydifact.edi_energy.segmentcollection import AbstractSegmentsContainer
 from pydifact.segments import Segment
 from pydifact.segmentcollection import Interchange
 

@@ -20,17 +20,16 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-from typing import Callable, Iterable, List, Optional, Tuple, Union, Generator
+import codecs
 import datetime
+from typing import Callable, Generator, Iterable, List, Optional, Tuple, Union
 
 from pydifact.api import EDISyntaxError
-from pydifact.parser import Parser
-from pydifact.serializer import Serializer
 from pydifact.control import Characters
-import codecs
-
-from edi_energy.energy_segments import EDISegment
+from pydifact.edi_energy.energy_segments import EDISegment
+from pydifact.parser import Parser
 from pydifact.segments import Segment
+from pydifact.serializer import Serializer
 
 
 class AbstractSegmentsContainer:

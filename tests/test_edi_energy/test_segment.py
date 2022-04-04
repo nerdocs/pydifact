@@ -15,9 +15,9 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import pytest
 
-from edi_energy.energy_segments import BGM, UNH, EDISegment as Segment
-from edi_energy.energy_segments import choose_segment_from_catalog
-from edi_energy.energy_collections import EnergySegmentsContainer
+from pydifact.edi_energy.energy_segments import BGM, UNH, EDISegment as Segment
+from pydifact.edi_energy.energy_segments import choose_segment_from_catalog
+from pydifact.edi_energy.energy_collections import EnergySegmentsContainer
 
 
 elements = ["field1", ["field2", "extra"], "stuff"]

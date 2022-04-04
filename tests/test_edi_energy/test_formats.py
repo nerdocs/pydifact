@@ -1,15 +1,15 @@
 import datetime
 from typing import Iterable, List
 
-from edi_energy.energy_collections import EnergySegmentsContainer
-from edi_energy.energy_collections import EDIEnergyInterchange as Interchange
-from edi_energy.energy_collections import EDIEnergyMessage as Message
+from pydifact.edi_energy.energy_collections import EnergySegmentsContainer
+from pydifact.edi_energy.energy_collections import EDIEnergyInterchange as Interchange
+from pydifact.edi_energy.energy_collections import EDIEnergyMessage as Message
 
 from pydifact.segments import Segment
 from pydifact.api import EDISyntaxError
 
 
-from edi_energy.energy_formats import FORMAT_CATALOG, format_selector
+from pydifact.edi_energy.energy_formats import FORMAT_CATALOG, format_selector
 
 import pytest
 

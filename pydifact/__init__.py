@@ -20,7 +20,16 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-from pydifact import segmentcollection, parser, segments, serializer, token, tokenizer
+from pydifact import (
+    segmentcollection,
+    parser,
+    segments,
+    serializer,
+    token,
+    tokenizer,
+    edi_analyzer,
+    edi_energy,
+)
 
 __version__ = "0.1.5"
 
@@ -32,6 +41,7 @@ from .segments import Segment
 from .serializer import Serializer
 from .token import Token
 from .tokenizer import Tokenizer
+
 
 # up-to-date information for newest standard
 # https://www.unece.org/tradewelcome/un-centre-for-trade-facilitation-and-e-business-uncefact/outputs/standards/unedifact/directories/2011-present.html

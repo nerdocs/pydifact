@@ -18,11 +18,11 @@ from typing import Iterable, List
 
 import pytest
 
-from edi_energy.energy_collections import (
+from pydifact.edi_energy.energy_collections import (
     EnergySegmentsContainer as RawSegmentCollection,
 )
-from edi_energy.energy_collections import EDIEnergyInterchange as Interchange
-from edi_energy.energy_collections import EDIEnergyMessage as Message
+from pydifact.edi_energy.energy_collections import EDIEnergyInterchange as Interchange
+from pydifact.edi_energy.energy_collections import EDIEnergyMessage as Message
 from pydifact.segments import Segment
 from pydifact.api import EDISyntaxError
 

@@ -15,7 +15,7 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from pydifact.segmentcollection import Interchange
-from edi_energy.energy_segments import EDISegment as Segment
+from pydifact.edi_energy.energy_segments import EDISegment as Segment
 
 import conftest
 

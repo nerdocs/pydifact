@@ -1,6 +1,6 @@
 from typing import Callable, Generator, Iterable, List, Optional, Tuple, Union
 
-from edi_energy.energy_segments import (
+from pydifact.edi_energy.energy_segments import (
     IDE,
     EDISegment,
     LIN,
