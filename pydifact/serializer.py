@@ -19,10 +19,10 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
+import re
 from typing import List, Optional
 
 from pydifact.control.characters import Characters
-import re
 
 from .segments import Segment
 

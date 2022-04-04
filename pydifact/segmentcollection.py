@@ -20,17 +20,17 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
+import codecs
 import collections.abc as collections
-from typing import Callable, Generator, Iterable, List, Optional, Tuple, Union
 import datetime
 import warnings
+from typing import Callable, Generator, Iterable, List, Optional, Tuple, Union
 
 from pydifact.api import EDISyntaxError
+from pydifact.control import Characters
 from pydifact.parser import Parser
 from pydifact.segments import Segment
 from pydifact.serializer import Serializer
-from pydifact.control import Characters
-import codecs
 
 
 class AbstractSegmentsContainer:

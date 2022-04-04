@@ -22,11 +22,12 @@
 
 import collections
 from copy import deepcopy
-from typing import List, Tuple, Iterator
+from typing import Iterator, List, Tuple
 
-from pydifact.segmentcollection import Message
 from pydifact.api import EDISyntaxError
-from pydifact.segments import Segment as Seg, SegmentFactory
+from pydifact.segmentcollection import Message
+from pydifact.segments import Segment as Seg
+from pydifact.segments import SegmentFactory
 
 
 class BiDirectionalIterator:

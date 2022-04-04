@@ -19,12 +19,12 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
-from typing import Optional, Generator, Any
+from typing import Any, Generator, Optional
 
-from pydifact.tokenizer import Tokenizer
-from pydifact.token import Token
-from pydifact.segments import Segment, SegmentFactory
 from pydifact.control import Characters
+from pydifact.segments import Segment, SegmentFactory
+from pydifact.token import Token
+from pydifact.tokenizer import Tokenizer
 
 
 class Parser:

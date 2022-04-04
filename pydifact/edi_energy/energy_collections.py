@@ -1,20 +1,18 @@
+import codecs
+import datetime
 from typing import Callable, Generator, Iterable, List, Optional, Tuple, Union
 
+from pydifact.control import Characters
 from pydifact.edi_energy.energy_segments import (
-    IDE,
-    EDISegment,
-    LIN,
     CCI,
+    IDE,
+    LIN,
+    EDISegment,
     choose_segment_from_catalog,
 )
-from pydifact.segmentcollection import AbstractSegmentsContainer, Interchange, Message
-
-from pydifact.control import Characters
-from pydifact.segments import Segment
 from pydifact.parser import Parser
-import codecs
-
-import datetime
+from pydifact.segmentcollection import AbstractSegmentsContainer, Interchange, Message
+from pydifact.segments import Segment
 
 # from .energy_segments import EDISegment as Segment
 

@@ -21,27 +21,29 @@
 # THE SOFTWARE.
 
 from pydifact import (
-    segmentcollection,
+    edi_analyzer,
+    edi_energy,
     parser,
+    segmentcollection,
     segments,
     serializer,
     token,
     tokenizer,
-    edi_analyzer,
-    edi_energy,
 )
 
-__version__ = "0.1.5"
+__version__ = "0.2.0"
 
 from . import mapping
 from .control.characters import Characters
-from .segmentcollection import SegmentCollection
+from .edi_analyzer.analyze import Index, compare_segments_to_index
+from .edi_energy.energy_formats import FORMAT_CATALOG, read_edi_energy_from_file
+from .edi_energy.energy_segments import SEGMENT_CATALOG, choose_segment_from_catalog
 from .parser import Parser
+from .segmentcollection import SegmentCollection
 from .segments import Segment
 from .serializer import Serializer
 from .token import Token
 from .tokenizer import Tokenizer
-
 
 # up-to-date information for newest standard
 # https://www.unece.org/tradewelcome/un-centre-for-trade-facilitation-and-e-business-uncefact/outputs/standards/unedifact/directories/2011-present.html

@@ -1,9 +1,8 @@
 from abc import abstractmethod
 from typing import Callable, Union
 
-from pydifact.segments import Segment
 from pydifact.parser import Parser
-
+from pydifact.segments import Segment
 from utils.dev import deprecation_warning
 
 

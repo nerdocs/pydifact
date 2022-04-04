@@ -10,8 +10,6 @@ import codecs
 import datetime
 from typing import Callable, Generator, Iterable, List, Tuple, Union
 
-from pydifact.parser import Parser
-
 from pydifact.edi_energy.energy_collections import (
     EDIEnergyInterchange,
     EnergySegmentsContainer,
@@ -30,6 +28,7 @@ from pydifact.edi_energy.energy_segments import (
     EDISegment,
 )
 from pydifact.edi_energy.errors import MessageError
+from pydifact.parser import Parser
 
 
 class EDIenergy(EDIEnergyInterchange):

@@ -20,9 +20,10 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-from pydifact.token import Token
-from pydifact.control.characters import Characters
 from typing import List, Optional
+
+from pydifact.control.characters import Characters
+from pydifact.token import Token
 
 
 class Tokenizer:
