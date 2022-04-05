@@ -1,2 +1,0 @@
-class MessageError(ValueError):
-    pass
