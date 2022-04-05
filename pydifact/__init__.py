@@ -21,8 +21,6 @@
 # THE SOFTWARE.
 
 from pydifact import (
-    edi_analyzer,
-    edi_energy,
     parser,
     segmentcollection,
     segments,
@@ -35,9 +33,6 @@ __version__ = "0.2.0"
 
 from . import mapping
 from .control.characters import Characters
-from .edi_analyzer.analyze import Index, compare_segments_to_index
-from .edi_energy.energy_formats import FORMAT_CATALOG, read_edi_energy_from_file
-from .edi_energy.energy_segments import SEGMENT_CATALOG, choose_segment_from_catalog
 from .parser import Parser
 from .segmentcollection import SegmentCollection
 from .segments import Segment
