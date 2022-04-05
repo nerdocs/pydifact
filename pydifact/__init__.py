@@ -21,6 +21,7 @@
 # THE SOFTWARE.
 
 from pydifact import (
+    control,
     parser,
     segmentcollection,
     segments,
