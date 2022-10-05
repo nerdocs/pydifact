@@ -48,7 +48,7 @@ class Segment(SegmentProvider):
     # tag is not a class attribute in this case, as each Segment instance could have another tag.
     __omitted__ = True
 
-    def __init__(self, tag: str, *elements: Union[str, List[str]]):
+    def __init__(self, tag: str, *elements: Union[str, List[str], None]):
         """Create a new Segment instance.
 
         :param str tag: The code/tag of the segment. Must not be empty.
