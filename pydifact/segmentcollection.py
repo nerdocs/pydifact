@@ -20,17 +20,17 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-from collections.abc import Callable, Iterable
-from typing import List, Optional, Tuple, Union
+import codecs
 import datetime
 import warnings
+from collections.abc import Callable, Iterable
+from typing import List, Optional, Tuple, Union
 
 from pydifact.api import EDISyntaxError
+from pydifact.control import Characters
 from pydifact.parser import Parser
 from pydifact.segments import Segment
 from pydifact.serializer import Serializer
-from pydifact.control import Characters
-import codecs
 
 
 class AbstractSegmentsContainer:
@@ -91,7 +91,9 @@ class AbstractSegmentsContainer:
         return cls().add_segments(segments)
 
     def get_segments(
-        self, name: str, predicate: Callable = None  # Python3.9+ Callable[[Segment], bool]
+        self,
+        name: str,
+        predicate: Callable = None,  # Python3.9+ Callable[[Segment], bool]
     ) -> list:
         """Get all the segments that match the requested name.
 
@@ -104,7 +106,9 @@ class AbstractSegmentsContainer:
                 yield segment
 
     def get_segment(
-        self, name: str, predicate: Callable = None  # Python3.9+ Callable[[Segment], bool]
+        self,
+        name: str,
+        predicate: Callable = None,  # Python3.9+ Callable[[Segment], bool]
     ) -> Optional[Segment]:
         """Get the first segment that matches the requested name.
 
@@ -508,8 +512,18 @@ class Interchange(FileSourcableMixin, UNAHandlingMixin, AbstractSegmentsContaine
         if len(unb.elements) < 4:
             raise EDISyntaxError("Missing elements in UNB header")
 
+        # In syntax version 3 the year is formatted using two digits, while in version 4 four digits are used.
+        # Since some EDIFACT files in the wild don't adhere to this specification, we just use whatever format seems
+        # more appropriate according to the length of the date string.
+        if len(unb.elements[3][0]) == 6:
+            datetime_fmt = "%y%m%d-%H%M"
+        elif len(unb.elements[3][0]) == 8:
+            datetime_fmt = "%Y%m%d-%H%M"
+        else:
+            raise EDISyntaxError("Timestamp of file-creation malformed.")
+
         datetime_str = "-".join(unb.elements[3])
-        timestamp = datetime.datetime.strptime(datetime_str, "%y%m%d-%H%M")
+        timestamp = datetime.datetime.strptime(datetime_str, datetime_fmt)
         interchange = Interchange(
             syntax_identifier=unb.elements[0],
             sender=unb.elements[1],
