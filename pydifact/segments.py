@@ -141,8 +141,9 @@ class SegmentFactory:
             )
 
         for Plugin in SegmentProvider.plugins:
-            if Plugin().tag == name:
+            if getattr(Plugin, "tag", "") == name:
                 s = Plugin(name, *elements)
+                break
         else:
             # we don't support this kind of EDIFACT segment (yet), so
             # just create a generic Segment()
@@ -155,4 +156,4 @@ class SegmentFactory:
                 )
 
         # FIXME: characters is not used!
-        return Segment(name, *elements)
+        return s
