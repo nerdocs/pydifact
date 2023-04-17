@@ -1,5 +1,5 @@
-from mapping import SegmentGroup, Segment, Loop
-from segmentcollection import Interchange
+from .mapping import SegmentGroup, Segment, Loop
+from .segmentcollection import Interchange
 
 
 class DelforTransportInformation(SegmentGroup):
@@ -169,11 +169,6 @@ class DejitCommunication(SegmentGroup):
 class DejitArticleDescription(SegmentGroup):
     """Not a segment group"""
     article_description = Segment("IMD", mandatory=False)
-
-
-class DejitDatetime(SegmentGroup):
-    """Not a segment group"""
-    delivery_datetime = Segment("DTM", mandatory=True)
 
 
 class DejitDatetime(SegmentGroup):
