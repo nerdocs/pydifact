@@ -150,7 +150,7 @@ class DelforMessage(SegmentGroup):
 def validate_delfor(inc_message):
     """Validates delfor UND96A message, returns it's object"""
     type_to_parser_dict = {"DELFOR": DelforMessage}
-    message = next(inc_message.Interchange.get_messages())
+    message = next(inc_message.get_messages())
     cls = type_to_parser_dict.get(message.type)
     if not cls:
         raise NotImplementedError("Unsupported message type '{}'".format(message.type))
@@ -379,7 +379,7 @@ class DeljitMessage(SegmentGroup):
 def validate_deljit(inc_message):
     """Validates deljit D:04B:UND message, returns it's message"""
     type_to_parser_dict = {"DELJIT": DeljitMessage}
-    message = next(inc_message.Interchange.get_messages())
+    message = next(inc_message.get_messages())
     cls = type_to_parser_dict.get(message.type)
     if not cls:
         raise NotImplementedError("Unsupported message type '{}'".format(message.type))
