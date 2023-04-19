@@ -242,6 +242,28 @@ def test_interchange_messages_from_str():
     )
 
 
+def test_interchange_with_una():
+    i = Interchange.from_str(
+        "UNA:+,? '"
+        "UNB+UNOC:1+1234+3333+200102:2212+42'"
+        "UNH+42z42+PAORES:93:1:IA'"
+        "UNT+2+42z42'"
+        "UNZ+1+42'"
+    )
+    assert i.has_una_segment
+
+
+def test_interchange_with_custom_character():
+    i = Interchange.from_str(
+        "UNA:+.? '"
+        "UNB+UNOC:1+1234+3333+200102:2212+42'"
+        "UNH+42z42+PAORES:93:1:IA'"
+        "UNT+2+42z42'"
+        "UNZ+1+42'"
+    )
+    assert i.characters.decimal_point == "."
+
+
 def test_faulty_interchange__UNH_not_closed():
     """creates a message with an opening UNH message, without closing UNT"""
     i = Interchange.from_str(
