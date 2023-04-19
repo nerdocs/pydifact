@@ -51,7 +51,9 @@ class Parser:
         # If there is a UNA, take the following 6 characters
         # unconditionally, save them, strip them, and make control Characters()
         # for further parsing
-        if message[0:3] == "UNA":
+        self.una_found = message[0:3] == "UNA"
+
+        if self.una_found:
             self.characters = Characters.from_str("UNA" + message[3:9])
 
             # remove the UNA segment from the string
@@ -64,7 +66,9 @@ class Parser:
 
         tokenizer = Tokenizer()
         return self.convert_tokens_to_segments(
-            tokenizer.get_tokens(message, self.characters), self.characters
+            tokenizer.get_tokens(message, self.characters),
+            self.characters,
+            with_una=self.una_found,
         )
 
     @staticmethod
@@ -105,11 +109,13 @@ class Parser:
 
         return characters
 
-    def convert_tokens_to_segments(self, tokens: list, characters: Characters):
+    def convert_tokens_to_segments(
+        self, tokens: list, characters: Characters, with_una: bool = False
+    ):
         """Convert the tokenized message into an array of segments.
-        :param with_una: whether the UNA segment should be included
         :param tokens: The tokens that make up the message
         :param characters: the control characters to use
+        :param with_una: whether the UNA segment should be included
         :type tokens: list of Token
         :rtype list of Segment
         """
@@ -120,11 +126,12 @@ class Parser:
         in_segment = False
         empty_component_counter = 0
 
-        for token in tokens:
+        if with_una:
+            yield self.factory.create_segment("UNA", str(self.characters))
 
+        for token in tokens:
             # If we're in the middle of a segment, check if we've reached the end
             if in_segment:
-
                 if token.type == Token.Type.TERMINATOR:
                     in_segment = False
                     if len(data_element) == 0:  # empty element
