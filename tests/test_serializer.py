@@ -129,3 +129,23 @@ def test_no_mutation(serializer):
     segments2 = copy.deepcopy(segments1)
     serializer.serialize(segments1, with_una_header=True)
     assert segments1 == segments2
+
+
+@pytest.fixture
+def interchange_str():
+    return (
+        "UNB+UNOC:1+1234+3333+200102:2212+42'"
+        "UNH+42z42+PAORES:93:1:IA'"
+        "UNT+2+42z42'"
+        "UNZ+1+42'"
+    )
+
+
+def test_interchange_serialization_with_una(interchange_str):
+    i = Interchange.from_str("UNA:+.? '" + interchange_str)
+    assert i.serialize() == "UNA:+.? '" + interchange_str
+
+
+def test_interchange_serialization_with_out_una(interchange_str):
+    i = Interchange.from_str(interchange_str)
+    assert i.serialize() == interchange_str
