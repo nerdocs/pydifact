@@ -194,7 +194,6 @@ class Parser:
             empty_component_counter = 0
             continue
 
-        self.factory.characters = characters
         for segment in segments:
             name = segment.pop(0)
             yield self.factory.create_segment(name, *segment)

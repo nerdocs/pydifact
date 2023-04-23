@@ -105,8 +105,6 @@ class Segment(SegmentProvider):
 class SegmentFactory:
     """Factory for producing segments."""
 
-    characters = None
-
     @staticmethod
     def create_segment(
         name: str, *elements: Union[str, List[str]], validate: bool = True
@@ -117,9 +115,6 @@ class SegmentFactory:
         :param elements: The data elements for this segment
         :param validate: bool if True, the created segment is validated before return
         """
-        if not SegmentFactory.characters:
-            SegmentFactory.characters = Characters()
-
         # Basic segment type validation is done here.
         # The more special validation must be done in the corresponding Segment
 
@@ -155,5 +150,4 @@ class SegmentFactory:
                     "could not create '{}' Segment. Validation failed.".format(name)
                 )
 
-        # FIXME: characters is not used!
         return s
