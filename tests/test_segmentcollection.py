@@ -19,6 +19,8 @@ from typing import Iterable, List
 import pytest
 
 from pydifact import Serializer
+from pydifact.parser import Parser
+from pydifact.control.characters import Characters
 from pydifact.segmentcollection import Interchange, Message, RawSegmentCollection
 from pydifact.segments import Segment
 from pydifact.api import EDISyntaxError
@@ -227,6 +229,16 @@ def test_interchange_from_str_multi_messages():
     assert len(list(i.get_messages()))
 
 
+@pytest.fixture
+def interchange_str():
+    return (
+        "UNB+UNOC:1+1234+3333+200102:2212+42'"
+        "UNH+42z42+PAORES:93:1:IA'"
+        "UNT+2+42z42'"
+        "UNZ+1+42'"
+    )
+
+
 def test_interchange_messages_from_str():
     i = Interchange.from_str(
         "UNB+UNOC:1+1234+3333+200102:2212+42'"
@@ -261,6 +273,33 @@ def test_interchange_with_custom_character():
         "UNT+2+42z42'"
         "UNZ+1+42'"
     )
+    assert i.characters.decimal_point == "."
+
+
+
+def test_interchange_with_default_parser(interchange_str):
+    i = Interchange.from_str(interchange_str, parser=Parser())
+    assert str(i) == interchange_str
+
+
+def test_interchange_with_parser_and_differing_control_character(interchange_str):
+    parser = Parser(characters=Characters.from_str("UNA:+.? '"))
+
+    i = Interchange.from_str("UNA:+,? '" + interchange_str, parser=parser)
+    assert i.characters.decimal_point == ","
+
+
+def test_interchange_with_parser_and_una_default_una(interchange_str):
+    parser = Parser(characters=Characters.from_str("UNA:+.? '"))
+
+    i = Interchange.from_str("UNA:+.? '" + interchange_str, parser=parser)
+    assert i.characters.decimal_point == "."
+
+
+def test_interchange_with_parser_and_default_una(interchange_str):
+    parser = Parser(characters=Characters.from_str("UNA:+.? '"))
+
+    i = Interchange.from_str(interchange_str, parser=parser)
     assert i.characters.decimal_point == "."
 
 
