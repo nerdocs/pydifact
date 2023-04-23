@@ -66,13 +66,19 @@ class AbstractSegmentsContainer:
         self.has_una_segment = False
 
     @classmethod
-    def from_str(cls, string: str) -> "AbstractSegmentsContainer":
+    def from_str(
+        cls, string: str, parser: Optional[Parser] = None
+    ) -> "AbstractSegmentsContainer":
         """Create an instance from a string.
 
         This method is intended for usage in inheriting classes, not it AbstractSegmentsContainer itself.
         :param string: The EDI content
+        :param parser: A parser to convert the tokens to segments, defaults to `Parser`
         """
-        segments = Parser().parse(string)
+        if parser is None:
+            parser = Parser()
+
+        segments = parser.parse(string)
 
         return cls.from_segments(segments)
 
@@ -238,7 +244,9 @@ class FileSourcableMixin:
     """
 
     @classmethod
-    def from_file(cls, file: str, encoding: str = "iso8859-1") -> "FileSourcableMixin":
+    def from_file(
+        cls, file: str, encoding: str = "iso8859-1", parser: Optional[Parser] = None
+    ) -> "FileSourcableMixin":
         """Create a Interchange instance from a file.
 
         Raises FileNotFoundError if filename is not found.
@@ -251,7 +259,7 @@ class FileSourcableMixin:
 
         with open(file, encoding=encoding) as f:
             collection = f.read()
-        return cls.from_str(collection)
+        return cls.from_str(collection, parser=parser)
 
 
 class UNAHandlingMixin:
