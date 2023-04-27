@@ -530,6 +530,7 @@ class Interchange(FileSourcableMixin, UNAHandlingMixin, AbstractSegmentsContaine
             recipient=unb.elements[2],
             timestamp=timestamp,
             control_reference=unb.elements[4],
+            extra_header_elements=unb.elements[5:]
         )
 
         if first_segment.tag == "UNA":
