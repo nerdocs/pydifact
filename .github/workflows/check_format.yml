@@ -4,7 +4,7 @@ on:
   # check formatting on any push to main and any open pull request
   push:
     branches:
-      - main
+      - all
   pull_request: {}
 jobs:
   black:
