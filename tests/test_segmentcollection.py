@@ -317,3 +317,23 @@ def test_counting_of_messages(interchange, message):
     )
     i = Interchange.from_str(edi_str)
     assert i.serialize() == edi_str
+
+
+def test_interchange_with_extra_header_elements():
+    edi_str = (
+        "UNB+UNOC:3+9901011000001:500+9900222000002:500+230314:1015+333333333++TL'"
+        "UNH+42z42+PAORES:93:1:IA'"
+        "UNT+2+42z42'"
+        "UNZ+1+333333333'"
+    )
+    i = Interchange.from_str(edi_str)
+    assert i.get_header_segment() == Segment(
+        "UNB",
+        ["UNOC", "3"],
+        ["9901011000001", "500"],
+        ["9900222000002", "500"],
+        ["230314", "1015"],
+        "333333333",
+        "",
+        "TL",
+    )
