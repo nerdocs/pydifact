@@ -30,12 +30,13 @@ from pydifact.control import Characters
 class Parser:
     """Parse EDI messages into a list of segments."""
 
-    def __init__(self, factory: SegmentFactory = None):
-        if factory is None:
-            factory = SegmentFactory()
-
-        self.factory = factory
-        self.characters = Characters()
+    def __init__(
+        self,
+        factory: Optional[SegmentFactory] = None,
+        characters: Optional[Characters] = None,
+    ):
+        self.factory = factory or SegmentFactory()
+        self.characters = characters or Characters()
 
     def parse(
         self, message: str, characters: Characters = None
@@ -49,26 +50,27 @@ class Parser:
         """
 
         # If there is a UNA, take the following 6 characters
-        # unconditionally, save them, strip them, and make control Characters()
+        # unconditionally, strip them, and make control Characters()
         # for further parsing
-        self.una_found = message[0:3] == "UNA"
+        una_found = message[0:3] == "UNA"
 
-        if self.una_found:
-            self.characters = Characters.from_str("UNA" + message[3:9])
+        if una_found:
+            characters = Characters.from_str("UNA" + message[3:9])
 
             # remove the UNA segment from the string
             message = message[9:].lstrip("\r\n")
 
         else:
             # if no UNA header present, use default control characters
-            if characters is not None:
-                self.characters = characters
+            # characters given on call take precedence over the stored defaults.
+            if characters is None:
+                characters = self.characters
 
         tokenizer = Tokenizer()
         return self.convert_tokens_to_segments(
-            tokenizer.get_tokens(message, self.characters),
-            self.characters,
-            with_una=self.una_found,
+            tokenizer.get_tokens(message, characters),
+            characters,
+            with_una=una_found,
         )
 
     @staticmethod
@@ -127,7 +129,7 @@ class Parser:
         empty_component_counter = 0
 
         if with_una:
-            yield self.factory.create_segment("UNA", str(self.characters))
+            yield self.factory.create_segment("UNA", str(characters))
 
         for token in tokens:
             # If we're in the middle of a segment, check if we've reached the end
@@ -192,7 +194,6 @@ class Parser:
             empty_component_counter = 0
             continue
 
-        self.factory.characters = characters
         for segment in segments:
             name = segment.pop(0)
             yield self.factory.create_segment(name, *segment)

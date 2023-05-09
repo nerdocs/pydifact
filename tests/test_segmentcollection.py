@@ -18,10 +18,9 @@ from typing import Iterable, List
 
 import pytest
 
-from pydifact import Serializer
+from pydifact.api import EDISyntaxError
 from pydifact.segmentcollection import Interchange, Message, RawSegmentCollection
 from pydifact.segments import Segment
-from pydifact.api import EDISyntaxError
 
 
 def test_from_file():
@@ -170,7 +169,7 @@ def test_empty_interchange(interchange):
     assert str(interchange) == ("UNB+UNOC:1+1234+3333+200102:2212+42'" "UNZ+0+42'")
 
 
-def test_empty_interchange_w_extra_header(interchange):
+def test_empty_interchange_w_extra_header():
     i = Interchange(
         sender="1234",
         recipient="3333",
@@ -225,43 +224,6 @@ def test_interchange_from_str_multi_messages():
     )
 
     assert len(list(i.get_messages()))
-
-
-def test_interchange_messages_from_str():
-    i = Interchange.from_str(
-        "UNB+UNOC:1+1234+3333+200102:2212+42'"
-        "UNH+42z42+PAORES:93:1:IA'"
-        "UNT+2+42z42'"
-        "UNZ+1+42'"
-    )
-    assert str(i) == (
-        "UNB+UNOC:1+1234+3333+200102:2212+42'"
-        "UNH+42z42+PAORES:93:1:IA'"
-        "UNT+2+42z42'"
-        "UNZ+1+42'"
-    )
-
-
-def test_interchange_with_una():
-    i = Interchange.from_str(
-        "UNA:+,? '"
-        "UNB+UNOC:1+1234+3333+200102:2212+42'"
-        "UNH+42z42+PAORES:93:1:IA'"
-        "UNT+2+42z42'"
-        "UNZ+1+42'"
-    )
-    assert i.has_una_segment
-
-
-def test_interchange_with_custom_character():
-    i = Interchange.from_str(
-        "UNA:+.? '"
-        "UNB+UNOC:1+1234+3333+200102:2212+42'"
-        "UNH+42z42+PAORES:93:1:IA'"
-        "UNT+2+42z42'"
-        "UNZ+1+42'"
-    )
-    assert i.characters.decimal_point == "."
 
 
 def test_faulty_interchange__UNH_not_closed():

@@ -15,7 +15,7 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 from pydifact.parser import Parser
 from pydifact.segments import Segment
-
+from pydifact.control.characters import Characters
 import pytest
 
 # @pytest.fixture
@@ -231,3 +231,32 @@ def test_compound_contains_two_skipped(parser, default_una_segment):
         "IMD+A:::B",
         [Segment("UNA", ":+,? '"), Segment("IMD", ["A", "", "", "B"])],
     )
+
+
+def test_parsing_with_new_default_characters():
+    parser = Parser(characters=Characters.from_str("UNA:+,! '"))
+    segments = parser.parse("ERC+10:Craig!'s'")
+    assert [s for s in segments] == [
+        Segment("ERC", ["10", "Craig's"]),
+    ]
+
+
+def test_parsing_with_passed_characters_():
+    parser = Parser()
+    segments = parser.parse(
+        "ERC+10:Craig!'s'", characters=Characters.from_str("UNA:+,! '")
+    )
+    assert [s for s in segments] == [
+        Segment("ERC", ["10", "Craig's"]),
+    ]
+
+
+def test_parsing_with_passed_characters_but_respect_una():
+    parser = Parser()
+    segments = parser.parse(
+        "UNA:+,! 'ERC+10:Craig!'s'", characters=Characters.from_str("UNA:+,? '")
+    )
+    assert [s for s in segments] == [
+        Segment("UNA", ":+,! '"),
+        Segment("ERC", ["10", "Craig's"]),
+    ]

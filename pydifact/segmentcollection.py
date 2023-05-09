@@ -48,15 +48,22 @@ class AbstractSegmentsContainer:
     HEADER_TAG: str = None
     FOOTER_TAG: str = None
 
-    def __init__(self, extra_header_elements: List[Union[str, List[str]]] = None):
+    def __init__(
+        self,
+        extra_header_elements: List[Union[str, List[str]]] = None,
+        characters: Optional[Characters] = None,
+    ):
         """
         :param extra_header_elements: a list of elements to be appended at the end
           of the header segment (same format as Segment() constructor *elements).
+        :param characters: the set of control characters
         """
 
         # The segments that make up this message
         self.segments = []
-        self.characters = Characters()
+
+        # set of control characters
+        self.characters = characters or Characters()
 
         self.extra_header_elements = (
             extra_header_elements if extra_header_elements else []
@@ -66,29 +73,42 @@ class AbstractSegmentsContainer:
         self.has_una_segment = False
 
     @classmethod
-    def from_str(cls, string: str) -> "AbstractSegmentsContainer":
+    def from_str(
+        cls,
+        string: str,
+        parser: Optional[Parser] = None,
+        characters: Optional[Characters] = None,
+    ) -> "AbstractSegmentsContainer":
         """Create an instance from a string.
 
         This method is intended for usage in inheriting classes, not it AbstractSegmentsContainer itself.
         :param string: The EDI content
+        :param parser: A parser to convert the tokens to segments, defaults to `Parser`
+        :param characters: the set of control characters
         """
-        segments = Parser().parse(string)
+        if parser is None:
+            parser = Parser(characters=characters)
 
-        return cls.from_segments(segments)
+        segments = parser.parse(string)
+
+        return cls.from_segments(segments=segments, characters=parser.characters)
 
     @classmethod
     def from_segments(
-        cls, segments: Union[List, Iterable]
+        cls,
+        segments: Union[List, Iterable],
+        characters: Optional[Characters] = None,
     ) -> "AbstractSegmentsContainer":
         """Create a new AbstractSegmentsContainer instance from a iterable list of segments.
 
         :param segments: The segments of the EDI interchange
+        :param characters: the set of control characters
         :type segments: list/iterable of Segment
         """
 
         # create a new instance of AbstractSegmentsContainer and return it
         # with the added segments
-        return cls().add_segments(segments)
+        return cls(characters=characters).add_segments(segments)
 
     def get_segments(
         self,
@@ -238,7 +258,9 @@ class FileSourcableMixin:
     """
 
     @classmethod
-    def from_file(cls, file: str, encoding: str = "iso8859-1") -> "FileSourcableMixin":
+    def from_file(
+        cls, file: str, encoding: str = "iso8859-1", parser: Optional[Parser] = None
+    ) -> "FileSourcableMixin":
         """Create a Interchange instance from a file.
 
         Raises FileNotFoundError if filename is not found.
@@ -251,7 +273,7 @@ class FileSourcableMixin:
 
         with open(file, encoding=encoding) as f:
             collection = f.read()
-        return cls.from_str(collection)
+        return cls.from_str(collection, parser=parser)
 
 
 class UNAHandlingMixin:
@@ -498,7 +520,9 @@ class Interchange(FileSourcableMixin, UNAHandlingMixin, AbstractSegmentsContaine
         return self
 
     @classmethod
-    def from_segments(cls, segments: Union[list, Iterable]) -> "Interchange":
+    def from_segments(
+        cls, segments: Union[list, Iterable], characters: Optional[Characters] = None
+    ) -> "Interchange":
         segments = iter(segments)
 
         first_segment = next(segments)
@@ -530,6 +554,7 @@ class Interchange(FileSourcableMixin, UNAHandlingMixin, AbstractSegmentsContaine
             recipient=unb.elements[2],
             timestamp=timestamp,
             control_reference=unb.elements[4],
+            characters=characters,
             extra_header_elements=unb.elements[5:],
         )
 
