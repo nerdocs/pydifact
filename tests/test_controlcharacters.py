@@ -33,7 +33,6 @@ class TestControlCharacters(unittest.TestCase):
         )
 
     def test_correct_parameters(self):
-
         d = self.cc.with_control_character("component_separator", "/")
 
         self.assertEqual(

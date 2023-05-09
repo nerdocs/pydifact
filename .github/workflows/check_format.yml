@@ -1,0 +1,21 @@
+name: "Check Format"
+
+on:
+  # check formatting on any push to main and any open pull request
+  push:
+    branches:
+      - all
+  pull_request: {}
+jobs:
+  black:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        python-version: ["3.11"]
+        os: [ubuntu-latest]
+    steps:
+      - uses: actions/checkout@v3
+      - name: Black Code Formatter
+        uses: lgeiger/black-action@v1.0.1
+        with:
+          args: ". --check"

@@ -49,7 +49,6 @@ def test_get_non_existing_element():
 
 def test_has_plugin():
     class TestSegment(Segment):
-
         tag = "TES"
 
         __omitted__ = False
