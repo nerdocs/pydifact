@@ -228,8 +228,8 @@ def test_compound_contains_two_skipped(parser, default_una_segment):
     _assert_segments(
         parser,
         default_una_segment,
-        "IMD+A::B",
-        [Segment("UNA", ":+,? '"), Segment("IMD", ["A", "", "B"])],
+        "IMD+A:::B",
+        [Segment("UNA", ":+,? '"), Segment("IMD", ["A", "", "", "B"])],
     )
 
 
