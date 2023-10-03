@@ -36,26 +36,39 @@ iter over the messages and segments:
 
 ```python
 from pydifact.segmentcollection import Interchange
-interchange = Interchange.from_file("./tests/data/order.edi")
+
+interchange = Interchange.from_file("./tests/data/wikipedia.edi")
 interchange = Interchange.from_str(
-  "UNA:+,? 'UNB+UNOC:1+1234+3333+200102:2212+42'UNH+42z42+PAORES:93:1:IA'UNT+2+42z42'UNZ+2+42'"
+    "UNA:+,? '"
+    "UNB+UNOC:1+1234+3333+200102:2212+42'"
+    "UNH+42z42+PAORES:93:1:IA'"
+    "MSG+1:45'"
+    "IFT+3+XYZCOMPANY AVAILABILITY'"
+    "ERC+A7V:1:AMD'"
+    "UNT+5+42z42'UNZ+2+42'"
 )
 for message in interchange.get_messages():
     for segment in message.segments:
-        print('Segment tag: {}, content: {}'.format(
-            segment.tag, segment.elements))
+        print("Segment tag: {}, content: {}".format(segment.tag, segment.elements))
 ```
 
 You may also want to iterate directly on segments :
 
 ```python
 from pydifact.segmentcollection import Interchange
-interchange = Interchange.from_file("./tests/data/order.edi")
-interchange = Interchange.from_str("UNA:+,? 'UNH+1+ORDERS:D:96A:UN:EAN008'")
+
+interchange = Interchange.from_str(
+    "UNA:+,? '"
+    "UNB+UNOC:1+1234+3333+200102:2212+42'"
+    "UNH+42z42+PAORES:93:1:IA'"
+    "MSG+1:45'"
+    "IFT+3+XYZCOMPANY AVAILABILITY'"
+    "ERC+A7V:1:AMD'"
+    "UNT+5+42z42'UNZ+2+42'"
+)
 
 for segment in interchange.segments:
-    print('Segment tag: {}, content: {}'.format(
-        segment.tag, segment.elements))
+    print("Segment tag: {}, content: {}".format(segment.tag, segment.elements))
 ```
 
 Or you can create an EDI interchange on the fly:
@@ -63,21 +76,22 @@ Or you can create an EDI interchange on the fly:
 ```python
 from pydifact.segmentcollection import Interchange
 from pydifact.segments import Segment
+
 interchange = Interchange()
-interchange.add_segment(Segment('QTY', ['12', '3']))
+interchange.add_segment(Segment("QTY", ["12", "3"]))
+
 print(interchange.serialize())
 ```
 
 You may also want to parse a « raw » segment bunch which is not an interchange :
 
-```
+```python
 from pydifact.segmentcollection import RawSegmentCollection
+
 collection = RawSegmentCollection.from_str("UNH+1+ORDERS:D:96A:UN:EAN008'")
 
 for segment in collection.segments:
-    print('Segment tag: {}, content: {}'.format(
-        segment.tag, segment.elements))
-
+    print("Segment tag: {}, content: {}".format(segment.tag, segment.elements))
 ```
 
 
@@ -96,7 +110,13 @@ In python ecosystem:
 
 ## Development
 
-To develop pydifact, install the dev requirements with `pipenv install --dev`. This installs all the python packages needed for development and testing.
+To develop pydifact, clone the repository and install the dev requirements with `pipenv install --dev`. This installs all the python packages needed for development and testing.
+Alternatively, if you are using `pip` run the following commands:
+
+```
+pip install -e .
+pip install -r requirements-dev.txt
+```
 
 Format all python files using [black](https://black.readthedocs.io).
 
