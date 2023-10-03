@@ -110,7 +110,13 @@ In python ecosystem:
 
 ## Development
 
-To develop pydifact, install the dev requirements with `pipenv install --dev`. This installs all the python packages needed for development and testing.
+To develop pydifact, clone the repository and install the dev requirements with `pipenv install --dev`. This installs all the python packages needed for development and testing.
+Alternatively, if you are using `pip` run the following commands:
+
+```
+pip install -e .
+pip install -r requirements-dev.txt
+```
 
 Format all python files using [black](https://black.readthedocs.io).
 
