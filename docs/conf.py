@@ -19,7 +19,7 @@ sys.path.insert(0, os.path.abspath(".."))
 # -- Project information -----------------------------------------------------
 
 project = "pydifact"
-copyright = "2019-2020, Christian González"
+copyright = "2017-2024, Christian González"
 author = "Christian González"
 
 
