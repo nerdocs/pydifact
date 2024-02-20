@@ -110,22 +110,26 @@ In python ecosystem:
 
 ## Development
 
-To develop pydifact, clone the repository and install the dev requirements with `pipenv install --dev`. This installs all the python packages needed for development and testing.
-Alternatively, if you are using `pip` run the following commands:
+### Setup
+To develop pydifact, clone the repository and install the dev requirements:
 
 ```
-pip install -e .
-pip install -r requirements-dev.txt
+pip install -e .[dev]
 ```
 
-Format all python files using [black](https://black.readthedocs.io).
+This installs all the python packages needed for development and testing.
 
-Happy coding, PR are more than welcome to make this library better, or to add a feature that matches your needs. Nevertheless, don't forget adding tests for every aspect you add in code.
+### Code formatting
+
+Format all python files using [black](https://black.readthedocs.io) before committing.
+
+Happy coding, PR are more than welcome to make this library better, or to add a feature that matches your needs.
+Nevertheless, don't forget adding tests for every aspect you add in code.
 
 ### Testing
 
 pydifact uses [pytest](http://pytest.org) for testing.
-Just exec `pytest` within the project folder to execute the unit tests.
+Just exec `pytest` within the project folder to execute the unit tests. Make sure you installed the library properly before using `pip install -e .[dev]`.
 
 There is one test to check the performance of parsing huge files, named `test_huge_message` - you can skip that test by calling
 
