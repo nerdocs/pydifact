@@ -352,12 +352,12 @@ class RawSegmentCollection(AbstractSegmentsContainer):
 
 class Message(AbstractSegmentsContainer):
     """
-    A message (started by UNH segment, ended by UNT segment)
+    A message (started by UNH_ segment, ended by UNT_ segment)
 
     Optional features of UNH are not yet supported.
 
-    https://www.stylusstudio.com/edifact/40100/UNH_.htm
-    https://www.stylusstudio.com/edifact/40100/UNT_.htm
+    .. _UNH: https://www.stylusstudio.com/edifact/40100/UNH_.htm
+    .. _UNT: https://www.stylusstudio.com/edifact/40100/UNT_.htm
     """
 
     HEADER_TAG = "UNH"
@@ -407,7 +407,7 @@ class Message(AbstractSegmentsContainer):
 
 class Interchange(FileSourcableMixin, UNAHandlingMixin, AbstractSegmentsContainer):
     """
-    An interchange (started by UNB segment, ended by UNZ segment)
+    An interchange (started by UNB_ segment, ended by UNZ_ segment)
 
     Optional features of UNB are not yet supported.
 
@@ -417,8 +417,8 @@ class Interchange(FileSourcableMixin, UNAHandlingMixin, AbstractSegmentsContaine
     optional: interchange segments can be accessed without going through
     messages.
 
-    https://www.stylusstudio.com/edifact/40100/UNB_.htm
-    https://www.stylusstudio.com/edifact/40100/UNZ_.htm
+    .. _UNB: https://www.stylusstudio.com/edifact/40100/UNB_.htm
+    .. _UNZ: https://www.stylusstudio.com/edifact/40100/UNZ_.htm
     """
 
     HEADER_TAG = "UNB"
