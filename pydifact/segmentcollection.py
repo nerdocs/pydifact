@@ -192,7 +192,7 @@ class AbstractSegmentsContainer:
     def add_segment(self, segment: Segment) -> "AbstractSegmentsContainer":
         """Append a segment to the collection.
 
-        Note: skips segments that are header oder footer tags of this segment container type.
+        Note: skips segments that are header or footer tags of this segment container type.
         :param segment: The segment to add
         """
         if not segment.tag in (self.HEADER_TAG, self.FOOTER_TAG):
