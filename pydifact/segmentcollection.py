@@ -433,7 +433,7 @@ class Interchange(FileSourcableMixin, UNAHandlingMixin, AbstractSegmentsContaine
         delimiters: Characters = Characters(),
         timestamp: datetime.datetime = None,
         *args,
-        **kwargs
+        **kwargs,
     ):
         super().__init__(*args, **kwargs)
         self.sender = sender
