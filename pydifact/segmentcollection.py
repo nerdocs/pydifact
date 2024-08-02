@@ -126,8 +126,8 @@ class AbstractSegmentsContainer:
         """Get all segments that match the requested name.
 
         :param name: The name of the segments to return.
-        :param predicate: Optional callable that returns True if the given
-         segment matches a condition.
+        :param predicate: Optional callable that accepts a segment as argument.
+        Only segments for which the returned value is ``True'' are returned.
 
         :rtype: list of :class:`Segment` objects.
         """
@@ -190,10 +190,11 @@ class AbstractSegmentsContainer:
     ) -> "AbstractSegmentsContainer":
         """Append a list of segments to the collection.
 
-        Passing a ``UNA`` segment means setting/overriding the control characters and
-        setting the serializer to output the Service String Advice. If you wish to
-        change the control characters from the default and not output the Service String
-        Advice, change :attr:`characters` instead, without passing a UNA Segment.
+        For the :class:`Interchange` subclass, passing a ``UNA`` segment means
+        setting/overriding the control characters and setting the serializer to output
+        the Service String Advice. If you wish to change the control characters from the
+        default and not output the Service String Advice, change :attr:`characters`
+        instead, without passing a ``UNA`` Segment.
 
         :param segments: The segments to add.
         :type segments: List or iterable of :class:`~pydifact.segments.Segment` objects.
