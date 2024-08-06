@@ -217,12 +217,23 @@ class AbstractSegmentsContainer:
         return self
 
     def get_header_segment(self) -> Optional[Segment]:
-        """Return the header segment or ``None`` if there is no header.
+        """Craft and return a header segment.
+
+        :meth:`get_header_segment` creates and returns an appropriate
+        :class:`~pydifact.segments.Segment` object that can serve as a header of the
+        current object. This is useful, for example, when serializing the current object.
+
+        Although the current object may have been created by reading a string (e.g.
+        with :meth:`from_str`), :meth:`get_header_segment` does not return the header
+        segment that was read by the string; that segment would have been useful only
+        during reading and it is the job of :meth:`from_str` to check it.
         """
         return None
 
     def get_footer_segment(self) -> Optional[Segment]:
-        """Return the footer segment or ``None`` if there is no footer.
+        """Craft and return a footer segment.
+
+        This is similar to :meth:`get_header_segment`, but for the footer segment.
         """
         return None
 
