@@ -426,16 +426,17 @@ class Message(AbstractSegmentsContainer):
 
 
 class Interchange(FileSourcableMixin, UNAHandlingMixin, AbstractSegmentsContainer):
-    """
-    An interchange (started by UNB_ segment, ended by UNZ_ segment)
+    """An EDIFACT interchange.
 
-    Optional features of UNB are not yet supported.
+    In EDIFACT, the **interchange** is the entire document at the highest level. Except
+    for its header (a UNB_ segment) and footer (a UNZ_ segment), it consists of one or
+    more **messages**.
 
-    Functional groups are not yet supported.
+    :class:`Interchange` currently does not support functional groups and optional
+    features of UNB.
 
-    Messages are supported (see :meth:`get_message`), but are
-    optional: interchange segments can be accessed without going through
-    messages.
+    :class:`Interchange` supports all methods of :class:`AbstractSegmentsContainer` plus
+    some additional methods.
 
     .. _UNB: https://www.stylusstudio.com/edifact/40100/UNB_.htm
     .. _UNZ: https://www.stylusstudio.com/edifact/40100/UNZ_.htm
@@ -475,11 +476,6 @@ class Interchange(FileSourcableMixin, UNAHandlingMixin, AbstractSegmentsContaine
         )
 
     def get_footer_segment(self) -> Segment:
-        """:returns a (UNZ) footer segment with correct segment count and control reference.
-
-        It counts either of the number of messages or, if used, of the number of functional groups
-        in an interchange (TODO)."""
-
         # FIXME: count functional groups (UNG/UNE) correctly
         cnt = 0
         for segment in self.segments:
@@ -495,11 +491,12 @@ class Interchange(FileSourcableMixin, UNAHandlingMixin, AbstractSegmentsContaine
         )
 
     def get_messages(self) -> List[Message]:
-        """parses a list of messages out of the internal segments.
+        """Get list of messages in the interchange.
 
-        :raises EDISyntaxError if constraints are not met (e.g. UNH/UNT both correct)
+        Using :meth:`get_messages` is optional; interchange segments can be accessed
+        directly without going through messages.
 
-        TODO: parts of this here are better done in the validate() method
+        :raises: :class:`EDISyntaxError` if the interchange contents are not correct.
         """
 
         message = None
@@ -531,6 +528,7 @@ class Interchange(FileSourcableMixin, UNAHandlingMixin, AbstractSegmentsContaine
                 raise EDISyntaxError("UNH segment was not closed with a UNT segment.")
 
     def add_message(self, message: Message) -> "Interchange":
+        """Append a message to the interchange."""
         segments = (
             [message.get_header_segment()]
             + message.segments
