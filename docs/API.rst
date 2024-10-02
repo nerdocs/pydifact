@@ -43,10 +43,6 @@ The base meta class is a PluginMount:
 .. autoclass:: pydifact.api.PluginMount
 
 
-Available entry points for plugins are:
-
-.. autoclass:: pydifact.segments.SegmentProvider
-    :members:
-
-    .. automethod:: SegmentProvider.__str__
-
+:class:`~pydifact.segments.SegmentProvider` uses
+:class:`~pydifact.api.PluginMount` and can thus be
+extended with plugins.

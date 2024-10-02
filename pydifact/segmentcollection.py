@@ -34,15 +34,30 @@ from pydifact.serializer import Serializer
 
 
 class AbstractSegmentsContainer:
-    """Represent a collection of EDI Segments for both reading and writing.
+    """Abstract base class of subclasses containing collection of segments.
 
-    You should not instantiate AbstractSegmentsContainer itself, but subclass it use that.
+    :class:`AbstractSegmentsContainer` is the superclass of several classes such as
+    :class:`RawSegmentCollection` and :class:`Interchange` and contains methods common
+    to them.
 
-    The segments list in AbstractSegmentsContainer includes header and footer segments too.
-    Inheriting envelopes must NOT include these elements in .segments, as get_header_element() and
-    get_footer_element() should provide these elements on-the-fly.
+    **Implementation detail:** Subclasses must set :attr:`HEADER_TAG` and
+    :attr:`FOOTER_TAG`.
 
-    Inheriting classes must set HEADER_TAG and FOOTER_TAG
+    :param extra_header_elements: A list of elements to be appended at the end
+       of the header segment (same format as :class:`~pydifact.segments.Segment`
+       constructor elements).
+
+    :param characters: The set of control characters
+
+    .. attribute:: segments
+
+       The segments that comprise the container. This does not include the envelope
+       (that is, the header and footer) segments. To get the envolope segments, use
+       as :meth:`get_header_segment` and :meth:`get_footer_segment`.
+
+    .. attribute:: characters
+
+       The control characters (a :class:`~pydifact.control.Characters` object).
     """
 
     HEADER_TAG: str = None
@@ -53,13 +68,6 @@ class AbstractSegmentsContainer:
         extra_header_elements: List[Union[str, List[str]]] = None,
         characters: Optional[Characters] = None,
     ):
-        """
-        :param extra_header_elements: a list of elements to be appended at the end
-          of the header segment (same format as Segment() constructor *elements).
-        :param characters: the set of control characters
-        """
-
-        # The segments that make up this message
         self.segments = []
 
         # set of control characters
@@ -81,10 +89,9 @@ class AbstractSegmentsContainer:
     ) -> "AbstractSegmentsContainer":
         """Create an instance from a string.
 
-        This method is intended for usage in inheriting classes, not it AbstractSegmentsContainer itself.
-        :param string: The EDI content
-        :param parser: A parser to convert the tokens to segments, defaults to `Parser`
-        :param characters: the set of control characters
+        :param string: The EDI content.
+        :param parser: A parser to convert the tokens to segments; defaults to `Parser`.
+        :param characters: The set of control characters.
         """
         if parser is None:
             parser = Parser(characters=characters)
@@ -99,11 +106,12 @@ class AbstractSegmentsContainer:
         segments: Union[List, Iterable],
         characters: Optional[Characters] = None,
     ) -> "AbstractSegmentsContainer":
-        """Create a new AbstractSegmentsContainer instance from a iterable list of segments.
+        """Create an instance from a list of segments.
 
-        :param segments: The segments of the EDI interchange
-        :param characters: the set of control characters
+        :param segments: The segments of the EDI interchange.
         :type segments: list/iterable of Segment
+
+        :param characters: The set of control characters.
         """
 
         # create a new instance of AbstractSegmentsContainer and return it
@@ -115,11 +123,13 @@ class AbstractSegmentsContainer:
         name: str,
         predicate: Callable = None,  # Python3.9+ Callable[[Segment], bool]
     ) -> list:
-        """Get all the segments that match the requested name.
+        """Get all segments that match the requested name.
 
-        :param name: The name of the segments to return
-        :param predicate: Optional predicate callable that returns True if the given segment matches a condition
-        :rtype: list of Segment
+        :param name: The name of the segments to return.
+        :param predicate: Optional callable that accepts a segment as argument.
+        Only segments for which the returned value is ``True'' are returned.
+
+        :rtype: list of :class:`Segment` objects.
         """
         for segment in self.segments:
             if segment.tag == name and (predicate is None or predicate(segment)):
@@ -132,10 +142,11 @@ class AbstractSegmentsContainer:
     ) -> Optional[Segment]:
         """Get the first segment that matches the requested name.
 
-        :return: The requested segment, or None if not found
-        :param name: The name of the segment to return
+        :param name: The name of the segment to return.
         :param predicate: Optional predicate that must match on the segments
-           to return
+           to return.
+
+        :return: The requested segment, or None if not found.
         """
         for segment in self.get_segments(name, predicate):
             return segment
@@ -146,17 +157,18 @@ class AbstractSegmentsContainer:
         self,
         start_segment_tag: str,
     ) -> Iterable:  # Python3.9+ Iterable["RawSegmentCollection"]
-        """Split a segment collection by tag.
+        """Split the segment collection by tag.
 
-        Everything before the first start segment is ignored, so if no matching
-        start segment is found at all, returned result is empty.
-
+        Assuming the collection contains tags ``["A", "B", "A", "A", "B", "D"]``,
+        ``split_by("A")`` would return ``[["A", "B"], ["A"], ["A", "B", "D"]]``.
+        Everything before the first start segment is ignored, so if no matching start
+        segment is found at all, the returned result is empty.
 
         :param start_segment_tag:
           the segment tag we want to use as separator
 
-        :return: generator of segment collections. The start tag is included in
-          each yielded collection
+        :return: Generator of segment collections. The start tag is included in
+          each yielded collection.
         """
         current_list = None
 
@@ -176,13 +188,16 @@ class AbstractSegmentsContainer:
     def add_segments(
         self, segments: Union[List[Segment], Iterable]
     ) -> "AbstractSegmentsContainer":
-        """Add multiple segments to the collection. Passing a UNA segment means setting/overriding the control
-        characters and setting the serializer to output the Service String Advice. If you wish to change the control
-        characters from the default and not output the Service String Advice, change self.characters instead,
-        without passing a UNA Segment.
+        """Append a list of segments to the collection.
 
-        :param segments: The segments to add
-        :type segments: list or iterable of Segments
+        For the :class:`Interchange` subclass, passing a ``UNA`` segment means
+        setting/overriding the control characters and setting the serializer to output
+        the Service String Advice. If you wish to change the control characters from the
+        default and not output the Service String Advice, change :attr:`characters`
+        instead, without passing a ``UNA`` Segment.
+
+        :param segments: The segments to add.
+        :type segments: List or iterable of :class:`~pydifact.segments.Segment` objects.
         """
         for segment in segments:
             self.add_segment(segment)
@@ -192,7 +207,9 @@ class AbstractSegmentsContainer:
     def add_segment(self, segment: Segment) -> "AbstractSegmentsContainer":
         """Append a segment to the collection.
 
-        Note: skips segments that are header or footer tags of this segment container type.
+        Note: skips segments that are header or footer tags of this segment container
+        type.
+
         :param segment: The segment to add
         """
         if not segment.tag in (self.HEADER_TAG, self.FOOTER_TAG):
@@ -200,23 +217,31 @@ class AbstractSegmentsContainer:
         return self
 
     def get_header_segment(self) -> Optional[Segment]:
-        """Craft and return this container header segment (if any)
+        """Craft and return a header segment.
 
-        :returns: None if there is no header for that container
+        :meth:`get_header_segment` creates and returns an appropriate
+        :class:`~pydifact.segments.Segment` object that can serve as a header of the
+        current object. This is useful, for example, when serializing the current object.
+
+        Although the current object may have been created by reading a string (e.g.
+        with :meth:`from_str`), :meth:`get_header_segment` does not return the header
+        segment that was read by the string; that segment would have been useful only
+        during reading and it is the job of :meth:`from_str` to check it.
         """
         return None
 
     def get_footer_segment(self) -> Optional[Segment]:
-        """Craft and return this container footer segment (if any)
+        """Craft and return a footer segment.
 
-        :returns: None if there is no footer for that container
+        This is similar to :meth:`get_header_segment`, but for the footer segment.
         """
         return None
 
     def serialize(self, break_lines: bool = False) -> str:
-        """Serialize all the segments added to this object.
+        """Return the string representation of the object.
 
-        :param break_lines: if True, insert line break after each segment terminator.
+        :param break_lines: If ``True``, inserts line break after each segment
+          terminator.
         """
         header = self.get_header_segment()
         footer = self.get_footer_segment()
@@ -235,18 +260,13 @@ class AbstractSegmentsContainer:
         )
 
     def validate(self):
-        """Validates this container.
+        """Validate the object.
 
-        This method must be overridden in implementing subclasses, and should make sure that
-        the container is implemented correctly.
-
-        It does not return anything and should raise an Exception in case of errors.
+        Raises an exception if the object is invalid.
         """
         raise NotImplementedError
 
     def __str__(self) -> str:
-        """Allow the object to be serialized by casting to a string."""
-
         return self.serialize()
 
 
@@ -352,12 +372,12 @@ class RawSegmentCollection(AbstractSegmentsContainer):
 
 class Message(AbstractSegmentsContainer):
     """
-    A message (started by UNH segment, ended by UNT segment)
+    A message (started by UNH_ segment, ended by UNT_ segment)
 
     Optional features of UNH are not yet supported.
 
-    https://www.stylusstudio.com/edifact/40100/UNH_.htm
-    https://www.stylusstudio.com/edifact/40100/UNT_.htm
+    .. _UNH: https://www.stylusstudio.com/edifact/40100/UNH_.htm
+    .. _UNT: https://www.stylusstudio.com/edifact/40100/UNT_.htm
     """
 
     HEADER_TAG = "UNH"
@@ -406,19 +426,20 @@ class Message(AbstractSegmentsContainer):
 
 
 class Interchange(FileSourcableMixin, UNAHandlingMixin, AbstractSegmentsContainer):
-    """
-    An interchange (started by UNB segment, ended by UNZ segment)
+    """An EDIFACT interchange.
 
-    Optional features of UNB are not yet supported.
+    In EDIFACT, the **interchange** is the entire document at the highest level. Except
+    for its header (a UNB_ segment) and footer (a UNZ_ segment), it consists of one or
+    more **messages**.
 
-    Functional groups are not yet supported
+    :class:`Interchange` currently does not support functional groups and optional
+    features of UNB.
 
-    Messages are supported, see get_message() and get_message(), but are
-    optional: interchange segments can be accessed without going through
-    messages.
+    :class:`Interchange` supports all methods of :class:`AbstractSegmentsContainer` plus
+    some additional methods.
 
-    https://www.stylusstudio.com/edifact/40100/UNB_.htm
-    https://www.stylusstudio.com/edifact/40100/UNZ_.htm
+    .. _UNB: https://www.stylusstudio.com/edifact/40100/UNB_.htm
+    .. _UNZ: https://www.stylusstudio.com/edifact/40100/UNZ_.htm
     """
 
     HEADER_TAG = "UNB"
@@ -455,11 +476,6 @@ class Interchange(FileSourcableMixin, UNAHandlingMixin, AbstractSegmentsContaine
         )
 
     def get_footer_segment(self) -> Segment:
-        """:returns a (UNZ) footer segment with correct segment count and control reference.
-
-        It counts either of the number of messages or, if used, of the number of functional groups
-        in an interchange (TODO)."""
-
         # FIXME: count functional groups (UNG/UNE) correctly
         cnt = 0
         for segment in self.segments:
@@ -475,11 +491,12 @@ class Interchange(FileSourcableMixin, UNAHandlingMixin, AbstractSegmentsContaine
         )
 
     def get_messages(self) -> List[Message]:
-        """parses a list of messages out of the internal segments.
+        """Get list of messages in the interchange.
 
-        :raises EDISyntaxError if constraints are not met (e.g. UNH/UNT both correct)
+        Using :meth:`get_messages` is optional; interchange segments can be accessed
+        directly without going through messages.
 
-        TODO: parts of this here are better done in the validate() method
+        :raises: :class:`EDISyntaxError` if the interchange contents are not correct.
         """
 
         message = None
@@ -511,6 +528,7 @@ class Interchange(FileSourcableMixin, UNAHandlingMixin, AbstractSegmentsContaine
                 raise EDISyntaxError("UNH segment was not closed with a UNT segment.")
 
     def add_message(self, message: Message) -> "Interchange":
+        """Append a message to the interchange."""
         segments = (
             [message.get_header_segment()]
             + message.segments

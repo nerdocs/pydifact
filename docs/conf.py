@@ -29,6 +29,7 @@ author = "Christian González"
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
 extensions = ["sphinx.ext.autodoc", "sphinx_rtd_theme"]
+autodoc_inherit_docstrings = False
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ["_templates"]
@@ -47,7 +48,6 @@ exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
 html_theme = "sphinx_rtd_theme"
 
 html_theme_options = {
-    "canonical_url": "https://pydifact.readthedocs.io/",
     # "logo_only": False,
     "display_version": True,
     "prev_next_buttons_location": "both",
