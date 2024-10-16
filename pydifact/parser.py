@@ -52,13 +52,15 @@ class Parser:
         # If there is a UNA, take the following 6 characters
         # unconditionally, strip them, and make control Characters()
         # for further parsing
-        una_found = message[0:3] == "UNA"
+        idx_una = message.find("UNA")
+        una_found = idx_una != -1
 
         if una_found:
-            characters = Characters.from_str("UNA" + message[3:9])
+            characters = Characters.from_str("UNA" + message[idx_una + 3 : idx_una + 9])
 
-            # remove the UNA segment from the string
-            message = message[9:].lstrip("\r\n")
+            # remove the UNA segment from the string,
+            # ignore everything before UNA because it should be the first segment if una_found.
+            message = message[idx_una + 9 :].lstrip("\r\n")
 
         else:
             # if no UNA header present, use default control characters
