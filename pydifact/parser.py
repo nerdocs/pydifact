@@ -56,7 +56,7 @@ class Parser:
         una_found = idx_una != -1
 
         if una_found:
-            characters = Characters.from_str("UNA" + message[idx_una + 3 : idx_una + 9])
+            characters = Characters.from_str("UNA" + message[idx_una + 3: idx_una + 9])
 
             # remove the UNA segment from the string,
             # ignore everything before UNA because it should be the first segment if una_found.
