@@ -17,14 +17,7 @@ from pydifact.segmentcollection import Interchange
 
 
 # This only a performance benchmark, no real test.
-def performance_test_huge_message():
+def test_performance_huge_message():
     """Performance test parsing a huge message"""
     collection = Interchange.from_file("tests/data/huge_file2.edi")
     assert collection
-
-
-if __name__ == "__main__":
-    # just call performance test function for profiling purposes
-    # use this file with:
-    #    $ python -m cProfile -s time tests/test_huge_message.py
-    performance_test_huge_message()

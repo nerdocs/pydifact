@@ -117,7 +117,9 @@ In python ecosystem:
 To develop pydifact, clone the repository and install the dev requirements:
 
 ```
-pip install -e .[dev]
+make dev
+# or 
+# pip install -e .[dev]
 ```
 
 This installs all the python packages needed for development and testing.
@@ -131,15 +133,21 @@ Nevertheless, don't forget adding tests for every aspect you add in code.
 
 ### Testing
 
-pydifact uses [pytest](http://pytest.org) for testing.
-Just exec `pytest` within the project folder to execute the unit tests. Make sure you installed the library properly before using `pip install -e .[dev]`.
-
-There is one test to check the performance of parsing huge files, named `test_huge_message` - you can skip that test by calling
+pydifact uses [pytest](http://pytest.org) for testing. There is a shortcut in the Makefile for your convenience:
 
 ```bash
-pytest --ignore tests/test_huge_message.py
+make test
 ```
-This is recommended for fast testing.
+
+This is recommended for faster testing.
+
+
+There are some additional tests to check the performance of parsing huge files - you can include that tests by calling
+
+```bash
+make test-extended
+```
+
 
 
 ## License
