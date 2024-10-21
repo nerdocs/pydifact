@@ -5,6 +5,12 @@ Changelog for PYDIFACT
 - BREAKING CHANGE: Remove SegmentCollection
 - BREAKING CHANGE: Remove FileSourcableMixin
 
+[0.1.8]
+- allow parsing EDI files created with SAGE COALA (with a "header" before the UNA segment)
+
+[0.1.7]
+- TODO
+
 [0.1.6] - 2023-04-22
 - Fix Parser drops UNA Segments while converting tokens to segments #56
 - Apply fixes for Segmentfactory and Pluginmount #54
