@@ -7,7 +7,7 @@ class PluginMount(type):
 
     # thanks to Marty Alchin!
 
-    def __init__(cls, name, bases, attrs):
+    def __init__(cls, name, bases, attrs):  # noqa
         if not hasattr(cls, "plugins"):
             cls.plugins = []
         else:
