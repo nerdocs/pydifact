@@ -2,7 +2,7 @@ class PluginMount(type):
     """Generic plugin mount point (= entry point) for pydifact plugins.
 
     .. note::
-        Plugins that have an **__omitted__** attriute are not added to the list!
+        Plugins that have an **__omitted__** attribute are not added to the list!
     """
 
     # thanks to Marty Alchin!
