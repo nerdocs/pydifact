@@ -86,7 +86,13 @@ interchange.add_segment(Segment("QTY", ["12", "3"]))
 print(interchange.serialize())
 ```
 
-You may also want to parse a « raw » segment bunch which is not an interchange :
+To include or override the Service String Advice segment (`UNA`), just specify it as a regular segment:
+
+```python
+interchange.add_segment(Segment("UNA", ":+.? '"))
+```
+
+You may also want to parse a « raw » segment bunch which is not an interchange:
 
 ```python
 from pydifact.segmentcollection import RawSegmentCollection
@@ -110,13 +116,13 @@ In python ecosystem:
 - [bots](https://github.com/bots-edi/bots) - huge, with webinterface (bots-monitor), webserver, bots-engine.
 - [edicat](https://github.com/notpeter/edicat) - simple, only for separating lines/segments for CLI-piping.
 
-
 ## Development
 
 ### Setup
+
 To develop pydifact, clone the repository and install the dev requirements:
 
-```
+```bash
 make dev
 # or 
 # pip install -e .[dev]
