@@ -33,6 +33,7 @@ class Characters:
         data_separator=None,
         decimal_point=None,
         escape_character=None,
+        reserved=None,
         segment_terminator=None,
     ):
         # The control character used to separate components.
@@ -48,7 +49,7 @@ class Characters:
         self.escape_character = escape_character or "?"
 
         # Reserved for future use
-        self.reserved_character = " "
+        self.reserved_character = reserved or " "
 
         # The control character used as an segment terminator.
         self.segment_terminator = segment_terminator or "'"
@@ -69,6 +70,7 @@ class Characters:
             data_separator=string[1],
             decimal_point=string[2],
             escape_character=string[3],
+            reserved=string[4],
             segment_terminator=string[5],
         )
         # characters.reserved_character = string[4]
