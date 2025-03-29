@@ -27,24 +27,31 @@ from copy import copy
 class Characters:
     """A set of control characters to use."""
 
-    def __init__(self):
+    def __init__(
+        self,
+        component_separator=None,
+        data_separator=None,
+        decimal_point=None,
+        escape_character=None,
+        segment_terminator=None,
+    ):
         # The control character used to separate components.
-        self.component_separator = ":"
+        self.component_separator = component_separator or ":"
 
         # The control character used to separate data elements.
-        self.data_separator = "+"
+        self.data_separator = data_separator or "+"
 
         # The control character used as a decimal point.
-        self.decimal_point = ","
+        self.decimal_point = decimal_point or ","
 
         # The control character used as an escape character.
-        self.escape_character = "?"
+        self.escape_character = escape_character or "?"
 
         # Reserved for future use
         self.reserved_character = " "
 
         # The control character used as an segment terminator.
-        self.segment_terminator = "'"
+        self.segment_terminator = segment_terminator or "'"
 
         self.line_terminators = [" ", "\r", "\n"]
 
@@ -57,13 +64,14 @@ class Characters:
             string = string[3:9]
         assert len(string) >= 6
 
-        characters = cls()
-        characters.component_separator = string[0]
-        characters.data_separator = string[1]
-        characters.decimal_point = string[2]
-        characters.escape_character = string[3]
-        characters.reserved_character = string[4]
-        characters.segment_terminator = string[5]
+        characters = cls(
+            component_separator=string[0],
+            data_separator=string[1],
+            decimal_point=string[2],
+            escape_character=string[3],
+            segment_terminator=string[5],
+        )
+        # characters.reserved_character = string[4]
         return characters
 
     def with_control_character(self, cc_type: str, char: str):
