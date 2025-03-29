@@ -84,7 +84,7 @@ class Parser:
 
         else:
             # if no UNA header present, use default control characters
-            # characters given on call take precedence over the stored defaults.
+            # given on call take precedence over the stored defaults.
             if characters is None:
                 characters = self.characters
 
