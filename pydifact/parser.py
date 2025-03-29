@@ -122,6 +122,7 @@ class Parser:
 
         # Get the character definitions
         chars = message[3:9]
+        characters.is_extracted_from_message = True
 
         characters.component_separator = chars[0]
         characters.data_separator = chars[1]
