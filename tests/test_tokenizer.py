@@ -15,7 +15,7 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import pytest
 
-from pydifact.token import Token
+from pydifact.token import Token, TokenType
 from pydifact.tokenizer import Tokenizer
 
 from pydifact.control import Characters
@@ -46,12 +46,12 @@ def test_basic():
     _assert_tokens(
         "RFF+PD:50515'",
         [
-            Token(Token.Type.CONTENT, "RFF"),
-            Token(Token.Type.DATA_SEPARATOR, "+"),
-            Token(Token.Type.CONTENT, "PD"),
-            Token(Token.Type.COMPONENT_SEPARATOR, ":"),
-            Token(Token.Type.CONTENT, "50515"),
-            Token(Token.Type.TERMINATOR, "'"),
+            Token(TokenType.CONTENT, "RFF"),
+            Token(TokenType.DATA_SEPARATOR, "+"),
+            Token(TokenType.CONTENT, "PD"),
+            Token(TokenType.COMPONENT_SEPARATOR, ":"),
+            Token(TokenType.CONTENT, "50515"),
+            Token(TokenType.TERMINATOR, "'"),
         ],
     )
 
@@ -60,10 +60,10 @@ def test_escape():
     _assert_tokens(
         "RFF+PD?:5'",
         [
-            Token(Token.Type.CONTENT, "RFF"),
-            Token(Token.Type.DATA_SEPARATOR, "+"),
-            Token(Token.Type.CONTENT, "PD:5"),
-            Token(Token.Type.TERMINATOR, "'"),
+            Token(TokenType.CONTENT, "RFF"),
+            Token(TokenType.DATA_SEPARATOR, "+"),
+            Token(TokenType.CONTENT, "PD:5"),
+            Token(TokenType.TERMINATOR, "'"),
         ],
     )
 
@@ -72,12 +72,12 @@ def test_double_escape():
     _assert_tokens(
         "RFF+PD??:5'",
         [
-            Token(Token.Type.CONTENT, "RFF"),
-            Token(Token.Type.DATA_SEPARATOR, "+"),
-            Token(Token.Type.CONTENT, "PD?"),
-            Token(Token.Type.COMPONENT_SEPARATOR, ":"),
-            Token(Token.Type.CONTENT, "5"),
-            Token(Token.Type.TERMINATOR, "'"),
+            Token(TokenType.CONTENT, "RFF"),
+            Token(TokenType.DATA_SEPARATOR, "+"),
+            Token(TokenType.CONTENT, "PD?"),
+            Token(TokenType.COMPONENT_SEPARATOR, ":"),
+            Token(TokenType.CONTENT, "5"),
+            Token(TokenType.TERMINATOR, "'"),
         ],
     )
 
@@ -86,10 +86,10 @@ def test_triple_escape():
     _assert_tokens(
         "RFF+PD???:5'",
         [
-            Token(Token.Type.CONTENT, "RFF"),
-            Token(Token.Type.DATA_SEPARATOR, "+"),
-            Token(Token.Type.CONTENT, "PD?:5"),
-            Token(Token.Type.TERMINATOR, "'"),
+            Token(TokenType.CONTENT, "RFF"),
+            Token(TokenType.DATA_SEPARATOR, "+"),
+            Token(TokenType.CONTENT, "PD?:5"),
+            Token(TokenType.TERMINATOR, "'"),
         ],
     )
 
@@ -98,12 +98,12 @@ def test_quadruple_escape():
     _assert_tokens(
         "RFF+PD????:5'",
         [
-            Token(Token.Type.CONTENT, "RFF"),
-            Token(Token.Type.DATA_SEPARATOR, "+"),
-            Token(Token.Type.CONTENT, "PD??"),
-            Token(Token.Type.COMPONENT_SEPARATOR, ":"),
-            Token(Token.Type.CONTENT, "5"),
-            Token(Token.Type.TERMINATOR, "'"),
+            Token(TokenType.CONTENT, "RFF"),
+            Token(TokenType.DATA_SEPARATOR, "+"),
+            Token(TokenType.CONTENT, "PD??"),
+            Token(TokenType.COMPONENT_SEPARATOR, ":"),
+            Token(TokenType.CONTENT, "5"),
+            Token(TokenType.TERMINATOR, "'"),
         ],
     )
 
@@ -112,10 +112,10 @@ def test_starts_with_escape():
     _assert_tokens(
         "DTM+?+0'",
         [
-            Token(Token.Type.CONTENT, "DTM"),
-            Token(Token.Type.DATA_SEPARATOR, "+"),
-            Token(Token.Type.CONTENT, "+0"),
-            Token(Token.Type.TERMINATOR, "'"),
+            Token(TokenType.CONTENT, "DTM"),
+            Token(TokenType.DATA_SEPARATOR, "+"),
+            Token(TokenType.CONTENT, "+0"),
+            Token(TokenType.TERMINATOR, "'"),
         ],
     )
 
@@ -126,14 +126,14 @@ def test_starts_with_escape():
 @pytest.fixture
 def expected_crlf():
     return [
-        Token(Token.Type.CONTENT, "RFF"),
-        Token(Token.Type.COMPONENT_SEPARATOR, ":"),
-        Token(Token.Type.CONTENT, "5"),
-        Token(Token.Type.TERMINATOR, "'"),
-        Token(Token.Type.CONTENT, "DEF"),
-        Token(Token.Type.COMPONENT_SEPARATOR, ":"),
-        Token(Token.Type.CONTENT, "6"),
-        Token(Token.Type.TERMINATOR, "'"),
+        Token(TokenType.CONTENT, "RFF"),
+        Token(TokenType.COMPONENT_SEPARATOR, ":"),
+        Token(TokenType.CONTENT, "5"),
+        Token(TokenType.TERMINATOR, "'"),
+        Token(TokenType.CONTENT, "DEF"),
+        Token(TokenType.COMPONENT_SEPARATOR, ":"),
+        Token(TokenType.CONTENT, "6"),
+        Token(TokenType.TERMINATOR, "'"),
     ]
 
 
