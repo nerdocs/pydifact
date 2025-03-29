@@ -287,3 +287,13 @@ UNZ+2+1'"""
     assert len(segments) == 12
     segments = list(Parser().parse("UNA:+,? '" + example_text))
     assert len(segments) == 13
+
+
+def test_edifact_text_with_newline_at_end():
+    example_text = """UNB+IBMA:1+FACHARZT A+PRAKTIKER X+950402+1200+1'
+UNH+000001+MEDRPT:1:901:UN'
+UNT+7+000001'
+UNZ+2+1'
+"""
+    segments = list(Parser().parse(example_text))
+    assert len(segments) == 4

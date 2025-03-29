@@ -192,6 +192,7 @@ FOO'"""
             )
         )
     assert "Newlines after escape characters are not allowed." in str(excinfo.value)
+    assert "line 0, column 5" in str(excinfo.value)
 
     # a "\n" must do the same as a real newline
     with pytest.raises(EdifactSyntaxError) as excinfo:
@@ -199,4 +200,4 @@ FOO'"""
         # "?" allowed.
         list(Tokenizer().get_tokens("UNB+?\nFOO'"))
     assert "Newlines after escape characters are not allowed." in str(excinfo.value)
-    assert "Unexpected end of EDI messages." in str(excinfo.value)
+    assert "line 0, column 5" in str(excinfo.value)

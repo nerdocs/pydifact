@@ -13,6 +13,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - BREAKING CHANGE: Segment() calls *must* provide the tag name now as the first parameter.
 - change plugin system from `metaclass` to `__init_subclass__`
 - raise ValidationError, not AssertionError, when ServiceAdviceString is not 6 chars long
+- Drop support for Python versions < 3.10 (3.8 was EOL 2024-10-07, 3.9 not much used in Distros.)
+
 ### ADDED
 - massively improve type annotations (thanks Tammo Ippen)
 - use code-based structures to validate segments and data elements
