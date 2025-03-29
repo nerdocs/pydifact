@@ -261,3 +261,29 @@ def test_parsing_with_passed_characters_but_respect_una():
         Segment("UNA", ":+,! '"),
         Segment("ERC", ["10", "Craig's"]),
     ]
+
+
+def test_message_end_without_control_char():
+    with pytest.raises(EdifactSyntaxError):
+        # must raise a RuntimeError as the string terminates abruptly within a segment
+        for c in Parser().parse("UNB+IBMA:1+BLUBB A+FOO X+950"):
+            pass
+
+
+def test_edifact_text_with_newlines():
+    example_text = """UNB+IBMA:1+FACHARZT A+PRAKTIKER X+950402+1200+1'
+UNH+000001+MEDRPT:1:901:UN'
+BGM+080+++19950402++123401011967+19670101'
+FTX+BFD++Keine Wachstumsstörungen.:'
+NAD+PAT++TEST:LIESCHEN:NULLWEG 97:+++NIRGENDWO++0000'
+UNT+7+000001'
+UNH+000002+MEDRPT:1:901:UN'
+BGM+080+++19950402++567802041993+19930402'
+FTX+BFD++Ich konnte keine Abnormalitäten entdecken:'
+NAD+PAT++TEST:MAX:NULLWEG 98:+++NIRGENDWO++0000'
+UNT+7+000002'
+UNZ+2+1'"""
+    segments = list(Parser().parse(example_text))
+    assert len(segments) == 12
+    segments = list(Parser().parse("UNA:+,? '" + example_text))
+    assert len(segments) == 13
