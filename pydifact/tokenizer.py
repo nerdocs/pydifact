@@ -21,6 +21,7 @@
 # THE SOFTWARE.
 from collections.abc import Iterator
 
+from pydifact.exceptions import EDISyntaxError
 from pydifact.token import Token
 from pydifact.control.characters import Characters
 
@@ -47,21 +48,28 @@ class Tokenizer:
 
         self.token_selector: dict[str, Token.Type] = {}
 
+        # The line number and column within the message
+        # beware of the UNA header before!
         self._message_index: int = 0
+        self._lineno = 0
+        self._column = 0
 
     def get_tokens(
         self, message: str, characters: Characters | None = None
     ) -> Iterator[Token]:
         """Convert the passed message into tokens.
-        :param characters: the Control Characters to use for tokenizing. If omitted, use a default set.
-        :param message: The EDI message
-        :return: Iterator[Token]
+
+        Parameters:
+            characters: the Control Characters to use for tokenizing.
+                If omitted, use a default set.
+            message: The EDI message, without the UNA header
+        Returns:
+            Iterator[Token]
         """
 
         self.characters = characters or Characters()
         self._char = None
         self._message = iter(message)
-        self._message_index = 0
         self.read_next_char()
 
         self.token_selector = {
@@ -92,10 +100,24 @@ class Tokenizer:
             self.isEscaped = True
             self._char = self.get_next_char()
 
+            # next char after an escape char may not be a newline
+            if self._char == "\n":
+                raise EDISyntaxError(
+                    "Newlines after escape characters are not allowed.",
+                    self._lineno,
+                    self._column - 1,
+                )
+
     def get_next_char(self) -> str | None:
         """Get the next character from the message."""
         try:
-            return next(self._message)
+            char = next(self._message)
+            self._message_index += 1
+            self._column += 1
+            if self._char == "\n":
+                self._lineno += 1
+                self._column = 0
+            return char
         except StopIteration:
             return None
 
@@ -119,11 +141,13 @@ class Tokenizer:
                     self.read_next_char()
             return token
 
+        # When message ends without a control character, raise an error
+        # except for a newline.
         while not self.is_control_character():
             if self.end_of_message():
-                raise RuntimeError("Unexpected end of EDI message")
-
+                raise EDISyntaxError("Unexpected end of EDI messages.")
             self.store_current_char_and_read_next()
+
         return Token(Token.Type.CONTENT, self.extract_stored_chars())
 
     def is_control_character(self) -> bool:

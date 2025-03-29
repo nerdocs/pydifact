@@ -140,3 +140,8 @@ class Characters:
             and (self.reserved_character == other.reserved_character)
             and (self.segment_terminator == other.segment_terminator)
         )
+
+    def __len__(self):
+        """Return the number of control characters in the string representation,
+        which is always 6"""
+        return 6

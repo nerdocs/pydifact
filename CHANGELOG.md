@@ -1,4 +1,9 @@
-# Changelog for PYDIFACT
+# Changelog
+
+All notable changes to this project will be documented in this file.
+
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 
 [0.2] - UNRELEASED
@@ -13,6 +18,7 @@
 - use code-based structures to validate segments and data elements
 - improve error output when EDIFACT syntax errors are found
 - Implement automatic detection and validation of EDIFACT syntax version (1 - 4) by examining the UNB segment for proper version control and adherence to version-specific syntax rules.
+- provide line numbers/columns in EdiFactSyntaxError exceptions
 
 [0.1.9]
 ### CHANGES
@@ -20,6 +26,7 @@
 
 ### FIXES
 - Token creation with the wrong type fixed
+- raise Error when "escaped newline" occurs
 
 [0.1.8]
 - allow parsing EDI files created with SAGE COALA (with a "header" before the UNA segment)

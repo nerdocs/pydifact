@@ -15,6 +15,7 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import pytest
 
+from pydifact.exceptions import EdifactSyntaxError
 from pydifact.token import Token, TokenType
 from pydifact.tokenizer import Tokenizer
 
@@ -166,6 +167,36 @@ def test_ignore_long_whitespace(expected_crlf):
 
 
 def test_no_terminator():
-    with pytest.raises(RuntimeError):
-        list(Tokenizer().get_tokens("TEST", Characters()))
-        pytest.fail("Unexpected end of EDI message")
+    with pytest.raises(EdifactSyntaxError):
+        list(Tokenizer().get_tokens("TEST"))
+
+    with pytest.raises(EdifactSyntaxError) as excinfo:
+        list(
+            Tokenizer().get_tokens(
+                "UNB+IBMA:1+FACHARZT A+PRAKTIKER X+950402+1200+1'"
+                "UNH+000001+MEDRPT:1:901:UN'UNT+7+000002'"
+                "UNZ+2+1"  # <-- no terminator char here
+            )
+        )
+    assert "Unexpected end of EDI messages." in str(excinfo.value)
+
+
+def test_escaped_newline_char():
+    with pytest.raises(EdifactSyntaxError) as excinfo:
+        # must raise a EdifactSyntaxError as there is no newline after an escape char
+        # "?" allowed.
+        list(
+            Tokenizer().get_tokens(
+                """UNB+?
+FOO'"""
+            )
+        )
+    assert "Newlines after escape characters are not allowed." in str(excinfo.value)
+
+    # a "\n" must do the same as a real newline
+    with pytest.raises(EdifactSyntaxError) as excinfo:
+        # must raise a EdifactSyntaxError as there is no newline after an escape char
+        # "?" allowed.
+        list(Tokenizer().get_tokens("UNB+?\nFOO'"))
+    assert "Newlines after escape characters are not allowed." in str(excinfo.value)
+    assert "Unexpected end of EDI messages." in str(excinfo.value)
