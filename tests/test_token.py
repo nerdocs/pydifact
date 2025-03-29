@@ -13,18 +13,19 @@
 #
 #    You should have received a copy of the GNU Lesser General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
-import unittest
+import pytest
+
 from pydifact.token import Token
 
 
-class TokenTest(unittest.TestCase):
-    def test_type(self):
-        token = Token(Token.Type.CONTENT, "ok")
-        self.assertEqual(Token.Type.CONTENT, token.type)
+def test_type():
+    token = Token(Token.Type.CONTENT, "ok")
+    assert Token.Type.CONTENT == token.type
 
-    def test_value(self):
-        token = Token(Token.Type.CONTENT, "ok")
-        self.assertEqual("ok", token.value)
+
+def test_value():
+    token = Token(Token.Type.CONTENT, "ok")
+    assert token.value == "ok"
 
 
 if __name__ == "__main__":
