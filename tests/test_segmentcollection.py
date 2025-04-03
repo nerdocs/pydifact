@@ -80,7 +80,7 @@ def test_get_segment_w_predicate():
 
 def test_split_by():
     def _serialize(collections: Iterable[RawSegmentCollection]) -> List[List[str]]:
-        lst = []
+        lst: list[str] = []
         global_lst = []
         for collection in collections:
             if lst:

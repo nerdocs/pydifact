@@ -13,6 +13,7 @@
 #
 #    You should have received a copy of the GNU Lesser General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+from typing import Optional
 import pytest
 
 from pydifact.token import Token
@@ -22,12 +23,14 @@ from pydifact.control import Characters
 
 
 @pytest.fixture
-def tokenizer():
+def tokenizer() -> Tokenizer:
     return Tokenizer()
 
 
 def _assert_tokens(
-    collection: str, expected: list = None, error_message: str = None
+    collection: str,
+    expected: Optional[list] = None,
+    error_message: Optional[str] = None,
 ) -> None:
     """Helper function to accelerate tokenizer testing."""
 
