@@ -203,8 +203,6 @@ class AbstractSegmentsContainer:
         for segment in segments:
             self.add_segment(segment)
 
-        # return self
-
     def add_segment(self, segment: Segment) -> None:
         """Append a segment to the collection.
 
@@ -215,7 +213,6 @@ class AbstractSegmentsContainer:
         """
         if segment.tag not in (self.HEADER_TAG, self.FOOTER_TAG):
             self.segments.append(segment)
-        # return self
 
     def get_header_segment(self) -> Optional[Segment]:
         """Craft and return a header segment.

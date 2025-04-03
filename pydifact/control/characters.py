@@ -88,7 +88,6 @@ class Characters:
         other = copy(self)
         setattr(other, cc_type, char)
 
-        # return clone
         return other
 
     @property
