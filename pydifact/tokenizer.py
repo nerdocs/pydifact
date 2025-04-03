@@ -19,25 +19,26 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
+from collections.abc import Iterator
+from typing import Dict, List, Optional
 
 from pydifact.token import Token
 from pydifact.control.characters import Characters
-from typing import List, Optional
 
 
 class Tokenizer:
     """Convert EDI messages into tokens for parsing."""
 
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__()
 
         # The message that we are tokenizing.
-        self._message = []
+        self._message: Iterator[str] = iter("")
 
-        self._current_chars = []
+        self._current_chars: List[str] = []
 
         # The current character from the message we are dealing with.
-        self._char = ""
+        self._char: Optional[str] = ""
 
         # The stored characters for the next token.
         self._string = ""
@@ -46,17 +47,17 @@ class Tokenizer:
         self.isEscaped = False
 
         # The control characters for the message
-        self.characters = None
+        self.characters: Optional[Characters] = None
 
-        self.token_selector = {}
+        self.token_selector: Dict[str, Token.Type] = {}
 
-        self._message_index = 0
+        self._message_index: int = 0
 
-    def get_tokens(self, message: str, characters: Characters = None) -> List[Token]:
+    def get_tokens(self, message: str, characters: Optional[Characters] = None) -> Iterator[Token]:
         """Convert the passed message into tokens.
         :param characters: the Control Characters to use for tokenizing. If omitted, use a default set.
         :param message: The EDI message
-        :return: Token[]
+        :return: Iterator[Token]
         """
 
         self.characters = characters or Characters()
@@ -89,7 +90,7 @@ class Tokenizer:
 
         # If this is the escape character, then read the next one, store it and
         # flag it as escaped
-        if self._char == self.characters.escape_character:
+        if self.characters and self._char == self.characters.escape_character:
             self.isEscaped = True
             self._char = self.get_next_char()
 
@@ -98,16 +99,17 @@ class Tokenizer:
         try:
             return next(self._message)
         except StopIteration:
-            return
+            return None
 
-    def get_next_token(self) -> Optional[Token]:
+    def get_next_token(self) -> Token:
         """Get the next token from the message."""
 
         # If we're not escaping this character then see if it's
         # a control character
+        assert self.characters is not None
 
-        token_type = not self.isEscaped and self.token_selector.get(self._char)
-        if token_type:
+        if not self.isEscaped and self._char in self.token_selector:
+            token_type = self.token_selector[self._char]
             self.store_current_char_and_read_next()
             token = Token(token_type, self.extract_stored_chars())
             if token_type == Token.Type.TERMINATOR:
@@ -134,6 +136,7 @@ class Tokenizer:
         """Store the current character and read the
         next one from the message."""
 
+        assert self._char is not None
         self._current_chars.append(self._char)
         self.read_next_char()
 
@@ -148,5 +151,5 @@ class Tokenizer:
         """Check if we've reached the end of the message"""
         return self._char is None
 
-    def __str__(self):
+    def __str__(self) -> str:
         return "".join(self._current_chars)

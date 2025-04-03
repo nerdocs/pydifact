@@ -260,12 +260,14 @@ def test_faulty_interchange__UNT_without_UNH():
 
 
 def test_empty_message(message):
-    assert str(message) == ("UNH+42z42+PAORES:93:1:IA'" "UNT+2+42z42'")
+    assert str(message) == "UNH+42z42+PAORES:93:1:IA'UNT+2+42z42'"
 
 
 def test_add_another_footer_element(message):
     """make sure that adding another UNZ footer is ignored."""
-    assert message.add_segment(Segment("UNZ", "1", "234z45")) == message
+    expected = str(message)
+    message.add_segment(Segment("UNT", "1", "234z45"))
+    assert str(message) == expected
 
 
 def test_counting_of_messages(interchange, message):

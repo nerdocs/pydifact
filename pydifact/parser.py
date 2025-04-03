@@ -19,7 +19,8 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
-from typing import Optional, Generator, Any
+from collections.abc import Iterator
+from typing import List, Optional, Union
 
 from pydifact.tokenizer import Tokenizer
 from pydifact.token import Token
@@ -34,13 +35,13 @@ class Parser:
         self,
         factory: Optional[SegmentFactory] = None,
         characters: Optional[Characters] = None,
-    ):
+    )-> None:
         self.factory = factory or SegmentFactory()
         self.characters = characters or Characters()
 
     def parse(
-        self, message: str, characters: Characters = None
-    ) -> Generator[Segment, Any, None]:
+        self, message: str, characters: Optional[Characters] = None
+    ) -> Iterator[Segment]:
         """Parse the message into a list of segments.
 
         :param characters: the control characters to use, if there is no
@@ -87,7 +88,7 @@ class Parser:
 
     @staticmethod
     def get_control_characters(
-        message: str, characters: Characters = None
+        message: str, characters: Optional[Characters] = None
     ) -> Optional[Characters]:
         """Read the UNA segment from the passed string and extract/store the control characters from it.
 
@@ -112,7 +113,6 @@ class Parser:
 
         # Get the character definitions
         chars = message[3:9]
-        characters.is_extracted_from_message = True
 
         characters.component_separator = chars[0]
         characters.data_separator = chars[1]
@@ -124,8 +124,8 @@ class Parser:
         return characters
 
     def convert_tokens_to_segments(
-        self, tokens: list, characters: Characters, with_una: bool = False
-    ):
+        self, tokens: Iterator[Token], characters: Characters, with_una: bool = False
+    ) -> Iterator[Segment]:
         """Convert the tokenized message into an array of segments.
         :param tokens: The tokens that make up the message
         :param characters: the control characters to use
@@ -134,9 +134,10 @@ class Parser:
         :rtype list of Segment
         """
 
-        segments = []
+        segments: List[List[Union[str, List[str]]]] = []
         current_segment = []
-        data_element = None
+        data_element: List[str] = []
+        data_element_value: Union[List[str], str]
         in_segment = False
         empty_component_counter = 0
 
@@ -149,12 +150,14 @@ class Parser:
                 if token.type == Token.Type.TERMINATOR:
                     in_segment = False
                     if len(data_element) == 0:  # empty element
-                        data_element = ""
-                    if len(data_element) == 1:
+                        data_element_value = ""
+                    elif len(data_element) == 1:
                         # use a str instead of a list
-                        data_element = data_element[0]
+                        data_element_value = data_element[0]
+                    else:
+                        data_element_value = data_element
 
-                    current_segment.append(data_element)
+                    current_segment.append(data_element_value)
                     data_element = []
                     continue
 
@@ -174,11 +177,13 @@ class Parser:
             # data_element to an empty list []
             if token.type == Token.Type.DATA_SEPARATOR:
                 if len(data_element) == 0:  # empty element
-                    data_element = ""
+                    data_element_value = ""
                 elif len(data_element) == 1:
-                    data_element = data_element[0]
+                    data_element_value = data_element[0]
+                else:
+                    data_element_value = data_element
 
-                current_segment.append(data_element)
+                current_segment.append(data_element_value)
 
                 data_element = []
                 empty_component_counter = 0
@@ -210,4 +215,5 @@ class Parser:
 
         for segment in segments:
             name = segment.pop(0)
-            yield self.factory.create_segment(name, *segment)
+            # create_segment tests name type
+            yield self.factory.create_segment(name, *segment)  # type: ignore

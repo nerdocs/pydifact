@@ -25,7 +25,6 @@ from pydifact import segmentcollection, parser, segments, serializer, token, tok
 __version__ = "0.1.8"
 
 from .control.characters import Characters
-from .segmentcollection import SegmentCollection
 from .parser import Parser
 from .segments import Segment
 from .serializer import Serializer

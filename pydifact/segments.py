@@ -19,11 +19,14 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
+from abc import abstractmethod
 from typing import Union, List
 
 from pydifact.api import EDISyntaxError, PluginMount
 from pydifact.control import Characters
 
+Element = Union[str, List[str], None]
+Elements = List[Element]
 
 class SegmentProvider(metaclass=PluginMount):
     """This is a plugin mount point for Segment plugins which represent a certain EDIFACT Segment.
@@ -31,9 +34,11 @@ class SegmentProvider(metaclass=PluginMount):
     Classes implementing this PluginMount should provide the following attributes:
     """
 
-    def __str__(self):
+    @abstractmethod
+    def __str__(self) -> str:
         """Returns the user readable text representation of this segment."""
 
+    @abstractmethod
     def validate(self) -> bool:
         """Validates the Segment."""
 
@@ -48,7 +53,7 @@ class Segment(SegmentProvider):
     # tag is not a class attribute in this case, as each Segment instance could have another tag.
     __omitted__ = True
 
-    def __init__(self, tag: str, *elements: Union[str, List[str], None]):
+    def __init__(self, tag: str, *elements: Element) -> None:
         """Create a new Segment instance.
 
         :param str tag: The code/tag of the segment. Must not be empty.
@@ -60,7 +65,7 @@ class Segment(SegmentProvider):
         # The data elements for this segment.
         # this is converted to a list (due to the fact that python creates a tuple
         # when passing a variable arguments list to a method)
-        self.elements = list(elements)
+        self.elements: Elements = list(elements)
 
     def __str__(self) -> str:
         """Returns the Segment in Python list printout"""
@@ -79,10 +84,10 @@ class Segment(SegmentProvider):
             and list(self.elements) == list(other.elements)
         )
 
-    def __getitem__(self, key):
+    def __getitem__(self, key: int) -> Element:
         return self.elements[key]
 
-    def __setitem__(self, key, value):
+    def __setitem__(self, key: int, value: Element) -> None:
         self.elements[key] = value
 
     def validate(self) -> bool:
@@ -107,7 +112,7 @@ class SegmentFactory:
 
     @staticmethod
     def create_segment(
-        name: str, *elements: Union[str, List[str]], validate: bool = True
+        name: str, *elements: Element, validate: bool = True
     ) -> Segment:
         """Create a new instance of the relevant class type.
 
@@ -121,7 +126,7 @@ class SegmentFactory:
         if not name:
             raise EDISyntaxError("The tag of a segment must not be empty.")
 
-        if type(name) != str:
+        if not isinstance(name, str):
             raise EDISyntaxError(
                 "The tag name of a segment must be a str, but is a {}: {}".format(
                     type(name), name

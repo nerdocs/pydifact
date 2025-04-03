@@ -22,15 +22,16 @@
 
 import codecs
 import datetime
-import warnings
-from collections.abc import Callable, Iterable
-from typing import List, Optional, Tuple, Union
+from collections.abc import Callable, Iterable, Iterator, Sequence
+from typing import List, Optional, Tuple, Type, TypeVar, Union
 
 from pydifact.api import EDISyntaxError
 from pydifact.control import Characters
 from pydifact.parser import Parser
-from pydifact.segments import Segment
+from pydifact.segments import Elements, Segment
 from pydifact.serializer import Serializer
+
+T = TypeVar("T", bound="AbstractSegmentsContainer")
 
 
 class AbstractSegmentsContainer:
@@ -60,15 +61,15 @@ class AbstractSegmentsContainer:
        The control characters (a :class:`~pydifact.control.Characters` object).
     """
 
-    HEADER_TAG: str = None
-    FOOTER_TAG: str = None
+    HEADER_TAG: Optional[str] = None
+    FOOTER_TAG: Optional[str] = None
 
     def __init__(
         self,
-        extra_header_elements: List[Union[str, List[str]]] = None,
+        extra_header_elements: Optional[Elements] = None,
         characters: Optional[Characters] = None,
-    ):
-        self.segments = []
+    ) -> None:
+        self.segments: List[Segment] = []
 
         # set of control characters
         self.characters = characters or Characters()
@@ -82,11 +83,11 @@ class AbstractSegmentsContainer:
 
     @classmethod
     def from_str(
-        cls,
+        cls: Type[T],
         string: str,
         parser: Optional[Parser] = None,
         characters: Optional[Characters] = None,
-    ) -> "AbstractSegmentsContainer":
+    ) -> T:
         """Create an instance from a string.
 
         :param string: The EDI content.
@@ -102,10 +103,10 @@ class AbstractSegmentsContainer:
 
     @classmethod
     def from_segments(
-        cls,
-        segments: Union[List, Iterable],
+        cls: Type[T],
+        segments: Iterable[Segment],
         characters: Optional[Characters] = None,
-    ) -> "AbstractSegmentsContainer":
+    ) -> T:
         """Create an instance from a list of segments.
 
         :param segments: The segments of the EDI interchange.
@@ -116,13 +117,15 @@ class AbstractSegmentsContainer:
 
         # create a new instance of AbstractSegmentsContainer and return it
         # with the added segments
-        return cls(characters=characters).add_segments(segments)
+        res = cls(characters=characters)
+        res.add_segments(segments)
+        return res
 
     def get_segments(
         self,
         name: str,
-        predicate: Callable = None,  # Python3.9+ Callable[[Segment], bool]
-    ) -> list:
+        predicate: Optional[Callable[[Segment], bool]] = None,
+    ) -> Iterator[Segment]:
         """Get all segments that match the requested name.
 
         :param name: The name of the segments to return.
@@ -138,7 +141,7 @@ class AbstractSegmentsContainer:
     def get_segment(
         self,
         name: str,
-        predicate: Callable = None,  # Python3.9+ Callable[[Segment], bool]
+        predicate: Optional[Callable[[Segment], bool]] = None,
     ) -> Optional[Segment]:
         """Get the first segment that matches the requested name.
 
@@ -156,7 +159,7 @@ class AbstractSegmentsContainer:
     def split_by(
         self,
         start_segment_tag: str,
-    ) -> Iterable:  # Python3.9+ Iterable["RawSegmentCollection"]
+    ) -> Iterable["RawSegmentCollection"]:
         """Split the segment collection by tag.
 
         Assuming the collection contains tags ``["A", "B", "A", "A", "B", "D"]``,
@@ -185,9 +188,7 @@ class AbstractSegmentsContainer:
         if current_list is not None:
             yield current_list
 
-    def add_segments(
-        self, segments: Union[List[Segment], Iterable]
-    ) -> "AbstractSegmentsContainer":
+    def add_segments(self, segments: Iterable[Segment]) -> None:
         """Append a list of segments to the collection.
 
         For the :class:`Interchange` subclass, passing a ``UNA`` segment means
@@ -202,9 +203,9 @@ class AbstractSegmentsContainer:
         for segment in segments:
             self.add_segment(segment)
 
-        return self
+        # return self
 
-    def add_segment(self, segment: Segment) -> "AbstractSegmentsContainer":
+    def add_segment(self, segment: Segment) -> None:
         """Append a segment to the collection.
 
         Note: skips segments that are header or footer tags of this segment container
@@ -212,9 +213,9 @@ class AbstractSegmentsContainer:
 
         :param segment: The segment to add
         """
-        if not segment.tag in (self.HEADER_TAG, self.FOOTER_TAG):
+        if segment.tag not in (self.HEADER_TAG, self.FOOTER_TAG):
             self.segments.append(segment)
-        return self
+        # return self
 
     def get_header_segment(self) -> Optional[Segment]:
         """Craft and return a header segment.
@@ -259,7 +260,7 @@ class AbstractSegmentsContainer:
             break_lines,
         )
 
-    def validate(self):
+    def validate(self) -> bool:
         """Validate the object.
 
         Raises an exception if the object is invalid.
@@ -270,95 +271,11 @@ class AbstractSegmentsContainer:
         return self.serialize()
 
 
-class FileSourcableMixin:
-    """
-    For backward compatibility
-
-    For v0.2 drop this class and move from_file() to Interchange class.
-    """
-
-    @classmethod
-    def from_file(
-        cls, file: str, encoding: str = "iso8859-1", parser: Optional[Parser] = None
-    ) -> "FileSourcableMixin":
-        """Create a Interchange instance from a file.
-
-        Raises FileNotFoundError if filename is not found.
-        :param encoding: an optional string which specifies the encoding. Default is "iso8859-1".
-        :param file: The full path to a file that contains an EDI message.
-        :rtype: FileSourcableMixin
-        """
-        # codecs.lookup raises an LookupError if given codec was not found:
-        codecs.lookup(encoding)
-
-        with open(file, encoding=encoding) as f:
-            collection = f.read()
-        return cls.from_str(collection, parser=parser)
-
-
-class UNAHandlingMixin:
-    """
-    For backward compatibility
-
-    For v0.2 drop this class and move add_segment() to Interchange class.
-    """
-
-    def add_segment(self, segment: Segment) -> "UNAHandlingMixin":
-        """Append a segment to the collection. Passing a UNA segment means setting/overriding the control
-        characters and setting the serializer to output the Service String Advice. If you wish to change the control
-        characters from the default and not output the Service String Advice, change self.characters instead,
-        without passing a UNA Segment.
-
-        :param segment: The segment to add
-        """
-        if segment.tag == "UNA":
-            self.has_una_segment = True
-            self.characters = Characters.from_str(segment.elements[0])
-            return self
-        return super().add_segment(segment)
-
-
-class SegmentCollection(
-    FileSourcableMixin, UNAHandlingMixin, AbstractSegmentsContainer
-):
-    """
-    For backward compatibility. Drop it in v0.2
-
-    Will be replaced by Interchange or RawSegmentCollection depending on the need.
-    """
-
-    def __init__(self, *args, **kwargs):
-        warnings.warn(
-            "SegmentCollection is deprecated and will no longer be available in v0.2, "
-            "replace it with Interchange or RawSegmentCollection",
-            DeprecationWarning,
-        )
-        super().__init__(*args, **kwargs)
-
-    @classmethod
-    def from_file(cls, *args, **kwargs) -> "SegmentCollection":
-        warnings.warn(
-            "SegmentCollection.from_file will be removed in v0.2, "
-            "Use Interchange class instead",
-            DeprecationWarning,
-        )
-        return super().from_file(*args, **kwargs)
-
-    def add_segment(self, segment: Segment) -> "SegmentCollection":
-        if segment.tag == "UNA":
-            warnings.warn(
-                "SegmentCollection will be removed in v0.2, "
-                "For UNA handling, use Interchange class instead",
-                DeprecationWarning,
-            )
-        return super().add_segment(segment)
 
 
 class RawSegmentCollection(AbstractSegmentsContainer):
     """
     A way to analyze arbitrary bunch of edifact segments.
-
-    Similar to the deprecated SegmentCollection, but lacking from_file() and UNA support.
 
     If you are handling an Interchange or a Message, you may want to prefer
     those classes to RawSegmentCollection, as they offer more features and
@@ -383,10 +300,10 @@ class Message(AbstractSegmentsContainer):
     HEADER_TAG = "UNH"
     FOOTER_TAG = "UNT"
 
-    def __init__(self, reference_number: str, identifier: Tuple, *args, **kwargs):
+    def __init__(self, reference_number: str, identifier: Sequence[str], *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.reference_number = reference_number
-        self.identifier = identifier
+        self.identifier = list(identifier)
 
     @property
     def type(self) -> str:
@@ -425,7 +342,7 @@ class Message(AbstractSegmentsContainer):
         pass
 
 
-class Interchange(FileSourcableMixin, UNAHandlingMixin, AbstractSegmentsContainer):
+class Interchange(AbstractSegmentsContainer):
     """An EDIFACT interchange.
 
     In EDIFACT, the **interchange** is the entire document at the highest level. Except
@@ -451,7 +368,7 @@ class Interchange(FileSourcableMixin, UNAHandlingMixin, AbstractSegmentsContaine
         recipient: str,
         control_reference: str,
         syntax_identifier: Tuple[str, int],
-        timestamp: datetime.datetime = None,
+        timestamp: Optional[datetime.datetime] = None,
         *args,
         **kwargs,
     ):
@@ -488,7 +405,7 @@ class Interchange(FileSourcableMixin, UNAHandlingMixin, AbstractSegmentsContaine
             self.control_reference,
         )
 
-    def get_messages(self) -> List[Message]:
+    def get_messages(self) -> Iterator[Message]:
         """Get list of messages in the interchange.
 
         Using :meth:`get_messages` is optional; interchange segments can be accessed
@@ -502,6 +419,8 @@ class Interchange(FileSourcableMixin, UNAHandlingMixin, AbstractSegmentsContaine
         for segment in self.segments:
             if segment.tag == "UNH":
                 if not message:
+                    assert isinstance(segment.elements[0], str)
+                    assert isinstance(segment.elements[1], list)
                     message = Message(segment.elements[0], segment.elements[1])
                     last_segment = segment
                 else:
@@ -534,6 +453,24 @@ class Interchange(FileSourcableMixin, UNAHandlingMixin, AbstractSegmentsContaine
         )
         self.add_segments(i for i in segments if i is not None)
         return self
+
+    @classmethod
+    def from_file(
+        cls, file: str, encoding: str = "iso8859-1", parser: Optional[Parser] = None
+    ) -> "Interchange":
+        """Create a Interchange instance from a file.
+
+        Raises FileNotFoundError if filename is not found.
+        :param encoding: an optional string which specifies the encoding. Default is "iso8859-1".
+        :param file: The full path to a file that contains an EDI message.
+        :rtype: FileSourcableMixin
+        """
+        # codecs.lookup raises an LookupError if given codec was not found:
+        codecs.lookup(encoding)
+
+        with open(file, encoding=encoding) as f:
+            collection = f.read()
+        return cls.from_str(collection, parser=parser)
 
     @classmethod
     def from_segments(
@@ -578,7 +515,23 @@ class Interchange(FileSourcableMixin, UNAHandlingMixin, AbstractSegmentsContaine
             interchange.has_una_segment = True
             interchange.characters = Characters.from_str(first_segment.elements[0])
 
-        return interchange.add_segments(segments)
+        interchange.add_segments(segments)
+        return interchange
+
+    def add_segment(self, segment: Segment) -> None:
+        """Append a segment to the collection. Passing a UNA segment means setting/overriding the control
+        characters and setting the serializer to output the Service String Advice. If you wish to change the control
+        characters from the default and not output the Service String Advice, change self.characters instead,
+        without passing a UNA Segment.
+
+        :param segment: The segment to add
+        """
+        if segment.tag == "UNA":
+            self.has_una_segment = True
+            assert isinstance(segment.elements[0], str)
+            self.characters = Characters.from_str(segment.elements[0])
+            return
+        super().add_segment(segment)
 
     def validate(self):
         # TODO: proper validation
