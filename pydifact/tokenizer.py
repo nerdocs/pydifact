@@ -53,7 +53,9 @@ class Tokenizer:
 
         self._message_index: int = 0
 
-    def get_tokens(self, message: str, characters: Optional[Characters] = None) -> Iterator[Token]:
+    def get_tokens(
+        self, message: str, characters: Optional[Characters] = None
+    ) -> Iterator[Token]:
         """Convert the passed message into tokens.
         :param characters: the Control Characters to use for tokenizing. If omitted, use a default set.
         :param message: The EDI message

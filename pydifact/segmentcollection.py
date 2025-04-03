@@ -271,8 +271,6 @@ class AbstractSegmentsContainer:
         return self.serialize()
 
 
-
-
 class RawSegmentCollection(AbstractSegmentsContainer):
     """
     A way to analyze arbitrary bunch of edifact segments.
@@ -300,7 +298,9 @@ class Message(AbstractSegmentsContainer):
     HEADER_TAG = "UNH"
     FOOTER_TAG = "UNT"
 
-    def __init__(self, reference_number: str, identifier: Sequence[str], *args, **kwargs):
+    def __init__(
+        self, reference_number: str, identifier: Sequence[str], *args, **kwargs
+    ):
         super().__init__(*args, **kwargs)
         self.reference_number = reference_number
         self.identifier = list(identifier)

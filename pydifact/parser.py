@@ -35,7 +35,7 @@ class Parser:
         self,
         factory: Optional[SegmentFactory] = None,
         characters: Optional[Characters] = None,
-    )-> None:
+    ) -> None:
         self.factory = factory or SegmentFactory()
         self.characters = characters or Characters()
 

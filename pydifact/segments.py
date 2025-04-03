@@ -28,6 +28,7 @@ from pydifact.control import Characters
 Element = Union[str, List[str], None]
 Elements = List[Element]
 
+
 class SegmentProvider(metaclass=PluginMount):
     """This is a plugin mount point for Segment plugins which represent a certain EDIFACT Segment.
 
@@ -111,9 +112,7 @@ class SegmentFactory:
     """Factory for producing segments."""
 
     @staticmethod
-    def create_segment(
-        name: str, *elements: Element, validate: bool = True
-    ) -> Segment:
+    def create_segment(name: str, *elements: Element, validate: bool = True) -> Segment:
         """Create a new instance of the relevant class type.
 
         :param name: The name of the segment

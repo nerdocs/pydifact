@@ -41,7 +41,10 @@ class Serializer:
         self.regexp = re.compile("|".join(map(re.escape, substrs)))
 
     def serialize(
-        self, segments: List[Segment], with_una_header: bool = True, break_lines: bool=False
+        self,
+        segments: List[Segment],
+        with_una_header: bool = True,
+        break_lines: bool = False,
     ) -> str:
         """Serialize all the passed segments.
 
