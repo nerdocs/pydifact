@@ -14,7 +14,7 @@
 #    You should have received a copy of the GNU Lesser General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import datetime
-from typing import Iterable, List
+from typing import Iterable, list
 
 import pytest
 
@@ -79,7 +79,7 @@ def test_get_segment_w_predicate():
 
 
 def test_split_by():
-    def _serialize(collections: Iterable[RawSegmentCollection]) -> List[List[str]]:
+    def _serialize(collections: Iterable[RawSegmentCollection]) -> list[list[str]]:
         lst: list[str] = []
         global_lst = []
         for collection in collections:

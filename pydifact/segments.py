@@ -20,13 +20,12 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 from abc import abstractmethod
-from typing import Union, List
+from typing import Union
 
 from pydifact.api import EDISyntaxError, PluginMount
-from pydifact.control import Characters
 
-Element = Union[str, List[str], None]
-Elements = List[Element]
+Element = Union[str, list[str], None]
+Elements = list[Element]
 
 
 class SegmentProvider(metaclass=PluginMount):

@@ -23,7 +23,7 @@
 import codecs
 import datetime
 from collections.abc import Callable, Iterable, Iterator, Sequence
-from typing import List, Optional, Tuple, Type, TypeVar, Union
+from typing import Optional, Type, TypeVar, Union
 
 from pydifact.api import EDISyntaxError
 from pydifact.control import Characters
@@ -69,7 +69,7 @@ class AbstractSegmentsContainer:
         extra_header_elements: Optional[Elements] = None,
         characters: Optional[Characters] = None,
     ) -> None:
-        self.segments: List[Segment] = []
+        self.segments: list[Segment] = []
 
         # set of control characters
         self.characters = characters or Characters()
@@ -198,7 +198,7 @@ class AbstractSegmentsContainer:
         instead, without passing a ``UNA`` Segment.
 
         :param segments: The segments to add.
-        :type segments: List or iterable of :class:`~pydifact.segments.Segment` objects.
+        :type segments: list or iterable of :class:`~pydifact.segments.Segment` objects.
         """
         for segment in segments:
             self.add_segment(segment)
@@ -367,7 +367,7 @@ class Interchange(AbstractSegmentsContainer):
         sender: str,
         recipient: str,
         control_reference: str,
-        syntax_identifier: Tuple[str, int],
+        syntax_identifier: tuple[str, int],
         timestamp: Optional[datetime.datetime] = None,
         *args,
         **kwargs,

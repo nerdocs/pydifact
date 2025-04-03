@@ -19,7 +19,7 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
-from typing import List, Optional
+from typing import Optional
 
 from pydifact.control.characters import Characters
 import re
@@ -42,7 +42,7 @@ class Serializer:
 
     def serialize(
         self,
-        segments: List[Segment],
+        segments: list[Segment],
         with_una_header: bool = True,
         break_lines: bool = False,
     ) -> str:
@@ -54,7 +54,7 @@ class Serializer:
             is created.
         :param break_lines: if True, insert line break after each segment terminator.
         """
-        collection_parts: List[str] = []
+        collection_parts: list[str] = []
 
         # first, check if UNA header is wanted.
         if with_una_header:

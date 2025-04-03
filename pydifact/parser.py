@@ -20,7 +20,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 from collections.abc import Iterator
-from typing import List, Optional, Union
+from typing import Optional, Union
 
 from pydifact.tokenizer import Tokenizer
 from pydifact.token import Token
@@ -134,10 +134,10 @@ class Parser:
         :rtype list of Segment
         """
 
-        segments: List[List[Union[str, List[str]]]] = []
+        segments: list[list[Union[str, list[str]]]] = []
         current_segment = []
-        data_element: List[str] = []
-        data_element_value: Union[List[str], str]
+        data_element: list[str] = []
+        data_element_value: Union[list[str], str]
         in_segment = False
         empty_component_counter = 0
 

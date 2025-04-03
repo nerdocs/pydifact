@@ -20,7 +20,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 from collections.abc import Iterator
-from typing import Dict, List, Optional
+from typing import Optional
 
 from pydifact.token import Token
 from pydifact.control.characters import Characters
@@ -35,7 +35,7 @@ class Tokenizer:
         # The message that we are tokenizing.
         self._message: Iterator[str] = iter("")
 
-        self._current_chars: List[str] = []
+        self._current_chars: list[str] = []
 
         # The current character from the message we are dealing with.
         self._char: Optional[str] = ""
@@ -49,7 +49,7 @@ class Tokenizer:
         # The control characters for the message
         self.characters: Optional[Characters] = None
 
-        self.token_selector: Dict[str, Token.Type] = {}
+        self.token_selector: dict[str, Token.Type] = {}
 
         self._message_index: int = 0
 
