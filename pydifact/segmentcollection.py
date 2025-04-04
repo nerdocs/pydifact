@@ -364,7 +364,7 @@ class Interchange(AbstractSegmentsContainer):
         sender: Element,
         recipient: Element,
         control_reference: Element,
-        syntax_identifier: Element,
+        syntax_identifier: tuple[str, int],
         timestamp: Optional[datetime.datetime] = None,
         *args,
         **kwargs,
@@ -379,7 +379,7 @@ class Interchange(AbstractSegmentsContainer):
     def get_header_segment(self) -> Segment:
         return Segment(
             self.HEADER_TAG,
-            [str(i) for i in self.syntax_identifier],
+            [self.syntax_identifier[0], str(self.syntax_identifier[1])],
             self.sender,
             self.recipient,
             ["{:%y%m%d}".format(self.timestamp), "{:%H%M}".format(self.timestamp)],
@@ -499,10 +499,19 @@ class Interchange(AbstractSegmentsContainer):
         else:
             raise EDISyntaxError("Timestamp of file-creation malformed.")
 
+        if (
+            isinstance(unb.elements[0], list)
+            and len(unb.elements[0]) == 2
+            and unb.elements[0][1].isdecimal()
+        ):
+            syntax_identifier = (unb.elements[0][0], int(unb.elements[0][1]))
+        else:
+            raise EDISyntaxError("Syntax identifier malformed.")
+
         datetime_str = "-".join(unb.elements[3])
         timestamp = datetime.datetime.strptime(datetime_str, datetime_fmt)
         interchange = Interchange(
-            syntax_identifier=unb.elements[0],
+            syntax_identifier=syntax_identifier,
             sender=unb.elements[1],
             recipient=unb.elements[2],
             timestamp=timestamp,
