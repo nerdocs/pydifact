@@ -40,9 +40,6 @@ class Tokenizer:
         # The current character from the message we are dealing with.
         self._char: Optional[str] = ""
 
-        # The stored characters for the next token.
-        self._string = ""
-
         # bool isEscaped If the current character has been escaped.
         self.isEscaped = False
 

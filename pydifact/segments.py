@@ -24,7 +24,7 @@ from typing import Union
 
 from pydifact.api import EDISyntaxError, PluginMount
 
-Element = Union[str, list[str], None]
+Element = Union[str, list[str]]
 Elements = list[Element]
 
 

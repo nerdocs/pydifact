@@ -24,7 +24,7 @@ from typing import Optional, Union
 
 from pydifact.tokenizer import Tokenizer
 from pydifact.token import Token
-from pydifact.segments import Segment, SegmentFactory
+from pydifact.segments import Element, Elements, Segment, SegmentFactory
 from pydifact.control import Characters
 
 
@@ -134,10 +134,10 @@ class Parser:
         :rtype list of Segment
         """
 
-        segments: list[list[Union[str, list[str]]]] = []
-        current_segment = []
+        segments: list[Elements] = []
+        current_segment: Elements = []
         data_element: list[str] = []
-        data_element_value: Union[list[str], str]
+        data_element_value: Element
         in_segment = False
         empty_component_counter = 0
 

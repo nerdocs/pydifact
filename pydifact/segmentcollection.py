@@ -23,12 +23,12 @@
 import codecs
 import datetime
 from collections.abc import Callable, Iterable, Iterator, Sequence
-from typing import Optional, Type, TypeVar, Union
+from typing import Optional, Type, TypeVar
 
 from pydifact.api import EDISyntaxError
 from pydifact.control import Characters
 from pydifact.parser import Parser
-from pydifact.segments import Elements, Segment
+from pydifact.segments import Element, Elements, Segment
 from pydifact.serializer import Serializer
 
 T = TypeVar("T", bound="AbstractSegmentsContainer")
@@ -361,10 +361,10 @@ class Interchange(AbstractSegmentsContainer):
 
     def __init__(
         self,
-        sender: str,
-        recipient: str,
-        control_reference: str,
-        syntax_identifier: tuple[str, int],
+        sender: Element,
+        recipient: Element,
+        control_reference: Element,
+        syntax_identifier: Element,
         timestamp: Optional[datetime.datetime] = None,
         *args,
         **kwargs,
@@ -471,7 +471,7 @@ class Interchange(AbstractSegmentsContainer):
 
     @classmethod
     def from_segments(
-        cls, segments: Union[list, Iterable], characters: Optional[Characters] = None
+        cls, segments: Iterable[Segment], characters: Optional[Characters] = None
     ) -> "Interchange":
         segments = iter(segments)
 
@@ -489,10 +489,13 @@ class Interchange(AbstractSegmentsContainer):
         # In syntax version 3 the year is formatted using two digits, while in version 4 four digits are used.
         # Since some EDIFACT files in the wild don't adhere to this specification, we just use whatever format seems
         # more appropriate according to the length of the date string.
-        if len(unb.elements[3][0]) == 6:
-            datetime_fmt = "%y%m%d-%H%M"
-        elif len(unb.elements[3][0]) == 8:
-            datetime_fmt = "%Y%m%d-%H%M"
+        if isinstance(unb.elements[3], list) and len(unb.elements[3]) > 0:
+            if len(unb.elements[3][0]) == 6:
+                datetime_fmt = "%y%m%d-%H%M"
+            elif len(unb.elements[3][0]) == 8:
+                datetime_fmt = "%Y%m%d-%H%M"
+            else:
+                raise EDISyntaxError("Timestamp of file-creation malformed.")
         else:
             raise EDISyntaxError("Timestamp of file-creation malformed.")
 
@@ -508,7 +511,7 @@ class Interchange(AbstractSegmentsContainer):
             extra_header_elements=unb.elements[5:],
         )
 
-        if first_segment.tag == "UNA":
+        if first_segment.tag == "UNA" and isinstance(first_segment.elements[0], str):
             interchange.has_una_segment = True
             interchange.characters = Characters.from_str(first_segment.elements[0])
 
