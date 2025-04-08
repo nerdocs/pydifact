@@ -20,7 +20,6 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 from collections.abc import Iterator
-from typing import Optional
 
 from pydifact.token import Token
 from pydifact.control.characters import Characters
@@ -38,20 +37,20 @@ class Tokenizer:
         self._current_chars: list[str] = []
 
         # The current character from the message we are dealing with.
-        self._char: Optional[str] = ""
+        self._char: str | None = ""
 
         # bool isEscaped If the current character has been escaped.
         self.isEscaped = False
 
         # The control characters for the message
-        self.characters: Optional[Characters] = None
+        self.characters: Characters | None = None
 
         self.token_selector: dict[str, Token.Type] = {}
 
         self._message_index: int = 0
 
     def get_tokens(
-        self, message: str, characters: Optional[Characters] = None
+        self, message: str, characters: Characters | None = None
     ) -> Iterator[Token]:
         """Convert the passed message into tokens.
         :param characters: the Control Characters to use for tokenizing. If omitted, use a default set.
@@ -93,7 +92,7 @@ class Tokenizer:
             self.isEscaped = True
             self._char = self.get_next_char()
 
-    def get_next_char(self) -> Optional[str]:
+    def get_next_char(self) -> str | None:
         """Get the next character from the message."""
         try:
             return next(self._message)

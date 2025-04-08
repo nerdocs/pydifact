@@ -23,7 +23,7 @@
 import codecs
 import datetime
 from collections.abc import Callable, Iterable, Iterator, Sequence
-from typing import Optional, Type, TypeVar
+from typing import Type, TypeVar
 
 from pydifact.api import EDISyntaxError
 from pydifact.control import Characters
@@ -61,13 +61,13 @@ class AbstractSegmentsContainer:
        The control characters (a :class:`~pydifact.control.Characters` object).
     """
 
-    HEADER_TAG: Optional[str] = None
-    FOOTER_TAG: Optional[str] = None
+    HEADER_TAG: str | None = None
+    FOOTER_TAG: str | None = None
 
     def __init__(
         self,
-        extra_header_elements: Optional[Elements] = None,
-        characters: Optional[Characters] = None,
+        extra_header_elements: Elements | None = None,
+        characters: Characters | None = None,
     ) -> None:
         self.segments: list[Segment] = []
 
@@ -85,8 +85,8 @@ class AbstractSegmentsContainer:
     def from_str(
         cls: Type[T],
         string: str,
-        parser: Optional[Parser] = None,
-        characters: Optional[Characters] = None,
+        parser: Parser | None = None,
+        characters: Characters | None = None,
     ) -> T:
         """Create an instance from a string.
 
@@ -105,7 +105,7 @@ class AbstractSegmentsContainer:
     def from_segments(
         cls: Type[T],
         segments: Iterable[Segment],
-        characters: Optional[Characters] = None,
+        characters: Characters | None = None,
     ) -> T:
         """Create an instance from a list of segments.
 
@@ -124,7 +124,7 @@ class AbstractSegmentsContainer:
     def get_segments(
         self,
         name: str,
-        predicate: Optional[Callable[[Segment], bool]] = None,
+        predicate: Callable[[Segment], bool] | None = None,
     ) -> Iterator[Segment]:
         """Get all segments that match the requested name.
 
@@ -141,8 +141,8 @@ class AbstractSegmentsContainer:
     def get_segment(
         self,
         name: str,
-        predicate: Optional[Callable[[Segment], bool]] = None,
-    ) -> Optional[Segment]:
+        predicate: Callable[[Segment], bool] | None = None,
+    ) -> Segment | None:
         """Get the first segment that matches the requested name.
 
         :param name: The name of the segment to return.
@@ -214,7 +214,7 @@ class AbstractSegmentsContainer:
         if segment.tag not in (self.HEADER_TAG, self.FOOTER_TAG):
             self.segments.append(segment)
 
-    def get_header_segment(self) -> Optional[Segment]:
+    def get_header_segment(self) -> Segment | None:
         """Craft and return a header segment.
 
         :meth:`get_header_segment` creates and returns an appropriate
@@ -228,7 +228,7 @@ class AbstractSegmentsContainer:
         """
         return None
 
-    def get_footer_segment(self) -> Optional[Segment]:
+    def get_footer_segment(self) -> Segment | None:
         """Craft and return a footer segment.
 
         This is similar to :meth:`get_header_segment`, but for the footer segment.
@@ -365,7 +365,7 @@ class Interchange(AbstractSegmentsContainer):
         recipient: Element,
         control_reference: Element,
         syntax_identifier: tuple[str, int],
-        timestamp: Optional[datetime.datetime] = None,
+        timestamp: datetime.datetime | None = None,
         *args,
         **kwargs,
     ):
@@ -453,7 +453,7 @@ class Interchange(AbstractSegmentsContainer):
 
     @classmethod
     def from_file(
-        cls, file: str, encoding: str = "iso8859-1", parser: Optional[Parser] = None
+        cls, file: str, encoding: str = "iso8859-1", parser: Parser | None = None
     ) -> "Interchange":
         """Create a Interchange instance from a file.
 
@@ -471,7 +471,7 @@ class Interchange(AbstractSegmentsContainer):
 
     @classmethod
     def from_segments(
-        cls, segments: Iterable[Segment], characters: Optional[Characters] = None
+        cls, segments: Iterable[Segment], characters: Characters | None = None
     ) -> "Interchange":
         segments = iter(segments)
 

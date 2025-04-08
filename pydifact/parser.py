@@ -20,7 +20,6 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 from collections.abc import Iterator
-from typing import Optional, Union
 
 from pydifact.tokenizer import Tokenizer
 from pydifact.token import Token
@@ -33,14 +32,14 @@ class Parser:
 
     def __init__(
         self,
-        factory: Optional[SegmentFactory] = None,
-        characters: Optional[Characters] = None,
+        factory: SegmentFactory | None = None,
+        characters: Characters | None = None,
     ) -> None:
         self.factory = factory or SegmentFactory()
         self.characters = characters or Characters()
 
     def parse(
-        self, message: str, characters: Optional[Characters] = None
+        self, message: str, characters: Characters | None = None
     ) -> Iterator[Segment]:
         """Parse the message into a list of segments.
 
@@ -88,8 +87,8 @@ class Parser:
 
     @staticmethod
     def get_control_characters(
-        message: str, characters: Optional[Characters] = None
-    ) -> Optional[Characters]:
+        message: str, characters: Characters | None = None
+    ) -> Characters | None:
         """Read the UNA segment from the passed string and extract/store the control characters from it.
 
         :param message: a valid EDI message string, or UNA segment string,

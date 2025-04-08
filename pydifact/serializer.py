@@ -19,8 +19,6 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
-from typing import Optional
-
 from pydifact.control.characters import Characters
 import re
 
@@ -30,7 +28,7 @@ from pydifact.segments import Segment
 class Serializer:
     """Serialize a bunch of segments into an EDI message string."""
 
-    def __init__(self, characters: Optional[Characters] = None) -> None:
+    def __init__(self, characters: Characters | None = None) -> None:
         super().__init__()
         self.characters = characters or Characters()
         self.replace_map = self.characters.escaped_syntax_dic
@@ -95,7 +93,7 @@ class Serializer:
         collection = "".join(collection_parts)
         return collection
 
-    def escape(self, string: Optional[str]) -> str:
+    def escape(self, string: str | None) -> str:
         """Escapes control characters.
 
         :param string: The string to be escaped
@@ -103,6 +101,6 @@ class Serializer:
 
         if string is None:
             return ""
-        assert type(string) == str, "%s is not a str, it is %s" % (string, type(string))
+        assert isinstance(string, str), "%s is not a str, it is %s" % (string, type(string))
 
         return self.regexp.sub(lambda match: self.replace_map[match.group(0)], string)

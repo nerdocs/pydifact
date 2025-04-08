@@ -11,7 +11,6 @@ herby providing the same structure.
 """
 
 import re
-from typing import Union
 
 from pydifact import Segment, Characters
 
@@ -59,7 +58,7 @@ class UNASegment(Segment):
 
     tag = "UNA"
 
-    def __init__(self, characters: Union[Characters, str, None] = None):
+    def __init__(self, characters: Characters | str | None = None):
         if not characters:
             characters = Characters()
         assert_an(str(characters), 6)

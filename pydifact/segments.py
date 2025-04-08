@@ -20,11 +20,10 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 from abc import abstractmethod
-from typing import Union
 
 from pydifact.api import EDISyntaxError, PluginMount
 
-Element = Union[str, list[str]]
+Element = str | list[str]
 Elements = list[Element]
 
 
