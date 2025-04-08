@@ -22,7 +22,7 @@ def test_with_separator_identity():
     one = Characters()
     other = Characters()
     # a copy of a characters object must be equal, but not the same
-    assert one == other, 'Objects differ: "{}", "{}"'.format(one, other)
+    assert one == other, f'Objects differ: "{one}", "{other}"'
     assert one is not other
 
 

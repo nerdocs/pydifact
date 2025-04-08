@@ -82,7 +82,7 @@ class Characters:
         # set the attribute dynamically.
         if not hasattr(self, cc_type):
             raise AttributeError(
-                "{} doesn't have an attribute with the name '{}'".format(self, cc_type)
+                f"{self} doesn't have an attribute with the name '{cc_type}'"
             )
 
         other = copy(self)
@@ -114,10 +114,10 @@ class Characters:
         )
 
     def __repr__(self):
-        return "'{}'".format(self.__str__())
+        return f"'{self.__str__()}'"
 
     def __eq__(self, other):
-        if type(other) == str:
+        if isinstance(other, str):
             other = Characters.from_str(other)
         return (
             (self.component_separator == other.component_separator)

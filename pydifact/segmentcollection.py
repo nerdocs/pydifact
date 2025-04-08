@@ -313,7 +313,7 @@ class Message(AbstractSegmentsContainer):
 
         :return: message version, parsable by pkg_resources.parse_version()
         """
-        return "{}.{}".format(self.identifier[1], self.identifier[2])
+        return f"{self.identifier[1]}.{self.identifier[2]}"
 
     def get_header_segment(self) -> Segment:
         return Segment(
@@ -382,7 +382,7 @@ class Interchange(AbstractSegmentsContainer):
             [self.syntax_identifier[0], str(self.syntax_identifier[1])],
             self.sender,
             self.recipient,
-            ["{:%y%m%d}".format(self.timestamp), "{:%H%M}".format(self.timestamp)],
+            [f"{self.timestamp:%y%m%d}", f"{self.timestamp:%H%M}"],
             self.control_reference,
             *self.extra_header_elements,
         )
@@ -422,7 +422,7 @@ class Interchange(AbstractSegmentsContainer):
                     last_segment = segment
                 else:
                     raise EDISyntaxError(
-                        "Missing UNT segment before new UNH: {}".format(segment)
+                        f"Missing UNT segment before new UNH: segment{segment}"
                     )
             elif segment.tag == "UNT":
                 if message:
@@ -431,7 +431,7 @@ class Interchange(AbstractSegmentsContainer):
                     last_segment = segment
                 else:
                     raise EDISyntaxError(
-                        'UNT segment without matching UNH: "{}"'.format(segment)
+                        f'UNT segment without matching UNH: "{segment}"'
                     )
             else:
                 if message:

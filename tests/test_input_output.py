@@ -22,7 +22,7 @@ path = os.path.dirname(os.path.realpath(__file__)) + "/data"
 
 
 def test_wikipedia_file():
-    message = Interchange.from_file("{}/wikipedia.edi".format(path))
+    message = Interchange.from_file(f"{path}/wikipedia.edi")
     # make some checks
     assert message.get_header_segment() == Segment(
         "UNB", ["IATB", "1"], "6XPPC", "LHPPC", ["940101", "0950"], "1"
@@ -34,7 +34,7 @@ def test_wikipedia_file():
 
 
 def test_invoice_file():
-    message = Interchange.from_file("{}/invoice1.edi".format(path))
+    message = Interchange.from_file(f"{path}/invoice1.edi")
     # make some checks
     assert message.get_header_segment() == Segment(
         "UNB",
@@ -52,8 +52,8 @@ def test_invoice_file():
 
 
 # def test_order_file():
-#     _test_file_read("{}/order.edi".format(path))
+#     _test_file_read(f"{path}/order.edi")
 #
 #
 # def test_patient1_file():
-#     _test_file_read("{}/patient1.edi".format(path))
+#     _test_file_read(f"{path}/patient1.edi")

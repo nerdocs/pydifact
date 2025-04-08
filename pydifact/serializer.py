@@ -101,6 +101,9 @@ class Serializer:
 
         if string is None:
             return ""
-        assert isinstance(string, str), "%s is not a str, it is %s" % (string, type(string))
+        assert isinstance(string, str), "%s is not a str, it is %s" % (
+            string,
+            type(string),
+        )
 
         return self.regexp.sub(lambda match: self.replace_map[match.group(0)], string)

@@ -45,12 +45,10 @@ class Token:
         self.value = value
 
     def __str__(self) -> str:
-        return "{name} Token: '{value}'".format(name=self.type.name, value=self.value)
+        return f"{self.type.name} Token: '{self.value}'"
 
     def __repr__(self) -> str:
-        return "<{name} Token object '{value}' at {address}>".format(
-            name=self.type.name, value=self.value, address=hex(id(self))
-        )
+        return f"<{self.type.name} Token object '{self.value}' at {hex(id(self))}>"
 
     def __eq__(self, other) -> bool:
         return self.type == other.type and self.value == other.value

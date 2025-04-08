@@ -68,12 +68,10 @@ class Segment(SegmentProvider):
 
     def __str__(self) -> str:
         """Returns the Segment in Python list printout"""
-        return "'{tag}' EDI segment: {elements}".format(
-            tag=self.tag, elements=str(self.elements)
-        )
+        return f"'{self.tag}' EDI segment: {self.elements}"
 
     def __repr__(self) -> str:
-        return "{} segment: {}".format(self.tag, str(self.elements))
+        return f"{self.tag} segment: {str(self.elements)}"
 
     def __eq__(self, other) -> bool:
         # FIXME the other way round too? isinstance(other, type(self))?
@@ -125,16 +123,12 @@ class SegmentFactory:
 
         if not isinstance(name, str):
             raise EDISyntaxError(
-                "The tag name of a segment must be a str, but is a {}: {}".format(
-                    type(name), name
-                )
+                f"The tag name of a segment must be a str, but is a {type(name)}: {name}"
             )
 
         if not name.isalnum():
             raise EDISyntaxError(
-                "Tag '{}': A tag name must only contain alphanumeric characters.".format(
-                    name
-                )
+                f"Tag '{name}': A tag name must only contain alphanumeric characters."
             )
 
         for Plugin in SegmentProvider.plugins:
@@ -149,7 +143,7 @@ class SegmentFactory:
         if validate:
             if not s.validate():
                 raise EDISyntaxError(
-                    "could not create '{}' Segment. Validation failed.".format(name)
+                    f"could not create '{name}' Segment. Validation failed."
                 )
 
         return s
