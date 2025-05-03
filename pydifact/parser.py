@@ -145,7 +145,7 @@ class Parser:
         :rtype list of Segment
         """
 
-        segments: list[Elements] = []
+        raw_segments: list[Elements] = []
         current_segment: Elements = []
         data_element: list[str] = []
         data_element_value: Element
@@ -178,7 +178,7 @@ class Parser:
             # an empty string to save into the segment then.
             else:
                 current_segment = []
-                segments.append(current_segment)
+                raw_segments.append(current_segment)
                 data_element = []
                 empty_component_counter = 0
                 in_segment = True
@@ -224,7 +224,7 @@ class Parser:
             empty_component_counter = 0
             continue
 
-        for segment in segments:
+        for segment in raw_segments:
             name = segment.pop(0)
             if with_una and name == "UNA":
                 # we found another UNA segment.
