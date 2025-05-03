@@ -22,6 +22,7 @@
 
 from collections.abc import Iterator
 
+from pydifact.exceptions import EDISyntaxError
 from pydifact.tokenizer import Tokenizer
 from pydifact.token import Token
 from pydifact.segments import Element, Elements, Segment, SegmentFactory
@@ -225,8 +226,11 @@ class Parser:
 
         for segment in segments:
             name = segment.pop(0)
+            if with_una and name == "UNA":
+                # we found another UNA segment.
+                # This is not in the specs, so raise an error
+                raise EDISyntaxError("There are not multiple UNA segments allowed.")
             if name == "UNB":
                 self.version = int(segment[0][1])
                 print("found edifact version", self.version)
             yield self.factory.create_segment(name, *segment, version=self.version)
-
