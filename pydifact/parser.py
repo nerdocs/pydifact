@@ -227,7 +227,7 @@ class Parser:
         for segment in raw_segments:
             name = segment.pop(0)
             if with_una and name == "UNA":
-                # we found another UNA segment.
+                # We found another UNA segment.
                 # This is not in the specs, so raise an error
                 raise EDISyntaxError("There are not multiple UNA segments allowed.")
             if name == "UNB":
