@@ -14,7 +14,7 @@
 #    You should have received a copy of the GNU Lesser General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import datetime
-from typing import Iterable, List
+from typing import Iterable
 
 import pytest
 
@@ -79,8 +79,8 @@ def test_get_segment_w_predicate():
 
 
 def test_split_by():
-    def _serialize(collections: Iterable[RawSegmentCollection]) -> List[List[str]]:
-        lst = []
+    def _serialize(collections: Iterable[RawSegmentCollection]) -> list[list[str]]:
+        lst: list[str] = []
         global_lst = []
         for collection in collections:
             if lst:
@@ -260,12 +260,14 @@ def test_faulty_interchange__UNT_without_UNH():
 
 
 def test_empty_message(message):
-    assert str(message) == ("UNH+42z42+PAORES:93:1:IA'" "UNT+2+42z42'")
+    assert str(message) == "UNH+42z42+PAORES:93:1:IA'UNT+2+42z42'"
 
 
 def test_add_another_footer_element(message):
     """make sure that adding another UNZ footer is ignored."""
-    assert message.add_segment(Segment("UNZ", "1", "234z45")) == message
+    expected = str(message)
+    message.add_segment(Segment("UNT", "1", "234z45"))
+    assert str(message) == expected
 
 
 def test_counting_of_messages(interchange, message):

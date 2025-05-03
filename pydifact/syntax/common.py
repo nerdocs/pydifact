@@ -49,17 +49,6 @@ def assert_an_max(s, length):
     assert len(s) <= length
 
 
-def assert_a(s, length):
-    """checks if s only contains characters (no numbers) and has a given length."""
-    assert len(s) == length
-    # TODO only alpha
-
-
-def assert_a_max(s, length):
-    """checks if s only contains characters (no numbers) and has a given length."""
-    assert len(s) <= length
-
-
 def assert_format(s, fmt_str):
     assert re.match(fmt_str, s)
 
@@ -69,8 +58,8 @@ class UNASegment(Segment):
 
     tag = "UNA"
 
-    def __init__(self, characters: Characters or str = None):
+    def __init__(self, characters: Characters | str | None = None):
         if not characters:
             characters = Characters()
         assert_an(str(characters), 6)
-        super().__init__("UNA", characters)
+        super().__init__("UNA", str(characters))

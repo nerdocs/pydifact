@@ -95,8 +95,8 @@ def _assert_segments(parser, default_una_segment, collection: str, segments: lis
 
     input_str = "UNA:+,? '\n" + collection + "'\n"
     result = list(parser.parse(input_str))
-    # print("input segments: {}".format(segments[0]))
-    # print("parser result:  {}".format(result[0]))
+    # print(f"input segments: {segments[0]}")
+    # print(f"parser result:  {result[0]}")
     assert segments == result
 
 

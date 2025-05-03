@@ -1,10 +1,6 @@
 API
 ===
 
-SegmentCollection
-------------------
-.. automodule:: pydifact.segmentcollection
-    :members:
 
 Parser
 ------

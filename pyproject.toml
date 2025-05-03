@@ -17,10 +17,8 @@ classifiers = [
     "Programming Language :: Python :: 3",
     "Topic :: Software Development :: Libraries"
 ]
-requires-python = ">=3.8"
-
-[dependencies]
-# none
+requires-python = ">=3.10"
+dependencies = []
 
 [project.optional-dependencies]
 dev = [
@@ -34,7 +32,8 @@ dev = [
     "black>=24.0.0",
     "sphinx-rtd-theme>=2.0.0",
     "build",
-    "twine"
+    "twine",
+    "mypy>=1.15.0"
  ]
 
 [project.urls]

@@ -49,7 +49,7 @@ interchange = Interchange.from_str(
 )
 for message in interchange.get_messages():
     for segment in message.segments:
-        print("Segment tag: {}, content: {}".format(segment.tag, segment.elements))
+        print(f"Segment tag: {segment.tag}, content: {segment.elements}")
 ```
 
 You may also want to iterate directly on segments :
@@ -68,7 +68,7 @@ interchange = Interchange.from_str(
 )
 
 for segment in interchange.segments:
-    print("Segment tag: {}, content: {}".format(segment.tag, segment.elements))
+    print(f"Segment tag: {segment.tags}, content: {segment.elements}")
 ```
 
 Or you can create an EDI interchange on the fly:
@@ -100,7 +100,7 @@ from pydifact.segmentcollection import RawSegmentCollection
 collection = RawSegmentCollection.from_str("UNH+1+ORDERS:D:96A:UN:EAN008'")
 
 for segment in collection.segments:
-    print("Segment tag: {}, content: {}".format(segment.tag, segment.elements))
+    print(f"Segment tag: {segment.tags}, content: {segment.elements}")
 ```
 
 
@@ -124,7 +124,7 @@ To develop pydifact, clone the repository and install the dev requirements:
 
 ```bash
 make dev
-# or 
+# or
 # pip install -e .[dev]
 ```
 

@@ -39,18 +39,16 @@ class Token:
 
     def __init__(self, token_type: Type, value: str):
         """Creates a Token with a type and a value"""
-        assert type(token_type) == Token.Type
+        assert isinstance(token_type, Token.Type)
 
         self.type = token_type
         self.value = value
 
-    def __str__(self):
-        return "{name} Token: '{value}'".format(name=self.type.name, value=self.value)
+    def __str__(self) -> str:
+        return f"{self.type.name} Token: '{self.value}'"
 
-    def __repr__(self):
-        return "<{name} Token object '{value}' at {address}>".format(
-            name=self.type.name, value=self.value, address=hex(id(self))
-        )
+    def __repr__(self) -> str:
+        return f"<{self.type.name} Token object '{self.value}' at {hex(id(self))}>"
 
     def __eq__(self, other) -> bool:
         return self.type == other.type and self.value == other.value

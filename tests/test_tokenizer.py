@@ -22,12 +22,14 @@ from pydifact.control import Characters
 
 
 @pytest.fixture
-def tokenizer():
+def tokenizer() -> Tokenizer:
     return Tokenizer()
 
 
 def _assert_tokens(
-    collection: str, expected: list = None, error_message: str = None
+    collection: str,
+    expected: list | None = None,
+    error_message: str | None = None,
 ) -> None:
     """Helper function to accelerate tokenizer testing."""
 
