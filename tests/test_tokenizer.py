@@ -15,8 +15,8 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import pytest
 
-from pydifact.exceptions import EdifactSyntaxError
-from pydifact.token import Token, TokenType
+from pydifact.exceptions import EDISyntaxError
+from pydifact.token import Token
 from pydifact.tokenizer import Tokenizer
 
 from pydifact.control import Characters
@@ -47,12 +47,12 @@ def test_basic():
     _assert_tokens(
         "RFF+PD:50515'",
         [
-            Token(TokenType.CONTENT, "RFF"),
-            Token(TokenType.DATA_SEPARATOR, "+"),
-            Token(TokenType.CONTENT, "PD"),
-            Token(TokenType.COMPONENT_SEPARATOR, ":"),
-            Token(TokenType.CONTENT, "50515"),
-            Token(TokenType.TERMINATOR, "'"),
+            Token(Token.Type.CONTENT, "RFF"),
+            Token(Token.Type.DATA_SEPARATOR, "+"),
+            Token(Token.Type.CONTENT, "PD"),
+            Token(Token.Type.COMPONENT_SEPARATOR, ":"),
+            Token(Token.Type.CONTENT, "50515"),
+            Token(Token.Type.TERMINATOR, "'"),
         ],
     )
 
@@ -61,10 +61,10 @@ def test_escape():
     _assert_tokens(
         "RFF+PD?:5'",
         [
-            Token(TokenType.CONTENT, "RFF"),
-            Token(TokenType.DATA_SEPARATOR, "+"),
-            Token(TokenType.CONTENT, "PD:5"),
-            Token(TokenType.TERMINATOR, "'"),
+            Token(Token.Type.CONTENT, "RFF"),
+            Token(Token.Type.DATA_SEPARATOR, "+"),
+            Token(Token.Type.CONTENT, "PD:5"),
+            Token(Token.Type.TERMINATOR, "'"),
         ],
     )
 
@@ -73,12 +73,12 @@ def test_double_escape():
     _assert_tokens(
         "RFF+PD??:5'",
         [
-            Token(TokenType.CONTENT, "RFF"),
-            Token(TokenType.DATA_SEPARATOR, "+"),
-            Token(TokenType.CONTENT, "PD?"),
-            Token(TokenType.COMPONENT_SEPARATOR, ":"),
-            Token(TokenType.CONTENT, "5"),
-            Token(TokenType.TERMINATOR, "'"),
+            Token(Token.Type.CONTENT, "RFF"),
+            Token(Token.Type.DATA_SEPARATOR, "+"),
+            Token(Token.Type.CONTENT, "PD?"),
+            Token(Token.Type.COMPONENT_SEPARATOR, ":"),
+            Token(Token.Type.CONTENT, "5"),
+            Token(Token.Type.TERMINATOR, "'"),
         ],
     )
 
@@ -87,10 +87,10 @@ def test_triple_escape():
     _assert_tokens(
         "RFF+PD???:5'",
         [
-            Token(TokenType.CONTENT, "RFF"),
-            Token(TokenType.DATA_SEPARATOR, "+"),
-            Token(TokenType.CONTENT, "PD?:5"),
-            Token(TokenType.TERMINATOR, "'"),
+            Token(Token.Type.CONTENT, "RFF"),
+            Token(Token.Type.DATA_SEPARATOR, "+"),
+            Token(Token.Type.CONTENT, "PD?:5"),
+            Token(Token.Type.TERMINATOR, "'"),
         ],
     )
 
@@ -99,12 +99,12 @@ def test_quadruple_escape():
     _assert_tokens(
         "RFF+PD????:5'",
         [
-            Token(TokenType.CONTENT, "RFF"),
-            Token(TokenType.DATA_SEPARATOR, "+"),
-            Token(TokenType.CONTENT, "PD??"),
-            Token(TokenType.COMPONENT_SEPARATOR, ":"),
-            Token(TokenType.CONTENT, "5"),
-            Token(TokenType.TERMINATOR, "'"),
+            Token(Token.Type.CONTENT, "RFF"),
+            Token(Token.Type.DATA_SEPARATOR, "+"),
+            Token(Token.Type.CONTENT, "PD??"),
+            Token(Token.Type.COMPONENT_SEPARATOR, ":"),
+            Token(Token.Type.CONTENT, "5"),
+            Token(Token.Type.TERMINATOR, "'"),
         ],
     )
 
@@ -113,10 +113,10 @@ def test_starts_with_escape():
     _assert_tokens(
         "DTM+?+0'",
         [
-            Token(TokenType.CONTENT, "DTM"),
-            Token(TokenType.DATA_SEPARATOR, "+"),
-            Token(TokenType.CONTENT, "+0"),
-            Token(TokenType.TERMINATOR, "'"),
+            Token(Token.Type.CONTENT, "DTM"),
+            Token(Token.Type.DATA_SEPARATOR, "+"),
+            Token(Token.Type.CONTENT, "+0"),
+            Token(Token.Type.TERMINATOR, "'"),
         ],
     )
 
@@ -127,14 +127,14 @@ def test_starts_with_escape():
 @pytest.fixture
 def expected_crlf():
     return [
-        Token(TokenType.CONTENT, "RFF"),
-        Token(TokenType.COMPONENT_SEPARATOR, ":"),
-        Token(TokenType.CONTENT, "5"),
-        Token(TokenType.TERMINATOR, "'"),
-        Token(TokenType.CONTENT, "DEF"),
-        Token(TokenType.COMPONENT_SEPARATOR, ":"),
-        Token(TokenType.CONTENT, "6"),
-        Token(TokenType.TERMINATOR, "'"),
+        Token(Token.Type.CONTENT, "RFF"),
+        Token(Token.Type.COMPONENT_SEPARATOR, ":"),
+        Token(Token.Type.CONTENT, "5"),
+        Token(Token.Type.TERMINATOR, "'"),
+        Token(Token.Type.CONTENT, "DEF"),
+        Token(Token.Type.COMPONENT_SEPARATOR, ":"),
+        Token(Token.Type.CONTENT, "6"),
+        Token(Token.Type.TERMINATOR, "'"),
     ]
 
 
@@ -167,10 +167,10 @@ def test_ignore_long_whitespace(expected_crlf):
 
 
 def test_no_terminator():
-    with pytest.raises(EdifactSyntaxError):
+    with pytest.raises(EDISyntaxError):
         list(Tokenizer().get_tokens("TEST"))
 
-    with pytest.raises(EdifactSyntaxError) as excinfo:
+    with pytest.raises(EDISyntaxError) as excinfo:
         list(
             Tokenizer().get_tokens(
                 "UNB+IBMA:1+FACHARZT A+PRAKTIKER X+950402+1200+1'"
@@ -182,8 +182,8 @@ def test_no_terminator():
 
 
 def test_escaped_newline_char():
-    with pytest.raises(EdifactSyntaxError) as excinfo:
-        # must raise a EdifactSyntaxError as there is no newline after an escape char
+    with pytest.raises(EDISyntaxError) as excinfo:
+        # must raise a EDISyntaxError as there is no newline after an escape char
         # "?" allowed.
         list(
             Tokenizer().get_tokens(
@@ -195,8 +195,8 @@ FOO'"""
     assert "line 0, column 5" in str(excinfo.value)
 
     # a "\n" must do the same as a real newline
-    with pytest.raises(EdifactSyntaxError) as excinfo:
-        # must raise a EdifactSyntaxError as there is no newline after an escape char
+    with pytest.raises(EDISyntaxError) as excinfo:
+        # must raise a EDISyntaxError as there is no newline after an escape char
         # "?" allowed.
         list(Tokenizer().get_tokens("UNB+?\nFOO'"))
     assert "Newlines after escape characters are not allowed." in str(excinfo.value)

@@ -13,7 +13,7 @@
 #
 #    You should have received a copy of the GNU Lesser General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
-from pydifact.exceptions import EdifactSyntaxError
+from pydifact.exceptions import EDISyntaxError
 from pydifact.parser import Parser
 from pydifact.segments import Segment
 from pydifact.control.characters import Characters
@@ -264,7 +264,7 @@ def test_parsing_with_passed_characters_but_respect_una():
 
 
 def test_message_end_without_control_char():
-    with pytest.raises(EdifactSyntaxError):
+    with pytest.raises(EDISyntaxError):
         # must raise a RuntimeError as the string terminates abruptly within a segment
         for c in Parser().parse("UNB+IBMA:1+BLUBB A+FOO X+950"):
             pass

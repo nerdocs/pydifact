@@ -23,14 +23,6 @@
 from enum import Enum
 
 
-class TokenType(Enum):
-    CTRL_CHARS = 10  # ASCII string holding the control chars
-    CONTENT = 11
-    COMPONENT_SEPARATOR = 12  # default :
-    DATA_SEPARATOR = 13  # default +
-    TERMINATOR = 14  # default '
-
-
 class Token:
     """Represents a block of characters in the message.
 
@@ -38,9 +30,16 @@ class Token:
     a component data separator (usually :), or a segment terminator (usually ').
     """
 
-    def __init__(self, token_type: TokenType, value: str):
+    class Type(Enum):
+        CTRL_CHARS = 10  # ASCII string holding the control chars
+        CONTENT = 11
+        COMPONENT_SEPARATOR = 12  # default :
+        DATA_SEPARATOR = 13  # default +
+        TERMINATOR = 14  # default '
+
+    def __init__(self, token_type: Type, value: str):
         """Creates a Token with a type and a value"""
-        if not isinstance(token_type, TokenType):
+        if not isinstance(token_type, self.Type):
             raise TypeError(f"Invalid token type: {token_type}")
 
         self.type = token_type

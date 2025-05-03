@@ -15,16 +15,16 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import pytest
 
-from pydifact.token import Token, TokenType
+from pydifact.token import Token
 
 
 def test_type():
-    token = Token(TokenType.CONTENT, "ok")
-    assert TokenType.CONTENT == token.type
+    token = Token(Token.Type.CONTENT, "ok")
+    assert Token.Type.CONTENT == token.type
 
 
 def test_value():
-    token = Token(TokenType.CONTENT, "ok")
+    token = Token(Token.Type.CONTENT, "ok")
     assert token.value == "ok"
 
 
