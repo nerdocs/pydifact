@@ -1,4 +1,4 @@
-Changelog for PYDIFACT
+# Changelog for PYDIFACT
 
 
 [0.2] - UNRELEASED
@@ -8,6 +8,8 @@ Changelog for PYDIFACT
 [0.1.9]
 ### CHANGES
 - Breaking change (possibly): Characters can be set up with reserved character now. If anyone used args instead of kwargs, this could lead to problems as the 2nd last parameter now is "reserved". But I suppose this not harm anyone's implementations.
+### FIXES
+- Token creation with wrong type fixed
 
 [0.1.8]
 - allow parsing EDI files created with SAGE COALA (with a "header" before the UNA segment)

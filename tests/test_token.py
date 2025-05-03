@@ -28,5 +28,9 @@ def test_value():
     assert token.value == "ok"
 
 
-if __name__ == "__main__":
-    unittest.main()
+def test_wrong_type():
+    with pytest.raises(TypeError):
+        Token(123, "ok")
+
+    with pytest.raises(TypeError):
+        Token(True, "ok")

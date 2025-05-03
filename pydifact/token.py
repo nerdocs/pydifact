@@ -39,7 +39,8 @@ class Token:
 
     def __init__(self, token_type: Type, value: str):
         """Creates a Token with a type and a value"""
-        assert isinstance(token_type, Token.Type)
+        if not isinstance(token_type, Token.Type):
+            raise TypeError(f"Invalid token type: {token_type}")
 
         self.type = token_type
         self.value = value

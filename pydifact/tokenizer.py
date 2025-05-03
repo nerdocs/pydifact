@@ -100,8 +100,12 @@ class Tokenizer:
             return None
 
     def get_next_token(self) -> Token:
-        """Get the next token from the message."""
+        """Get the next token from the message.
 
+        Raises:
+            RuntimeError: If the message ends, and the last token is not a control
+                          character
+        """
         # If we're not escaping this character then see if it's
         # a control character
         assert self.characters is not None
