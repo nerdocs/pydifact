@@ -9,7 +9,7 @@ def test_message_with_2_UNA_segments():
     with open(f"{path}/wikipedia_de.edi") as f:
         content = f.read()
 
-    # doouble the message (2 UNA headers in one string!!)
+    # double the message (2 UNA headers in one string!!)
     content = content + content
 
     with pytest.raises(EDISyntaxError):
