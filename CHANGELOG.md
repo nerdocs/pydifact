@@ -2,14 +2,24 @@
 
 
 [0.2] - UNRELEASED
+### CHANGES
 - BREAKING CHANGE: Remove SegmentCollection
 - BREAKING CHANGE: Remove FileSourcableMixin
+- BREAKING CHANGE: Segment() calls *must* provide the tag name now as the first parameter.
+- change plugin system from `metaclass` to `__init_subclass__`
+- raise ValidationError, not AssertionError, when ServiceAdviceString is not 6 chars long
+### ADDED
+- massively improve type annotations (thanks Tammo Ippen)
+- use code-based structures to validate segments and data elements
+- improve error output when EDIFACT syntax errors are found
+- Implement automatic detection and validation of EDIFACT syntax version (1 - 4) by examining the UNB segment for proper version control and adherence to version-specific syntax rules.
 
 [0.1.9]
 ### CHANGES
-- Breaking change (possibly): Characters can be set up with reserved character now. If anyone used args instead of kwargs, this could lead to problems as the 2nd last parameter now is "reserved". But I suppose this not harm anyone's implementations.
+- BREAKING CHANGE (possibly): Characters can be set up with reserved character now. If anyone used args instead of kwargs, this could lead to problems as the 2nd last parameter now is "reserved". But I suppose this not harm anyone's implementations.
+
 ### FIXES
-- Token creation with wrong type fixed
+- Token creation with the wrong type fixed
 
 [0.1.8]
 - allow parsing EDI files created with SAGE COALA (with a "header" before the UNA segment)

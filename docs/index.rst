@@ -14,7 +14,8 @@ This documentation ATM just contains the API as a starting point.
 
    API
 
-Base is the `official UNECE reference syntax rules <http://www.unece.org/fileadmin/DAM/trade/edifact/untdid/d422_s.htm>`_.
+Base is the `official UNECE reference syntax rules <http://www.unece.org/fileadmin/DAM/trade/edifact/untdid/d422_s.htm>`_
+or interactively at `service.gefeg.com <https://service.gefeg.com/jwg1/Current/id1.htm>`_
 
 ------------------------
 

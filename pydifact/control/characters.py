@@ -23,6 +23,8 @@
 
 from copy import copy
 
+from pydifact.exceptions import ValidationError
+
 
 class Characters:
     """A set of control characters to use."""
@@ -63,7 +65,8 @@ class Characters:
         """
         if string[0:3] == "UNA":
             string = string[3:9]
-        assert len(string) >= 6
+        if len(string) != 6:
+            raise ValidationError("Control character length must be 6.")
 
         characters = cls(
             component_separator=string[0],

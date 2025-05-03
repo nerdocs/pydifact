@@ -112,23 +112,23 @@ def test_compare_equal_segments(parser, default_una_segment):
 
 def test_una_parser1(parser):
     # UNA headers are a special parsing task and must be processed correctly.
-    tokens = parser.parse("UNA:+,? 'TEST'")
+    tokens = parser.parse("UNA:+,? 'FOO+TEST'")
     assert next(tokens) == Segment("UNA", ":+,? '")
-    assert next(tokens) == Segment("TEST")
+    assert next(tokens) == Segment("FOO", "TEST")
 
 
 def test_una_parser2(parser):
     # UNA headers are a special parsing task and must be processed correctly.
-    tokens = parser.parse("UNA123456TEST6")
+    tokens = parser.parse("UNA123456FOO2TEST6")
     assert next(tokens) == Segment("UNA", "123456")
-    assert next(tokens) == Segment("TEST")
+    assert next(tokens) == Segment("FOO", "TEST")
 
 
 def test_una_parser3(parser):
     # UNA headers are a special parsing task and must be processed correctly.
-    tokens = parser.parse("UNA12345'TEST'")
+    tokens = parser.parse("UNA12345'FOO2TEST'")
     assert next(tokens) == Segment("UNA", "12345'")
-    assert next(tokens) == Segment("TEST")
+    assert next(tokens) == Segment("FOO", "TEST")
 
 
 def test_basic1(parser, default_una_segment):

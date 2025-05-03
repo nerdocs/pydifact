@@ -15,14 +15,20 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import pytest
 
-from pydifact.segments import Segment, SegmentProvider
+from pydifact.segments import Segment
 
 
 elements = ["field1", ["field2", "extra"], "stuff"]
 
 
+def test_get_segment_code_empty():
+    # check if pytest output contains warning
+    with pytest.warns(SyntaxWarning):
+        Segment("OMD")  # noqa
+
+
 def test_get_segment_code():
-    segment = Segment("OMD")
+    segment = Segment("OMD", "")
     assert segment.tag == "OMD"
 
 
@@ -44,7 +50,7 @@ def test_get_list_element():
 def test_get_non_existing_element():
     segment = Segment("OMD", *elements)
     with pytest.raises(IndexError):
-        segment.elements[7]
+        segment.elements[7]  # noqa
 
 
 def test_has_plugin():
@@ -53,7 +59,7 @@ def test_has_plugin():
 
         __omitted__ = False
 
-        def validate(self) -> bool:
+        def validate(self):
             pass
 
-    assert TestSegment in SegmentProvider.plugins
+    assert TestSegment in Segment.plugins

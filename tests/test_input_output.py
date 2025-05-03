@@ -17,19 +17,42 @@ import os
 
 from pydifact.segmentcollection import Interchange
 from pydifact.segments import Segment
+from pydifact.syntax import v3
 
 path = os.path.dirname(os.path.realpath(__file__)) + "/data"
 
 
-def test_wikipedia_file():
-    message = Interchange.from_file(f"{path}/wikipedia.edi")
+def test_wikipedia_file_en():
+    """This tests a file presented on the Wikipedia homepage "EDIFACT" -
+    interestingly, it is not covered by EDIFACT standards, but uses a IATB syntax
+    identifier string."""
+    message = Interchange.from_file(f"{path}/wikipedia_en.edi")
     # make some checks
     assert message.get_header_segment() == Segment(
-        "UNB", ["IATB", "1"], "6XPPC", "LHPPC", ["940101", "0950"], "1"
+        "UNB", ["IATB", "1"], ["6XPPC", "ZZ"], ["LHPPC", "ZZ"], ["940101", "0950"], "1"
     )
     assert message.get_segment("IFT") == Segment("IFT", "3", "XYZCOMPANY AVAILABILITY")
     assert message.get_segment("TVL") == Segment(
         "TVL", ["240493", "1000", "", "1220"], "FRA", "JFK", "DL", "400", "C"
+    )
+
+
+def test_wikipedia_file_de():
+    message = Interchange.from_file(f"{path}/wikipedia_de.edi")
+    # make some checks
+    assert message.get_header_segment() == v3.UNBSegment(
+        ["UNOC", "3"],
+        "Senderkennung",
+        "Empfaengerkennung",
+        ["060620", "0931"],
+        "1",
+        "",
+        "1234567",
+    )
+    assert message.get_segment("BGM") == Segment("BGM", "220", "B10001")
+    assert message.get_segment("QTY") == Segment("QTY", ["1", "1000"])
+    assert message.get_segment("LIN") == Segment(
+        "LIN", "1", "", ["Produkt Schrauben", "SA"]
     )
 
 

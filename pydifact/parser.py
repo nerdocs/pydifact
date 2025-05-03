@@ -19,6 +19,7 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
+
 from collections.abc import Iterator
 
 from pydifact.tokenizer import Tokenizer
@@ -28,15 +29,24 @@ from pydifact.control import Characters
 
 
 class Parser:
-    """Parse EDI messages into a list of segments."""
+    """Parse EDI messages into a list of segments.
+
+    Parameters:
+        factory: The SegmentFactory to use for creating segments.
+            (default: SegmentFactory())
+        characters: The control characters to use. (default: Characters())
+        version: The EDI version to use (default: 4)
+    """
 
     def __init__(
         self,
         factory: SegmentFactory | None = None,
         characters: Characters | None = None,
+        version: int | None = None,
     ) -> None:
         self.factory = factory or SegmentFactory()
         self.characters = characters or Characters()
+        self.version = version or 4
 
     def parse(
         self, message: str, characters: Characters | None = None
@@ -214,5 +224,8 @@ class Parser:
 
         for segment in segments:
             name = segment.pop(0)
-            # create_segment tests name type
-            yield self.factory.create_segment(name, *segment)  # type: ignore
+            if name == "UNB":
+                self.version = int(segment[0][1])
+                print("found edifact version", self.version)
+            yield self.factory.create_segment(name, *segment, version=self.version)
+
