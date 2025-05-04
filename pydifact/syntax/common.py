@@ -27,14 +27,11 @@ def is_edifact_alphanum(s: str) -> bool:
     """Returns True if str contains only alphanumeric characters in the sense of
     EDIFACT.
 
-    The set method is extremely fast, which takes precedence here over having
-    "exotic" chars like
+    See https://service.gefeg.com/jwg1/Files/V41-9735-1.pdf - page 11
     """
-    # https://service.gefeg.com/jwg1/Files/V41-9735-1.pdf - page 11
     return all(
         c.isalnum() or (c.isascii() and c.isprintable() and not c.isalnum()) for c in s
     )
-    # return all(c in allowed_alphanum_chars for c in s)
 
 
 def assert_a(s, length, message=""):
