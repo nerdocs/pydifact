@@ -188,7 +188,7 @@ def message():
 
 
 def test_empty_interchange(interchange):
-    assert str(interchange) == ("UNB+UNOC:1+1234+3333+200102:2212+42'" "UNZ+0+42'")
+    assert str(interchange) == ("UNB+UNOC:1+1234+3333+200102:2212+42'UNZ+0+42'")
 
 
 def test_empty_interchange_w_extra_header():
@@ -201,12 +201,12 @@ def test_empty_interchange_w_extra_header():
         extra_header_elements=[["66", "2"], "ZZ"],
     )
 
-    assert str(i) == ("UNB+UNOC:1+1234+3333+200102:2212+42+66:2+ZZ'" "UNZ+0+42'")
+    assert str(i) == ("UNB+UNOC:1+1234+3333+200102:2212+42+66:2+ZZ'UNZ+0+42'")
 
 
 def test_empty_interchange_from_str():
-    i = Interchange.from_str("UNB+UNOC:1+1234+3333+200102:2212+42'" "UNZ+0+42'")
-    assert str(i) == ("UNB+UNOC:1+1234+3333+200102:2212+42'" "UNZ+0+42'")
+    i = Interchange.from_str("UNB+UNOC:1+1234+3333+200102:2212+42'UNZ+0+42'")
+    assert str(i) == ("UNB+UNOC:1+1234+3333+200102:2212+42'UNZ+0+42'")
 
 
 def test_empty_interchange_w_una():
@@ -217,7 +217,7 @@ def test_empty_interchange_w_una():
             Segment("UNZ", "0", "42"),
         ]
     )
-    assert str(i) == ("UNA:+,? '" "UNB+UNOC:1+1234+3333+200102:2212+42'" "UNZ+0+42'")
+    assert str(i) == ("UNA:+,? '" "UNB+UNOC:1+1234+3333+200102:2212+42'UNZ+0+42'")
 
 
 def test_interchange_messages(interchange, message):
