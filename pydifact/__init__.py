@@ -31,6 +31,22 @@ from .serializer import Serializer
 from .token import Token
 from .tokenizer import Tokenizer
 
+__all__ = [
+    "__version__",
+    "Characters",
+    "Parser",
+    "parser",
+    "Segment",
+    "segmentcollection",
+    "segments",
+    "Serializer",
+    "serializer",
+    "Token",
+    "token",
+    "Tokenizer",
+    "tokenizer",
+]
+
 # up-to-date information for newest standard
 # https://www.unece.org/tradewelcome/un-centre-for-trade-facilitation-and-e-business-uncefact/outputs/standards/unedifact/directories/2011-present.html
 
