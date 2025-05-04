@@ -141,7 +141,7 @@ class Segment:
 
         for index, element in enumerate(self.elements):
             # validation is only done in specific segments, not in generic "Segment"
-            if self is not Segment:
+            if self.__class__ is not Segment:
                 # if there are codes defined, use them for validation
                 if self.schema:
                     if index >= len(self.schema):
