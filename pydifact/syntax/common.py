@@ -272,7 +272,7 @@ class CompositeDataElement:
                     )
                 # If data structure representation is not overridden, use
                 # the default value from the schema
-            if len(current_schema) > 2:
+            elif len(current_schema) > 2:
                 data_struct_representation = current_schema[2]
             else:
                 data_struct_representation = getattr(TemplateClass, "repr", None)
