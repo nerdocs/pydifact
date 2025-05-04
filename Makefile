@@ -18,3 +18,9 @@ mypy:
 
 test-extended:
 	pytest
+
+run-isort:
+	isort .
+
+check-isort:
+	isort . --check

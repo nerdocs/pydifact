@@ -12,7 +12,7 @@ herby providing the same structure.
 
 import re
 import warnings
-from typing import Optional, Type, TypeAlias, TypeVar, NamedTuple
+from typing import NamedTuple, Optional, Type, TypeAlias, TypeVar
 
 from pydifact.constants import EDI_DEFAULT_VERSION
 from pydifact.exceptions import ValidationError

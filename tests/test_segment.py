@@ -17,7 +17,6 @@ import pytest
 
 from pydifact.segments import Segment
 
-
 elements = ["field1", ["field2", "extra"], "stuff"]
 
 

@@ -32,8 +32,12 @@ dev = [
     "sphinx-rtd-theme>=2.0.0",
     "build",
     "twine",
-    "mypy>=1.15.0"
- ]
+    "mypy>=1.15.0",
+    "isort==6.0.1"
+]
+
+[tool.isort]
+profile = "black"
 
 [tool.black]
 target_version = ["py310", "py311", "py312", "py313"]

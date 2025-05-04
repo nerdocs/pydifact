@@ -24,10 +24,9 @@ import codecs
 import datetime
 from collections.abc import Callable, Iterable, Iterator, Sequence
 from typing import Type, TypeVar
-from collections.abc import Callable, Iterable
 
-from pydifact.exceptions import EDISyntaxError
 from pydifact.control import Characters
+from pydifact.exceptions import EDISyntaxError
 from pydifact.parser import Parser
 from pydifact.segments import Element, Elements, Segment
 from pydifact.serializer import Serializer

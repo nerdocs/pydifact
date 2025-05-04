@@ -15,11 +15,10 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import pytest
 
+from pydifact.control import Characters
 from pydifact.exceptions import EDISyntaxError
 from pydifact.token import Token
 from pydifact.tokenizer import Tokenizer
-
-from pydifact.control import Characters
 
 
 @pytest.fixture

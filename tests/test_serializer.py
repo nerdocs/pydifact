@@ -15,9 +15,10 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import copy
 import datetime
+
 import pytest
 
-from pydifact.segmentcollection import RawSegmentCollection, Interchange
+from pydifact.segmentcollection import Interchange, RawSegmentCollection
 from pydifact.segments import Segment
 from pydifact.serializer import Serializer
 
