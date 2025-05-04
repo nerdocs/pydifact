@@ -5,17 +5,20 @@ on:
   push:
     branches:
       - all
-  pull_request: {}
+  pull_request: { }
 jobs:
   black:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        python-version: ["3.11"]
-        os: [ubuntu-latest]
+        python-version: [ "3.13" ]
+        os: [ ubuntu-latest ]
     steps:
       - uses: actions/checkout@v4
-      - name: Black Code Formatter
-        uses: lgeiger/black-action@v1.0.1
-        with:
-          args: ". --check"
+      - name: Install Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install .[dev]
+      - name: "Black Code Formatter"
+        run: |
+          black . --check

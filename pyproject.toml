@@ -29,7 +29,7 @@ dev = [
     "Sphinx>=7.2.0",
     "setuptools>=69.1.0",
     "wheel>=0.42.0",
-    "black>=24.0.0",
+    "black>=25.1.0",
     "sphinx-rtd-theme>=2.0.0",
     "build",
     "twine",

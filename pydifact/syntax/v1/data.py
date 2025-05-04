@@ -4,7 +4,7 @@ partner_identification_codes = {
         "description": "Partner identification code assigned by Dun & Bradstreet.",
     },
     "4": {
-        "name": "IATA (International Air Transport Association)", 
+        "name": "IATA (International Air Transport Association)",
         "description": "Partner identification code assigned by the International Air Transport Association.",
     },
     "5": {
