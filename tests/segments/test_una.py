@@ -13,26 +13,30 @@
 #
 #    You should have received a copy of the GNU Lesser General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
-import pytest
-from pydifact.control import Characters
 
 
-class Setup:
-    pass
+from pydifact import Segment
+from pydifact.syntax.v1 import UNASegment
 
 
-@pytest.fixture
-def setup():
-    setup = Setup()
-    una_segment = "UNA:+.? '"
-    setup.cc = Characters.from_str(una_segment)
-    return setup
+def test_compare_against_str():
+    u = UNASegment(":+.? '")
+    assert u == ":+.? '"
+    u = UNASegment("123456")
+    assert u == "123456"
 
 
-def test_una_segment(setup):
-    assert setup.cc.component_separator == ":"
-    assert setup.cc.data_separator == "+"
-    assert setup.cc.decimal_point == "."
-    assert setup.cc.escape_character == "?"
-    assert setup.cc.reserved_character == " "
-    assert setup.cc.segment_terminator == "'"
+def test_compare_against_same_segment():
+    assert UNASegment(":+.? '") == UNASegment(":+.? '")
+    assert UNASegment("123456") == UNASegment("123456")
+
+
+def test_compare_against_other_segment():
+    assert UNASegment(":+.? '") != UNASegment("123456")
+    # change single chars
+    assert UNASegment(":+.? '") != UNASegment(":+.? `")  # backtick!
+    assert UNASegment(":+.? '") != UNASegment(";+.? `")  # colon
+
+
+def test_compare_against_other_segment_type():
+    assert UNASegment(":+.? '") != Segment("FOO", "123456")
