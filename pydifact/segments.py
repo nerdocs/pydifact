@@ -144,7 +144,7 @@ class Segment:
             if self is not Segment:
                 # if there are codes defined, use them for validation
                 if self.schema:
-                    if index > len(self.schema):
+                    if index >= len(self.schema):
                         raise ValidationError(
                             f"{self.__class__.__name__}: odd element at position {index}: "
                             f"'{element}'"
