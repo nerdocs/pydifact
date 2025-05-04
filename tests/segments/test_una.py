@@ -21,9 +21,9 @@ from pydifact.syntax.v1 import UNASegment
 
 def test_compare_against_str():
     u = UNASegment(":+.? '")
-    assert u == ":+.? '"
+    assert str(u) == "'UNA' EDI segment: [ ServiceStringAdvice: ':+.? '']"
     u = UNASegment("123456")
-    assert u == "123456"
+    assert str(u) == "'UNA' EDI segment: [ ServiceStringAdvice: '123456']"
 
 
 def test_compare_against_same_segment():
