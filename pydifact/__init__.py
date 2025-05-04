@@ -20,7 +20,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-from pydifact import segmentcollection, parser, segments, serializer, token, tokenizer
+from pydifact import parser, segmentcollection, segments, serializer, token, tokenizer
 
 __version__ = "0.1.8"
 

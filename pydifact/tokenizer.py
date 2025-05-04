@@ -21,9 +21,9 @@
 # THE SOFTWARE.
 from collections.abc import Iterator
 
+from pydifact.control.characters import Characters
 from pydifact.exceptions import EDISyntaxError
 from pydifact.token import Token
-from pydifact.control.characters import Characters
 
 
 class Tokenizer:

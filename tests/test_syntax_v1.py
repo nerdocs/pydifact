@@ -1,8 +1,8 @@
+import pytest
+
 from pydifact import Serializer
 from pydifact.exceptions import ValidationError
 from pydifact.segments import Segment
-import pytest
-
 from pydifact.syntax.v1 import UNASegment
 
 default_characters = ":+,? '"

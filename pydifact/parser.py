@@ -22,11 +22,11 @@
 
 from collections.abc import Iterator
 
-from pydifact.exceptions import EDISyntaxError
-from pydifact.tokenizer import Tokenizer
-from pydifact.token import Token
-from pydifact.segments import Element, Elements, Segment, SegmentFactory
 from pydifact.control import Characters
+from pydifact.exceptions import EDISyntaxError
+from pydifact.segments import Element, Elements, Segment, SegmentFactory
+from pydifact.token import Token
+from pydifact.tokenizer import Tokenizer
 
 
 class Parser:

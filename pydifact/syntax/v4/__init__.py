@@ -1,12 +1,13 @@
 from typing import NamedTuple
 
-from pydifact.constants import M, C
+from pydifact.constants import C, M
 from pydifact.syntax import v1, v2, v3
 from pydifact.syntax.common import (
-    DataElement,
     CompositeDataElement,
+    DataElement,
     SyntaxVersionNumber,
 )
+
 from .data import partner_identification_codes
 
 __version__ = 4

@@ -27,11 +27,11 @@ Elements = list[Element]
 
 from pydifact.constants import EDI_DEFAULT_VERSION, M
 from pydifact.exceptions import (
-    ValidationError,
-    MissingImplementationWarning,
     EDISyntaxError,
+    MissingImplementationWarning,
+    ValidationError,
 )
-from pydifact.syntax.common import DataElement, CompositeDataElement
+from pydifact.syntax.common import CompositeDataElement, DataElement
 
 
 class Segment:
