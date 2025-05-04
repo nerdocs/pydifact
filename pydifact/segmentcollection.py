@@ -240,7 +240,8 @@ class AbstractSegmentsContainer:
         """Return the string representation of the object.
 
         :param break_lines: If ``True``, inserts line break after each segment
-          terminator.
+          terminator. This is forbidden in the EDIFACT specs, but apparently widely
+          used.
         """
         header = self.get_header_segment()
         footer = self.get_footer_segment()
