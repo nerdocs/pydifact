@@ -24,34 +24,34 @@ class SyntaxIdentifier(DataElement):
     title = "Syntax identifier"
     repr = "a4"
     codes = {
-        "UNOA": (
-            "UN/ECE level A",
-            "Defined in ISO 646 basic code table with exceptions for lowercase "
-            "letters, alternative graphic character allocations, "
-            "and national/application-oriented allocations.",
-        ),
-        "UNOB": (
-            "UN/ECE level B",
-            "Defined in ISO 646 basic code table with exceptions for alternative "
-            "graphic character allocations and national/application-oriented "
-            "allocations.",
-        ),
-        "UNOC": (
-            "UN/ECE level C",
-            "Defined in ISO 8859-1: Information processing - Part 1: Latin alphabet No. 1.",
-        ),
-        "UNOD": (
-            "UN/ECE level D",
-            "Defined in ISO 8859-2: Information processing - Part 2: Latin alphabet No. 2.",
-        ),
-        "UNOE": (
-            "UN/ECE level E",
-            "Defined in ISO 8859-5: Information processing - Part 5: Latin/Cyrillic alphabet.",
-        ),
-        "UNOF": (
-            "UN/ECE level F",
-            "Defined in ISO 8859-7: Information processing - Part 7: Latin/Greek alphabet.",
-        ),
+        "UNOA": {
+            "name:": "UN/ECE level A",
+            "description": "Defined in ISO 646 basic code table with (exceptions) for "
+            "lowercase letters, alternative graphic character allocations, and "
+            "national/application-oriented allocations.",
+        },
+        "UNOB": {
+            "name:": "UN/ECE level B",
+            "description": "Defined in ISO 646 basic code table with exceptions for "
+            "alternative graphic character allocations and "
+            "national/application-oriented allocations.",
+        },
+        "UNOC": {
+            "name": "UN/ECE level C",
+            "description": "Defined in ISO 8859-1: Information processing - Part 1: Latin alphabet No. 1.",
+        },
+        "UNOD": {
+            "name:": "UN/ECE level D",
+            "description": "Defined in ISO 8859-2: Information processing - Part 2: Latin alphabet No. 2.",
+        },
+        "UNOE": {
+            "name": "UN/ECE level E",
+            "description": "Defined in ISO 8859-5: Information processing - Part 5: Latin/Cyrillic alphabet.",
+        },
+        "UNOF": {
+            "name": "UN/ECE level F",
+            "description": "Defined in ISO 8859-7: Information processing - Part 7: Latin/Greek alphabet.",
+        },
     }
 
 
