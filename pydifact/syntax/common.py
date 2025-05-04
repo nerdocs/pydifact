@@ -79,37 +79,8 @@ class Code(NamedTuple):
     description: str
 
 
-DataElementProviderType: TypeAlias = Type["DataElementProvider"]
-
-
-class DataElementProvider:
-    code: str
-    """A 4 digit numeric code"""
-
-    repr: str
-    """the constraint of the data element's value."""
-
-    title: str
-    """The human readable title of the data element."""
-
-    description: str
-    """A short description of the data element"""
-
-    plugins = []
-
-    def __init_subclass__(cls, **kwargs):
-        if not "__omitted__" in cls.__dict__ or getattr(cls, "__omitted__") is False:
-            DataElementProvider.plugins.append(cls)
-
-    def validate(self, mandatory: bool = None, repr: str = None) -> None:
-        """Plugin hook that validates the data element and returns `True` if valid.
-
-        Raises:
-           ValidationError if any error occurs."""
-
-
 # TODO: test DataElement
-class DataElement(DataElementProvider):
+class DataElement:
     """Basic EDIFACT service code.
 
     Subclass this class to create custom service codes.
@@ -127,6 +98,19 @@ class DataElement(DataElementProvider):
     """
 
     __omitted__ = True
+    code: str
+    """A 4 digit numeric code"""
+
+    repr: str
+    """the constraint of the data element's value."""
+
+    title: str
+    """The human readable title of the data element."""
+
+    description: str
+    """A short description of the data element"""
+
+    plugins: list = []
 
     codes = {}
     """A possible dict of codes that can be used for validation"""
@@ -303,7 +287,7 @@ class DataElementFactory:
             version: The version of the EDI standard this element is based on
                 (default: 4)
         """
-        for Plugin in DataElementProvider.plugins:
+        for Plugin in DataElement.plugins:
             if (
                 getattr(Plugin, "code", "") == code
                 and getattr(Plugin, "version") == version
