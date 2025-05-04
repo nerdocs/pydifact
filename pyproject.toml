@@ -2,7 +2,7 @@
 name = "pydifact"
 dynamic = ["version"]
 authors = [{ name = "Christian González", email = "christian.gonzalez@nerdocs.at" }]
-license = { "file" = "LICENSE" }
+license = "MIT"
 description = "Pydifact is a library that aims to provide complete support for reading and writing EDIFACT files. These file format, despite being old, is still a standard in many business cases. In Austria e.g., it is used for the transfer of medical reports between medical doctors."
 readme = "README.md"
 classifiers = [
