@@ -127,7 +127,7 @@ class Characters:
         )
 
     def __repr__(self):
-        return f"'{self.__str__()}'"
+        return f" ServiceStringAdvice: '{str(self)}'"
 
     def __eq__(self, other):
         if isinstance(other, str):
