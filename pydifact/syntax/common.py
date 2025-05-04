@@ -263,19 +263,18 @@ class CompositeDataElement:
         for index, value in enumerate(self.elements):
             current_schema = self.schema[index]
             TemplateClass = current_schema[0]
+            # If data structure representation is not overridden, use
+            # the default value of the DataElement class.
+            data_struct_representation = getattr(TemplateClass, "repr", None)
             if len(current_schema) > 1:
-                if not mandatory:
+                if mandatory is None:
                     # If mandatory is not set, use the default value from the schema,
                     # or assume True if not set.
-                    mandatory = (
-                        (current_schema[1] == "M") if len(current_schema) > 1 else True
-                    )
-                # If data structure representation is not overridden, use
-                # the default value from the schema
+                    mandatory = current_schema[1] == M
             elif len(current_schema) > 2:
+                # override representation if set in schema
                 data_struct_representation = current_schema[2]
-            else:
-                data_struct_representation = getattr(TemplateClass, "repr", None)
+
             if mandatory:
                 # FIXME: even if not mandatory, but present, validation should be done.
                 TemplateClass(value).validate(
