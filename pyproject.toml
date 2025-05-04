@@ -36,6 +36,9 @@ dev = [
     "mypy>=1.15.0"
  ]
 
+[tool.black]
+target_version = ["py310", "py311", "py312", "py313"]
+
 [project.urls]
 Documentation = "https://pydifact.readthedocs.io"
 Repository = "https://github.com/nerdocs/pydifact"
