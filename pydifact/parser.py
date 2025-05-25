@@ -22,6 +22,7 @@
 
 from collections.abc import Iterator
 
+from pydifact.constants import EDI_DEFAULT_VERSION, EDI_DEFAULT_SYNTAX
 from pydifact.exceptions import EDISyntaxError
 from pydifact.tokenizer import Tokenizer
 from pydifact.token import Token
@@ -43,11 +44,13 @@ class Parser:
         self,
         factory: SegmentFactory | None = None,
         characters: Characters | None = None,
+        syntax_identifier: str | None = None,
         version: int | None = None,
     ) -> None:
         self.factory = factory or SegmentFactory()
         self.characters = characters or Characters()
-        self.version = version or 4
+        self.syntax_identifier = syntax_identifier
+        self.version = version
 
     def parse(
         self, message: str, characters: Characters | None = None
@@ -231,6 +234,32 @@ class Parser:
                 # This is not in the specs, so raise an error
                 raise EDISyntaxError("There are not multiple UNA segments allowed.")
             if name == "UNB":
-                self.version = int(segment[0][1])
-                print("found edifact version", self.version)
-            yield self.factory.create_segment(name, *segment, version=self.version)
+                # here we have the chance to determine the syntax/style and version
+                # of the EDI file. We have to inform the factory about it.
+                # However, if the syntax is set by force (Parser init parameter),
+                # then we don't override it here, even if the UNB segment has another
+                # value. The user might want to override this manually.
+
+                print(f"Found edifact syntax '{segment[0][0]}' in UNB header", end="")
+                if self.syntax_identifier:
+                    print(", but using override syntax '{self.syntax_identifier}'")
+                else:
+                    print(".")
+                    self.syntax_identifier = segment[0][0]
+
+                print(
+                    f"Found edifact version '{int(segment[0][1])}' in UNB header",
+                    end="",
+                )
+                if self.version:
+                    print(f", but using override version '{self.version}'.")
+
+                else:
+                    self.version = int(segment[0][1])
+                    print(".")
+            yield self.factory.create_segment(
+                name,
+                *segment,
+                syntax_identifier=self.syntax_identifier or EDI_DEFAULT_SYNTAX,
+                version=self.version or EDI_DEFAULT_VERSION,
+            )
