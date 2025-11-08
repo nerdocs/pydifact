@@ -25,7 +25,7 @@ from typing import overload
 Element = str | list[str]
 Elements = list[Element]
 
-from pydifact.constants import EDI_DEFAULT_VERSION, M
+from pydifact.constants import EDI_DEFAULT_VERSION, M, EDI_DEFAULT_SYNTAX
 from pydifact.exceptions import (
     ValidationError,
     MissingImplementationWarning,
@@ -181,6 +181,7 @@ class SegmentFactory:
         name: str,
         *elements: Element,
         validate: bool = True,
+        syntax_identifier: str = EDI_DEFAULT_SYNTAX,
         version: int = EDI_DEFAULT_VERSION,
     ) -> Segment:
         """Create a new instance of the relevant class type.
@@ -202,7 +203,6 @@ class SegmentFactory:
             raise EDISyntaxError(
                 f"The tag name of a segment must be a str, but is a {type(name)}: {name}"
             )
-
         if not name.isalnum():
             raise EDISyntaxError(
                 f"Tag '{name}': A tag name must only contain alphanumeric characters."
