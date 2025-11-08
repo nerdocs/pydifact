@@ -229,6 +229,8 @@ class Parser:
 
         for segment in raw_segments:
             name = segment.pop(0)
+            if isinstance(name, list):
+                raise EDISyntaxError("Invalid segment name: {name}")
             if with_una and name == "UNA":
                 # We found another UNA segment.
                 # This is not in the specs, so raise an error
