@@ -49,7 +49,7 @@ class Segment:
 
     def __init_subclass__(cls, **kwargs):
         super().__init_subclass__(**kwargs)
-        if not "__omitted__" in cls.__dict__ or getattr(cls, "__omitted__") is False:
+        if "__omitted__" not in cls.__dict__ or getattr(cls, "__omitted__") is False:
             cls.plugins.append(cls)
 
     @overload

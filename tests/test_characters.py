@@ -16,8 +16,6 @@
 
 import pytest
 from pydifact.control import Characters
-import pytest
-from pydifact.control import Characters
 
 
 class Setup:

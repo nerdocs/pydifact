@@ -14,7 +14,7 @@ import re
 import warnings
 from typing import Optional, Type, TypeAlias, TypeVar, NamedTuple
 
-from pydifact.constants import EDI_DEFAULT_VERSION
+from pydifact.constants import EDI_DEFAULT_VERSION, M
 from pydifact.exceptions import ValidationError
 
 allowed_alphanum_chars = set(
@@ -178,7 +178,7 @@ class DataElement:
                     f"be numeric and must have {r[1:]} digits. Current value: "
                     f"'{self.value}'",
                 )
-            if self.codes and not self.value in self.codes:
+            if self.codes and self.value not in self.codes:
                 warnings.warn(
                     f"'{self.value}' is not a valid value of '{self.code}: {self.title}'.",
                     category=SyntaxWarning,
