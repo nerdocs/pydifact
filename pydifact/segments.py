@@ -105,6 +105,8 @@ class Segment:
         return f"{self.tag} segment: {str(self.elements)}"
 
     def __eq__(self, other) -> bool:
+        if isinstance(other, str):
+            return str(self) == other
         # FIXME the other way round too? isinstance(other, type(self))?
         return (
             isinstance(self, type(other))

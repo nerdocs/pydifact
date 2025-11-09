@@ -283,6 +283,17 @@ class UNASegment(Segment):
     def validate(self) -> None:
         super().validate()
 
+    def __str__(self):
+        return "".join(
+            [
+                self.component_separator,
+                self.data_separator,
+                self.decimal_point,
+                self.escape_character,
+                self.reserved_character,
+                self.segment_terminator,
+            ]
+        )
 
 class UNBSegment(Segment):
     """Interchange header.
