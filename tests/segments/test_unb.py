@@ -22,7 +22,8 @@ from pydifact.syntax import v4
 
 
 class Setup:
-    pass
+    cc:Characters
+    collection: RawSegmentCollection
 
 
 @pytest.fixture

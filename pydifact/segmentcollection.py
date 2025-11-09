@@ -24,7 +24,6 @@ import codecs
 import datetime
 from collections.abc import Callable, Iterable, Iterator, Sequence
 from typing import Type, TypeVar
-from collections.abc import Callable, Iterable
 
 from pydifact.exceptions import EDISyntaxError
 from pydifact.control import Characters
