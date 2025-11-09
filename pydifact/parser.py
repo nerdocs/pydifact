@@ -22,11 +22,12 @@
 
 from collections.abc import Iterator
 
-from pydifact.constants import EDI_DEFAULT_VERSION, EDI_DEFAULT_SYNTAX
+from pydifact.constants import EDI_DEFAULT_VERSION, EDI_DEFAULT_SYNTAX, Element, \
+    Elements
 from pydifact.exceptions import EDISyntaxError
 from pydifact.tokenizer import Tokenizer
 from pydifact.token import Token
-from pydifact.segments import Element, Elements, Segment, SegmentFactory
+from pydifact.segments import Segment, SegmentFactory
 from pydifact.control import Characters
 
 

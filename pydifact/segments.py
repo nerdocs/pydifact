@@ -22,10 +22,8 @@
 import warnings
 from typing import overload
 
-Element = str | list[str]
-Elements = list[Element]
-
-from pydifact.constants import EDI_DEFAULT_VERSION, M, EDI_DEFAULT_SYNTAX
+from pydifact.constants import EDI_DEFAULT_VERSION, M, EDI_DEFAULT_SYNTAX, Element, \
+    Elements
 from pydifact.exceptions import (
     ValidationError,
     MissingImplementationWarning,

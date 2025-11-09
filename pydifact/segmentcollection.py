@@ -29,7 +29,8 @@ from collections.abc import Callable, Iterable
 from pydifact.exceptions import EDISyntaxError
 from pydifact.control import Characters
 from pydifact.parser import Parser
-from pydifact.segments import Element, Elements, Segment
+from pydifact.segments import Segment
+from pydifact.constants import Element, Elements
 from pydifact.serializer import Serializer
 
 T = TypeVar("T", bound="AbstractSegmentsContainer")
