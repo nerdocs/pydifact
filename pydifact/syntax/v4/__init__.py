@@ -8,10 +8,10 @@ from pydifact.syntax.common import (
     SyntaxVersionNumber,
 )
 from .data import partner_identification_codes
+from ... import Segment
 
 __version__ = 4
 
-from ... import Segment
 
 
 class SyntaxIdentifier(v1.SyntaxIdentifier):
