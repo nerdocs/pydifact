@@ -112,7 +112,7 @@ for segment in collection.segments:
 
 In python ecosystem:
 
-- [python-edifact](https://github.com/FriedrichK/python-edifact) - simpler, IMHO less cleaner code, less flexible. may be faster though (not tested). Seems unmaintained.
+- [python-edifact](https://github.com/FriedrichK/python-edifact) - simpler, IMHO less clean code, less flexible. may be faster though (not tested). Seems unmaintained.
 - [bots](https://github.com/bots-edi/bots) - huge, with webinterface (bots-monitor), webserver, bots-engine.
 - [edicat](https://github.com/notpeter/edicat) - simple, only for separating lines/segments for CLI-piping.
 
