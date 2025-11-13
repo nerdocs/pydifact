@@ -22,7 +22,7 @@ from pydifact.syntax import v4
 
 
 class Setup:
-    cc:Characters
+    cc: Characters
     collection: RawSegmentCollection
 
 

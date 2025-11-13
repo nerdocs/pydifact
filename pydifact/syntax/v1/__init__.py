@@ -271,7 +271,7 @@ class UNASegment(Segment):
             characters = Characters.from_str(characters)
         else:
             characters = Characters() if characters is None else characters
-        self.elements = [characters]
+        self.elements = [str(characters)]
         # provide shortcut handles to the separators
         self.component_separator = characters.component_separator
         self.data_separator = characters.data_separator

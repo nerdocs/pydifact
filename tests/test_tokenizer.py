@@ -20,7 +20,6 @@ from pydifact.token import Token
 from pydifact.tokenizer import Tokenizer
 
 
-
 @pytest.fixture
 def tokenizer() -> Tokenizer:
     return Tokenizer()
