@@ -1,0 +1,1469 @@
+import logging
+import os
+import re
+import shutil
+import sys
+import black
+import requests
+
+import pydifact.syntax
+import zipfile
+import io
+
+from datetime import datetime
+from typing import Iterable, Iterator
+from pydifact.exceptions import ParsingError
+from pydifact.utils import syntax_version_from_directory
+from .constants import download_directory
+from .helpers import (
+    _retrieve_or_get_cached_file,
+    get_next_not_empty_line,
+    processed_title,
+    last_file_path,  # noqa
+)
+from .specs import (
+    SegmentSpec,
+    data_element_specs,
+    composite_specs,
+    segment_specs,
+    message_specs,
+    DataElementSpec,
+    CompositeElementSpec,
+    SegmentDataElementUsage,
+    SegmentCompositeElementUsage,
+    SegmentInlineDataElementUsage,
+    CompositeDataElementUsage,
+    source_specs,
+    MessageSpec,
+    MessageSegmentUsage,
+    MessageGroupUsage,
+)
+
+logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
+logger = logging.getLogger(__name__)
+
+# edi_directory: str = ""
+base_url = "https://service.unece.org/trade/untdid"
+
+
+def parse_url(line: str) -> str:
+    """Parses a line from the EDIFACT documentation and extracts the URL.
+
+    Arguments:
+        line: str, the line containing the URL, like "#   https://service.unece.org/..."
+
+    Returns:
+        str, the URL extracted from the line
+    """
+    pattern = re.match(r"^\s*#\s*#.*(https://service.unece.org/.*)+s*", line)
+    return pattern.group(1) if pattern else ""
+
+
+def parse_multiline_until(
+    regex: re.Pattern[str] | str, lines: Iterator[str], line_number: int
+) -> tuple[str, int, str]:
+    """Parses a multiline comment block, which is stripped and combined into a single
+    string.
+
+    Arguments:
+        regex (re.Pattern|str), the regular expression to match the next pattern. If
+            pattern is found, the parsing stops and returns to the caller. If the
+            pattern is "", the parsing stops at the next empty line.
+        lines: Iterable[str], the lines of the EDIFACT documentation
+        line_number: int, the current line number (will be returned increased)
+
+    Returns:
+        tuple[str, int, str], the title, the line number after the description, and the last line
+
+    """
+    desc_lines = []
+    if isinstance(regex, str):
+        regex = re.compile(regex)
+    while True:
+        line = next(lines)
+        line_number += 1
+        line = line.strip()
+        if not line:  # empty line
+            # if regex was empty, meaning we search until the next empty line, break
+            if not regex.pattern:
+                break
+            continue
+        if regex.pattern and regex.match(line):  # type: ignore
+            break
+        if line.startswith("-"):
+            line = "\n" + line
+        desc_lines.append(line)
+    return " ".join(desc_lines), line_number, line
+
+
+def read_service_file(version: int, file: str) -> str:
+    path = download_directory / "service" / str(version) / f"{file}"
+    with open(path, "r", encoding="iso8859") as f:
+        return f.read()
+
+
+# ------------------ Data Elements ------------------
+
+
+def download_service_file(
+    url: str, version: int, check_existing: list[str] | None = None
+) -> None:
+    """Returns the data element description text for the EDIFACT service list.
+
+    Attributes:
+        url: the url of the service zip file
+        version (str): 1,2,3,4 (=incl 4x)
+        check_existing:  a list of filenames that are checked. if all of them exist,
+            nothing is downloaded
+    """
+    response = requests.get(url)
+    response.raise_for_status()
+    dest_dir = download_directory / "service" / str(version)
+    if not os.path.exists(dest_dir):
+        os.makedirs(dest_dir, exist_ok=True)
+    if not check_existing:
+        check_existing = []
+    all_exist = True
+    for filename in check_existing:
+        if not os.path.exists(dest_dir / filename):
+            all_exist = False
+    if not all_exist or not check_existing:
+        print(f"Downloading service file from {url}...")
+        with zipfile.ZipFile(io.BytesIO(response.content)) as z:
+            z.extractall(dest_dir)
+
+
+def ensure_composite_spec_exists(code: str, title: str, segment_tag: str):
+
+    if code not in composite_specs:
+        print(
+            f"While parsing '{segment_tag}' segment, referenced element {code} was not "
+            f"listed in the "
+            f"composite data element list. Creating stub entry."
+        )
+        composite_specs[code] = CompositeElementSpec(
+            code=code,
+            title=title,
+            schema=[],
+            description=f"STUB - This composite element was referenced in {segment_tag}"
+            f".{code}, but not listed in the composite data element list.",
+            stub=True,
+        )
+
+
+def ensure_data_element_spec_exists(code: str, title: str, segment_tag: str):
+    if code not in data_element_specs:
+        print(
+            f"While parsing '{segment_tag}' segment, referenced element {code} "
+            f"was not listed in the "
+            f"data element list. Creating stub entry."
+        )
+        data_element_specs[code] = DataElementSpec(
+            code=code,
+            title=title,
+            repr_line="",
+            description=f"STUB - This element was referenced first in {segment_tag}"
+            f".{code}, but not listed in the data element list.",
+            stub=True,
+        )
+
+
+def get_data_element_directory_desc(edi_directory: str) -> str:
+    """Returns the data element description text for the EDIFACT EDED list.
+
+    Attributes:
+        edi_directory: The service directory where the segment is found, e.g. "d11a",
+            "d24a", "d11b"
+    """
+    return _retrieve_or_get_cached_file(
+        f"{base_url}/{edi_directory}/tred/tredi1.htm",
+        f"{edi_directory}/tredi1.txt",
+    )
+
+
+def parse_data_element_directory_desc(text):
+    """
+    Parse the data element list description from EDIFACT documentation.
+
+    This function processes a text containing the data element list
+    description, extracts the data element codes and titles, and stores them
+    in the global data_element_specs dictionary.
+
+    Args:
+        text (str): The raw text containing the data element list description.
+
+    Returns:
+        None: This function doesn't return a value, but updates the global
+        data_element_specs dictionary with the parsed data elements.
+
+    Note:
+        The function expects the input text to contain lines in the format:
+        "00010   UNH Message header                           M   1"
+        where the first 5 characters are the data element code, followed by
+        the title, and ending with [B], [C], or [I] (which is ignored).
+    """
+    lines = iter(text.strip().splitlines())
+    line_number = 0
+    while True:
+        try:
+            # skip all empty lines
+            line, line_number = get_next_not_empty_line(lines, line_number)
+            # find lines like this:
+            # 00010   UNH Message header                           M   1        [B]
+            # 00020   BGM Beginning of message                     M   1        [C]
+            if pattern := re.match(r"^[ +*#|X]{5}(\d{4})\s{2}(.*?)\s+\[[BCI]\]$", line):
+                code, title = pattern.groups()
+                if not code in data_element_specs:
+                    data_element_specs[code] = DataElementSpec(
+                        code=code, title=title, description="", repr_line="", stub=True
+                    )
+        except StopIteration:
+            break
+
+
+def get_data_element_desc(directory: str, code: str) -> str:
+    """Returns the description text for the provided data element.
+
+    Attributes:
+        directory: The service directory where the data element is found,
+                    e.g. "d11a", "d24a", "d11b"
+        code: The data element code as string, e.g. "1001"
+    """
+    # code must be convertible to an int.
+    assert int(code), "Invalid data element code"
+    return _retrieve_or_get_cached_file(
+        f"{base_url}/{directory.lower()}/tred/tred" f"{code}.htm",
+        f"{directory}/tred{code.lower()}.txt",
+    )
+
+
+# ------------------ Composite Data Elements ------------------
+
+
+def parse_data_element_desc(text, only_one_code: str | None = None):
+    """Parses a data element text (or list) and extracts the data element
+    specification(s).
+
+    Arguments:
+        text: str, the raw text of the EDIFACT data element description
+        only_one_code: str, the data element code, like "1001". If omitted, it parses all
+        elements found in the text.
+    """
+    lines = iter(text.strip().splitlines())
+    line_number = 0
+    in_element = False
+    in_description = False
+    # if we should only parse one element, it must be (as a stub) in the cache before.
+    if only_one_code:
+        if only_one_code not in data_element_specs:
+            raise KeyError(f"Data element {only_one_code} not found in the cache.")
+        if not data_element_specs[only_one_code].stub:
+            print(
+                "Can't parse data element",
+                only_one_code,
+                "because it's already in the cache.",
+            )
+            return
+        # get the item from the cache
+        element = data_element_specs[only_one_code]
+    else:
+        # create an empty data element spec to start with
+        element = DataElementSpec(
+            code="", title="", description="", repr_line="", stub=False
+        )
+    while True:
+        try:
+            # skip all empty lines
+            line, line_number = get_next_not_empty_line(lines, line_number)
+            # first, if we parsed a description, it could be multiline, so check for
+            # second/third line of desc., and if we find it, append it to description.
+            if in_description and element.code:
+                if pattern := re.match(r" {9,11}(.*?)$", line):
+                    element.description += " " + pattern.group(1).strip()
+                    continue
+                else:
+                    in_description = False
+
+            if not in_element and not element.url:
+                element.url = parse_url(line)
+
+            # find lines like this:
+            #      1000  Document name                                           [B]
+            #   0007  Identification code qualifier
+            if pattern := re.match(
+                r"^[ +*#|X]+(\d{4})\s+(.*?)(?:\s+\[[BCI]\])?$", line
+            ):
+                code, title = pattern.groups()
+                title = processed_title(title)
+                # if we should only parse ONE element, ignore all the others.
+                if only_one_code:
+                    if only_one_code != code:
+                        continue
+                    element.title = title
+                    in_element = True
+                else:
+                    # New data element found!
+                    # If there is already an old element, save it to the cache
+                    # before creating a new one
+                    if element.code:
+                        # if (
+                        #     element.code in data_element_specs
+                        #     and data_element_specs[element.code].stub
+                        # ):
+                        data_element_specs[element.code] = element
+
+                    # if the code is already in the list, we might have a title mismatch.
+                    # don't set the title, as it is already taken from the global list
+                    if code in data_element_specs and not data_element_specs[code].stub:
+                        if not data_element_specs[code].title == title:
+                            print(
+                                f"{code} data element title mismatch: "
+                                f"'{data_element_specs[code].title}' != '{title}'"
+                            )  # TODO should be AFTER title and desc saving
+
+                    # create a new element for the next cycle
+                    element = DataElementSpec(
+                        code=code, title=title, description="", repr_line="", stub=False
+                    )
+                    in_element = True
+                    in_description = False
+                    continue
+
+            if in_element:
+                # find lines like this:
+                #      Desc: To identify an object.
+                if pattern := re.match(r"^[ +*#|X]+Desc: (.*?)$", line):
+                    element.description = pattern.group(1)
+                    in_description = True
+                    continue
+                # find lines like this:
+                #      Repr: an..23
+                if pattern := re.match(r"^[ +*#|X]+Repr: (.*?)$", line):
+                    element.repr_line = pattern.group(1)
+                    # after repr, we could stop processing to save time. Everything below
+                    # this line is not needed anymore.
+                    continue
+
+                # possible ending codes
+                if re.match(r"^\s+Data Element Cross Reference.*$", line):
+                    # skip the rest of the file/description to avoid a textual mimikry
+                    in_element = False
+                    continue
+
+            # TODO evtl. parse code values
+
+        except StopIteration:
+            break
+        # save last constructed element
+
+    if element.code:
+        data_element_specs[element.code] = element
+
+
+def get_composite_directory_desc(directory):
+    """Returns the description text for the EDIFACT EDED composite element list.
+
+    Attributes:
+        directory: The service directory where the segment is found, e.g. "d11a",
+            "d24a", "d11b"
+    """
+    return _retrieve_or_get_cached_file(
+        f"{base_url}/{directory}/trcd/trcdi1.htm",
+        f"{directory}/trcdi1.txt",
+    )
+
+
+def parse_composite_directory_desc(text):
+    """
+    Parse the composite element list description from EDIFACT documentation.
+
+    This function processes the text containing the composite element list
+    description, extracts the composite element codes and titles, and stores them
+    in the global composite_specs dictionary.
+
+    Args:
+        text: The raw text containing the composite element list description.
+    """
+    lines = iter(text.strip().splitlines())
+    line_number = 0
+    while True:
+        try:
+            # skip all empty lines
+            line, line_number = get_next_not_empty_line(lines, line_number)
+            # find lines like this:
+            # 00010   UNH Message header                           M   1
+            # 00020   BGM Beginning of message                     M   1
+            if pattern := re.match(r"^[ +*#|X]{4}([A-Z]\d{3})\s+(.*)$", line):
+                code, title = pattern.groups()
+                title = processed_title(title)
+                composite_specs[code] = CompositeElementSpec(
+                    code=code, title=title, schema=[], stub=True
+                )
+        except StopIteration:
+            break
+
+
+def get_composite_desc(directory: str, code: str) -> str:
+    """Returns the URL for the provided composite data element code.
+
+    Attributes:
+        directory: The service directory where the composite data element is found,
+            e.g. "d11a", "d24a", "d11b"
+        code: The composite data element code as string, e.g. "C010"
+    """
+    return _retrieve_or_get_cached_file(
+        f"{base_url}/{directory}/trcd/trcd" f"{code.lower()}.htm",
+        f"{directory}/trcd{code.lower()}.txt",
+    )
+
+
+# def parse_edifact_desc(
+#     SpecType: Type[DataElementSpec, CompositeElementSpec, SegmentSpec, MessageSpec],
+#     cache: dict,
+#     hooks: tuple[tuple[Callable[[Match[str],dict],None], str]],
+#     text,
+#     only_one_code: str,
+# ) -> None:
+#     lines = iter(text.strip().splitlines())
+#     line_number = 0
+#     in_element = False
+#     in_description = False
+#     if only_one_code:
+#         if not only_one_code in cache:
+#             raise KeyError(f"Data element {only_one_code} not found in the cache.")
+#         if not cache[only_one_code].stub:
+#             print(
+#                 "Can't parse element",
+#                 only_one_code,
+#                 "because it's already in the cache.",
+#             )
+#             return
+#     element = SpecType(code=only_one_code or "", title="", schema=[], stub=False)
+#
+#     while True:
+#         try:
+#             # skip all empty lines
+#             line, line_number = get_next_not_empty_line(lines, line_number)
+#             # first, if we parsed a description, it could be multiline, so check for
+#             # second/third line of desc., and if we find it, append it to description.
+#             if in_description and element.code:
+#                 if pattern := re.match(r" {11,12}(.*?)$", line): # TODO:anpassen
+#                     element.description += " " + pattern.group(1).strip()
+#                     continue
+#                 else:
+#                     in_description = False
+#
+#             if not in_element and hasattr(element,"url") and not element.url:
+#                 element.url = parse_url(line)
+#
+#
+#
+#     for plugin in hooks:
+#         if pattern:= re.match(plugin[1],line):
+#             plugin[0](pattern,element)
+
+
+def parse_composite_desc(text, only_one_code: str | None = None):
+    lines = iter(text.strip().splitlines())
+    line_number = 0
+    in_composite = False
+    in_description = False
+    if only_one_code:
+        if not only_one_code in composite_specs:
+            raise KeyError(f"Data element {only_one_code} not found in the cache.")
+        if not composite_specs[only_one_code].stub:
+            print(
+                "Can't parse composite data element",
+                only_one_code,
+                "because it's already in the cache.",
+            )
+            return
+    composite = CompositeElementSpec(
+        code=only_one_code or "", title="", schema=[], stub=False
+    )
+    while True:
+        try:
+            # skip all empty lines
+            line, line_number = get_next_not_empty_line(lines, line_number)
+            # first, if we parsed a description, it could be multiline, so check for
+            # second/third line of desc., and if we find it, append it to description.
+            if in_description and composite.code:
+                if pattern := re.match(r" {11,12}(.*?)$", line):
+                    composite.description += " " + pattern.group(1).strip()
+                    continue
+                else:
+                    in_description = False
+
+            if not in_composite and not composite.url:
+                composite.url = parse_url(line)
+
+            # find header lines like this:
+            #       C001 TRANSPORT MEANS
+            #       S005  RECIPIENT REFERENCE/PASSWORD DETAILS
+            if pattern := re.match(r"^[ +*#|X]+([A-Z]\d{3})\s(.*?)$", line):
+                code, title = pattern.groups()
+                title = processed_title(title)
+                if only_one_code:
+                    if only_one_code != code:
+                        continue
+                    composite.title = title
+                    # in_composite = True
+                else:
+                    if composite.code:
+                        composite_specs[composite.code] = composite
+
+                    # just check if the title matches with the one from the list.
+                    if code in composite_specs and not composite_specs[code].stub:
+                        if not composite_specs[code].title == title:
+                            print(
+                                f"{code} composite element title mismatch: "
+                                f"'{composite_specs[code].title}' != {title}'"
+                            )
+
+                    composite = CompositeElementSpec(
+                        code=code, title=title, schema=[], stub=False
+                    )
+
+                in_composite = True
+                in_description = False
+                continue
+
+            if in_composite:
+                # find Description patterns:
+                # Desc: Code and/or name identifying the type of means of
+                #       transport.
+                if pattern := re.match(r"^[ +*#|X]+Desc: (.*)$", line):
+                    composite.description = pattern.group(1).strip()
+                    in_description = True
+                    continue
+
+                # find sub data element reference pattern like:
+                # 010    8179  Transport means description code          C      an..8
+                # 020    1131  Code list identification code             C      an..17
+                if pattern := re.match(
+                    r"^(\d{3})\s+(\d{4})\s+(.*?)\s+([MC])\s+([an]+\.?\.?\d+)\s*$", line
+                ):
+                    pos, code, title, mandatory, repr_line = pattern.groups()
+                    mandatory = mandatory == "M"
+                    if (
+                        not data_element_specs[code].stub
+                        and title != data_element_specs[code].title
+                    ):
+                        print(
+                            f"{composite.code} composite element has a reference to"
+                            f" {code} data element with wrong title: '{title}' != "
+                            f"'{data_element_specs[code].title}'"
+                        )
+
+                    # If repr_line is the same as in the data element description,
+                    # we skip it in the tuple
+                    entry = CompositeDataElementUsage(
+                        pos, data_element_specs[code], mandatory, repr_line
+                    )
+                    composite.schema.append(entry)
+                    continue
+        except StopIteration:
+            break
+    composite_specs[composite.code] = composite
+
+
+# ------------------ Segment ------------------
+
+
+def get_segment_directory_desc(directory: str) -> str:
+    """Returns the URL for the EDSD segment list.
+
+    Attributes:
+        directory: The service directory where the segment is found, e.g. "d11a",
+        "d24a", "d11b"
+    """
+    return _retrieve_or_get_cached_file(
+        f"{base_url}/{directory}/trsd/trsdi1.htm",
+        f"{directory}/trsdi1.txt",
+    )
+
+
+def parse_segment_directory_desc(text: str):
+    """Parses a segment list description from EDIFACT documentation.
+
+    The function accepts a text containing one segment, or a list of segments.
+    """
+    lines = iter(text.strip().splitlines())
+    line_number = 0
+    in_list = False
+    while True:
+        try:
+            # skip all empty lines
+            line, line_number = get_next_not_empty_line(lines, line_number)
+            # find lines like this:
+            # BCD  Benefit and coverage detail
+            # BLI  Billable information
+            if pattern := re.match(r"^\s+Tag\s+Name\s*$", line):
+                in_list = True
+                continue
+
+            if not in_list:
+                continue
+
+            if pattern := re.match(r"^[ +*#|X]{3,}([A-Z]{3})\s+([A-Z].*?)$", line):
+                tag, title = pattern.groups()
+                if tag in segment_specs:
+                    raise KeyError(
+                        f"Could not create SegmentSpec: {tag} already exists."
+                    )
+
+                segment_specs[tag] = SegmentSpec(
+                    tag=tag,
+                    title=processed_title(title),
+                    description="",
+                    schema=[],
+                    stub=True,
+                )
+        except StopIteration:
+            break
+
+
+def get_segment_desc(directory: str, segment_tag: str) -> str:
+    """Returns the URL for the provided segment code.
+
+    Attributes:
+        directory: The service directory where the segment is found, e.g. "d11a",
+        "d24a", "d11b"
+        segment_tag: The segment tag as lowercase string, e.g. "bgm", "unb"
+    """
+    # some tags don't seem to have a downloadable description...
+    # however, the "d23a" directory has it...
+    # fmt: off
+    if segment_tag in [
+        "UCD", "UCF", "UCI", "UCM", "UCS", "UGH", "UGT", "UIB", "UIH", "UIR",
+        "UIT", "UIZ", "UNB", "UNE", "UNG", "UNH", "UNO", "UNP", "UNS", "UNT",
+        "UNZ", "USA", "USB", "USC", "USD", "USE", "USF", "USH", "USL", "USR",
+        "UST", "USU", "USX", "USY",
+    ]:
+        return ""
+    # fmt: on
+    text = _retrieve_or_get_cached_file(
+        f"{base_url}/{directory}/trsd/trsd" f"{segment_tag.lower()}.htm",
+        f"{directory}/trsd{segment_tag.lower()}.txt",
+    )
+    if not text:
+        print(f"No description found for segment: {segment_tag}")
+    return text
+
+
+def parse_segments_desc(text: str, only_segment_tag: str = ""):
+    """Parses the description text containing one or more segments.
+
+    If segment_tag is given, it will only parse the one segment, and ignore others.
+    """
+    if not text:
+        return
+    lines = iter(text.strip().splitlines())
+    line_number = 0
+    in_composite = False
+    in_segment = False
+    multiline = False
+
+    # the last top level element usage: a composite or data segment
+    last_toplevel_element: (
+        SegmentCompositeElementUsage | SegmentDataElementUsage | None
+    ) = None
+    sub_elements: list[SegmentInlineDataElementUsage] = []
+    segment = SegmentSpec(tag="", title="", schema=[], url="")
+    url = ""
+    tag = ""
+    keep_next_line = False
+    while True:
+        try:
+            if keep_next_line:
+                keep_next_line = False
+            else:
+                # skip all empty lines
+                line, line_number = get_next_not_empty_line(lines, line_number)
+
+            if not in_segment and not in_composite and not url:
+                url = parse_url(line)  # noqa
+                # If we found a URL, it means it's a single  segment file which was
+                # downloaded and prepended with the URL
+                # we just save the url, and if we know the tag, we append it to the schema
+
+            # ---------------------------- parse title ---------------------------------
+            # find pattern for title
+            #       IDE  IDENTITY
+            #      UCD    DATA ELEMENT ERROR INDICATION
+            if pattern := re.match((r"^[ +*#|X]{6,8}([A-Z]{3})\s+([A-Z ].*)$"), line):
+                # we found a new segment
+                # save old segment if already available, and proceed to new one
+                if segment.tag:
+                    if not segment.tag in segment_specs:
+                        print(
+                            f"Could not fill segment {segment.tag} schema with "
+                            f"elements. Please create segment first."
+                        )
+                    else:
+                        segment.stub = False
+                        segment_specs[segment.tag] = segment
+
+                # if only one segment should be parsed, and we found another one,
+                # stop it.
+                if in_segment and only_segment_tag:
+                    break
+
+                tag, title = pattern.groups()
+                title = processed_title(title)
+                # create new segment
+                segment = SegmentSpec(tag=tag, title=title, url=url, schema=[])
+                in_segment = True
+                continue
+
+            if in_segment:
+                if pattern := re.match(r"^\s+Function:\s(.*?)\s*$", line):
+                    desc_firstline = pattern.group(1)
+
+                    if not segment:
+                        raise ParsingError(
+                            f"Unexpected Function line, cannot assign to segment:\n"
+                            f"'{line}'"
+                        )
+                    # parse multilines until next "Pos TAG Name" or next top level tag
+                    desc, line_number, line = parse_multiline_until(
+                        r"^(?:Pos\s+TAG\s+Name\s+S|\d{3}[ +*#|X]+[A-Z\d]\d{3}\s+"
+                        r"\w+).*",
+                        lines,
+                        line_number,
+                    )
+                    segment.description = " ".join([desc_firstline, desc])
+                    keep_next_line = True
+                    continue
+
+                # ----------------------- top level data element ---------------------------
+                # Search for a start of a top level data element, like this:
+                # 030    3164 CITY NAME                                  C    1 an..35
+                if toplevel_dataelement_match := re.match(
+                    r"^(\d{3})[ +*#|X]+(\d{4})\s+(.*?)\s{2,30}([MC])\s+(\d+)\s+(["
+                    r"an]+\.?\.?\d+)(?:\s+[\d,]+|\s*)?$",
+                    line,
+                ):
+                    pos, code, title, mandatory, repeat, repr_line = (
+                        toplevel_dataelement_match.groups()
+                    )
+                    title = processed_title(title)
+                    ensure_data_element_spec_exists(code, title, tag)
+
+                    if title != data_element_specs[code].title:
+                        print(
+                            f"{tag}.{code} title '{title}' in data element desc file does "
+                            f"not match expected title '{data_element_specs[code].title}' "
+                            f"from data element list."
+                        )
+
+                    if last_toplevel_element:
+                        # Save current top level element...
+                        segment.schema.append(last_toplevel_element)
+                        sub_elements = []
+
+                    last_toplevel_element = SegmentDataElementUsage(
+                        pos=pos,
+                        element=data_element_specs[code],
+                        mandatory=mandatory == "M",
+                        repeat=int(repeat),
+                        repr_line=repr_line,
+                    )
+                    assert (
+                        not sub_elements
+                    ), f"Found open sub elements when parsing {line}"
+                    in_composite = False
+                    continue
+
+                # ------------------- top level composite data element ---------------------
+                # New start of a top level composite element, like this:
+                # 060    C819 COUNTRY SUBDIVISION DETAILS                C    5
+                if composite_match := re.match(
+                    r"^(\d{3})[ +*#|X]+([A-Z]\d{3})\s+(.*?)\s+([MC])\s+(\d+)(?:\s+[\d,]+|\s*)?$",
+                    line,
+                ):
+                    pos, code, title, mandatory, repeat = composite_match.groups()
+                    if in_composite:
+                        # This is a new composite element after a *composite* element
+                        if (
+                            not type(last_toplevel_element)
+                            is SegmentCompositeElementUsage
+                        ):
+                            raise ParsingError(
+                                f"Unexpected begin of composite {code} in {segment.tag}:\n"
+                                f"'{line}'"
+                            )
+                        ensure_composite_spec_exists(code, title, tag)
+                        # There are no nested composite elements, but we found a new
+                        # composite start. Save current toplevel element...
+                        if last_toplevel_element:
+                            # Save current top level element...
+                            segment.schema.append(last_toplevel_element)
+
+                        in_composite = True  # again, next composite has started
+
+                    else:
+                        # This is a new composite element after a *data* element
+                        # save current line as composite start...
+                        if last_toplevel_element:
+                            # Save current top level element...
+                            segment.schema.append(last_toplevel_element)
+
+                    sub_elements = []
+                    ensure_composite_spec_exists(code, title, tag)
+                    last_toplevel_element = SegmentCompositeElementUsage(
+                        pos=pos,
+                        element=composite_specs[code],
+                        mandatory=mandatory == "M",
+                        repeat=int(repeat),
+                        schema=sub_elements,
+                    )
+
+                    in_composite = True
+                    continue
+
+                # ------------------------- sub element of a composite----------------------
+                # Start of composite sub element line, like:
+                #     3299  Address purpose code                      C      an..3
+                #  +  3131  Address type code                         C      an..3
+                #     5105  Monetary amount function detail
+                #           description code                          C      an..17
+                # first check if it looks similar to a data sub element ("startswith"...)
+                if re.match(r"^[ +*#|X]+(\d{4})\s+(.+)$", line):
+                    if not re.search(r"([MC])\s{2,}([an]+\.?\.?\d+)\s*$", line):
+                        line = line + " " + next(lines).strip()
+                        multiline = True
+
+                if sub_element_match := re.match(
+                    r"^[ +*#|X]+(\d{4})\s+(.+)\s+([MC])\s{2,}([an]+\.?\.?\d+)\s*$", line
+                ):
+                    code, title, mandatory, repr_line = sub_element_match.groups()
+                    if not in_composite:
+                        raise ParsingError(
+                            f"Unexpected begin of sub element {code} in {segment.tag} "
+                            f"without containing composite element:\n"
+                            f"'{line}'"
+                        )
+                    # with sub elements, no POS field is defined.
+                    title = processed_title(title)
+                    ensure_data_element_spec_exists(code, title, tag)
+                    if (
+                        not data_element_specs[code].stub
+                        and title != data_element_specs[code].title
+                    ):
+                        print(
+                            f"{tag}.{code} title '{title}' in desc file does not match expected "
+                            f"title '{data_element_specs[code].title}' from data element "
+                            f"list."
+                        )
+                    sub_elements.append(
+                        SegmentInlineDataElementUsage(
+                            element=data_element_specs[code],
+                            mandatory=mandatory == "M",
+                            repr_line=repr_line,
+                        )
+                    )
+                    multiline = False
+                    continue
+                elif multiline:
+                    raise ParsingError(
+                        f"Unexpected multiline element in line {line_number}:\n{line}"
+                    )
+
+        except StopIteration:
+            break
+    # Finalize last composite
+    if in_composite and type(last_toplevel_element) is SegmentCompositeElementUsage:
+        segment.schema.append(last_toplevel_element)
+        segment.stub = False
+        segment_specs[segment.tag] = segment
+
+
+# ------------------ Message ------------------
+
+
+def get_message_directory_desc(directory: str) -> str:
+    """Returns the URL for the service directory for messages.
+
+    Attributes:
+        directory: The service directory as lowercase string, e.g. "d11a",
+            "d24a", "d11b"
+    """
+    return _retrieve_or_get_cached_file(
+        f"{base_url}/{directory}/trmd/trmdi2.htm",
+        f"{directory}/trmdi2.txt",
+    )
+
+
+def parse_message_directory_desc(text: str):
+    """Creates a basic messages dict from the given raw EDIFACT message directory.
+
+    It just fills tag and title of the messages, and leaves the schema yet empty.
+    """
+    lines = iter(text.strip().splitlines())
+    while True:
+        try:
+            line = next(lines)
+            if pattern := re.match(
+                r"^[ +*|XR]{3}([A-Z]{6})\s((?:.*?(?:\n\s{10}.*?)*)?)\s+(\d+)\s+$", line
+            ):
+                tag, desc, _rev = pattern.groups()
+                desc = desc.replace("\n", " ").strip()
+                message_specs[tag] = MessageSpec(
+                    tag=tag, title=desc, description="", schema={}, stub=True
+                )
+        except StopIteration:
+            break
+    return message_specs
+
+
+def get_message_desc(directory: str, tag: str) -> str:
+    """Returns the URL for the service directory for messages.
+
+    Attributes:
+        directory: The service directory as lowercase string, e.g. "d11a",
+            "d24a", "d11b"
+        tag: The message code as string, e.g. "ENTREC", "PRIHIS", ...
+    """
+    return _retrieve_or_get_cached_file(
+        f"{base_url}/{directory}/trmd/" f"{tag.lower()}_c.htm",
+        f"{directory}/trmd{tag.lower()}_c.txt",
+    )
+
+
+def parse_message_desc(text, tag: str) -> MessageSpec:
+    """Parses a message text and extracts the message specification.
+
+    It creates all used segments, if they are not existing yet, in segments
+    Arguments:
+        text: str, the raw text of the EDIFACT message description
+        tag: str, the message code, like "APERAK"
+    """
+    pos_segment_line_re = re.compile(r"^(\d{5})(\s+)(.*)\s*$")
+
+    lines = iter(text.strip().splitlines())
+    line_number = 0
+    message = message_specs[tag]
+    group_parent: MessageGroupUsage | MessageSpec = message
+    expected_indent_level = 0
+    in_message = False
+    stay_on_next_line = False
+    while True:
+        try:
+            if stay_on_next_line:
+                stay_on_next_line = False
+            else:
+                line, line_number = get_next_not_empty_line(lines, line_number)
+            title = ""
+
+            if not in_message:
+                # find lines like this and collect sources:
+                # SOURCE: TBG16 Entry Point
+                if pattern := re.match(r"^SOURCE:\s+([A-Z0-9]+)\s+(.*)\s*$", line):
+                    abbr, _title = pattern.groups()
+                    if not abbr in source_specs:
+                        source_specs[abbr] = title
+                    message.source = abbr
+
+                # find message type and check if we are parsing correct file:
+                if pattern := re.match(r"^\s+Message Type\s?: (.*)\s*$", line):
+                    if pattern.group(1) != tag:
+                        raise ParsingError(
+                            f"Message type '{pattern.group(1)}' in file does not "
+                            f"match expected tag: '{tag}'"
+                        )
+                message.url = parse_url(line)
+
+            if re.match(r".*\s+Segment index\s.*$", line):
+                # after the message block, find key word and skip the rest
+                break
+
+            # find lines like this  with a pos{5} start:
+            # 00130   BGM, Beginning of message
+            # 00150      RFF, Reference
+            # 00070   Segment group 1:  IND-RCS-SG2
+            # 00100      Segment group 2:  FOO-BAR-BAZ
+            # 00110         Foo, Foo Bar Baz
+            segment_start = False
+            group_start = False
+            pos = number = members = ""
+            if pattern := pos_segment_line_re.match(line):
+                in_message = True
+                pos, spaces, rest = pattern.groups()
+                # the indent level is correct
+                current_indent_level = (len(spaces) - 3) // 3
+                if pattern := re.match(r"Segment group\s+(\d+):\s+(.*)", rest):
+                    number, members = pattern.groups()
+                    # members could be too long for a line, so make sure all are
+                    # recognized.
+                    while members.endswith("-"):
+                        members = members + next(lines).strip()
+
+                    _tag = f"SG{number}"
+                    group_start = True
+                elif pattern := re.match(r"^([A-Z]{3}),\s(.*)\s*$", rest):
+                    _tag, title = pattern.groups()
+                    segment_start = True
+                else:
+                    raise ParsingError(
+                        f"Error parsing message '{message.tag}': Unexpected "
+                        f"line {line_number}:\n"
+                        f"'{line}'"
+                    )
+
+                # check indent level correctness, if there are open members to tick off
+                if isinstance(group_parent, MessageGroupUsage) and group_parent.members:
+                    # this must be the next expected member of the current group
+                    expected = group_parent.members.pop(0)
+                    if not _tag == expected:
+                        raise ParsingError(
+                            f"Wrong segment reference '{_tag}' in line "
+                            f"{line_number} (expected '{expected}'):\n"
+                            f"'{line}'"
+                        )
+                    assert len(spaces) == 3 + expected_indent_level * 3, (
+                        f"Wrong indent level {current_indent_level} (expected "
+                        f"{expected_indent_level}) for line {line_number} while parsing '{tag}' "
+                        f"message:\n"
+                        f"'{line}'"
+                    )
+                    while (
+                        not group_start
+                        and group_parent is not message
+                        and len(group_parent.members) == 0  # type:ignore
+                    ):
+                        expected_indent_level -= 1
+                        group_parent = group_parent.parent  # type:ignore
+
+                # ----------------- New group detected! -----------------
+            if group_start:
+                # We found a group header!
+                # Get segments list
+                # ...and add a new group of segments that need to be parsed next
+                new_schema: dict[str, MessageSegmentUsage | MessageGroupUsage] = {}
+
+                group_parent = MessageGroupUsage(
+                    pos=pos,
+                    title=f"Segment group {number}",
+                    schema=new_schema,
+                    members=members.split("-"),
+                    parent=group_parent,  # the former one, or None
+                )
+                desc, line_number, line = parse_multiline_until(
+                    pos_segment_line_re, lines, line_number
+                )
+                stay_on_next_line = True
+                # for _tag in members.split("-"):  # type:str
+                #     new_schema[_tag] = {}
+                # _tag = f"SG{number}"
+                # new_schema[_tag] = current_usage
+
+                # and increase the indent level
+
+                expected_indent_level += 1
+
+                # ----------------- New segment detected! -----------------
+                # find lines like this:
+                # 00020   BGM, Beginning of message
+                # 00060      RFF, Reference
+            elif segment_start:
+
+                desc, line_number, line = parse_multiline_until(
+                    pos_segment_line_re, lines, line_number
+                )
+                stay_on_next_line = True
+                group_parent.schema[_tag] = MessageSegmentUsage(  # type:ignore
+                    pos=pos,
+                    element=segment_specs[_tag],
+                    parent=group_parent,
+                    description=desc,
+                )
+
+            else:
+                _tag = ""
+
+        except StopIteration:
+            break
+
+    return message
+
+
+def file_header():
+    return """# Copyright (c) 2017-{year} Christian González
+# This file is licensed under the MIT license, see LICENSE file.
+
+""".format(
+        year=datetime.now().year
+        # TODO:, date=datetime.now().strftime("%Y-%M-%d %H:%M:%S")
+    )
+
+
+def export_all(_list: Iterable):
+    output = "\n\n__all__ = [\n"
+    for element in _list:
+        output += f"    '{element.class_name()}',\n"
+        pass
+    output += "]\n"
+    return output
+
+
+# TODO:  add this to string above:
+#
+# Generated at {date} by pydifact-generator from the official
+# UN descriptions at service.unece.org.
+
+
+def render_data_elements(with_imports=True) -> str:
+    output = "# ------------------- Data Elements -------------------\n"
+    output += "# created from EDED - the EDIFACT data elements directory\n\n"
+    output += file_header()
+
+    if with_imports:
+        output += "from pydifact.syntax.common import DataElement"
+
+    for code, element in data_element_specs.items():
+        logger.info(f"Creating class '{element.class_name()}'")
+        # TODO: element.description|wordwrap:73 - use django filter
+        output += f"""
+
+class {element.class_name()}(DataElement):
+    \"\"\"{element.description}\"\"\" 
+    code: str = "{element.code}"
+    title: str = "{element.title}"
+    repr_line: str = "{element.repr_line}"
+"""
+
+    output += export_all(data_element_specs.values())
+    return black.format_str(output, mode=black.Mode())
+
+
+def render_composite_elements(with_imports=True) -> str:
+    output = "# ------------------- Composite Data Elements -------------------\n"
+    output += "# created from EDCD - the EDIFACT composite  data elements directory\n\n"
+    output += file_header()
+    if with_imports:
+        output += (
+            "from pydifact.syntax.common import CompositeDataElement, "
+            "CompositeSchemaEntryList\n"
+        )
+        # output += "from .data import (\n"
+        # for data_spec in data_element_specs.values():  # type: DataElementSpec
+        #     output += f"    {data_spec.class_name()},\n"
+        # output += ")\n"
+        output += "from .data import *\n"
+
+    for code, spec in composite_specs.items():
+        output += f"class {spec.class_name()}(CompositeDataElement):\n"
+        output += f'    """{spec.description}"""\n'
+        output += f'    code: str = "{code}"\n'
+        output += f'    title: str = "{spec.title}"\n'
+        output += "    schema: CompositeSchemaEntryList = [\n"
+        for entry in spec.schema:
+            comment = ""
+            if entry.element.repr_line != entry.repr_line:
+                comment = f"  # orig: '{entry.element.repr_line}'"
+            output += (
+                f"({entry.element.class_name()}, {entry.mandatory}, "
+                f'"{entry.repr_line}"),{comment}\n'
+            )
+        output += "]\n"
+
+    output += export_all(composite_specs.values())
+    return black.format_str(output, mode=black.Mode())
+
+
+def render_segments(with_imports=True) -> str:
+
+    output = "# ------------------- Segments -------------------\n"
+    output += "# created from EDSD - the EDIFACT segments directory\n\n"
+    output += file_header()
+    if with_imports:
+        output += "from pydifact import Segment\n"
+        # output += (
+        #     "from pydifact.syntax.specs import SegmentCompositeSpec, "
+        #     "SegmentDataElementSpec\n"
+        # )
+        output += "from pydifact.syntax.common import SegmentSchema\n"
+        output += "from .data import *\n"
+        output += "from .composite import *\n"
+    for tag, segment_spec in segment_specs.items():
+        output += f"\n\nclass {segment_spec.class_name()}(Segment):\n"
+        if segment_spec.description:
+            output += f'    """{segment_spec.description}"""\n'
+        output += f'    tag: str = "{segment_spec.tag}"\n'
+        output += "    schema: SegmentSchema = {\n"
+        #    version: str = "{segment_spec.version}"
+        # TODO: if local schema differs from global, make a hint as comment
+        identifiers: list[str] = []
+        for entry in segment_spec.schema:
+
+            # prevent multiple identifiers with same name
+            identifier = entry.identifier
+            counter = 0
+            while identifier in identifiers:
+                counter += 1
+                identifier = f"{entry.identifier}{counter}"
+            identifiers.append(identifier)
+
+            output += f'        "{identifier}": '
+            if isinstance(entry, SegmentCompositeElementUsage):
+                output += (
+                    f"({entry.element.class_name()}, "
+                    f"{entry.mandatory=='M'}, {entry.repeat}"
+                )
+                differs = False
+                subschema_output = ",("
+                if entry.schema:
+                    for subschema in entry.schema:
+                        comment = ""
+                        if (
+                            subschema.element.repr_line
+                            and subschema.element.repr_line != subschema.repr_line
+                        ):
+                            differs = True
+                            comment = f"  # orig: '{subschema.element.repr_line}'"
+                        subschema_output += (
+                            f"({subschema.element.class_name()},"
+                            f" {subschema.mandatory=='M'}, '{subschema.repr_line}'),{comment}\n"
+                        )
+                subschema_output += "),"
+                if differs:
+                    output += subschema_output
+                output += "),\n"
+
+            elif isinstance(entry, SegmentDataElementUsage):
+                output += (
+                    f"({entry.element.class_name()}, "
+                    f'{entry.mandatory=="M"}, "{entry.repr_line}"),\n'
+                )
+        output += "    }\n"
+
+    output += export_all(segment_specs.values())
+    return output  # black.format_str(output, mode=black.Mode())
+
+
+def render_messages_group(group: MessageGroupUsage, indent=0) -> str:
+    output = ""
+    for entry in group.schema:
+        if isinstance(entry, MessageGroupUsage):
+            output += f"{'    ' * indent}{render_messages_group(entry, indent + 1)},\n"
+        elif isinstance(entry, MessageSegmentUsage):
+            output += f"{'    ' * indent}{entry.element.class_name()},\n"
+    return output
+
+
+def render_messages(with_imports=True) -> str:
+
+    output = "# ------------------- Messages -------------------\n"
+    output += "# created from EDMD - the EDIFACT messages directory\n\n"
+    output += file_header()
+    if with_imports:
+        output += "from pydifact.segmentcollection import Message, MessageSchema\n"
+        output += "from .data import *\n"
+        output += "from .composite import *\n"
+    for tag, message_spec in message_specs.items():
+        output += f"""
+
+class {message_spec.class_name()}(Message):\n
+    tag: str = "{message_spec.tag}"
+    schema: MessageSchema = """
+        output += "{\n"
+        #    version: str = "{segment_spec.version}"
+        # TODO: if local schema differs from global, make a hint as comment
+        identifiers: list[str] = []
+        for segment_tag, entry in message_spec.schema.items():
+
+            # prevent multiple identifiers with same name
+            identifier = entry.identifier
+            counter = 0
+            while identifier in identifiers:
+                counter += 1
+                identifier = f"{entry.identifier}{counter}"
+            identifiers.append(identifier)
+
+            output += f'        "{identifier}": '
+            if isinstance(entry, MessageGroupUsage):
+                output += render_messages_group(entry, 1)
+
+            elif isinstance(entry, SegmentDataElementUsage):
+                output += (
+                    f"({entry.element.class_name()}, "
+                    f'{entry.mandatory=="M"}, "{entry.repr_line}"),\n'
+                )
+            output += "),\n"
+
+        output += "    }\n"
+
+    output += export_all(message_specs.values())
+    return output  # black.format_str(output, mode=black.Mode())
+
+
+def write_python_code_to_file(directory: str, filename: str, content: str):
+    global last_file_path
+    # get path of pydifact.syntax module
+    dirname = os.path.join(os.path.dirname(pydifact.syntax.__file__), directory)
+    os.makedirs(dirname, exist_ok=True)
+    with open(os.path.join(dirname, "__init__.py"), "w", encoding="utf-8") as f:
+        f.write("")
+    current_file = os.path.join(dirname, filename)
+    with open(current_file, "w", encoding="utf-8") as f:
+        f.write(content)
+
+
+def print_usage():
+    print("Usage: pydifact-generator <directory>")
+    print("Parses online UNECE EDIFACT directory and generates Python classes from it.")
+    print(
+        "This program is NOT intended for end users, it is aimed at pydifact "
+        "developers, as it modifies the pydifact source code.\n"
+    )
+    print("Attributes:")
+    print(
+        "    directory       The EDIFACT directory to download spec descriptions "
+        "                    from, e.g. d24a, d11b etc."
+    )
+    print("    --help|-h       Shows this message.")
+    print("    --clear-cache   Clears the temporary directory and exits.")
+
+
+download_map = {
+    3: {"cl/data/unsl{directory}a.zip": ["UNSL.{directory}.txt"]},
+    4: {
+        # Service message type directory
+        "v4x/data/m40200.zip": [
+            "Autack_0.txt",
+            "Contrl_1.txt",
+            "Keyman_0.txt",
+            "Nm40200.txt",
+            "Tm40200.txt",
+        ],
+        # Service segment directory
+        "v4x/data/s40200.zip": [
+            "Ns40200.txt",
+            "Ss40200.txt",
+            "Ts40200.txt",
+        ],
+        # Service composite data element directory
+        "v4x/data/c40200.zip": [
+            "Nc40200.txt",
+            "Sc40200.txt",
+            "Tc40200.txt",
+        ],
+        # Service simple data element directory
+        "v4x/data/e40200.zip": [
+            "Ne40200.txt",
+            "Se40200.txt",
+            "Te40200.txt",
+        ],
+        "cl/data/sl40219.zip": [
+            "sl40219.txt",
+        ],
+    },
+}
+
+
+def main():
+    if len(sys.argv) != 2 or (sys.argv[1] in ["-h", "--help"]):
+        print_usage()
+        sys.exit(0)
+
+    if sys.argv[1] == "--clear-cache":
+        shutil.rmtree(download_directory, ignore_errors=True)
+        sys.exit(0)
+
+    if not os.path.exists(download_directory):
+        os.mkdir(download_directory)
+
+    edi_directory = sys.argv[1].lower()
+    syntax_version = syntax_version_from_directory(edi_directory)
+    download_baseurl = "https://service.gefeg.com/jwg1/Archive/"
+
+    if syntax_version not in download_map:
+        logger.error(f"Unsupported EDIFACT syntax version: {edi_directory}")
+        sys.exit(1)
+
+    # first, download service files, as they are needed as base for the others
+    for filename, check_file_list in download_map[syntax_version].items():
+        if syntax_version == 3:
+            # FIXME: in some .zips the files are lowercase, some upper, some mixed...
+            download_service_file(
+                download_baseurl + filename.replace("{directory}", edi_directory),
+                syntax_version,
+                [f.replace("{directory}", edi_directory) for f in check_file_list],
+            )
+        elif syntax_version == 4:
+            download_service_file(
+                download_baseurl + filename, syntax_version, check_file_list
+            )
+
+    try:
+
+        # fill all service data elements from list (including data!)
+        parse_data_element_desc(read_service_file(syntax_version, "Se40200.txt"))
+        # get and parse list of user data elements
+        text = get_data_element_directory_desc(edi_directory)
+        parse_data_element_directory_desc(text)
+        # walk through this list and parse each file, if code>=1000 (user elements)
+        for code in data_element_specs:
+            if data_element_specs[code].stub:
+                parse_data_element_desc(
+                    get_data_element_desc(edi_directory, code), code
+                )
+
+        # parse service composite data elements
+        parse_composite_desc(read_service_file(4, "Sc40200.txt"))
+
+        text = get_composite_directory_desc(edi_directory)
+        parse_composite_directory_desc(text)
+        for code in composite_specs:
+            if composite_specs[code].stub:
+                parse_composite_desc(get_composite_desc(edi_directory, code), code)
+
+        text = read_service_file(4, "Ts40200.txt")
+        parse_segment_directory_desc(text)
+        text = get_segment_directory_desc(edi_directory)
+        parse_segment_directory_desc(text)
+        text = read_service_file(4, "Ss40200.txt")
+        parse_segment_directory_desc(text)
+        parse_segments_desc(text)
+        for _tag in segment_specs:
+            text = get_segment_desc(edi_directory, _tag)
+            parse_segments_desc(text)
+
+        text = get_message_directory_desc(edi_directory)
+        parse_message_directory_desc(text)
+        for _tag in message_specs:
+            text = get_message_desc(edi_directory, _tag)
+            parse_message_desc(text, _tag)
+    except ParsingError as e:
+        raise ParsingError(
+            f"Error parsing EDIFACT directory '{edi_directory}' in "
+            f"file '{last_file_path}':\n{e}"
+        )
+
+    write_python_code_to_file(
+        edi_directory,
+        "data.py",
+        render_data_elements(),
+    )
+    write_python_code_to_file(
+        edi_directory,
+        "composite.py",
+        render_composite_elements(),
+    )
+    write_python_code_to_file(
+        edi_directory,
+        "segments.py",
+        render_segments(),
+    )
+    write_python_code_to_file(
+        edi_directory,
+        "messages.py",
+        render_messages(),
+    )
+
+
+# TODO: EDCL - the EDIFACT codes list directory
+
+if __name__ == "__main__":
+    main()

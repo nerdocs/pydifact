@@ -22,14 +22,22 @@
 import warnings
 from typing import overload
 
-from pydifact.constants import EDI_DEFAULT_VERSION, M, EDI_DEFAULT_SYNTAX, Element, \
-    Elements
+
+from pydifact.constants import (
+    M,
+    EDI_DEFAULT_SYNTAX_IDENTIFIER,
+    Element,
+    Elements,
+    EDI_DEFAULT_DIRECTORY,
+)
 from pydifact.exceptions import (
     ValidationError,
     MissingImplementationWarning,
     EDISyntaxError,
 )
-from pydifact.syntax.common import DataElement, CompositeDataElement
+from pydifact.syntax.common import SegmentSchema
+from pydifact.syntax.registry import SyntaxRegistry
+from pydifact.utils import is_valid_syntax_directory
 
 
 class Segment:
@@ -42,15 +50,23 @@ class Segment:
 
     # tag is not a class attribute in this case, as each Segment instance could have another tag.
     __omitted__ = True
-    plugins: list = []
-    schema: list[tuple[type[CompositeDataElement | DataElement], str, int, str]] = []
-    tag = None
-    elements = None
+    # plugins is a dict, that holds a list of Segments for each edifact directory schema
+    # as key (e.g. "d24a": [Segment1, Segment2,...])
+    plugins: dict[str, list[type["Segment"]]] = {}
+    schema: SegmentSchema
+    tag: str = ""
+    elements: Elements = []
 
     def __init_subclass__(cls, **kwargs):
+        from pydifact.syntax.registry import SyntaxRegistry
+
         super().__init_subclass__(**kwargs)
         if "__omitted__" not in cls.__dict__ or getattr(cls, "__omitted__") is False:
-            cls.plugins.append(cls)
+            # get the module where the class is defined, as edifact directory
+            directory = cls.__module__.split(".")[-2]
+            assert is_valid_syntax_directory(directory)
+            # register the new class as a Segment for the given directory.
+            SyntaxRegistry.register_segment(cls, directory)
 
     @overload
     def __init__(self, tag: str, *elements: Element): ...
@@ -69,7 +85,7 @@ class Segment:
         """
         # if there is no tag defined in the class itself, it MUST be passed as the first
         # argument.
-        if self.tag is None:
+        if not self.tag:
             if len(args) < 1:
                 raise AttributeError(
                     f"{self}: A generic segment must provide a tag as first argument."
@@ -181,8 +197,8 @@ class SegmentFactory:
         name: str,
         *elements: Element,
         validate: bool = True,
-        syntax_identifier: str = EDI_DEFAULT_SYNTAX,
-        version: int = EDI_DEFAULT_VERSION,
+        directory: str = EDI_DEFAULT_DIRECTORY,
+        syntax_identifier: str = EDI_DEFAULT_SYNTAX_IDENTIFIER,
     ) -> Segment:
         """Create a new instance of the relevant class type.
 
@@ -190,8 +206,9 @@ class SegmentFactory:
             name: The name of the segment
             elements: The data elements for this segment
             validate: bool if True, the created segment is validated before return
-            version: The version of the EDI standard this segment is based on
-                    (default: 4)
+            directory: The EDI directory/schema this segment is based on
+                    (default: "D24A", EDI Syntax version v4)
+            syntax_identifier: The syntax identifier for this segment
         """
         # Basic segment type validation is done here.
         # The more special validation must be done in the corresponding Segment
@@ -207,15 +224,10 @@ class SegmentFactory:
             raise EDISyntaxError(
                 f"Tag '{name}': A tag name must only contain alphanumeric characters."
             )
-        # TODO: don't iterate over plugins, use a dict to find plugins faster
-        for Plugin in Segment.plugins:
-            if (
-                getattr(Plugin, "tag", "") == name
-                and getattr(Plugin, "version", EDI_DEFAULT_VERSION) == version
-            ):
-                # use specific Segment subclass for this tag
-                segment = Plugin(*elements)
-                break
+        SpecificSegmentClass = SyntaxRegistry.get_segment(directory=directory, tag=name)
+
+        if SpecificSegmentClass:
+            segment = SpecificSegmentClass(*elements)
         else:
             # we don't support this kind of EDIFACT segment (yet), so
             # just create a generic Segment()

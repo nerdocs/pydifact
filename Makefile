@@ -18,3 +18,6 @@ mypy:
 
 test-extended:
 	pytest
+
+generate:
+	python -m scripts.generator.pydifact_generator $(ARGS)

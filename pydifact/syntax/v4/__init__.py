@@ -1,4 +1,4 @@
-from typing import NamedTuple
+# FIXME: deprecated
 
 from pydifact.constants import M, C
 from pydifact.syntax import v1, v2, v3
@@ -11,7 +11,6 @@ from .data import partner_identification_codes
 from ... import Segment
 
 __version__ = 4
-
 
 
 class SyntaxIdentifier(v1.SyntaxIdentifier):

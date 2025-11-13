@@ -3,7 +3,7 @@ from pydifact.syntax.common import (
     CompositeDataElement,
     SyntaxVersionNumber,
 )
-from pydifact.constants import M, C
+from pydifact.constants import M, C, Elements
 from pydifact.segments import Segment
 
 __version__ = 1
@@ -177,7 +177,7 @@ class PartyName(DataElement):
     repr = "an..35"
 
 
-class PartyNameFormat(DataElement):
+class PartyNameFormatCode(DataElement):
     code = "3045"
     desc = "Specification of the representation of a party name."
     repr = "an..3"
@@ -199,12 +199,12 @@ class PartyNameComposite(CompositeDataElement):
     code = "C080"
     desc = "Identification of a transaction party by name, one to five lines. Party name may be formatted."
     schema = [
-        PartyName,
-        PartyName,
-        PartyName,
-        PartyName,
-        PartyName,
-        PartyNameFormat,
+        (PartyName, M, "an..70"),
+        (PartyName, C, "an..70"),
+        (PartyName, C, "an..70"),
+        (PartyName, C, "an..70"),
+        (PartyName, C, "an..70"),
+        (PartyNameFormatCode, C, "an..3"),
     ]
 
 
@@ -294,6 +294,7 @@ class UNASegment(Segment):
                 self.segment_terminator,
             ]
         )
+
 
 class UNBSegment(Segment):
     """Interchange header.

@@ -116,44 +116,6 @@ In python ecosystem:
 - [bots](https://github.com/bots-edi/bots) - huge, with webinterface (bots-monitor), webserver, bots-engine.
 - [edicat](https://github.com/notpeter/edicat) - simple, only for separating lines/segments for CLI-piping.
 
-## Development
-
-### Setup
-
-To develop pydifact, clone the repository and install the dev requirements:
-
-```bash
-make dev
-# or
-# pip install -e .[dev]
-```
-
-This installs all the python packages needed for development and testing.
-
-### Code formatting
-
-Format all python files using [black](https://black.readthedocs.io) before committing.
-
-Happy coding, PR are more than welcome to make this library better, or to add a feature that matches your needs.
-Nevertheless, don't forget adding tests for every aspect you add in code.
-
-### Testing
-
-pydifact uses [pytest](http://pytest.org) for testing. There is a shortcut in the Makefile for your convenience:
-
-```bash
-make test
-```
-
-This is recommended for faster testing.
-
-
-There are some additional tests to check the performance of parsing huge files - you can include that tests by calling
-
-```bash
-make test-extended
-```
-
 ## Credits
 The official formats for UN/EDIFAT provided by UN Secretariat are raw text files located [here](http://www.unece.org/tradewelcome/un-centre-for-trade-facilitation-and-e-business-uncefact/outputs/standards/unedifact/directories/download.html) and html (.htm) files located [here](http://www.unece.org/tradewelcome/un-centre-for-trade-facilitation-and-e-business-uncefact/outputs/standards/unedifact/directories/2011-present.html), similarly for service codes as text and html files located at https://www.gefeg.com/jswg/.
 

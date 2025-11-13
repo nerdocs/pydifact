@@ -1,3 +1,4 @@
+# FIXME: deprecated
 partner_identification_codes = {
     "1": {
         "name": "DUNS (Data Universal Numbering System)",

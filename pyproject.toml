@@ -32,8 +32,15 @@ dev = [
     "sphinx-rtd-theme>=2.0.0",
     "build",
     "twine",
-    "mypy>=1.15.0"
+    "mypy>=1.15.0",
+    "requests",
+    "types-requests" # needed for mypy
  ]
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["pydifact"]
+exclude = ["scripts", "tests"]
 
 [tool.black]
 target_version = ["py310", "py311", "py312", "py313"]
@@ -49,3 +56,7 @@ build-backend = "setuptools.build_meta"
 
 [tool.setuptools.dynamic]
 version = {attr = "pydifact.__version__"}
+
+# ignore star imports for generated files
+[tool.ruff.lint.per-file-ignores]
+"pydifact/syntax/*" = ["F403","F405"]

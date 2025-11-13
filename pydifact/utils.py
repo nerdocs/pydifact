@@ -2,7 +2,7 @@ import re
 from typing import Literal
 
 
-def edifact_syntax_version(directory: str) -> Literal[1, 2, 3, 4]:
+def syntax_version_from_directory(directory: str) -> Literal[1, 2, 3, 4]:
     """
     Returns the EDIFACT syntax version (1–4) for a directory like 'D96A'.
 
@@ -37,7 +37,7 @@ def edifact_syntax_version(directory: str) -> Literal[1, 2, 3, 4]:
         raise ValueError("Unknown EDIFACT directory year")
 
 
-def edifact_syntax_directory(syntax_version: int) -> str:
+def directory_from_syntax_version(syntax_version: int) -> str:
     """
     Returns the latest EDIFACT syntax directory (like 'D24A') for a given
     syntax version (1–4).
@@ -60,6 +60,23 @@ def is_valid_syntax_directory(directory: str) -> bool:
     Returns True if the given directory is a valid EDIFACT syntax directory.
     """
     try:
-        return edifact_syntax_version(directory) is not None
+        return syntax_version_from_directory(directory) is not None
     except ValueError:  # unknown directory format / year
         return False
+
+
+allowed_alphanum_chars = set(
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789*-./:()'&=+\"?,"
+    "!_\\ "
+)
+
+
+def is_edifact_alphanum(s: str) -> bool:
+    """Returns True if str contains only alphanumeric characters in the sense of
+    EDIFACT.
+
+    See https://service.gefeg.com/jwg1/Files/V41-9735-1.pdf - page 11
+    """
+    return all(
+        c.isalnum() or (c.isascii() and c.isprintable() and not c.isalnum()) for c in s
+    )

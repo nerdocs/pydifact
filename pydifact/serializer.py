@@ -23,6 +23,7 @@ from pydifact.control.characters import Characters
 import re
 
 from pydifact.segments import Segment
+from pydifact.syntax.common import CompositeDataElement, DataElement
 
 
 class Serializer:
@@ -73,22 +74,26 @@ class Serializer:
             # skip the UNA segment as we already have written it if requested
             if segment.tag == "UNA":
                 continue
-            collection_parts += [segment.tag]
+            segment_out = ""
+            segment_out += segment.tag
             for element in segment.elements:
-                collection_parts += [self.characters.data_separator]
-                if isinstance(element, list):
-                    collection_parts += [
-                        self.characters.component_separator.join(
-                            self.escape(subelement) for subelement in element
-                        )
-                    ]
+                segment_out += self.characters.data_separator
+                if isinstance(element, (DataElement, CompositeDataElement)):
+                    segment_out += element.serialize(self.characters)
+                elif isinstance(element, list):
+                    segment_out += self.characters.component_separator.join(
+                        self.escape(subelement) for subelement in element
+                    )
+                    # self.characters.component_separator.join(
 
-                else:
-                    collection_parts += [self.escape(element)]
+                elif isinstance(element, str):
+                    segment_out += self.escape(element)
 
-            collection_parts += [self.characters.segment_terminator]
+            segment_out += self.characters.segment_terminator
             if break_lines:
-                collection_parts += ["\n"]
+                segment_out += "\n"
+
+            collection_parts.append(segment_out)
 
         collection = "".join(collection_parts)
         return collection
@@ -99,11 +104,8 @@ class Serializer:
         :param string: The string to be escaped
         """
 
-        if string is None:
+        if not string:
             return ""
-        assert isinstance(string, str), "%s is not a str, it is %s" % (
-            string,
-            type(string),
+        return self.regexp.sub(
+            lambda match: self.replace_map[match.group(0)], str(string)
         )
-
-        return self.regexp.sub(lambda match: self.replace_map[match.group(0)], string)

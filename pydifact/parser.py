@@ -19,26 +19,34 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
-
+import logging
 from collections.abc import Iterator
 
-from pydifact.constants import EDI_DEFAULT_VERSION, EDI_DEFAULT_SYNTAX, Element, \
-    Elements
+from pydifact.constants import (
+    EDI_DEFAULT_VERSION,
+    EDI_DEFAULT_SYNTAX_IDENTIFIER,
+    Element,
+    Elements,
+    EDI_DEFAULT_DIRECTORY,
+)
 from pydifact.exceptions import EDISyntaxError
 from pydifact.tokenizer import Tokenizer
 from pydifact.token import Token
 from pydifact.segments import Segment, SegmentFactory
 from pydifact.control import Characters
+from pydifact.utils import directory_from_syntax_version
+
+logger = logging.getLogger(__name__)
 
 
 class Parser:
     """Parse EDI messages into a list of segments.
 
-    Parameters:
+    Args:
         factory: The SegmentFactory to use for creating segments.
             (default: SegmentFactory())
         characters: The control characters to use. (default: Characters())
-        version: The EDI version to use (default: 4)
+        edi_version: The EDI version to use (default: 4)
     """
 
     def __init__(
@@ -46,22 +54,24 @@ class Parser:
         factory: SegmentFactory | None = None,
         characters: Characters | None = None,
         syntax_identifier: str | None = None,
-        version: int | None = None,
+        edi_directory: str = "",
+        # edi_version: int | None = None,
     ) -> None:
         self.factory = factory or SegmentFactory()
         self.characters = characters or Characters()
         self.syntax_identifier = syntax_identifier
-        self.version = version
+        self.edi_directory = edi_directory.upper()
 
     def parse(
         self, message: str, characters: Characters | None = None
     ) -> Iterator[Segment]:
         """Parse the message into a list of segments.
 
-        :param characters: the control characters to use, if there is no
-                UNA segment present
-        :param message: The EDI message
-        :rtype:
+        Args:
+            characters: the control characters, if there is no UNA segment present
+            message: The EDI message
+        Returns:
+            An iterator of Segment objects
         """
 
         # If there is a UNA, take the following 6 characters
@@ -106,11 +116,13 @@ class Parser:
     ) -> Characters | None:
         """Read the UNA segment from the passed string and extract/store the control characters from it.
 
-        :param message: a valid EDI message string, or UNA segment string,
-                        to extract the control characters from.
-        :param characters: the control characters to use, if none found in
-                           the message. Default: ":+,? '"
-        :return: the control characters
+        Args:
+            message: a valid EDI message string, or UNA segment string, to extract
+                the control characters from.
+            characters: the control characters to use, if none found in the message.
+                Default: ":+,? '"
+        Returns:
+            The control characters
         """
 
         if not characters:
@@ -141,11 +153,12 @@ class Parser:
         self, tokens: Iterator[Token], characters: Characters, with_una: bool = False
     ) -> Iterator[Segment]:
         """Convert the tokenized message into an array of segments.
-        :param tokens: The tokens that make up the message
-        :param characters: the control characters to use
-        :param with_una: whether the UNA segment should be included
-        :type tokens: list of Token
-        :rtype list of Segment
+        Args:
+            tokens: The tokens that make up the message
+            characters: the control characters to use
+            with_una: whether the UNA segment should be included
+        Returns:
+            An iterator of Segment objects
         """
 
         raw_segments: list[Elements] = []
@@ -242,26 +255,28 @@ class Parser:
                 # then we don't override it here, even if the UNB segment has another
                 # value. The user might want to override this manually.
 
-                print(f"Found edifact syntax '{segment[0][0]}' in UNB header", end="")
+                s = f"Found edifact syntax '{segment[0][0]}' in UNB header"
                 if self.syntax_identifier:
-                    print(", but using override syntax '{self.syntax_identifier}'")
+                    s += f", but using override syntax '{self.syntax_identifier}'"
                 else:
-                    print(".")
+                    s += "."
                     self.syntax_identifier = segment[0][0]
-
-                print(
-                    f"Found edifact version '{int(segment[0][1])}' in UNB header",
-                    end="",
+                logger.info(s)
+                _version = int(segment[0][1])
+                s = (
+                    f"Found edifact version '{_version}' "
+                    f"(->{directory_from_syntax_version(_version)}) in UNB header"
                 )
-                if self.version:
-                    print(f", but using override version '{self.version}'.")
-
+                if self.edi_directory:
+                    s += f", but using override version '{self.edi_directory}'."
                 else:
-                    self.version = int(segment[0][1])
-                    print(".")
+                    s += "."
+                logger.info(s)
+
             yield self.factory.create_segment(
                 name,
                 *segment,
-                syntax_identifier=self.syntax_identifier or EDI_DEFAULT_SYNTAX,
-                version=self.version or EDI_DEFAULT_VERSION,
+                syntax_identifier=self.syntax_identifier
+                or EDI_DEFAULT_SYNTAX_IDENTIFIER,
+                directory=self.edi_directory or EDI_DEFAULT_DIRECTORY,
             )

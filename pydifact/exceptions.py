@@ -16,6 +16,10 @@ class ValidationError(Exception):
     pass
 
 
+class ParsingError(Exception):
+    pass
+
+
 # ---------------- Warnings ----------------
 class MissingImplementationWarning(Warning):
     pass
