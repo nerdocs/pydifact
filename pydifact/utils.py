@@ -2,20 +2,22 @@ import re
 from typing import Literal
 
 
-def syntax_version_from_directory(directory: str) -> Literal[1, 2, 3, 4]:
+def syntax_versions_from_directory(directory: str) -> list[Literal[1, 2, 3, 4]]:
     """
-    Returns the EDIFACT syntax version (1–4) for a directory like 'D96A'.
-
-    It accepts the following formats (case insensitive):
-    * d96a, D96A, D.96A, D96B, ...
-    * 91-2, 88-2
-
-
+    Matches the given EDIFACT directory identifier to a list of possible syntax versions.
     https://unece.org/trade/uncefact/unedifact/download
+
+    Args:
+        directory: The EDIFACT directory identifier (case-insensitive).
+            It accepts the following formats :
+            * d96a, D96A, D.96A, D96B, ...
+            * 91-2, 88-2
+    Returns:
+        A list of possible EDIFACT syntax versions (1–4) for a directory like 'D96A'.
     """
 
+    versions: list[Literal[1, 2, 3, 4]] = []
     directory = directory.upper().replace(".", "")
-
     # extract year
     if re.match(r"D\d{2}[AB]", directory):
         year = int(directory[1:3])
@@ -25,16 +27,17 @@ def syntax_version_from_directory(directory: str) -> Literal[1, 2, 3, 4]:
         raise ValueError("Invalid EDIFACT directory format")
 
     # Syntax mapping
-    if 87 <= year <= 88:
-        return 1
-    elif 89 <= year <= 92:
-        return 2
-    elif 93 <= year <= 99:
-        return 3
-    elif 0 <= year <= 24:  # D00A - D24A ++.
-        return 4
-    else:
+    if 2 <= year <= 24:  # D00A - D24A ++.
+        versions.append(4)
+    if 92 <= year <= 99 or 0 <= year <= 2:  # 1992-2002
+        versions.append(3)
+    if 90 <= year <= 92:
+        versions.append(2)
+    if 87 <= year <= 90:
+        versions.append(1)
+    if not versions:
         raise ValueError("Unknown EDIFACT directory year")
+    return versions
 
 
 def directory_from_syntax_version(syntax_version: int) -> str:
@@ -60,7 +63,7 @@ def is_valid_syntax_directory(directory: str) -> bool:
     Returns True if the given directory is a valid EDIFACT syntax directory.
     """
     try:
-        return syntax_version_from_directory(directory) is not None
+        return syntax_versions_from_directory(directory) is not None
     except ValueError:  # unknown directory format / year
         return False
 
