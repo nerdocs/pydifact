@@ -58,7 +58,7 @@ class Segment:
     @overload
     def __init__(self, *elements: Element): ...
 
-    def __init__(self, *args: Element):
+    def __init__(self, *args):
         """Create a new Segment instance.
 
         Params:
@@ -76,9 +76,9 @@ class Segment:
                 )
             self.tag = args[0]
 
-            self.elements: Elements = list(args[1:])
+            self.elements = list(args[1:])
         else:
-            self.elements: Elements = list(args)
+            self.elements = list(args)
 
         if not self.elements:
             warnings.warn(

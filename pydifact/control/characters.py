@@ -126,8 +126,8 @@ class Characters:
             + self.segment_terminator
         )
 
-    def __repr__(self):
-        return f" ServiceStringAdvice: '{str(self)}'"
+    def __repr__(self) -> str:
+        return str(self)
 
     def __eq__(self, other):
         if isinstance(other, str):
