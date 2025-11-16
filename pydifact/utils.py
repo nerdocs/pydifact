@@ -9,8 +9,8 @@ def syntax_versions_from_directory(directory: str) -> list[Literal[1, 2, 3, 4]]:
 
     Args:
         directory: The EDIFACT directory identifier (case-insensitive).
-            It accepts the following formats :
-            * d96a, D96A, D.96A, D96B, ...
+            It accepts the following formats:
+            * d96a, D96A, D.96A, D96B, D.01C...
             * 91-2, 88-2
     Returns:
         A list of possible EDIFACT syntax versions (1–4) for a directory like 'D96A'.
@@ -19,10 +19,8 @@ def syntax_versions_from_directory(directory: str) -> list[Literal[1, 2, 3, 4]]:
     versions: list[Literal[1, 2, 3, 4]] = []
     directory = directory.upper().replace(".", "")
     # extract year
-    if re.match(r"D\d{2}[AB]", directory):
-        year = int(directory[1:3])
-    elif re.match(r"D?\d{2}-\d", directory):
-        year = int(directory.split("-")[0])
+    if pattern := re.match(r"^[DS]?\.?(\d{2})-?[ABC]?$", directory):
+        year = int(pattern.group(1))
     else:
         raise ValueError("Invalid EDIFACT directory format")
 
@@ -35,7 +33,7 @@ def syntax_versions_from_directory(directory: str) -> list[Literal[1, 2, 3, 4]]:
         versions.append(2)
     if 87 <= year <= 90:
         versions.append(1)
-    if not versions:
+    if 24 < year < 87:
         raise ValueError("Unknown EDIFACT directory year")
     return versions
 

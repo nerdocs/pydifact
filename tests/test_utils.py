@@ -5,50 +5,61 @@ from pydifact.utils import syntax_versions_from_directory, directory_from_syntax
 
 def test_edifact_syntax_version_d87a():
     assert syntax_versions_from_directory("D87A") == [1]
+    assert syntax_versions_from_directory("D.87A") == [1]
 
 
 def test_edifact_syntax_version_d88b():
     assert syntax_versions_from_directory("D88B") == [1]
+    assert syntax_versions_from_directory("D.88B") == [1]
 
 
 def test_edifact_syntax_version_d89a_earliest_version_2():
     assert syntax_versions_from_directory("D89A") == [1]
+    assert syntax_versions_from_directory("D.89A") == [1]
 
 
 def test_edifact_syntax_version_d92b():
     assert syntax_versions_from_directory("D92B") == [3, 2]
+    assert syntax_versions_from_directory("D.92B") == [3, 2]
 
 
 def test_edifact_syntax_version_d93a():
     assert syntax_versions_from_directory("D93A") == [3]
+    assert syntax_versions_from_directory("D.93A") == [3]
 
 
 def test_edifact_syntax_version_d99b():
     assert syntax_versions_from_directory("D99B") == [3]
+    assert syntax_versions_from_directory("D.99B") == [3]
 
 
 def test_edifact_syntax_version_d00a():
     assert syntax_versions_from_directory("D00A") == [3]
+    assert syntax_versions_from_directory("D.00A") == [3]
 
 
 def test_edifact_syntax_version_d24b():
     assert syntax_versions_from_directory("D24B") == [4]
+    assert syntax_versions_from_directory("D.24B") == [4]
 
 
 def test_edifact_syntax_version_valid_lowercase():
     assert syntax_versions_from_directory("d00a") == [3]
+    assert syntax_versions_from_directory("d.00a") == [3]
 
 
 def test_edifact_syntax_version_invalid_year():
     with pytest.raises(ValueError, match="Unknown EDIFACT directory year"):
-        syntax_versions_from_directory("D25A")
+        syntax_versions_from_directory("D66A")
 
 
 def test_edifact_syntax_version_invalid_chars():
     with pytest.raises(ValueError, match="Invalid EDIFACT directory format"):
-        syntax_versions_from_directory("D25X")
+        syntax_versions_from_directory("D24X")
     with pytest.raises(ValueError, match="Invalid EDIFACT directory format"):
-        syntax_versions_from_directory("S25A")
+        syntax_versions_from_directory("F24A")
+    with pytest.raises(ValueError, match="Unknown EDIFACT directory year"):
+        syntax_versions_from_directory("D25A")
 
 
 def test_edifact_syntax_directory_version_1():
