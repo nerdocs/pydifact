@@ -155,7 +155,7 @@ class MessageGroupUsage(NamedTuple):
     def identifier(self) -> str:
         """Returns a Python identifier that can be used as an accessor in a
         dataclass."""
-        return f"{to_identifier(self.title)}"
+        return to_identifier(self.title)
 
 
 @dataclass
