@@ -16,7 +16,7 @@
 
 
 from pydifact import Segment
-from pydifact.syntax.v1 import UNASegment
+from pydifact.syntax.v1.segments import UNASegment
 
 
 def test_compare_against_str():

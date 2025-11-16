@@ -1,9 +1,9 @@
-from pydifact import Serializer
-from pydifact.exceptions import ValidationError
+from pydifact import Serializer, Parser
+from pydifact.exceptions import ValidationError, EDISyntaxError
 from pydifact.segments import Segment
 import pytest
 
-from pydifact.syntax.v1 import UNASegment
+from pydifact.syntax.v1.segments import UNASegment
 
 default_characters = ":+,? '"
 
@@ -44,3 +44,20 @@ def test_UNASegment_characters():
     assert s.escape_character == "?"
     assert s.reserved_character == " "
     assert s.segment_terminator == "'"
+
+
+def test_syntax_v1_requires_una_segment_when_absent():
+    """In EDIFACT syntax version 1, a UNA segment is mandatory.
+
+    Ensure that parsing a message without an initial UNA segment raises
+    an EDISyntaxError when edi_version=1 is used.
+    """
+
+    parser = Parser(edi_version=1)
+
+    # A minimal message starting with UNB and without any preceding UNA
+    message_without_una = "UNB+SENDER:1+RECEIVER+950402+1200+1'"
+
+    with pytest.raises(EDISyntaxError):
+        # Materialize the iterator to trigger parsing
+        list(parser.parse(message_without_una))

@@ -1,4 +1,5 @@
 import pydifact.syntax.common
+import pydifact.syntax.v1.segments
 from pydifact import Segment
 from pydifact.syntax import v1, v2
 
@@ -11,5 +12,5 @@ class UNASegment(Segment):
     version = __version__
 
 
-class UNBSegment(v1.UNBSegment):
+class UNBSegment(pydifact.syntax.v1.segments.UNBSegment):
     version = __version__

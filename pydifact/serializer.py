@@ -23,7 +23,7 @@ from pydifact.control.characters import Characters
 import re
 
 from pydifact.segments import Segment
-from pydifact.syntax.common import CompositeDataElement, DataElement
+from pydifact.syntax.common.types import CompositeDataElement
 
 
 class Serializer:

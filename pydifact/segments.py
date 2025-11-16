@@ -35,7 +35,7 @@ from pydifact.exceptions import (
     MissingImplementationWarning,
     EDISyntaxError,
 )
-from pydifact.syntax.common import SegmentSchema
+from pydifact.syntax.common.types import SegmentSchema
 from pydifact.syntax.registry import SyntaxRegistry
 from pydifact.utils import is_valid_syntax_directory
 
@@ -58,6 +58,7 @@ class Segment:
     elements: Elements = []
 
     def __init_subclass__(cls, **kwargs):
+        """Register this Segment class with a SyntaxRegistry"""
         from pydifact.syntax.registry import SyntaxRegistry
 
         super().__init_subclass__(**kwargs)

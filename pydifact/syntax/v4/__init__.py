@@ -4,9 +4,8 @@ from pydifact.constants import M, C
 from pydifact.syntax import v1, v2, v3
 from pydifact.syntax.common import (
     DataElement,
-    CompositeDataElement,
-    SyntaxVersionNumber,
 )
+from ..common.types import CompositeDataElement, SyntaxVersionNumber
 from .data import partner_identification_codes
 from ... import Segment
 

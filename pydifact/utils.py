@@ -42,6 +42,8 @@ def directory_from_syntax_version(syntax_version: int) -> str:
     """
     Returns the latest EDIFACT syntax directory (like 'D24A') for a given
     syntax version (1–4).
+
+    If syntax_version is not supported, ValueError is raised.
     """
     # Syntax mapping
     if syntax_version == 1:
@@ -61,7 +63,7 @@ def is_valid_syntax_directory(directory: str) -> bool:
     Returns True if the given directory is a valid EDIFACT syntax directory.
     """
     try:
-        return syntax_versions_from_directory(directory) is not None
+        return syntax_versions_from_directory(directory) != []
     except ValueError:  # unknown directory format / year
         return False
 
@@ -81,3 +83,43 @@ def is_edifact_alphanum(s: str) -> bool:
     return all(
         c.isalnum() or (c.isascii() and c.isprintable() and not c.isalnum()) for c in s
     )
+
+
+def assert_a(s, length, message=""):
+    """checks if s consists of only alphabetical characters, and has a given length."""
+    assert str(s).isalpha(), message
+    assert len(s) == int(length), message
+
+
+def assert_a_max(s, length, message=""):
+    """checks if s consists of only alphabetical characters, and has a given maximum length."""
+    assert str(s).isalpha() or s == "", message
+    assert len(s) <= int(length), message
+
+
+def assert_n(s, length, message=""):
+    """checks if s is numeric and has a given length."""
+    assert int(s), message
+    assert len(s) == int(length), message
+
+
+def assert_n_max(s, length, message=""):
+    """checks if s is numeric and has a given length."""
+    assert int(s), message
+    assert len(s) <= int(length), message
+
+
+def assert_an(s, length, message=""):
+    """checks if s is alphanumeric and has a given length."""
+    assert is_edifact_alphanum(s), message
+    assert len(s) == int(length), message
+
+
+def assert_an_max(s, length, message=""):
+    """checks if s is alphanumeric and has a given length."""
+    assert is_edifact_alphanum(s), message
+    assert len(s) <= int(length), message
+
+
+def assert_format(s, fmt_str, message=""):
+    assert re.match(fmt_str, s), message

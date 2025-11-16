@@ -1,4 +1,4 @@
-from pydifact.syntax.common import CompositeDataElement
+from pydifact.syntax.common.types import CompositeDataElement
 
 
 class EmptyCDataElement(CompositeDataElement):

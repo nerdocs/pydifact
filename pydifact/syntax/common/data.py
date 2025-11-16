@@ -1,4 +1,4 @@
-from pydifact.syntax.common import DataElement, Code
+from pydifact.syntax.common.types import Code, DataElement
 
 
 # There are a few `DataElement`s that are not part of EDIFACT directories, as they
@@ -6,6 +6,15 @@ from pydifact.syntax.common import DataElement, Code
 # versioned (`SyntaxVersionNumber`). They are defined here in one place.
 
 
+class ServiceStringAdvice(DataElement):
+    code = ""
+    repr = "an6"
+    title = "Service String Advice"
+    description = "Service string advice"
+
+
+# we provide the SyntaxVersionNumber here, as it does not make sense to include old
+# ones. We have to decide anyway which version we support, so we need the newest list.
 class SyntaxVersionNumber(DataElement):
     """EDIFACT Syntax version number, as used in the UNB segment."""
 

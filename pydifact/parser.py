@@ -46,6 +46,7 @@ class Parser:
         factory: The SegmentFactory to use for creating segments.
             (default: SegmentFactory())
         characters: The control characters to use. (default: Characters())
+        edi_directory: The EDI directory to use (default: "D24A")
         edi_version: The EDI version to use (default: 4)
     """
 
@@ -54,13 +55,14 @@ class Parser:
         factory: SegmentFactory | None = None,
         characters: Characters | None = None,
         syntax_identifier: str | None = None,
-        edi_directory: str = "",
-        # edi_version: int | None = None,
+        edi_version: int = EDI_DEFAULT_VERSION,
+        edi_directory: str = EDI_DEFAULT_DIRECTORY,
     ) -> None:
         self.factory = factory or SegmentFactory()
         self.characters = characters or Characters()
         self.syntax_identifier = syntax_identifier
-        self.edi_directory = edi_directory.upper()
+        self.edi_directory = edi_directory.upper() or EDI_DEFAULT_DIRECTORY
+        self.edi_version = edi_version or EDI_DEFAULT_VERSION
 
     def parse(
         self, message: str, characters: Characters | None = None
@@ -86,18 +88,22 @@ class Parser:
         else:
             una_pattern = "'UNA"
             idx_una = message.find(una_pattern)
-        una_found = idx_una != -1
+        una_present = idx_una != -1
 
-        if una_found:
+        if una_present:
             idx_begin = idx_una + len(una_pattern)
             idx_end = idx_begin + 6
             characters = Characters.from_str(f"UNA{message[idx_begin: idx_end]}")
 
             # remove the UNA segment from the string,
-            # ignore everything before UNA because it should be the first segment if una_found.
+            # ignore everything before UNA because it should be the first segment if una_present.
             message = message[idx_end:].lstrip("\r\n")
 
         else:
+            # in syntax version 1, UNA is mandatory
+            if self.edi_version == 1:
+                raise EDISyntaxError("No UNA segment found in message")
+
             # if no UNA header present, use default control characters
             # given on call take precedence over the stored defaults.
             if characters is None:
@@ -107,7 +113,7 @@ class Parser:
         return self.convert_tokens_to_segments(
             tokenizer.get_tokens(message, characters),
             characters,
-            with_una=una_found,
+            with_una=una_present,
         )
 
     @staticmethod

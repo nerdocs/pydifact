@@ -13,7 +13,11 @@ import io
 from datetime import datetime
 from typing import Iterable, Iterator
 from pydifact.exceptions import ParsingError
-from pydifact.utils import syntax_version_from_directory
+from pydifact.utils import (
+    syntax_versions_from_directory,
+    directory_from_syntax_version,
+    is_valid_syntax_directory,
+)
 from .constants import download_directory
 from .helpers import (
     _retrieve_or_get_cached_file,
@@ -108,13 +112,14 @@ def read_service_file(version: int, file: str) -> str:
 def download_service_file(
     url: str, version: int, check_existing: list[str] | None = None
 ) -> None:
-    """Returns the data element description text for the EDIFACT service list.
+    """Downloads a service file from the specified URL, extracts it, and stores it in a directory
+    based on the provided version.
 
-    Attributes:
-        url: the url of the service zip file
-        version (str): 1,2,3,4 (=incl 4x)
-        check_existing:  a list of filenames that are checked. if all of them exist,
-            nothing is downloaded
+    Args:
+        url: The URL to download the service file from.
+        version: The version number used to determine the destination directory.
+        check_existing: A list of filenames to verify existence in the destination directory.
+            If not provided, all files are downloaded regardless.
     """
     response = requests.get(url)
     response.raise_for_status()
@@ -123,11 +128,11 @@ def download_service_file(
         os.makedirs(dest_dir, exist_ok=True)
     if not check_existing:
         check_existing = []
-    all_exist = True
+    all_files_exist = True
     for filename in check_existing:
         if not os.path.exists(dest_dir / filename):
-            all_exist = False
-    if not all_exist or not check_existing:
+            all_files_exist = False
+    if not all_files_exist or not check_existing:
         print(f"Downloading service file from {url}...")
         with zipfile.ZipFile(io.BytesIO(response.content)) as z:
             z.extractall(dest_dir)
@@ -1311,7 +1316,7 @@ def write_python_code_to_file(directory: str, filename: str, content: str):
 
 
 def print_usage():
-    print("Usage: pydifact-generator <directory>")
+    print("Usage: pydifact-generator [version] <directory>")
     print("Parses online UNECE EDIFACT directory and generates Python classes from it.")
     print(
         "This program is NOT intended for end users, it is aimed at pydifact "
@@ -1320,15 +1325,37 @@ def print_usage():
     print("Attributes:")
     print(
         "    directory       The EDIFACT directory to download spec descriptions "
-        "                    from, e.g. d24a, d11b etc."
+        "                    from, e.g. d24a, d11b, 90-1 etc."
     )
+    print(
+        "    version         Optional EDIFACT syntax version number (1-4). If provided,\n"
+        "                    it must match a corresponding directory."
+    )
+
     print("    --help|-h       Shows this message.")
     print("    --clear-cache   Clears the temporary directory and exits.")
 
 
 download_map = {
-    3: {"cl/data/unsl{directory}a.zip": ["UNSL.{directory}.txt"]},
+    3: {
+        # Service message type directory
+        "v3/data/v3-smed.zip": ["Contrl.s3", "Smedi1.s3", "Smedi2.s3"],
+        # Service segment directory
+        "v3/data/v3-ssed.zip": ["Ssed.s3", "Ssedi1.s3", "Ssedi2.s3"],
+        # Service composite data element directory
+        "v3/data/v3-sced.zip": ["Sced.s3", "Scedi1.s3", "Scedi2.s3"],
+        # Service simple data element directory
+        "v3/data/v3-sded.zip": ["Sded.s3", "Sdedi1.s3", "Sdedi2.s3"],
+        # Service code lists directory
+        "cl/data/unsl{directory}a.zip": ["UNSL.{directory}.txt"],
+    },
     4: {
+        # Service simple data element directory
+        "v4x/data/e40200.zip": ["Ne40200.txt", "Se40200.txt", "Te40200.txt"],
+        # Service composite data element directory
+        "v4x/data/c40200.zip": ["Nc40200.txt", "Sc40200.txt", "Tc40200.txt"],
+        # Service segment directory
+        "v4x/data/s40200.zip": ["Ns40200.txt", "Ss40200.txt", "Ts40200.txt"],
         # Service message type directory
         "v4x/data/m40200.zip": [
             "Autack_0.txt",
@@ -1337,33 +1364,14 @@ download_map = {
             "Nm40200.txt",
             "Tm40200.txt",
         ],
-        # Service segment directory
-        "v4x/data/s40200.zip": [
-            "Ns40200.txt",
-            "Ss40200.txt",
-            "Ts40200.txt",
-        ],
-        # Service composite data element directory
-        "v4x/data/c40200.zip": [
-            "Nc40200.txt",
-            "Sc40200.txt",
-            "Tc40200.txt",
-        ],
-        # Service simple data element directory
-        "v4x/data/e40200.zip": [
-            "Ne40200.txt",
-            "Se40200.txt",
-            "Te40200.txt",
-        ],
-        "cl/data/sl40219.zip": [
-            "sl40219.txt",
-        ],
+        # Service code lists directory
+        "cl/data/sl40219.zip": ["sl40219.txt"],
     },
 }
 
 
 def main():
-    if len(sys.argv) != 2 or (sys.argv[1] in ["-h", "--help"]):
+    if len(sys.argv) not in (2, 3) or (sys.argv[1] in ["-h", "--help"]):
         print_usage()
         sys.exit(0)
 
@@ -1374,31 +1382,74 @@ def main():
     if not os.path.exists(download_directory):
         os.mkdir(download_directory)
 
-    edi_directory = sys.argv[1].lower()
-    syntax_version = syntax_version_from_directory(edi_directory)
-    download_baseurl = "https://service.gefeg.com/jwg1/Archive/"
+    # CLI accepts either <version> or <directory> or <version> <directory>
+
+    # if only directory is given, auto-derive syntax version from it
+    if len(sys.argv) == 2:
+        if sys.argv[1] in ("1", "2", "3", "4"):
+            syntax_version = int(sys.argv[1])
+            # arg 1 is a syntax version number -> derive latest directory from it
+            edi_directory = directory_from_syntax_version(syntax_version)
+        else:
+            # arg 1 is a directory str -> derive a syntax version from it
+            edi_directory = sys.argv[1].lower()
+            if not is_valid_syntax_directory(edi_directory):
+                print(f"Error: Invalid syntax directory '{edi_directory}'")
+                print_usage()
+                sys.exit(1)
+            syntax_version = syntax_versions_from_directory(edi_directory)[0]
+
+        print(
+            f"Using EDI syntax version {syntax_version} for directory {edi_directory}"
+        )
+
+    # if both are given, perfect. Only check if they make sense.
+    elif len(sys.argv) == 3:
+        try:
+            syntax_version = int(sys.argv[1])
+        except ValueError:
+            print(f"Unknown syntax version: {sys.argv[1]}")
+            print_usage()
+            sys.exit(1)
+        if syntax_version not in (1, 2, 3, 4):
+            logger.error("Unsupported EDIFACT syntax version: %s", sys.argv[1])
+            sys.exit(1)
+
+        edi_directory = sys.argv[2].lower()
+        possible_versions = syntax_versions_from_directory(edi_directory)
+        if syntax_version not in possible_versions:
+            logger.error(
+                "Version mismatch: provided version %s does not match directory '%s' "
+                "(detected: v%s)",
+                syntax_version,
+                edi_directory,
+                possible_versions,
+            )
+            sys.exit(1)
+    else:
+        print_usage()
+        sys.exit(1)
+
+    # we need the GEFEG site as base url for downloading the service files
+    # that are not included in the EDI directories
+    # https://service.gefeg.com/jwg1/Archive/v3/data/v3.html
+    # https://service.gefeg.com/jwg1/Archive/v4x/data/v4x.html
+
+    gefeg_download_baseurl = "https://service.gefeg.com/jwg1/Archive/"
 
     if syntax_version not in download_map:
         logger.error(f"Unsupported EDIFACT syntax version: {edi_directory}")
         sys.exit(1)
 
-    # first, download service files, as they are needed as base for the others
+    # first, download service files, as they are needed as the base for all others
+    # There the UNB, UNE/UNH etc. base segments are defined.
     for filename, check_file_list in download_map[syntax_version].items():
-        if syntax_version == 3:
-            # FIXME: in some .zips the files are lowercase, some upper, some mixed...
-            download_service_file(
-                download_baseurl + filename.replace("{directory}", edi_directory),
-                syntax_version,
-                [f.replace("{directory}", edi_directory) for f in check_file_list],
-            )
-        elif syntax_version == 4:
-            download_service_file(
-                download_baseurl + filename, syntax_version, check_file_list
-            )
+        download_service_file(
+            gefeg_download_baseurl + filename, syntax_version, check_file_list
+        )
 
     try:
-
-        # fill all service data elements from list (including data!)
+        # 1. fill all service data elements from the list (including data!)
         parse_data_element_desc(read_service_file(syntax_version, "Se40200.txt"))
         # get and parse list of user data elements
         text = get_data_element_directory_desc(edi_directory)

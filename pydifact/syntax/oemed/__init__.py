@@ -1,6 +1,8 @@
 import pydifact.syntax.common.data
+import pydifact.syntax.v1.segments
 from .. import v1
-from ..common import DataElement, CompositeDataElement
+from ..common import DataElement
+from ..common.types import CompositeDataElement
 from ...constants import M
 
 
@@ -78,7 +80,7 @@ class CSyntaxIdentifier(v1.CSyntaxIdentifier):
     ]
 
 
-class UNBSegment(v1.UNBSegment):
+class UNBSegment(pydifact.syntax.v1.segments.UNBSegment):
     """Specific Interchange Header for Austrian MED EDIFACT."""
 
     schema = [
