@@ -184,26 +184,25 @@ SegmentSchema = dict[str, CompositeSchemaEntry | DataElementSchemaEntry]
 
 # TODO: test CompositeDataElement
 class CompositeDataElement:
-    code: str
     """A structured representation of a composite data element.
-    
+
     A `CompositeDataElement` provides a schema which is a list of tuples, where each tuple
-    represents a `DataElement` class, a M(andatory) or C(onditional) flag and a 
+    represents a `DataElement` class, a M(andatory) or C(onditional) flag and a
     representation of the data structure in a specific format.
     The original description is written like this:
-    
+
     ```
-    POS TAG  Name                             S R Repr. 
-    010 S001 SYNTAX IDENTIFIER                M 1       
+    POS TAG  Name                             S R Repr.
+    010 S001 SYNTAX IDENTIFIER                M 1
         0001 Syntax identifier                M   a4
         0002 Syntax version number            M   an1
         0080 Service code list dir. vers. nr. C   an..6
         0133 Character encoding, coded        C   an..3
     ...
-    ```        
+    ```
 
     So the schema is converted to python code like this:
-    
+
     ```python
     schema = [
         (SyntaxIdentifier, M, "a4"),
@@ -211,11 +210,12 @@ class CompositeDataElement:
         (...)
     ]
     ```
-    
-    Note that  only `CompositeDataElement`s have a "repeat" attribute, `DataElement`s 
+
+    Note that  only `CompositeDataElement`s have a "repeat" attribute, `DataElement`s
     haven't.
     """
 
+    code: str
     schema: CompositeSchemaEntryList
 
     def __init__(self, elements: list[DataElement]):
