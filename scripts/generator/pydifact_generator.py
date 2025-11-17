@@ -409,20 +409,6 @@ def parse_data_elements_dir(text, only_one_code: str | None = None):
         data_element_specs[element.code] = element
 
 
-def get_composite_desc(directory: str, code: str) -> str:
-    """Returns the URL for the provided composite data element code.
-
-    Attributes:
-        directory: The service directory where the composite data element is found,
-            e.g. "d11a", "d24a", "d11b"
-        code: The composite data element code as string, e.g. "C010"
-    """
-    return _retrieve_or_get_cached_file(
-        f"{base_url}/{directory}/trcd/trcd" f"{code.lower()}.htm",
-        f"{directory}/trcd{code.lower()}.txt",
-    )
-
-
 def parse_composite_dir(text, only_code: str | None = None):
     """Parses a composite data element text (or list) and extracts the data element
     specification(s)."""
@@ -558,88 +544,35 @@ def parse_composite_dir(text, only_code: str | None = None):
 # ------------------ Segment ------------------
 
 
-def get_segment_directory_desc(directory: str) -> str:
-    """Returns the URL for the EDSD segment list.
-
-    Attributes:
-        directory: The service directory where the segment is found, e.g. "d11a",
-        "d24a", "d11b"
-    """
-    return _retrieve_or_get_cached_file(
-        f"{base_url}/{directory}/trsd/trsdi1.htm",
-        f"{directory}/trsdi1.txt",
-    )
-
-
-def parse_segment_directory_desc(text: str):
-    """Parses a segment list description from EDIFACT documentation.
-
-    The function accepts a text containing one segment, or a list of segments.
-    """
-    lines = iter(text.strip().splitlines())
-    line_number = 0
-    in_list = False
-    while True:
-        try:
-            # skip all empty lines
-            line, line_number = get_next_not_empty_line(lines, line_number)
-            # find lines like this:
-            # BCD  Benefit and coverage detail
-            # BLI  Billable information
-            if pattern := re.match(r"^\s+Tag\s+Name\s*$", line):
-                in_list = True
-                continue
-
-            if not in_list:
-                continue
-
-            if pattern := re.match(r"^[ +*#|X]{3,}([A-Z]{3})\s+([A-Z].*?)$", line):
-                tag, title = pattern.groups()
-                if tag in segment_specs:
-                    raise KeyError(
-                        f"Could not create SegmentSpec: {tag} already exists."
-                    )
-
-                segment_specs[tag] = SegmentSpec(
-                    tag=tag,
-                    title=processed_title(title),
-                    description="",
-                    schema=[],
-                    stub=True,
-                )
-        except StopIteration:
-            break
+# def get_segment_desc(directory: str, segment_tag: str) -> str:
+#     """Returns the URL for the provided segment code.
+#
+#     Attributes:
+#         directory: The service directory where the segment is found, e.g. "d11a",
+#         "d24a", "d11b"
+#         segment_tag: The segment tag as lowercase string, e.g. "bgm", "unb"
+#     """
+#     # some tags don't seem to have a downloadable description...
+#     # however, the "d23a" directory has it...
+#     # fmt: off
+#     if segment_tag in [
+#         "UCD", "UCF", "UCI", "UCM", "UCS", "UGH", "UGT", "UIB", "UIH", "UIR",
+#         "UIT", "UIZ", "UNB", "UNE", "UNG", "UNH", "UNO", "UNP", "UNS", "UNT",
+#         "UNZ", "USA", "USB", "USC", "USD", "USE", "USF", "USH", "USL", "USR",
+#         "UST", "USU", "USX", "USY",
+#     ]:
+#         return ""
+#     # fmt: on
+#     text = _retrieve_or_get_cached_file(
+#         f"{base_url}/{directory}/trsd/trsd" f"{segment_tag.lower()}.htm",
+#         f"{directory}/trsd{segment_tag.lower()}.txt",
+#     )
+#     if not text:
+#         logger.warning(f"No description found for segment: {segment_tag}")
+#     return text
 
 
-def get_segment_desc(directory: str, segment_tag: str) -> str:
-    """Returns the URL for the provided segment code.
-
-    Attributes:
-        directory: The service directory where the segment is found, e.g. "d11a",
-        "d24a", "d11b"
-        segment_tag: The segment tag as lowercase string, e.g. "bgm", "unb"
-    """
-    # some tags don't seem to have a downloadable description...
-    # however, the "d23a" directory has it...
-    # fmt: off
-    if segment_tag in [
-        "UCD", "UCF", "UCI", "UCM", "UCS", "UGH", "UGT", "UIB", "UIH", "UIR",
-        "UIT", "UIZ", "UNB", "UNE", "UNG", "UNH", "UNO", "UNP", "UNS", "UNT",
-        "UNZ", "USA", "USB", "USC", "USD", "USE", "USF", "USH", "USL", "USR",
-        "UST", "USU", "USX", "USY",
-    ]:
-        return ""
-    # fmt: on
-    text = _retrieve_or_get_cached_file(
-        f"{base_url}/{directory}/trsd/trsd" f"{segment_tag.lower()}.htm",
-        f"{directory}/trsd{segment_tag.lower()}.txt",
-    )
-    if not text:
-        logger.warning(f"No description found for segment: {segment_tag}")
-    return text
-
-
-def parse_segments_desc(text: str, only_segment_tag: str = ""):
+def parse_segment_dir(text: str, only_segment_tag: str = ""):
     """Parses the description text containing one or more segments.
 
     If segment_tag is given, it will only parse the one segment, and ignore others.
@@ -679,30 +612,41 @@ def parse_segments_desc(text: str, only_segment_tag: str = ""):
             # find pattern for title
             #       IDE  IDENTITY
             #      UCD    DATA ELEMENT ERROR INDICATION
-            if pattern := re.match((r"^[ +*#|X]{6,8}([A-Z]{3})\s+([A-Z ].*)$"), line):
-                # we found a new segment
-                # save old segment if already available, and proceed to new one
-                if segment.tag:
-                    if not segment.tag in segment_specs:
-                        logger.warning(
-                            f"Could not fill segment {segment.tag} schema with "
-                            f"elements. Please create segment first."
-                        )
-                    else:
-                        segment.stub = False
-                        segment_specs[segment.tag] = segment
+            #      UGH    ANTI-COLLISION SEGMENT GROUP HEADER
+            # ACT  ALTERNATIVE CURRENCY TOTAL AMOUNT                           88.1
+            # ACA  ALTERNATIVE CURRENCY AMOUNT                            88.1
+            # first check, if it gennerally matches a title line
+            if re.match(r"\s*[A-Z]{3}\s+[A-Z,-].*$", line):
+                # try v4 pattern
+                pattern = re.match(r"^[ +*#|X]{5,8}([A-Z]{3})\s+([A-Z,-].*)$", line)
+                if not pattern:
+                    pattern = re.match(
+                        r"^([A-Z]{3})\s+([A-Z,-].*)\s+(?:[\d.]{2,4})?$", line
+                    )
+                if pattern:
+                    tag, title = pattern.groups()
+                    # we found a new segment
+                    # save old segment if already available, and proceed to the new one
+                    if segment.tag:
+                        if segment.tag not in segment_specs:
+                            logger.warning(
+                                f"Could not fill segment {segment.tag} schema with "
+                                f"elements. Please create segment first."
+                            )
+                        else:
+                            segment.stub = False
+                            segment_specs[segment.tag] = segment
 
-                # if only one segment should be parsed, and we found another one,
-                # stop it.
-                if in_segment and only_segment_tag:
-                    break
+                    # if only one segment should be parsed, and we found another one,
+                    # stop it.
+                    if in_segment and only_segment_tag:
+                        break
 
-                tag, title = pattern.groups()
-                title = processed_title(title)
-                # create new segment
-                segment = SegmentSpec(tag=tag, title=title, url=url, schema=[])
-                in_segment = True
-                continue
+                    title = processed_title(title)
+                    # create new segment
+                    segment = SegmentSpec(tag=tag, title=title, url=url, schema=[])
+                    in_segment = True
+                    continue
 
             if in_segment:
                 if pattern := re.match(r"^\s+Function:\s(.*?)\s*$", line):
@@ -863,6 +807,14 @@ def parse_segments_desc(text: str, only_segment_tag: str = ""):
     # Finalize last composite
     if in_composite and type(last_toplevel_element) is SegmentCompositeElementUsage:
         segment.schema.append(last_toplevel_element)
+        segment.stub = False
+        segment_specs[segment.tag] = segment
+        # Save the last segment if it hasn't been saved yet
+    elif segment.tag and segment.tag not in segment_specs:
+        segment.stub = False
+        segment_specs[segment.tag] = segment
+    # Update existing segment if it was a stub
+    elif segment.tag and segment_specs.get(segment.tag, {}).stub:
         segment.stub = False
         segment_specs[segment.tag] = segment
 
@@ -1233,7 +1185,7 @@ def render_segments(edi_directory: str, with_imports=True) -> str:
                 )
         output += "    }\n"
         logger.info(
-            f"Creating CompositeDataElement class for "
+            f"Creating Segment class for "
             f"{edi_directory}.{segment_spec.tag}: {segment_spec.class_name()}"
         )
     output += export_all(segment_specs.values())
@@ -1530,12 +1482,11 @@ def main():
         )  # e.g.Sc40200.txt
 
         # Service Segments
-        parse_segment_directory_desc(
-            read_service_file(
-                syntax_version, services_map[syntax_version]["s"]["index"]
-            )
-        )  # e.g. "Ts40200.txt"
+        parse_segment_dir(
+            read_service_file(syntax_version, services_map[syntax_version]["s"]["list"])
+        )  # e.g. "Ss40200.txt"
 
+        # ------------- User elements -------------
         if not os.path.exists(download_directory / edi_directory.lower()):
             logger.error(
                 f"No downloaded directory '{edi_directory.lower()}' found.\n"
@@ -1546,7 +1497,6 @@ def main():
             )
             sys.exit(1)
 
-        # ------------- User elements -------------
         # Data Elements
         parse_data_elements_dir(
             read_file(edi_directory, directories_map[edi_directory]["e"]["list"])
@@ -1556,16 +1506,10 @@ def main():
             read_file(edi_directory, directories_map[edi_directory]["c"]["list"]),
         )
 
-        parse_segment_directory_desc(get_segment_directory_desc(edi_directory))
-
         # Segments
-        text = read_service_file(
-            syntax_version, services_map[syntax_version]["s"]["list"]
+        parse_segment_dir(
+            read_file(edi_directory, directories_map[edi_directory]["s"]["list"])
         )  # e.g. Ss40200.txt
-        parse_segment_directory_desc(text)
-        parse_segments_desc(text)
-        for _tag in segment_specs:
-            parse_segments_desc(get_segment_desc(edi_directory, _tag), _tag)
 
         # Messages
         parse_message_directory_desc(get_message_directory_desc(edi_directory))
