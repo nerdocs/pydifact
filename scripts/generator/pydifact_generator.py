@@ -522,9 +522,9 @@ def parse_composite_dir(text, only_code: str | None = None):
                         and title != data_element_specs[code].title
                     ):
                         logger.warning(
-                            f"{composite.code} composite element has a reference to"
-                            f" {code} data element with wrong title: '{title}' != "
-                            f"'{data_element_specs[code].title}'"
+                            f"{composite.code}.{code} reference title does not match"
+                            f" {code} title: "
+                            f"'{title}' != '{data_element_specs[code].title}'"
                         )
 
                     # If repr_line is the same as in the data element description,
