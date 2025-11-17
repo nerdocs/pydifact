@@ -19,7 +19,7 @@ def syntax_versions_from_directory(directory: str) -> list[Literal[1, 2, 3, 4]]:
     versions: list[Literal[1, 2, 3, 4]] = []
     directory = directory.upper().replace(".", "")
     # extract year
-    if pattern := re.match(r"^[DS]?\.?(\d{2})-?[ABC]?$", directory):
+    if pattern := re.match(r"^[DS]?\.?(\d{2})-?\d?[ABC]?$", directory):
         year = int(pattern.group(1))
     else:
         raise ValueError("Invalid EDIFACT directory format")
