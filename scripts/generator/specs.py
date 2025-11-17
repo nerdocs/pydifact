@@ -25,7 +25,9 @@ class DataElementSpec:
     stub: bool = False
 
     def class_name(self) -> str:
-        return to_class_name(self.title, "E")  # type: ignore
+        """Returns a Python class name that can be used as a dataclass."""
+        prefix = "E" if int(self.code) >= 1000 else ""
+        return to_class_name(self.title, prefix)
 
     @property
     def identifier(self) -> str:
