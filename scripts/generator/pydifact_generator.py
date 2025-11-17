@@ -23,7 +23,6 @@ from .helpers import (
     _retrieve_or_get_cached_file,
     get_next_not_empty_line,
     processed_title,
-    last_file_path,  # noqa
 )
 from .specs import (
     SegmentSpec,
@@ -110,7 +109,9 @@ def read_service_file(version: int, file: str) -> str:
 
 
 def download_service_file(
-    url: str, version: int, check_existing: list[str] | None = None
+    url: str,
+    version: int,
+    check_existing: str | list[str] | None = None,
 ) -> None:
     """Downloads a service file from the specified URL, extracts it, and stores it in a directory
     based on the provided version.
@@ -126,6 +127,8 @@ def download_service_file(
     dest_dir = download_directory / "service" / str(version)
     if not os.path.exists(dest_dir):
         os.makedirs(dest_dir, exist_ok=True)
+    if isinstance(check_existing, str):
+        check_existing = [check_existing]
     if not check_existing:
         check_existing = []
     all_files_exist = True
@@ -133,7 +136,7 @@ def download_service_file(
         if not os.path.exists(dest_dir / filename):
             all_files_exist = False
     if not all_files_exist or not check_existing:
-        print(f"Downloading service file from {url}...")
+        logger.info(f"Downloading service file from {url}...")
         with zipfile.ZipFile(io.BytesIO(response.content)) as z:
             z.extractall(dest_dir)
 
@@ -141,7 +144,7 @@ def download_service_file(
 def ensure_composite_spec_exists(code: str, title: str, segment_tag: str):
 
     if code not in composite_specs:
-        print(
+        logger.info(
             f"While parsing '{segment_tag}' segment, referenced element {code} was not "
             f"listed in the "
             f"composite data element list. Creating stub entry."
@@ -158,7 +161,7 @@ def ensure_composite_spec_exists(code: str, title: str, segment_tag: str):
 
 def ensure_data_element_spec_exists(code: str, title: str, segment_tag: str):
     if code not in data_element_specs:
-        print(
+        logger.info(
             f"While parsing '{segment_tag}' segment, referenced element {code} "
             f"was not listed in the "
             f"data element list. Creating stub entry."
@@ -180,9 +183,13 @@ def get_data_element_directory_desc(edi_directory: str) -> str:
         edi_directory: The service directory where the segment is found, e.g. "d11a",
             "d24a", "d11b"
     """
-    return _retrieve_or_get_cached_file(
-        f"{base_url}/{edi_directory}/tred/tredi1.htm",
-        f"{edi_directory}/tredi1.txt",
+    file_name = directories_map[edi_directory]["e"]["index"]
+    file_path = download_directory / edi_directory / file_name
+    if os.path.exists(file_path):
+        with open(file_path, "r") as file:
+            return file.read()
+    raise FileNotFoundError(
+        f"The file '{file_name}' was not found in the directory '{file_path}'"
     )
 
 
@@ -263,7 +270,7 @@ def parse_data_element_desc(text, only_one_code: str | None = None):
         if only_one_code not in data_element_specs:
             raise KeyError(f"Data element {only_one_code} not found in the cache.")
         if not data_element_specs[only_one_code].stub:
-            print(
+            logger.warning(
                 "Can't parse data element",
                 only_one_code,
                 "because it's already in the cache.",
@@ -321,7 +328,7 @@ def parse_data_element_desc(text, only_one_code: str | None = None):
                     # don't set the title, as it is already taken from the global list
                     if code in data_element_specs and not data_element_specs[code].stub:
                         if not data_element_specs[code].title == title:
-                            print(
+                            logger.warning(
                                 f"{code} data element title mismatch: "
                                 f"'{data_element_specs[code].title}' != '{title}'"
                             )  # TODO should be AFTER title and desc saving
@@ -372,10 +379,21 @@ def get_composite_directory_desc(directory):
         directory: The service directory where the segment is found, e.g. "d11a",
             "d24a", "d11b"
     """
-    return _retrieve_or_get_cached_file(
+    # there are some errors in the service.unece download urls:
+    # they are not consistent regarding case-insensitivity, and some URLs need a
+    # capital, some a small edifact directory name.
+    # I wrote to the UN, and they told me they will fix that... Not done until now
+    result = _retrieve_or_get_cached_file(
         f"{base_url}/{directory}/trcd/trcdi1.htm",
-        f"{directory}/trcdi1.txt",
+        f"{directory.lower()}/trcdi1.txt",
     )
+    # if not downloadable, retry with lowercase URL.
+    if not result:
+        result = _retrieve_or_get_cached_file(
+            f"{base_url}/{directory.lower()}/trcd/trcdi1.htm",
+            f"{directory.lower()}/trcdi1.txt",
+        )
+    return result
 
 
 def parse_composite_directory_desc(text):
@@ -477,7 +495,7 @@ def parse_composite_desc(text, only_one_code: str | None = None):
         if not only_one_code in composite_specs:
             raise KeyError(f"Data element {only_one_code} not found in the cache.")
         if not composite_specs[only_one_code].stub:
-            print(
+            logger.warning(
                 "Can't parse composite data element",
                 only_one_code,
                 "because it's already in the cache.",
@@ -520,7 +538,7 @@ def parse_composite_desc(text, only_one_code: str | None = None):
                     # just check if the title matches with the one from the list.
                     if code in composite_specs and not composite_specs[code].stub:
                         if not composite_specs[code].title == title:
-                            print(
+                            logger.warning(
                                 f"{code} composite element title mismatch: "
                                 f"'{composite_specs[code].title}' != {title}'"
                             )
@@ -554,7 +572,7 @@ def parse_composite_desc(text, only_one_code: str | None = None):
                         not data_element_specs[code].stub
                         and title != data_element_specs[code].title
                     ):
-                        print(
+                        logger.warning(
                             f"{composite.code} composite element has a reference to"
                             f" {code} data element with wrong title: '{title}' != "
                             f"'{data_element_specs[code].title}'"
@@ -652,7 +670,7 @@ def get_segment_desc(directory: str, segment_tag: str) -> str:
         f"{directory}/trsd{segment_tag.lower()}.txt",
     )
     if not text:
-        print(f"No description found for segment: {segment_tag}")
+        logger.warning(f"No description found for segment: {segment_tag}")
     return text
 
 
@@ -701,7 +719,7 @@ def parse_segments_desc(text: str, only_segment_tag: str = ""):
                 # save old segment if already available, and proceed to new one
                 if segment.tag:
                     if not segment.tag in segment_specs:
-                        print(
+                        logger.warning(
                             f"Could not fill segment {segment.tag} schema with "
                             f"elements. Please create segment first."
                         )
@@ -756,7 +774,7 @@ def parse_segments_desc(text: str, only_segment_tag: str = ""):
                     ensure_data_element_spec_exists(code, title, tag)
 
                     if title != data_element_specs[code].title:
-                        print(
+                        logger.warning(
                             f"{tag}.{code} title '{title}' in data element desc file does "
                             f"not match expected title '{data_element_specs[code].title}' "
                             f"from data element list."
@@ -856,7 +874,7 @@ def parse_segments_desc(text: str, only_segment_tag: str = ""):
                         not data_element_specs[code].stub
                         and title != data_element_specs[code].title
                     ):
-                        print(
+                        logger.warning(
                             f"{tag}.{code} title '{title}' in desc file does not match expected "
                             f"title '{data_element_specs[code].title}' from data element "
                             f"list."
@@ -1124,7 +1142,7 @@ def render_data_elements(with_imports=True) -> str:
     output += file_header()
 
     if with_imports:
-        output += "from pydifact.syntax.common import DataElement"
+        output += "from pydifact.syntax.common.types import DataElement"
 
     for code, element in data_element_specs.items():
         logger.info(f"Creating class '{element.class_name()}'")
@@ -1148,7 +1166,7 @@ def render_composite_elements(with_imports=True) -> str:
     output += file_header()
     if with_imports:
         output += (
-            "from pydifact.syntax.common import CompositeDataElement, "
+            "from pydifact.syntax.common.types import CompositeDataElement, "
             "CompositeSchemaEntryList\n"
         )
         # output += "from .data import (\n"
@@ -1188,7 +1206,7 @@ def render_segments(with_imports=True) -> str:
         #     "from pydifact.syntax.specs import SegmentCompositeSpec, "
         #     "SegmentDataElementSpec\n"
         # )
-        output += "from pydifact.syntax.common import SegmentSchema\n"
+        output += "from pydifact.syntax.common.types import SegmentSchema\n"
         output += "from .data import *\n"
         output += "from .composite import *\n"
     for tag, segment_spec in segment_specs.items():
@@ -1316,7 +1334,7 @@ def write_python_code_to_file(directory: str, filename: str, content: str):
 
 
 def print_usage():
-    print("Usage: pydifact-generator [version] <directory>")
+    print("Usage: pydifact-generator [version] [directory]")
     print("Parses online UNECE EDIFACT directory and generates Python classes from it.")
     print(
         "This program is NOT intended for end users, it is aimed at pydifact "
@@ -1324,48 +1342,111 @@ def print_usage():
     )
     print("Attributes:")
     print(
+        "    version         Optional EDIFACT syntax version number (1-4). If provided,\n"
+        "                    it must match a corresponding directory."
+    )
+    print(
         "    directory       The EDIFACT directory to download spec descriptions "
         "                    from, e.g. d24a, d11b, 90-1 etc."
     )
     print(
-        "    version         Optional EDIFACT syntax version number (1-4). If provided,\n"
-        "                    it must match a corresponding directory."
+        "                    If both (syntax version and directory) are provided, "
+        "                    they must be compatible to each other."
     )
 
     print("    --help|-h       Shows this message.")
     print("    --clear-cache   Clears the temporary directory and exits.")
 
 
-download_map = {
+services_map: dict[int, dict[str, dict[str, str | list[str]]]] = {
     3: {
-        # Service message type directory
-        "v3/data/v3-smed.zip": ["Contrl.s3", "Smedi1.s3", "Smedi2.s3"],
-        # Service segment directory
-        "v3/data/v3-ssed.zip": ["Ssed.s3", "Ssedi1.s3", "Ssedi2.s3"],
-        # Service composite data element directory
-        "v3/data/v3-sced.zip": ["Sced.s3", "Scedi1.s3", "Scedi2.s3"],
         # Service simple data element directory
-        "v3/data/v3-sded.zip": ["Sded.s3", "Sdedi1.s3", "Sdedi2.s3"],
-        # Service code lists directory
-        "cl/data/unsl{directory}a.zip": ["UNSL.{directory}.txt"],
+        "e": {
+            "file": "v3/data/v3-sded.zip",
+            "index": "Sdedi1.s3",  # "Sdedi2.s3"
+            "list": "Sded.s3",
+        },
+        # Service composite data element directory
+        "c": {
+            "file": "v3/data/v3-sced.zip",
+            "index": "Scedi1.s3",  # "Scedi2.s3"
+            "list": "Sced.s3",
+        },
+        # Service segment directory
+        "s": {
+            "file": "v3/data/v3-ssed.zip",
+            "index": "Ssedi1.s3",  # "Ssedi2.s3"
+            "list": "Ssed.s3",
+        },
+        # Service message type directory
+        "m": {
+            "file": "v3/data/v3-smed.zip",
+            "index": "Smedi1.s3",  # "Smedi2.s3"
+            "list": "Contrl.s3",
+        },
+        # # Service code lists directory
+        # "cl": {
+        #     "file": "cl/data/unsl{directory}a.zip",
+        #     "list": ["UNSL.{directory}.txt"],
+        # },
     },
     4: {
         # Service simple data element directory
-        "v4x/data/e40200.zip": ["Ne40200.txt", "Se40200.txt", "Te40200.txt"],
+        "e": {
+            "file": "v4x/data/e40200.zip",
+            "index": "Ne40200.txt",  # "Te40200.txt"
+            "list": "Se40200.txt",
+        },
         # Service composite data element directory
-        "v4x/data/c40200.zip": ["Nc40200.txt", "Sc40200.txt", "Tc40200.txt"],
+        "c": {
+            "file": "v4x/data/c40200.zip",
+            "index": "Nc40200.txt",  # Tc40200.txt"
+            "list": "Sc40200.txt",
+        },
         # Service segment directory
-        "v4x/data/s40200.zip": ["Ns40200.txt", "Ss40200.txt", "Ts40200.txt"],
+        "s": {
+            "file": "v4x/data/s40200.zip",
+            "index": "Ns40200.txt",  # "Ts40200.txt"
+            "list": "Ss40200.txt",
+        },
         # Service message type directory
-        "v4x/data/m40200.zip": [
-            "Autack_0.txt",
-            "Contrl_1.txt",
-            "Keyman_0.txt",
-            "Nm40200.txt",
-            "Tm40200.txt",
-        ],
-        # Service code lists directory
-        "cl/data/sl40219.zip": ["sl40219.txt"],
+        "m": {
+            "file": "v4x/data/m40200.zip",
+            "index": "Nm40200.txt",  # "Tm40200.txt",
+            "list": ["Autack_0.txt", "Contrl_1.txt", "Keyman_0.txt"],
+        },
+        # # Service code lists directory
+        # "cl": {
+        #     "file": "cl/data/sl40219.zip",
+        #     "list": "sl40219.txt",
+        # },
+    },
+}
+
+# This is a key-value map where the key is the edifact directory, and the value a
+# list of files in this order:
+# elements, composite elements, segments, messages, code lists.
+directories_map: dict[str, dict[str, dict[str, str | list[str]]]] = {
+    "90-1": {
+        "e": {"list": "EDED-901.ASC"},
+        "c": {"list": "EDCD-901.ASC"},
+        "s": {"list": "EDSD-901.ASC"},
+        "m": {"list": "EDMD-901.ASC"},
+        "cl": {"list": "EDCL-901.ASC"},
+    },
+    "93-2": {
+        "e": {"list": "EDED.932"},
+        "c": {"list": "EDCD.932"},
+        "s": {"list": "EDSD.932"},
+        "m": {"list": "EDMD.932"},
+        "cl": {"list": ["EDCL-1.932", "EDCL-2.932"]},
+    },
+    "d24a": {
+        "e": {"index": "EDEDI1.24A", "list": "EDED.24A"},
+        "c": {"index": "EDCD1.24A", "list": "EDCD.24A"},
+        "s": {"index": "EDSDI1.24A", "list": "EDSD.24A"},
+        "m": {"index": "EDMDI1.24A", "list": "EDMD.24A"},
+        "cl": {"list": ["EDCL-1.932", "EDCL-2.932"]},
     },
 }
 
@@ -1394,12 +1475,12 @@ def main():
             # arg 1 is a directory str -> derive a syntax version from it
             edi_directory = sys.argv[1].lower()
             if not is_valid_syntax_directory(edi_directory):
-                print(f"Error: Invalid syntax directory '{edi_directory}'")
+                logger.error(f"Error: Invalid UN/EDIFACT directory: '{edi_directory}'")
                 print_usage()
                 sys.exit(1)
             syntax_version = syntax_versions_from_directory(edi_directory)[0]
 
-        print(
+        logger.info(
             f"Using EDI syntax version {syntax_version} for directory {edi_directory}"
         )
 
@@ -1408,7 +1489,7 @@ def main():
         try:
             syntax_version = int(sys.argv[1])
         except ValueError:
-            print(f"Unknown syntax version: {sys.argv[1]}")
+            logger.error(f"Unknown syntax version: {sys.argv[1]}")
             print_usage()
             sys.exit(1)
         if syntax_version not in (1, 2, 3, 4):
@@ -1437,23 +1518,55 @@ def main():
 
     gefeg_download_baseurl = "https://service.gefeg.com/jwg1/Archive/"
 
-    if syntax_version not in download_map:
-        logger.error(f"Unsupported EDIFACT syntax version: {edi_directory}")
+    if syntax_version not in services_map:
+        logger.error(
+            f"Unsupported EDIFACT syntax version '{edi_directory}': No service entry"
+        )
         sys.exit(1)
 
     # first, download service files, as they are needed as the base for all others
     # There the UNB, UNE/UNH etc. base segments are defined.
-    for filename, check_file_list in download_map[syntax_version].items():
+    for _type, dct in services_map[syntax_version].items():
         download_service_file(
-            gefeg_download_baseurl + filename, syntax_version, check_file_list
+            url=gefeg_download_baseurl + dct["file"],
+            version=syntax_version,
+            check_existing=dct["list"],
         )
 
     try:
-        # 1. fill all service data elements from the list (including data!)
-        parse_data_element_desc(read_service_file(syntax_version, "Se40200.txt"))
-        # get and parse list of user data elements
-        text = get_data_element_directory_desc(edi_directory)
-        parse_data_element_directory_desc(text)
+        # ------------- Service elements -------------
+        # Service Data Elements
+        parse_data_element_desc(
+            read_service_file(syntax_version, services_map[syntax_version]["e"]["list"])
+        )  # e.g. Se40200.txt
+
+        # Service Composite Data Elements
+        parse_composite_desc(
+            read_service_file(syntax_version, services_map[syntax_version]["c"]["list"])
+        )  # e.g.Sc40200.txt
+
+        # Service Segments
+        parse_segment_directory_desc(
+            read_service_file(
+                syntax_version, services_map[syntax_version]["s"]["index"]
+            )
+        )  # e.g. "Ts40200.txt"
+
+        if not os.path.exists(download_directory / edi_directory):
+            logger.error(
+                f"No downloaded directory '{edi_directory}' found.\n"
+                "Please go to https://unece.org/trade/uncefact/unedifact/download, "
+                f"download and extract all contents of the '{edi_directory}' "
+                f"zip file manually into the following directory:\n"
+                f"'{download_directory / edi_directory.lower()}'"
+            )
+            sys.exit(1)
+
+        # ------------- User elements -------------
+        # Data Elements
+        parse_data_element_directory_desc(
+            get_data_element_directory_desc(edi_directory)
+        )
         # walk through this list and parse each file, if code>=1000 (user elements)
         for code in data_element_specs:
             if data_element_specs[code].stub:
@@ -1461,31 +1574,28 @@ def main():
                     get_data_element_desc(edi_directory, code), code
                 )
 
-        # parse service composite data elements
-        parse_composite_desc(read_service_file(4, "Sc40200.txt"))
-
-        text = get_composite_directory_desc(edi_directory)
-        parse_composite_directory_desc(text)
+        # Composite Data Elements
+        parse_composite_directory_desc(get_composite_directory_desc(edi_directory))
         for code in composite_specs:
             if composite_specs[code].stub:
                 parse_composite_desc(get_composite_desc(edi_directory, code), code)
 
-        text = read_service_file(4, "Ts40200.txt")
-        parse_segment_directory_desc(text)
-        text = get_segment_directory_desc(edi_directory)
-        parse_segment_directory_desc(text)
-        text = read_service_file(4, "Ss40200.txt")
+        parse_segment_directory_desc(get_segment_directory_desc(edi_directory))
+
+        # Segments
+        text = read_service_file(
+            syntax_version, services_map[syntax_version]["s"]["list"]
+        )  # e.g. Ss40200.txt
         parse_segment_directory_desc(text)
         parse_segments_desc(text)
         for _tag in segment_specs:
-            text = get_segment_desc(edi_directory, _tag)
-            parse_segments_desc(text)
+            parse_segments_desc(get_segment_desc(edi_directory, _tag), _tag)
 
-        text = get_message_directory_desc(edi_directory)
-        parse_message_directory_desc(text)
+        # Messages
+        parse_message_directory_desc(get_message_directory_desc(edi_directory))
         for _tag in message_specs:
-            text = get_message_desc(edi_directory, _tag)
-            parse_message_desc(text, _tag)
+            parse_message_desc(get_message_desc(edi_directory, _tag), _tag)
+
     except ParsingError as e:
         raise ParsingError(
             f"Error parsing EDIFACT directory '{edi_directory}' in "

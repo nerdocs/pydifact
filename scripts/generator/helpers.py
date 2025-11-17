@@ -1,3 +1,4 @@
+import logging
 import os
 import requests
 
@@ -8,6 +9,8 @@ from bs4 import BeautifulSoup
 from .constants import download_directory
 
 last_file_path = Path("")
+
+logger = logging.getLogger(__name__)
 
 
 def _retrieve_or_get_cached_file(url: str, destination: Path | str) -> str:

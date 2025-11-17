@@ -2,6 +2,8 @@ from pydifact import Segment, Characters
 from pydifact.constants import C, M
 from pydifact.syntax.common.data import ServiceStringAdvice
 from . import __version__
+from .composite import *
+from .data import *
 
 
 class UNASegment(Segment):
@@ -49,23 +51,71 @@ class UNASegment(Segment):
         )
 
 
-# class UNBSegment(Segment):
-#     """Interchange header.
-#
-#     To start, identify and specify an interchange."""
-#
-#     tag = "UNB"
-#     version = __version__
-#     schema = [
-#         (CSyntaxIdentifier, M, 1),
-#         (CInterchangeSender, M, 1),
-#         (CInterchangeRecipient, M, 1),
-#         (CDateAndTimeOfPreparation, M, 1),
-#         (InterchangeControlReference, M, 1),
-#         (CRecipientsReference, C, 1),
-#         (ApplicationReference, C, 1, "an..14"),
-#         (ProcessingPriorityCode, C, 1, "a1"),
-#         (AcknowledgementRequest, C, 1, "n1"),
-#         (CommunicationAgreementID, C, 1, "an..35"),
-#         (TestIndicator, C, 1, "n1"),
-#     ]
+class UNBSegment(Segment):
+    """Interchange header.
+
+    To start, identify and specify an interchange."""
+
+    tag = "UNB"
+    version = __version__
+    schema = {
+        "syntax_identifier": (CSyntaxIdentifier, True, 1),
+        "interchange_sender": (CInterchangeSender, True, 1),
+        "interchange_recipient": (CInterchangeRecipient, True, 1),
+        "date_time_preparation": (CDateAndTimeOfPreparation, True, 1),
+        "interchange_control_reference": (InterchangeControlReference, True, "an..14"),
+        "recipients_reference": (CRecipientsReference, False, 1),
+        "application_reference": (ApplicationReference, False, "an..14"),
+        "processing_priority_code": (ProcessingPriorityCode, False, "a1"),
+        "acknowledgement_request": (AcknowledgementRequest, False, "n1"),
+        "communication_agreement_id": (CommunicationAgreementID, False, "an..35"),
+        "test_indicator": (TestIndicator, False, "n1"),
+    }
+
+
+class UNZSegment(Segment):
+    """Interchange trailer.
+
+    To end and check the completeness of an interchange."""
+
+    tag = "UNZ"
+    version = __version__
+    schema = {
+        "interchange_control_count": (InterchangeControlCount, True, "n..6"),
+        "interchange_control_reference": (InterchangeControlReference, True, "an..14"),
+    }
+
+
+class UNGSegment(Segment):
+    """Functional Group Header.
+
+    To head, identify and specify a Functional Group."""
+
+    tag = "UNG"
+    version = __version__
+    schema = {
+        "functional_group_identification": (
+            FunctionalGroupIdentification,
+            True,
+            "an..6",
+        ),
+        "application_senders_identification": (
+            CApplicationSendersIdentification,
+            True,
+            1,
+        ),
+        "application_recipients_identification": (
+            CApplicationRecipientsIdentification,
+            True,
+            1,
+        ),
+        "date_time_of_preparation": (CDateAndTimeOfPreparation, True, 1),
+        "functional_group_reference_number": (
+            FunctionalGroupReferenceNumber,
+            True,
+            "an..14",
+        ),
+        "controlling_agency": (ControllingAgency, True, "an..2"),
+        "message_version": (CMessageVersion, True, 1),
+        "application_password": (ApplicationPassword, False, "an..14"),
+    }

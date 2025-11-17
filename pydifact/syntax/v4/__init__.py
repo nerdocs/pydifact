@@ -2,11 +2,8 @@
 
 from pydifact.constants import M, C
 from pydifact.syntax import v1, v2, v3
-from pydifact.syntax.common import (
-    DataElement,
-)
-from ..common.types import CompositeDataElement, SyntaxVersionNumber
-from .data import partner_identification_codes
+from pydifact.syntax.common.types import DataElement
+from .codes import partner_identification_codes
 from ... import Segment
 
 __version__ = 4
@@ -158,58 +155,6 @@ class MessageAuthenticationCode(DataElement):
 class ServiceCodeListDirectoryVersionNumber(DataElement):
     code = "0080"
     repr = "an..6"
-
-
-# ------------- Composite Data Elements -------------
-
-
-class CSyntaxIdentifier(v1.CSyntaxIdentifier):
-    code = "S001"
-    title = "Syntax identifier"
-    schema = [
-        (SyntaxIdentifier, M, "a4"),
-        (SyntaxVersionNumber, M, "an1"),
-        (ServiceCodeListDirectoryVersionNumber, C, "an..6"),
-        (CharacterEncoding, C, "an..3"),
-    ]
-
-
-class CInterchangeSender(CompositeDataElement):
-    code = "S002"
-    title = "Interchange sender"
-    schema = [
-        (v1.SenderIdentification, M, "an..35"),
-        (IdentificationCodeQualifier, C, "an..4"),
-        (InterchangeSenderInternalIdentification, C, "an..35"),
-        (InterchangeSenderInternalSubIdentification, C, "an..35"),
-    ]
-
-
-class CInterchangeRecipient(CompositeDataElement):
-    code = "S003"
-    title = "Interchange recipient"
-    schema = [
-        (InterchangeRecipientIdentification, M, "an..35"),
-        (IdentificationCodeQualifier, C, "an..4"),
-        (InterchangeRecipientInternalIdentification, C, "an..35"),
-        (InterchangeRecipientInternalSubIdentification, C, "an..35"),
-    ]
-
-
-class CDateAndTimeOfPreparation(CompositeDataElement):
-    code = "S004"
-    schema = [
-        (v1.Date, M, "n8"),  # CHANGED n6 to n8!!
-        (v1.Time, M, "n4"),
-    ]
-
-
-class CRecipientReferencePassword(CompositeDataElement):
-    code = "S005"
-    schema = [
-        (v1.RecipientReferencePassword, M, "an..14"),
-        (v1.RecipientReferencePasswordQualifier, C, "an2"),
-    ]
 
 
 # ------------- Segments -------------

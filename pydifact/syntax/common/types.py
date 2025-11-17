@@ -127,6 +127,10 @@ DataElementSchemaList = list[DataElementSchemaEntry]
 
 SegmentSchema = dict[str, CompositeSchemaEntry | DataElementSchemaEntry]
 
+MessageSchemaEntry = tuple[CompositeDataElementType, bool, int]
+# MessageGroupEntry =
+# MessageSchema = dict[str, MessageSchemaEntry | MessageGroupEntry]
+
 
 class CompositeDataElement:
     """A structured representation of a composite data element.
