@@ -23,7 +23,7 @@ from .helpers import (
     _retrieve_or_get_cached_file,
     get_next_not_empty_line,
     processed_title,
-    last_file_path,
+    to_identifier,
 )
 from .specs import (
     SegmentSpec,
@@ -563,8 +563,13 @@ class SegmentParserState:
 
 
 def parse_segment_title(line: str) -> tuple[str, str] | None:
-    """Extract segment tag and title from a line."""
-    # find pattern for title
+    """Extract segment tag and title from a line.
+
+    Returns:
+        A tuple containing the segment tag and title, if found.
+        None if the line does not match the expected format.
+    """
+    # find pattern for these title lines
     #       IDE  IDENTITY
     #      UCD    DATA ELEMENT ERROR INDICATION
     #      UGH    ANTI-COLLISION SEGMENT GROUP HEADER
@@ -587,20 +592,26 @@ def parse_segment_title(line: str) -> tuple[str, str] | None:
 
 
 def parse_segment_description(
-    lines, line_number: int, segment: SegmentSpec
+    lines: Iterator[str], line: str, line_number: int, segment: SegmentSpec
 ) -> tuple[int, str]:
-    """Parse the Function description of a segment.
+    """Parse the (e.g. multiline) Function description of a segment.
 
     Returns:
         A tuple of:
             * New line number after parsing the Function description,
             * Function description
     """
-    pattern = re.match(r"^\s+Function:\s(.*?)\s*$", lines[line_number])
+    pattern = re.match(r"^\s+Function:\s(.*?)\s*$", line)
     if pattern:
         desc_firstline = pattern.group(1)
+        # collect multiline description string until we find one of these patterns:
+        # Pos   TAG   Name                                        S R   Repr.    Notes
+        #     5463  ALLOWANCE OR CHARGE INDICATOR             M  an..3  id 1  3
+        #     C275  ALTERNATIVE CURRENCY                      C
+        # 010    C817 ADDRESS USAGE                              C    1
         desc, line_number, line = parse_multiline_until(
-            r"^(?:Pos\s+TAG\s+Name\s+S|\d{3}[ +*#|X]+[A-Z\d]\d{3}\s+\w+).*",
+            r"^(?:Pos\s+TAG\s+Name\s+S\s+R\s+Repr.*|\d{3}[ +*#|X]+[A-Z\d]\d{3}\s+[\w "
+            r"]+?\s{2,}|\s+[A-Z\d]\d{3}\s+[\w ]+?\s{2,}[MC]).*",
             lines,
             line_number,
         )
@@ -730,24 +741,24 @@ def parse_segment_dir(text: str, only_segment_tag: str = ""):
         # Save any pending top-level element first
         save_toplevel_element()
 
-        if segment.tag not in segment_specs:
-            logger.warning(f"Could not fill segment {segment.tag} schema")
-        else:
-            segment.stub = False
-            segment_specs[segment.tag] = segment
+        if segment.tag in segment_specs:
+            logger.warning(f"Segment {segment.tag} already in schema!")
+
+        segment_specs[segment.tag] = segment
 
     def save_toplevel_element():
         """Helper to save the current top-level element."""
         if state.last_toplevel_element:
             segment.schema.append(state.last_toplevel_element)
-            state.last_toplevel_element = None
-            state.sub_elements = []
+            state.reset_for_new_segment()
 
+    line = ""
     while True:
         try:
             if not state.keep_next_line:
                 line, line_number = get_next_not_empty_line(lines, line_number)
-            state.keep_next_line = False
+            else:
+                state.keep_next_line = False
 
             # Parse URL if not in segment yet
             if not state.in_segment and not state.in_composite and not state.url:
@@ -761,9 +772,9 @@ def parse_segment_dir(text: str, only_segment_tag: str = ""):
                 if state.in_segment:
                     save_current_segment()
 
-                # Stop if we only want one segment and found another
-                if state.in_segment and only_segment_tag:
-                    break
+                    # Stop if we only want one segment and found another
+                    if only_segment_tag:
+                        break
 
                 # Create new segment
                 segment = SegmentSpec(tag=tag, title=title, url=state.url, schema=[])
@@ -777,7 +788,7 @@ def parse_segment_dir(text: str, only_segment_tag: str = ""):
             # Parse function description
             if re.match(r"^\s+Function:\s", line):
                 line_number, line = parse_segment_description(
-                    lines, line_number, segment
+                    lines, line, line_number, segment
                 )
                 state.keep_next_line = True
                 continue
@@ -807,253 +818,6 @@ def parse_segment_dir(text: str, only_segment_tag: str = ""):
 
     # Save last segment
     save_current_segment()
-
-
-def parse_segment_dir(text: str, only_segment_tag: str = ""):
-    """Parses the description text containing one or more segments.
-
-    If segment_tag is given, it will only parse the one segment, and ignore others.
-    """
-    if not text:
-        return
-    lines = iter(text.strip().splitlines())
-    line_number = 0
-    in_composite = False
-    in_segment = False
-    multiline = False
-
-    # the last top level element usage: a composite or data segment
-    last_toplevel_element: (
-        SegmentCompositeElementUsage | SegmentDataElementUsage | None
-    ) = None
-    sub_elements: list[SegmentInlineDataElementUsage] = []
-    segment = SegmentSpec(tag="", title="", schema=[], url="")
-    url = ""
-    tag = ""
-    keep_next_line = False
-    while True:
-        try:
-            if keep_next_line:
-                keep_next_line = False
-            else:
-                # skip all empty lines
-                line, line_number = get_next_not_empty_line(lines, line_number)
-
-            if not in_segment and not in_composite and not url:
-                url = parse_url(line)  # noqa
-                # If we found a URL, it means it's a single  segment file which was
-                # downloaded and prepended with the URL
-                # we just save the url, and if we know the tag, we append it to the schema
-
-            # ---------------------------- parse title ---------------------------------
-            # find pattern for title
-            #       IDE  IDENTITY
-            #      UCD    DATA ELEMENT ERROR INDICATION
-            #      UGH    ANTI-COLLISION SEGMENT GROUP HEADER
-            # ACT  ALTERNATIVE CURRENCY TOTAL AMOUNT                           88.1
-            # ACA  ALTERNATIVE CURRENCY AMOUNT                            88.1
-            # first check, if it gennerally matches a title line
-            if re.match(r"\s*[A-Z]{3}\s+[A-Z,-].*$", line):
-                # try v4 pattern
-                pattern = re.match(r"^[ +*#|X]{5,8}([A-Z]{3})\s+([A-Z,-].*)$", line)
-                if not pattern:
-                    pattern = re.match(
-                        r"^([A-Z]{3})\s+([A-Z,-].*)\s+(?:[\d.]{2,4})?$", line
-                    )
-                if pattern:
-                    tag, title = pattern.groups()
-                    # we found a new segment
-                    # save old segment if already available, and proceed to the new one
-                    if segment.tag:
-                        if segment.tag not in segment_specs:
-                            logger.warning(
-                                f"Could not fill segment {segment.tag} schema with "
-                                f"elements. Please create segment first."
-                            )
-                        else:
-                            segment.stub = False
-                            segment_specs[segment.tag] = segment
-
-                    # if only one segment should be parsed, and we found another one,
-                    # stop it.
-                    if in_segment and only_segment_tag:
-                        break
-
-                    title = processed_title(title)
-                    # create new segment
-                    segment = SegmentSpec(tag=tag, title=title, url=url, schema=[])
-                    in_segment = True
-                    continue
-
-            if in_segment:
-                if pattern := re.match(r"^\s+Function:\s(.*?)\s*$", line):
-                    desc_firstline = pattern.group(1)
-
-                    if not segment:
-                        raise ParsingError(
-                            f"Unexpected Function line, cannot assign to segment:\n"
-                            f"'{line}'"
-                        )
-                    # parse multilines until next "Pos TAG Name" or next top level tag
-                    desc, line_number, line = parse_multiline_until(
-                        r"^(?:Pos\s+TAG\s+Name\s+S|\d{3}[ +*#|X]+[A-Z\d]\d{3}\s+"
-                        r"\w+).*",
-                        lines,
-                        line_number,
-                    )
-                    segment.description = " ".join([desc_firstline, desc])
-                    keep_next_line = True
-                    continue
-
-                # ----------------------- top level data element ---------------------------
-                # Search for a start of a top level data element, like this:
-                # 030    3164 CITY NAME                                  C    1 an..35
-                if toplevel_dataelement_match := re.match(
-                    r"^(\d{3})[ +*#|X]+(\d{4})\s+(.*?)\s{2,30}([MC])\s+(\d+)\s+(["
-                    r"an]+\.?\.?\d+)(?:\s+[\d,]+|\s*)?$",
-                    line,
-                ):
-                    pos, code, title, mandatory, repeat, repr_line = (
-                        toplevel_dataelement_match.groups()
-                    )
-                    title = processed_title(title)
-                    ensure_data_element_spec_exists(code, title, tag)
-
-                    if title != data_element_specs[code].title:
-                        logger.warning(
-                            f"{tag}.{code} title '{title}' in data element desc file does "
-                            f"not match expected title '{data_element_specs[code].title}' "
-                            f"from data element list."
-                        )
-
-                    if last_toplevel_element:
-                        # Save current top level element...
-                        segment.schema.append(last_toplevel_element)
-                        sub_elements = []
-
-                    last_toplevel_element = SegmentDataElementUsage(
-                        pos=pos,
-                        element=data_element_specs[code],
-                        mandatory=mandatory == "M",
-                        repeat=int(repeat),
-                        repr_line=repr_line,
-                    )
-                    assert (
-                        not sub_elements
-                    ), f"Found open sub elements when parsing {line}"
-                    in_composite = False
-                    continue
-
-                # ------------------- top level composite data element ---------------------
-                # New start of a top level composite element, like this:
-                # 060    C819 COUNTRY SUBDIVISION DETAILS                C    5
-                if composite_match := re.match(
-                    r"^(\d{3})[ +*#|X]+([A-Z]\d{3})\s+(.*?)\s+([MC])\s+(\d+)(?:\s+[\d,]+|\s*)?$",
-                    line,
-                ):
-                    pos, code, title, mandatory, repeat = composite_match.groups()
-                    if in_composite:
-                        # This is a new composite element after a *composite* element
-                        if (
-                            not type(last_toplevel_element)
-                            is SegmentCompositeElementUsage
-                        ):
-                            raise ParsingError(
-                                f"Unexpected begin of composite {code} in {segment.tag}:\n"
-                                f"'{line}'"
-                            )
-                        ensure_composite_spec_exists(code, title, tag)
-                        # There are no nested composite elements, but we found a new
-                        # composite start. Save current toplevel element...
-                        if last_toplevel_element:
-                            # Save current top level element...
-                            segment.schema.append(last_toplevel_element)
-
-                        in_composite = True  # again, next composite has started
-
-                    else:
-                        # This is a new composite element after a *data* element
-                        # save current line as composite start...
-                        if last_toplevel_element:
-                            # Save current top level element...
-                            segment.schema.append(last_toplevel_element)
-
-                    sub_elements = []
-                    ensure_composite_spec_exists(code, title, tag)
-                    last_toplevel_element = SegmentCompositeElementUsage(
-                        pos=pos,
-                        element=composite_specs[code],
-                        mandatory=mandatory == "M",
-                        repeat=int(repeat),
-                        schema=sub_elements,
-                    )
-
-                    in_composite = True
-                    continue
-
-                # ------------------------- sub element of a composite----------------------
-                # Start of composite sub element line, like:
-                #     3299  Address purpose code                      C      an..3
-                #  +  3131  Address type code                         C      an..3
-                #     5105  Monetary amount function detail
-                #           description code                          C      an..17
-                # first check if it looks similar to a data sub element ("startswith"...)
-                if re.match(r"^[ +*#|X]+(\d{4})\s+(.+)$", line):
-                    if not re.search(r"([MC])\s{2,}([an]+\.?\.?\d+)\s*$", line):
-                        line = line + " " + next(lines).strip()
-                        multiline = True
-
-                if sub_element_match := re.match(
-                    r"^[ +*#|X]+(\d{4})\s+(.+)\s+([MC])\s{2,}([an]+\.?\.?\d+)\s*$", line
-                ):
-                    code, title, mandatory, repr_line = sub_element_match.groups()
-                    if not in_composite:
-                        raise ParsingError(
-                            f"Unexpected begin of sub element {code} in {segment.tag} "
-                            f"without containing composite element:\n"
-                            f"'{line}'"
-                        )
-                    # with sub elements, no POS field is defined.
-                    title = processed_title(title)
-                    ensure_data_element_spec_exists(code, title, tag)
-                    if (
-                        not data_element_specs[code].stub
-                        and title != data_element_specs[code].title
-                    ):
-                        logger.warning(
-                            f"{tag}.{code} title '{title}' in desc file does not match expected "
-                            f"title '{data_element_specs[code].title}' from data element "
-                            f"list."
-                        )
-                    sub_elements.append(
-                        SegmentInlineDataElementUsage(
-                            element=data_element_specs[code],
-                            mandatory=mandatory == "M",
-                            repr_line=repr_line,
-                        )
-                    )
-                    multiline = False
-                    continue
-                elif multiline:
-                    raise ParsingError(
-                        f"Unexpected multiline element in line {line_number}:\n{line}"
-                    )
-
-        except StopIteration:
-            break
-    # Finalize last composite
-    if in_composite and type(last_toplevel_element) is SegmentCompositeElementUsage:
-        segment.schema.append(last_toplevel_element)
-        segment.stub = False
-        segment_specs[segment.tag] = segment
-        # Save the last segment if it hasn't been saved yet
-    elif segment.tag and segment.tag not in segment_specs:
-        segment.stub = False
-        segment_specs[segment.tag] = segment
-    # Update existing segment if it was a stub
-    elif segment.tag and segment_specs.get(segment.tag, {}).stub:
-        segment.stub = False
-        segment_specs[segment.tag] = segment
 
 
 # ------------------ Message ------------------
@@ -1293,6 +1057,7 @@ def export_all(_list: Iterable):
 def render_data_elements(edi_directory: str, with_imports=True) -> str:
     output = "# ------------------- Data Elements -------------------\n"
     output += "# created from EDED - the EDIFACT data elements directory\n\n"
+    output += "# This file is auto-generated. Don't edit it manually.\n\n"
     output += file_header()
 
     if with_imports:
@@ -1319,7 +1084,8 @@ class {element.class_name()}(DataElement):
 
 def render_composite_elements(edi_directory: str, with_imports=True) -> str:
     output = "# ------------------- Composite Data Elements -------------------\n"
-    output += "# created from EDCD - the EDIFACT composite data elements directory\n\n"
+    output += "# created from EDCD - the EDIFACT composite data elements directory\n"
+    output += "# This file is auto-generated. Don't edit it manually.\n\n"
     output += file_header()
     if with_imports:
         output += (
@@ -1359,7 +1125,8 @@ def render_composite_elements(edi_directory: str, with_imports=True) -> str:
 def render_segments(edi_directory: str, with_imports=True) -> str:
 
     output = "# ------------------- Segments -------------------\n"
-    output += "# created from EDSD - the EDIFACT segments directory\n\n"
+    output += "# created from EDSD - the EDIFACT segments directory\n"
+    output += "# This file is auto-generated. Don't edit it manually.\n\n"
     output += file_header()
     if with_imports:
         output += "from pydifact import Segment\n"
@@ -1442,7 +1209,8 @@ def render_messages_group(group: MessageGroupUsage, indent=0) -> str:
 def render_messages(with_imports=True) -> str:
 
     output = "# ------------------- Messages -------------------\n"
-    output += "# created from EDMD - the EDIFACT messages directory\n\n"
+    output += "# created from EDMD - the EDIFACT messages directory\n"
+    output += "# This file is auto-generated. Don't edit it manually.\n\n"
     output += file_header()
     if with_imports:
         output += "from pydifact.segmentcollection import Message, MessageSchema\n"

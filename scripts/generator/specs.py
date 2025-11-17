@@ -125,7 +125,6 @@ class SegmentSpec:
     schema: list[SegmentCompositeElementUsage | SegmentDataElementUsage]
     description: str = ""
     url: str = ""
-    stub: bool = False
 
     def class_name(self) -> str:
         return to_class_name(self.title, postfix="Segment")  # type: ignore
