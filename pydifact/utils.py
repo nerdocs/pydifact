@@ -40,20 +40,20 @@ def syntax_versions_from_directory(directory: str) -> list[Literal[1, 2, 3, 4]]:
 
 def directory_from_syntax_version(syntax_version: int) -> str:
     """
-    Returns the latest EDIFACT syntax directory (like 'D24A') for a given
+    Returns the latest EDIFACT syntax directory (like 'd24a') for a given
     syntax version (1–4).
 
     If syntax_version is not supported, ValueError is raised.
     """
     # Syntax mapping
     if syntax_version == 1:
-        return "D88"
+        return "d88"
     elif syntax_version == 2:
-        return "D92A"
+        return "d92a"
     elif syntax_version == 3:
-        return "D99B"
+        return "d99b"
     elif syntax_version == 4:
-        return "D24A"
+        return "d24a"
 
     raise ValueError("Unknown EDIFACT syntax version")
 

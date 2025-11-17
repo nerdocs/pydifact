@@ -23,6 +23,7 @@ from .helpers import (
     _retrieve_or_get_cached_file,
     get_next_not_empty_line,
     processed_title,
+    last_file_path,
 )
 from .specs import (
     SegmentSpec,
@@ -100,6 +101,8 @@ def parse_multiline_until(
 
 
 def read_service_file(version: int, file: str) -> str:
+    if not file:
+        return ""
     path = download_directory / "service" / str(version) / f"{file}"
     with open(path, "r", encoding="iso8859") as f:
         return f.read()
@@ -108,7 +111,7 @@ def read_service_file(version: int, file: str) -> str:
 # ------------------ Data Elements ------------------
 
 
-def download_service_file(
+def download_service_zipfile(
     url: str,
     version: int,
     check_existing: str | list[str] | None = None,
@@ -122,6 +125,8 @@ def download_service_file(
         check_existing: A list of filenames to verify existence in the destination directory.
             If not provided, all files are downloaded regardless.
     """
+    if not url:
+        return
     response = requests.get(url)
     response.raise_for_status()
     dest_dir = download_directory / "service" / str(version)
@@ -183,7 +188,10 @@ def get_data_element_directory_desc(edi_directory: str) -> str:
         edi_directory: The service directory where the segment is found, e.g. "d11a",
             "d24a", "d11b"
     """
+    edi_directory = edi_directory.lower()
     file_name = directories_map[edi_directory]["e"]["index"]
+    if not file_name:
+        return ""
     file_path = download_directory / edi_directory / file_name
     if os.path.exists(file_path):
         with open(file_path, "r") as file:
@@ -193,66 +201,90 @@ def get_data_element_directory_desc(edi_directory: str) -> str:
     )
 
 
-def parse_data_element_directory_desc(text):
-    """
-    Parse the data element list description from EDIFACT documentation.
+# def parse_data_element_directory_desc(text):
+#     """
+#     Parse the data element list description from EDIFACT documentation.
+#
+#     This function processes a text containing the data element list
+#     description, extracts the data element codes and titles, and stores them
+#     in the global data_element_specs dictionary.
+#
+#     Args:
+#         text (str): The raw text containing the data element list description.
+#
+#     Returns:
+#         None: This function doesn't return a value, but updates the global
+#         data_element_specs dictionary with the parsed data elements.
+#
+#     Note:
+#         The function expects the input text to contain lines in the format:
+#         "00010   UNH Message header                           M   1"
+#         where the first 5 characters are the data element code, followed by
+#         the title, and ending with [B], [C], or [I] (which is ignored).
+#     """
+#     lines = iter(text.strip().splitlines())
+#     line_number = 0
+#     while True:
+#         try:
+#             # skip all empty lines
+#             line, line_number = get_next_not_empty_line(lines, line_number)
+#             # find lines like this:
+#             # 00010   UNH Message header                           M   1        [B]
+#             # 00020   BGM Beginning of message                     M   1        [C]
+#             if pattern := re.match(r"^[ +*#|X]{5}(\d{4})\s{2}(.*?)\s+\[[BCI]\]$", line):
+#                 code, title = pattern.groups()
+#                 if not code in data_element_specs:
+#                     data_element_specs[code] = DataElementSpec(
+#                         code=code, title=title, description="", repr_line="", stub=True
+#                     )
+#         except StopIteration:
+#             break
 
-    This function processes a text containing the data element list
-    description, extracts the data element codes and titles, and stores them
-    in the global data_element_specs dictionary.
 
-    Args:
-        text (str): The raw text containing the data element list description.
-
-    Returns:
-        None: This function doesn't return a value, but updates the global
-        data_element_specs dictionary with the parsed data elements.
-
-    Note:
-        The function expects the input text to contain lines in the format:
-        "00010   UNH Message header                           M   1"
-        where the first 5 characters are the data element code, followed by
-        the title, and ending with [B], [C], or [I] (which is ignored).
-    """
-    lines = iter(text.strip().splitlines())
-    line_number = 0
-    while True:
-        try:
-            # skip all empty lines
-            line, line_number = get_next_not_empty_line(lines, line_number)
-            # find lines like this:
-            # 00010   UNH Message header                           M   1        [B]
-            # 00020   BGM Beginning of message                     M   1        [C]
-            if pattern := re.match(r"^[ +*#|X]{5}(\d{4})\s{2}(.*?)\s+\[[BCI]\]$", line):
-                code, title = pattern.groups()
-                if not code in data_element_specs:
-                    data_element_specs[code] = DataElementSpec(
-                        code=code, title=title, description="", repr_line="", stub=True
-                    )
-        except StopIteration:
-            break
+# def get_data_element_desc(directory: str, code: str) -> str:
+#     """Returns the description text for the provided data element.
+#
+#     Attributes:
+#         directory: The service directory where the data element is found,
+#                     e.g. "d11a", "d24a", "d11b"
+#         code: The data element code as string, e.g. "1001"
+#     """
+#     # code must be convertible to an int.
+#     assert int(code), "Invalid data element code"
+#     return _retrieve_or_get_cached_file(
+#         f"{base_url}/{directory.lower()}/tred/tred" f"{code}.htm",
+#         f"{directory}/tred{code.lower()}.txt",
+#     )
 
 
-def get_data_element_desc(directory: str, code: str) -> str:
+def read_file(edi_directory: str, file_name: str) -> str:
     """Returns the description text for the provided data element.
 
     Attributes:
         directory: The service directory where the data element is found,
                     e.g. "d11a", "d24a", "d11b"
-        code: The data element code as string, e.g. "1001"
+        file_name: The name of the file containing the data element description.
     """
-    # code must be convertible to an int.
-    assert int(code), "Invalid data element code"
-    return _retrieve_or_get_cached_file(
-        f"{base_url}/{directory.lower()}/tred/tred" f"{code}.htm",
-        f"{directory}/tred{code.lower()}.txt",
+    global last_file_path
+    file_path = download_directory / edi_directory / file_name
+    if os.path.exists(file_path):
+        with open(file_path, "r") as file:
+            last_file_path = file_path
+            return file.read()
+    logger.warning(
+        f"The file '{file_name}' was not found in the directory '{file_path}'"
     )
+    return ""
+    #     return _retrieve_or_get_cached_file(
+    #     f"{base_url}/{directory.lower()}/tred/tred" f"{code}.htm",
+    #     f"{directory}/tred{code.lower()}.txt",
+    # )
 
 
-# ------------------ Composite Data Elements ------------------
+# ------------------ Data Elements ------------------
 
 
-def parse_data_element_desc(text, only_one_code: str | None = None):
+def parse_data_elements_dir(text, only_one_code: str | None = None):
     """Parses a data element text (or list) and extracts the data element
     specification(s).
 
@@ -290,7 +322,7 @@ def parse_data_element_desc(text, only_one_code: str | None = None):
             # first, if we parsed a description, it could be multiline, so check for
             # second/third line of desc., and if we find it, append it to description.
             if in_description and element.code:
-                if pattern := re.match(r" {9,11}(.*?)$", line):
+                if pattern := re.match(r" {6,11}(.*?)$", line):
                     element.description += " " + pattern.group(1).strip()
                     continue
                 else:
@@ -302,10 +334,12 @@ def parse_data_element_desc(text, only_one_code: str | None = None):
             # find lines like this:
             #      1000  Document name                                           [B]
             #   0007  Identification code qualifier
+            # 8264 Means of transport                                     E    88.1
+            # 8154 Unit load device size and type                         E(84)88.1
             if pattern := re.match(
-                r"^[ +*#|X]+(\d{4})\s+(.*?)(?:\s+\[[BCI]\])?$", line
+                r"^[ +*#|X]*(\d{4})\s+(.*?)(?:\s+\[[BCI]\]|(E[\s(]+\d\d.*))?$", line
             ):
-                code, title = pattern.groups()
+                code, title, _ = pattern.groups()
                 title = processed_title(title)
                 # if we should only parse ONE element, ignore all the others.
                 if only_one_code:
@@ -344,13 +378,16 @@ def parse_data_element_desc(text, only_one_code: str | None = None):
             if in_element:
                 # find lines like this:
                 #      Desc: To identify an object.
-                if pattern := re.match(r"^[ +*#|X]+Desc: (.*?)$", line):
+                #           Desc: Goods item identification number.
+
+                if pattern := re.match(r"^[ +*#|X]*Desc: (.*)$", line):
                     element.description = pattern.group(1)
                     in_description = True
                     continue
                 # find lines like this:
                 #      Repr: an..23
-                if pattern := re.match(r"^[ +*#|X]+Repr: (.*?)$", line):
+                # Repr: an..3                        Min: 1    Max: 3    Datatype: id
+                if pattern := re.match(r"^[ +*#|X]*Repr: (.*?)(?:\s+Min.*)?$", line):
                     element.repr_line = pattern.group(1)
                     # after repr, we could stop processing to save time. Everything below
                     # this line is not needed anymore.
@@ -372,60 +409,6 @@ def parse_data_element_desc(text, only_one_code: str | None = None):
         data_element_specs[element.code] = element
 
 
-def get_composite_directory_desc(directory):
-    """Returns the description text for the EDIFACT EDED composite element list.
-
-    Attributes:
-        directory: The service directory where the segment is found, e.g. "d11a",
-            "d24a", "d11b"
-    """
-    # there are some errors in the service.unece download urls:
-    # they are not consistent regarding case-insensitivity, and some URLs need a
-    # capital, some a small edifact directory name.
-    # I wrote to the UN, and they told me they will fix that... Not done until now
-    result = _retrieve_or_get_cached_file(
-        f"{base_url}/{directory}/trcd/trcdi1.htm",
-        f"{directory.lower()}/trcdi1.txt",
-    )
-    # if not downloadable, retry with lowercase URL.
-    if not result:
-        result = _retrieve_or_get_cached_file(
-            f"{base_url}/{directory.lower()}/trcd/trcdi1.htm",
-            f"{directory.lower()}/trcdi1.txt",
-        )
-    return result
-
-
-def parse_composite_directory_desc(text):
-    """
-    Parse the composite element list description from EDIFACT documentation.
-
-    This function processes the text containing the composite element list
-    description, extracts the composite element codes and titles, and stores them
-    in the global composite_specs dictionary.
-
-    Args:
-        text: The raw text containing the composite element list description.
-    """
-    lines = iter(text.strip().splitlines())
-    line_number = 0
-    while True:
-        try:
-            # skip all empty lines
-            line, line_number = get_next_not_empty_line(lines, line_number)
-            # find lines like this:
-            # 00010   UNH Message header                           M   1
-            # 00020   BGM Beginning of message                     M   1
-            if pattern := re.match(r"^[ +*#|X]{4}([A-Z]\d{3})\s+(.*)$", line):
-                code, title = pattern.groups()
-                title = processed_title(title)
-                composite_specs[code] = CompositeElementSpec(
-                    code=code, title=title, schema=[], stub=True
-                )
-        except StopIteration:
-            break
-
-
 def get_composite_desc(directory: str, code: str) -> str:
     """Returns the URL for the provided composite data element code.
 
@@ -440,69 +423,26 @@ def get_composite_desc(directory: str, code: str) -> str:
     )
 
 
-# def parse_edifact_desc(
-#     SpecType: Type[DataElementSpec, CompositeElementSpec, SegmentSpec, MessageSpec],
-#     cache: dict,
-#     hooks: tuple[tuple[Callable[[Match[str],dict],None], str]],
-#     text,
-#     only_one_code: str,
-# ) -> None:
-#     lines = iter(text.strip().splitlines())
-#     line_number = 0
-#     in_element = False
-#     in_description = False
-#     if only_one_code:
-#         if not only_one_code in cache:
-#             raise KeyError(f"Data element {only_one_code} not found in the cache.")
-#         if not cache[only_one_code].stub:
-#             print(
-#                 "Can't parse element",
-#                 only_one_code,
-#                 "because it's already in the cache.",
-#             )
-#             return
-#     element = SpecType(code=only_one_code or "", title="", schema=[], stub=False)
-#
-#     while True:
-#         try:
-#             # skip all empty lines
-#             line, line_number = get_next_not_empty_line(lines, line_number)
-#             # first, if we parsed a description, it could be multiline, so check for
-#             # second/third line of desc., and if we find it, append it to description.
-#             if in_description and element.code:
-#                 if pattern := re.match(r" {11,12}(.*?)$", line): # TODO:anpassen
-#                     element.description += " " + pattern.group(1).strip()
-#                     continue
-#                 else:
-#                     in_description = False
-#
-#             if not in_element and hasattr(element,"url") and not element.url:
-#                 element.url = parse_url(line)
-#
-#
-#
-#     for plugin in hooks:
-#         if pattern:= re.match(plugin[1],line):
-#             plugin[0](pattern,element)
+def parse_composite_dir(text, only_code: str | None = None):
+    """Parses a composite data element text (or list) and extracts the data element
+    specification(s)."""
 
-
-def parse_composite_desc(text, only_one_code: str | None = None):
     lines = iter(text.strip().splitlines())
     line_number = 0
     in_composite = False
     in_description = False
-    if only_one_code:
-        if not only_one_code in composite_specs:
-            raise KeyError(f"Data element {only_one_code} not found in the cache.")
-        if not composite_specs[only_one_code].stub:
+    if only_code:
+        if only_code not in composite_specs:
+            raise KeyError(f"Data element {only_code} not found in the cache.")
+        if not composite_specs[only_code].stub:
             logger.warning(
                 "Can't parse composite data element",
-                only_one_code,
+                only_code,
                 "because it's already in the cache.",
             )
             return
     composite = CompositeElementSpec(
-        code=only_one_code or "", title="", schema=[], stub=False
+        code=only_code or "", title="", schema=[], stub=False
     )
     while True:
         try:
@@ -511,11 +451,11 @@ def parse_composite_desc(text, only_one_code: str | None = None):
             # first, if we parsed a description, it could be multiline, so check for
             # second/third line of desc., and if we find it, append it to description.
             if in_description and composite.code:
-                if pattern := re.match(r" {11,12}(.*?)$", line):
-                    composite.description += " " + pattern.group(1).strip()
-                    continue
-                else:
-                    in_description = False
+                if pattern := re.match(r" {11,15}(.*?)$", line):
+                    if "Cont:" not in pattern.group(1).strip():
+                        composite.description += " " + pattern.group(1).strip()
+                        continue
+                in_description = False
 
             if not in_composite and not composite.url:
                 composite.url = parse_url(line)
@@ -523,11 +463,13 @@ def parse_composite_desc(text, only_one_code: str | None = None):
             # find header lines like this:
             #       C001 TRANSPORT MEANS
             #       S005  RECIPIENT REFERENCE/PASSWORD DETAILS
-            if pattern := re.match(r"^[ +*#|X]+([A-Z]\d{3})\s(.*?)$", line):
+            #   C002     DOCUMENT
+            #        C002 DOCUMENT/MESSAGE NAME
+            if pattern := re.match(r"^[ +*#|X]+([A-Z]\d{3})\s+(.*?)$", line):
                 code, title = pattern.groups()
                 title = processed_title(title)
-                if only_one_code:
-                    if only_one_code != code:
+                if only_code:
+                    if only_code != code:
                         continue
                     composite.title = title
                     # in_composite = True
@@ -563,11 +505,33 @@ def parse_composite_desc(text, only_one_code: str | None = None):
                 # find sub data element reference pattern like:
                 # 010    8179  Transport means description code          C      an..8
                 # 020    1131  Code list identification code             C      an..17
-                if pattern := re.match(
+                #            Cont: 1154  Reference number             C  an..35 an 1 35
+                #                  1156  Line number                  C  an..6  an 1  6
+
+                pattern = re.match(
                     r"^(\d{3})\s+(\d{4})\s+(.*?)\s+([MC])\s+([an]+\.?\.?\d+)\s*$", line
-                ):
+                )
+                if pattern:
                     pos, code, title, mandatory, repr_line = pattern.groups()
-                    mandatory = mandatory == "M"
+                else:
+                    pattern = re.match(
+                        r"\s{10,18}(?:Cont: )?(\d{4})\s+(.*?)\s+([MC])\s+([an.\d]+)",
+                        line,
+                    )
+                    if pattern:
+                        code, title, mandatory, repr_line = pattern.groups()
+                        pos = "000"
+                if pattern:
+                    is_mandatory = mandatory == "M"
+                    # if the data element is not there, create a stub entry
+                    if code not in data_element_specs:
+                        data_element_specs[code] = DataElementSpec(
+                            code=code,
+                            title=title,
+                            stub=True,
+                            repr_line="",
+                            description="",
+                        )
                     if (
                         not data_element_specs[code].stub
                         and title != data_element_specs[code].title
@@ -581,13 +545,14 @@ def parse_composite_desc(text, only_one_code: str | None = None):
                     # If repr_line is the same as in the data element description,
                     # we skip it in the tuple
                     entry = CompositeDataElementUsage(
-                        pos, data_element_specs[code], mandatory, repr_line
+                        pos, data_element_specs[code], is_mandatory, repr_line
                     )
                     composite.schema.append(entry)
                     continue
         except StopIteration:
             break
-    composite_specs[composite.code] = composite
+    if composite.code:
+        composite_specs[composite.code] = composite
 
 
 # ------------------ Segment ------------------
@@ -1136,7 +1101,7 @@ def export_all(_list: Iterable):
 # UN descriptions at service.unece.org.
 
 
-def render_data_elements(with_imports=True) -> str:
+def render_data_elements(edi_directory: str, with_imports=True) -> str:
     output = "# ------------------- Data Elements -------------------\n"
     output += "# created from EDED - the EDIFACT data elements directory\n\n"
     output += file_header()
@@ -1145,7 +1110,10 @@ def render_data_elements(with_imports=True) -> str:
         output += "from pydifact.syntax.common.types import DataElement"
 
     for code, element in data_element_specs.items():
-        logger.info(f"Creating class '{element.class_name()}'")
+        logger.info(
+            f"Creating DataElement class for "
+            f"{edi_directory}.{element.code}: {element.class_name()}"
+        )
         # TODO: element.description|wordwrap:73 - use django filter
         output += f"""
 
@@ -1160,9 +1128,9 @@ class {element.class_name()}(DataElement):
     return black.format_str(output, mode=black.Mode())
 
 
-def render_composite_elements(with_imports=True) -> str:
+def render_composite_elements(edi_directory: str, with_imports=True) -> str:
     output = "# ------------------- Composite Data Elements -------------------\n"
-    output += "# created from EDCD - the EDIFACT composite  data elements directory\n\n"
+    output += "# created from EDCD - the EDIFACT composite data elements directory\n\n"
     output += file_header()
     if with_imports:
         output += (
@@ -1176,6 +1144,10 @@ def render_composite_elements(with_imports=True) -> str:
         output += "from .data import *\n"
 
     for code, spec in composite_specs.items():
+        logger.info(
+            f"Creating CompositeDataElement class for "
+            f"{edi_directory}.{spec.code}: {spec.class_name()}"
+        )
         output += f"class {spec.class_name()}(CompositeDataElement):\n"
         output += f'    """{spec.description}"""\n'
         output += f'    code: str = "{code}"\n'
@@ -1183,8 +1155,8 @@ def render_composite_elements(with_imports=True) -> str:
         output += "    schema: CompositeSchemaEntryList = [\n"
         for entry in spec.schema:
             comment = ""
-            if entry.element.repr_line != entry.repr_line:
-                comment = f"  # orig: '{entry.element.repr_line}'"
+            if entry.element.repr_line and entry.element.repr_line != entry.repr_line:
+                comment = f"  # DataElement uses: '{entry.element.repr_line}'"
             output += (
                 f"({entry.element.class_name()}, {entry.mandatory}, "
                 f'"{entry.repr_line}"),{comment}\n'
@@ -1195,7 +1167,7 @@ def render_composite_elements(with_imports=True) -> str:
     return black.format_str(output, mode=black.Mode())
 
 
-def render_segments(with_imports=True) -> str:
+def render_segments(edi_directory: str, with_imports=True) -> str:
 
     output = "# ------------------- Segments -------------------\n"
     output += "# created from EDSD - the EDIFACT segments directory\n\n"
@@ -1260,7 +1232,10 @@ def render_segments(with_imports=True) -> str:
                     f'{entry.mandatory=="M"}, "{entry.repr_line}"),\n'
                 )
         output += "    }\n"
-
+        logger.info(
+            f"Creating CompositeDataElement class for "
+            f"{edi_directory}.{segment_spec.tag}: {segment_spec.class_name()}"
+        )
     output += export_all(segment_specs.values())
     return output  # black.format_str(output, mode=black.Mode())
 
@@ -1358,66 +1333,82 @@ def print_usage():
     print("    --clear-cache   Clears the temporary directory and exits.")
 
 
+# we need the GEFEG site as base url for downloading the service files
+# that are not included in the EDI directories
+# https://service.gefeg.com/jwg1/Archive/v3/data/v3.html
+# https://service.gefeg.com/jwg1/Archive/v4x/data/v4x.html
+services_v3v4_base_url = "https://service.gefeg.com/jwg1/Archive/"
+
 services_map: dict[int, dict[str, dict[str, str | list[str]]]] = {
+    1: {
+        "e": {"url": "", "index": "", "list": ""},  # "Sded.s1",  TODO
+        "c": {"url": "", "index": "", "list": ""},  # "Sced.s1",  TODO
+        "s": {
+            "url": "",
+            "index": "",
+            "list": "Ssed.s1",
+        },
+        "m": {"url": "", "index": "", "list": ""},  # "Smed.s1",  TODO
+    },
     3: {
         # Service simple data element directory
         "e": {
-            "file": "v3/data/v3-sded.zip",
+            "url": services_v3v4_base_url + "v3/data/v3-sded.zip",
             "index": "Sdedi1.s3",  # "Sdedi2.s3"
             "list": "Sded.s3",
         },
         # Service composite data element directory
         "c": {
-            "file": "v3/data/v3-sced.zip",
+            "url": services_v3v4_base_url + "v3/data/v3-sced.zip",
             "index": "Scedi1.s3",  # "Scedi2.s3"
             "list": "Sced.s3",
         },
         # Service segment directory
         "s": {
-            "file": "v3/data/v3-ssed.zip",
+            "url": services_v3v4_base_url + "v3/data/v3-ssed.zip",
             "index": "Ssedi1.s3",  # "Ssedi2.s3"
             "list": "Ssed.s3",
         },
         # Service message type directory
         "m": {
-            "file": "v3/data/v3-smed.zip",
+            "url": services_v3v4_base_url + "v3/data/v3-smed.zip",
             "index": "Smedi1.s3",  # "Smedi2.s3"
             "list": "Contrl.s3",
         },
         # # Service code lists directory
         # "cl": {
-        #     "file": "cl/data/unsl{directory}a.zip",
+        #     "url": services_v3v4_base_url + "cl/data/unsl{directory}a.zip",
         #     "list": ["UNSL.{directory}.txt"],
         # },
     },
     4: {
         # Service simple data element directory
         "e": {
-            "file": "v4x/data/e40200.zip",
+            "url": services_v3v4_base_url + "v4x/data/e40200.zip",
             "index": "Ne40200.txt",  # "Te40200.txt"
             "list": "Se40200.txt",
         },
         # Service composite data element directory
         "c": {
-            "file": "v4x/data/c40200.zip",
+            "url": services_v3v4_base_url + "v4x/data/c40200.zip",
             "index": "Nc40200.txt",  # Tc40200.txt"
             "list": "Sc40200.txt",
         },
         # Service segment directory
         "s": {
-            "file": "v4x/data/s40200.zip",
+            "url": services_v3v4_base_url + "v4x/data/s40200.zip",
             "index": "Ns40200.txt",  # "Ts40200.txt"
             "list": "Ss40200.txt",
         },
         # Service message type directory
         "m": {
-            "file": "v4x/data/m40200.zip",
+            "url": services_v3v4_base_url + "v4x/data/m40200.zip",
             "index": "Nm40200.txt",  # "Tm40200.txt",
             "list": ["Autack_0.txt", "Contrl_1.txt", "Keyman_0.txt"],
         },
         # # Service code lists directory
         # "cl": {
-        #     "file": "cl/data/sl40219.zip",
+        #     "url": services_v3v4_base_url + "cl/data/sl40219.zip",
         #     "list": "sl40219.txt",
         # },
     },
@@ -1425,20 +1416,20 @@ services_map: dict[int, dict[str, dict[str, str | list[str]]]] = {
 
 # This is a key-value map where the key is the edifact directory, and the value a
 # list of files in this order:
-# elements, composite elements, segments, messages, code lists.
+# (e)lements, (c)omposite elements, (s)egments, (m)essages, (c)ode (l)ists.
 directories_map: dict[str, dict[str, dict[str, str | list[str]]]] = {
     "90-1": {
-        "e": {"list": "EDED-901.ASC"},
-        "c": {"list": "EDCD-901.ASC"},
-        "s": {"list": "EDSD-901.ASC"},
-        "m": {"list": "EDMD-901.ASC"},
+        "e": {"index": "", "list": "EDED-901.ASC"},
+        "c": {"index": "", "list": "EDCD-901.ASC"},
+        "s": {"index": "", "list": "EDSD-901.ASC"},
+        "m": {"index": "", "list": "EDMD-901.ASC"},
         "cl": {"list": "EDCL-901.ASC"},
     },
     "93-2": {
-        "e": {"list": "EDED.932"},
-        "c": {"list": "EDCD.932"},
-        "s": {"list": "EDSD.932"},
-        "m": {"list": "EDMD.932"},
+        "e": {"index": "", "list": "EDED.932"},
+        "c": {"index": "", "list": "EDCD.932"},
+        "s": {"index": "", "list": "EDSD.932"},
+        "m": {"index": "", "list": "EDMD.932"},
         "cl": {"list": ["EDCL-1.932", "EDCL-2.932"]},
     },
     "d24a": {
@@ -1511,13 +1502,6 @@ def main():
         print_usage()
         sys.exit(1)
 
-    # we need the GEFEG site as base url for downloading the service files
-    # that are not included in the EDI directories
-    # https://service.gefeg.com/jwg1/Archive/v3/data/v3.html
-    # https://service.gefeg.com/jwg1/Archive/v4x/data/v4x.html
-
-    gefeg_download_baseurl = "https://service.gefeg.com/jwg1/Archive/"
-
     if syntax_version not in services_map:
         logger.error(
             f"Unsupported EDIFACT syntax version '{edi_directory}': No service entry"
@@ -1527,8 +1511,8 @@ def main():
     # first, download service files, as they are needed as the base for all others
     # There the UNB, UNE/UNH etc. base segments are defined.
     for _type, dct in services_map[syntax_version].items():
-        download_service_file(
-            url=gefeg_download_baseurl + dct["file"],
+        download_service_zipfile(
+            url=dct["url"],
             version=syntax_version,
             check_existing=dct["list"],
         )
@@ -1536,12 +1520,12 @@ def main():
     try:
         # ------------- Service elements -------------
         # Service Data Elements
-        parse_data_element_desc(
+        parse_data_elements_dir(
             read_service_file(syntax_version, services_map[syntax_version]["e"]["list"])
         )  # e.g. Se40200.txt
 
         # Service Composite Data Elements
-        parse_composite_desc(
+        parse_composite_dir(
             read_service_file(syntax_version, services_map[syntax_version]["c"]["list"])
         )  # e.g.Sc40200.txt
 
@@ -1552,9 +1536,9 @@ def main():
             )
         )  # e.g. "Ts40200.txt"
 
-        if not os.path.exists(download_directory / edi_directory):
+        if not os.path.exists(download_directory / edi_directory.lower()):
             logger.error(
-                f"No downloaded directory '{edi_directory}' found.\n"
+                f"No downloaded directory '{edi_directory.lower()}' found.\n"
                 "Please go to https://unece.org/trade/uncefact/unedifact/download, "
                 f"download and extract all contents of the '{edi_directory}' "
                 f"zip file manually into the following directory:\n"
@@ -1564,21 +1548,13 @@ def main():
 
         # ------------- User elements -------------
         # Data Elements
-        parse_data_element_directory_desc(
-            get_data_element_directory_desc(edi_directory)
+        parse_data_elements_dir(
+            read_file(edi_directory, directories_map[edi_directory]["e"]["list"])
         )
-        # walk through this list and parse each file, if code>=1000 (user elements)
-        for code in data_element_specs:
-            if data_element_specs[code].stub:
-                parse_data_element_desc(
-                    get_data_element_desc(edi_directory, code), code
-                )
-
         # Composite Data Elements
-        parse_composite_directory_desc(get_composite_directory_desc(edi_directory))
-        for code in composite_specs:
-            if composite_specs[code].stub:
-                parse_composite_desc(get_composite_desc(edi_directory, code), code)
+        parse_composite_dir(
+            read_file(edi_directory, directories_map[edi_directory]["c"]["list"]),
+        )
 
         parse_segment_directory_desc(get_segment_directory_desc(edi_directory))
 
@@ -1605,22 +1581,22 @@ def main():
     write_python_code_to_file(
         edi_directory,
         "data.py",
-        render_data_elements(),
+        render_data_elements(edi_directory),
     )
     write_python_code_to_file(
         edi_directory,
         "composite.py",
-        render_composite_elements(),
+        render_composite_elements(edi_directory),
     )
     write_python_code_to_file(
         edi_directory,
         "segments.py",
-        render_segments(),
+        render_segments(edi_directory),
     )
     write_python_code_to_file(
         edi_directory,
         "messages.py",
-        render_messages(),
+        render_messages(edi_directory),
     )
 
 

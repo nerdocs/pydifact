@@ -19,8 +19,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - massively improve type annotations (thanks Tammo Ippen)
 - use code-based structures to validate segments and data elements
 - improve error output when EDIFACT syntax errors are found
-- Implement automatic detection and validation of EDIFACT syntax version (1 - 4) by examining the UNB segment for proper version control and adherence to version-specific syntax rules.
+- Starting to implement automatic detection and validation of EDIFACT syntax version (1 - 4) by examining the UNB segment for proper version control and adherence to version-specific syntax rules.
 - provide line numbers/columns in EdiFactSyntaxError exceptions
+- add support for loading extracted UNTDID zip files that must be present in the download directory for parsing different EDIFACT directories
 
 [0.1.9]
 ### CHANGES
