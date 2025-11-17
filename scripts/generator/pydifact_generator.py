@@ -1488,10 +1488,15 @@ class {message_spec.class_name()}(Message):\n
 def write_python_code_to_file(directory: str, filename: str, content: str):
     global last_file_path
     # get path of pydifact.syntax module
-    dirname = os.path.join(os.path.dirname(pydifact.syntax.__file__), directory)
+    dirname = os.path.join(
+        os.path.dirname(pydifact.syntax.__file__), to_identifier(directory)
+    )
     os.makedirs(dirname, exist_ok=True)
-    with open(os.path.join(dirname, "__init__.py"), "w", encoding="utf-8") as f:
-        f.write("")
+    # if __init__.py does not exis, create it
+    init_file = os.path.join(dirname, "__init__.py")
+    if not os.path.exists(init_file):
+        with open(init_file, "w", encoding="utf-8") as f:
+            f.write("")
     current_file = os.path.join(dirname, filename)
     with open(current_file, "w", encoding="utf-8") as f:
         f.write(content)
