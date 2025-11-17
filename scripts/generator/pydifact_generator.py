@@ -493,7 +493,7 @@ def parse_composite_dir(text, only_code: str | None = None):
                 # 020    1131  Code list identification code             C      an..17
                 #            Cont: 1154  Reference number             C  an..35 an 1 35
                 #                  1156  Line number                  C  an..6  an 1  6
-
+                title = code = pos = repr_line = mandatory = ""
                 if pattern := re.match(
                     r"^(\d{3})\s+(\d{4})\s+(.*?)\s+([MC])\s+([an]+\.?\.?\d+)\s*$", line
                 ):
