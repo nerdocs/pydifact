@@ -3,7 +3,7 @@
 # Note that they are NOT used for pydifact itself, as the code that is used by
 # pydifact is created on the fly by the parser and is located in
 # syntax.xxx.{data|composite|messages}.py
-import typing
+
 from dataclasses import dataclass
 from typing import NamedTuple
 
@@ -31,7 +31,8 @@ class DataElementSpec:
 
     @property
     def identifier(self) -> str:
-        """Returns a Python identifier that can be used as accessor in a dataclass."""
+        """Returns a Python identifier that can be used as an accessor in a
+        dataclass."""
         return f"{to_identifier(self.title)}"
 
 
@@ -69,7 +70,8 @@ class CompositeElementSpec:
 
     @property
     def identifier(self) -> str:
-        """Returns a Python identifier that can be used as accessor in a dataclass."""
+        """Returns a Python identifier that can be used as an accessor in a
+        dataclass."""
         return f"{to_identifier(self.title)}"
 
 
@@ -88,12 +90,13 @@ class SegmentDataElementUsage(NamedTuple):
 
     @property
     def identifier(self) -> str:
-        """Returns a Python identifier that can be used as accessor in a dataclass."""
+        """Returns a Python identifier that can be used as an accessor in a
+        dataclass."""
         return f"{to_identifier(self.element.title)}"
 
 
 class SegmentInlineDataElementUsage(NamedTuple):
-    """Usage of a top level data element within a segment."""
+    """Usage of a top-level data element within a segment."""
 
     element: DataElementSpec
     mandatory: bool
@@ -111,7 +114,8 @@ class SegmentCompositeElementUsage(NamedTuple):
 
     @property
     def identifier(self) -> str:
-        """Returns a Python identifier that can be used as accessor in a dataclass."""
+        """Returns a Python identifier that can be used as an accessor in a
+        dataclass."""
         return f"{to_identifier(self.element.title)}"
 
 
@@ -140,7 +144,8 @@ class MessageSegmentUsage(NamedTuple):
 
     @property
     def identifier(self) -> str:
-        """Returns a Python identifier that can be used as accessor in a dataclass."""
+        """Returns a Python identifier that can be used as an accessor in a
+        dataclass."""
         return f"{to_identifier(self.element.title)}"
 
 
