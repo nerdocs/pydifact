@@ -494,18 +494,17 @@ def parse_composite_dir(text, only_code: str | None = None):
                 #            Cont: 1154  Reference number             C  an..35 an 1 35
                 #                  1156  Line number                  C  an..6  an 1  6
 
-                pattern = re.match(
+                if pattern := re.match(
                     r"^(\d{3})\s+(\d{4})\s+(.*?)\s+([MC])\s+([an]+\.?\.?\d+)\s*$", line
-                )
-                if pattern:
+                ):
                     pos, code, title, mandatory, repr_line = pattern.groups()
                 else:
-                    pattern = re.match(
+                    if pattern := re.match(
                         r"\s{10,18}(?:Cont: )?(\d{4})\s+(.*?)\s+([MC])\s+([an.\d]+)",
                         line,
-                    )
-                    if pattern:
+                    ):
                         code, title, mandatory, repr_line = pattern.groups()
+                        # TODO: count and create POS manually
                         pos = "000"
                 if pattern:
                     is_mandatory = mandatory == "M"
