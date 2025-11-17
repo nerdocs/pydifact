@@ -17,7 +17,17 @@ class ValidationError(Exception):
 
 
 class ParsingError(Exception):
-    pass
+    def __init__(
+        self, message: str, file_name: str = "", line_number: int = 0, line: str = ""
+    ):
+        self.line_number = line_number
+        self.line = line
+        self.file_name = file_name
+        if not line and not line_number:
+            super().__init__(f"Parsing Error: {message}")
+        super().__init__(
+            f"Parsing Error in {file_name}:{line_number}: {message}\n'{line}'"
+        )
 
 
 # ---------------- Warnings ----------------

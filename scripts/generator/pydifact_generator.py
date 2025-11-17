@@ -726,6 +726,10 @@ def parse_segment_dir(text: str, only_segment_tag: str = ""):
         """Helper to save the current segment."""
         if not segment.tag:
             return
+
+        # Save any pending top-level element first
+        save_toplevel_element()
+
         if segment.tag not in segment_specs:
             logger.warning(f"Could not fill segment {segment.tag} schema")
         else:
@@ -736,6 +740,7 @@ def parse_segment_dir(text: str, only_segment_tag: str = ""):
         """Helper to save the current top-level element."""
         if state.last_toplevel_element:
             segment.schema.append(state.last_toplevel_element)
+            state.last_toplevel_element = None
             state.sub_elements = []
 
     while True:
@@ -753,7 +758,8 @@ def parse_segment_dir(text: str, only_segment_tag: str = ""):
                 tag, title = title_match
 
                 # Save previous segment
-                save_current_segment()
+                if state.in_segment:
+                    save_current_segment()
 
                 # Stop if we only want one segment and found another
                 if state.in_segment and only_segment_tag:
@@ -800,7 +806,6 @@ def parse_segment_dir(text: str, only_segment_tag: str = ""):
             break
 
     # Save last segment
-    save_toplevel_element()
     save_current_segment()
 
 
