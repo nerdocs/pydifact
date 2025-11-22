@@ -470,9 +470,11 @@ def main():
                         if k == "id":
                             continue
                         child.set(k, v)
-                    # adopt potential children (e.g., codes)
+                    # adobt subitems, but except codes (directly in segments.xml)
                     for orphan in list(data_def):
-                        xml_adopt(child, orphan)
+                        if orphan.tag != "code":
+                            xml_adopt(child, orphan)
+                            print(f"adopting {orphan.tag} from data element {did}")
 
                 if child.tag == "composite_data_element":
                     # enrich nested data elements inside composite with attributes
