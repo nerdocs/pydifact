@@ -157,6 +157,10 @@ make test-extended
 ## Credits
 The official formats for UN/EDIFAT provided by UN Secretariat are raw text files located [here](http://www.unece.org/tradewelcome/un-centre-for-trade-facilitation-and-e-business-uncefact/outputs/standards/unedifact/directories/download.html) and html (.htm) files located [here](http://www.unece.org/tradewelcome/un-centre-for-trade-facilitation-and-e-business-uncefact/outputs/standards/unedifact/directories/2011-present.html), similarly for service codes as text and html files located at https://www.gefeg.com/jswg/.
 
+There are many other helpful projects and people who made this possible:
+* [untid-parser](https://github.com/php-edifact/untdid-parser) by [Stefano](https://github.com/sabas) - thanks for your help.
+
+For a contributors' list, see [Contributors](https://github.com/nerdocs/pydifact/graphs/contributors).
 
 ## License
 

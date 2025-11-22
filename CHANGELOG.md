@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Drop support for Python versions < 3.10 (3.8 was EOL 2024-10-07, 3.9 not much used in Distros.)
 
 ### ADDED
+- EDED, EDCD, EDMD, EDSD, UNCL, UNSL parsers and zip extraction logic for automated EDI schema generation
 - massively improve type annotations (thanks Tammo Ippen)
 - use code-based structures to validate segments and data elements
 - improve error output when EDIFACT syntax errors are found
