@@ -143,7 +143,7 @@ def main():
         sys.exit(1)
 
     # Create the EDMD directory
-    edmd_dir = f"{extracted_dir}/EDMD"
+    edmd_dir = f"{extracted_dir}/MESSAGES"
     os.makedirs(edmd_dir, exist_ok=True)
 
     # NOTES ON RELEASES
@@ -167,7 +167,7 @@ def main():
             # UNCL - codes list
             # EDMD - messages (TRMD)
 
-            if re.search(r"(edmd|trmd)\.zip", file.lower()):
+            if re.search(r"(idmd|edmd|trmd)\.zip", file.lower()):
                 extract_zip(zip_path, edmd_dir)
             else:
                 extract_zip(zip_path, extracted_dir)
