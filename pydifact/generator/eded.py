@@ -8,9 +8,10 @@ from pydifact.generator.base import UntidBaseParser
 class EDEDParser(UntidBaseParser):
     """Parser for EDIFACT Data Element Directory (EDED) files."""
 
-    def __init__(self, file_path: str):
+    def __init__(self, file_path: str, codes: ElementTree.Element | None = None):
         super().__init__()
         self.msg_xml = ElementTree.Element("data_elements")
+        self.codes = codes
 
         try:
             self._validate_input(file_path)
@@ -179,3 +180,10 @@ class EDEDParser(UntidBaseParser):
             def_xml.set("desc", element_description)
             def_xml.set("type", element_type)
             def_xml.set("maxlength", element_max_size)
+
+            # if codes are available, fill the codes into the tree
+            if self.codes:
+                codes_element = self.codes.find(f"./data_element[@id='{element_code}']")
+                if codes_element:
+                    for child in codes_element:
+                        def_xml.append(child)
