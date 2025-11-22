@@ -49,3 +49,8 @@ build-backend = "setuptools.build_meta"
 
 [tool.setuptools.dynamic]
 version = {attr = "pydifact.__version__"}
+
+[tool.setuptools.packages.find]
+where = ["."]  # TODO use src layout
+include = ["pydifact*"]
+exclude = ["pydifact.generator*"]
