@@ -58,8 +58,8 @@ class EDEDParser(UntidBaseParser):
         # Remove first empty section
         eded_list = eded_list[1:]
 
-        for eded_elm in eded_list:
-            parts = re.split(r"[\r\n]+", eded_elm)
+        for eded_element in eded_list:
+            parts = re.split(r"[\r\n]+", eded_element)
 
             element_status = ""
             element_code = ""
