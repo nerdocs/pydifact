@@ -239,7 +239,7 @@ def main():
         error_xml = f'<?xml version="1.0" encoding="utf-8" standalone="yes"?><data_elements><error>{e}</error></data_elements>'
         with open(f"{generated_dir}/codes.xml", "w") as f:
             f.write(error_xml)
-        sys.exit(1)
+        raise e
 
     # Parse EDED (data elements)
     print("Parsing EDED... (Data elements directory)")
@@ -266,7 +266,7 @@ def main():
         error_xml = f'<?xml version="1.0" encoding="utf-8" standalone="yes"?><data_elements><error>{e}</error></data_elements>'
         with open(f"{generated_dir}/data_elements.xml", "w") as f:
             f.write(error_xml)
-        sys.exit(1)
+        raise e
 
     # Parse EDCD (composite data elements)
     print("Parsing EDCD... (Composite data elements directory)")
@@ -296,7 +296,7 @@ def main():
         error_xml = f'<?xml version="1.0" encoding="utf-8" standalone="yes"?><composite_data_elements><error>{e}</error></composite_data_elements>'
         with open(f"{generated_dir}/composite_data_elements.xml", "w") as f:
             f.write(error_xml)
-        sys.exit(1)
+        raise e
 
     # Parse EDSD (segments)
     print("Parsing EDSD... (Segments directory)")
@@ -323,7 +323,7 @@ def main():
         error_xml = f'<?xml version="1.0" encoding="utf-8" standalone="yes"?><segments><error>{e}</error></segments>'
         with open(f"{generated_dir}/simple_segments.xml", "w") as f:
             f.write(error_xml)
-        sys.exit(1)
+        raise e
 
     # Parse EDMD (messages)
     print("Parsing EDMD... (Messages directory)")
@@ -362,6 +362,7 @@ def main():
             with open(f"{messages_dir}/{name.lower()}.xml", "w") as f:
                 f.write(error_xml)
             message_parse_errors += 1
+            raise e
 
     print("EDMD parsing completed")
 
@@ -390,7 +391,7 @@ def main():
         error_xml = f'<?xml version="1.0" encoding="utf-8" standalone="yes"?><data_elements><error>{e}</error></data_elements>'
         with open(f"{generated_dir}/service_segments.xml", "w") as f:
             f.write(error_xml)
-        sys.exit(1)
+        raise e
 
     if message_parse_errors > 0:
         print(f" with {message_parse_errors} error(s)")
@@ -519,6 +520,7 @@ def main():
                 dst.write(data)
         except Exception:
             pass
+        raise e
 
 
 if __name__ == "__main__":
