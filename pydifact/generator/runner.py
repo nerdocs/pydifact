@@ -5,6 +5,7 @@ from xml.etree import ElementTree
 from pathlib import Path
 import re
 
+from pydifact.generator.base import UntidBaseParser
 from pydifact.generator.edsd import EDSDParser
 from pydifact.generator.edcd import EDCDParser
 from pydifact.generator.eded import EDEDParser
@@ -13,6 +14,9 @@ from pydifact.generator.edmd import EDMDParser
 from pydifact.generator.unsl import UNSLParser
 
 from os import PathLike
+
+
+V4_RELEASE_NUMBER = "40219"
 
 
 def xml_adopt(root: ElementTree.Element, new: ElementTree.Element) -> None:
@@ -36,15 +40,43 @@ def xml_adopt(root: ElementTree.Element, new: ElementTree.Element) -> None:
         xml_adopt(node, child)
 
 
-def extract_zip(zip_path: PathLike[str] | str, extract_to: PathLike[str] | str) -> bool:
-    """Extract a ZIP file to a directory."""
+def _expand_zip(
+    zip_path: PathLike[str] | str,
+    extract_to: PathLike[str] | str,
+    members: list[str] | str | None = None,
+) -> bool:
+    """Internal work function to expand a ZIP file."""
     try:
+        if isinstance(members, str):
+            members = [members]
         with zipfile.ZipFile(zip_path, "r") as zip_ref:
-            zip_ref.extractall(extract_to)
+            zip_ref.extractall(path=extract_to, members=members or None)
         return True
     except Exception as e:
         print(f"ERROR: Failed to extract {zip_path}: {e}")
         return False
+
+
+def expand_zip(
+    zip_path: PathLike[str] | str,
+    extract_to: PathLike[str] | str,
+    members: list[str] | str | None = None,
+):
+    """Extract a ZIP file to a directory.
+
+    Prints status messages and errors if it fails.
+
+    Args:
+        zip_path: The path to the ZIP file
+        extract_to: The path to the directory where the ZIP file should be extracted
+        members: An optional list of file names to extract
+            (must be a subset of the zip file's contents)
+    """
+    print(f"Extracting '{zip_path}'...", end="")
+    if _expand_zip(zip_path, extract_to, members):
+        print("OK")
+    else:
+        sys.exit(1)
 
 
 def uppercase_files(directory: PathLike[str] | str) -> None:
@@ -67,6 +99,33 @@ def uppercase_files(directory: PathLike[str] | str) -> None:
                 pass  # File might already exist with an uppercase name
 
 
+def extract_data(parser: UntidBaseParser, output_file: str, release: str) -> None:
+    # Parse UNSL (service elements)
+    print(f"Parsing {parser.name}... for {release}")
+    try:
+
+        with open(output_file, "w", encoding="utf-8") as f:
+            f.write(parser.get_xml())
+
+        if parser.has_warnings():
+            print(f"{parser.name} parser warnings:")
+            for warning in parser.get_warnings():
+                print(f"  WARNING: {warning}")
+
+        if parser.has_errors():
+            print(f"{parser.name} parser errors:")
+            for error in parser.get_errors():
+                print(f"  ERROR: {error}")
+
+        print(f"{parser.name} parsing completed successfully")
+    except Exception as e:
+        # print(f"CRITICAL ERROR in {parser_class.name} parsing: {e}")
+        # error_xml = f'<?xml version="1.0" encoding="utf-8" standalone="yes"?><error>{e}</error>'
+        # with open(f"{generated_dir}/service_segments.xml", "w") as f:
+        #     f.write(error_xml)
+        raise e
+
+
 def main():
     # Default version and edi directory
     syntax_version = "4"
@@ -87,6 +146,10 @@ def main():
 
     release = f"D{edi_directory}"
 
+    if syntax_version not in ["1", "2", "3", "4"]:
+        print(f"ERROR: Unsupported syntax version: {syntax_version}")
+        sys.exit(1)
+
     # Create the necessary directories
     extracted_dir = f"extracted/{release}"
     generated_dir = f"generated/{release}"
@@ -98,7 +161,7 @@ def main():
     os.makedirs(messages_dir, exist_ok=True)
     os.makedirs(os.path.join(services_dir), exist_ok=True)
 
-    # Check if ZIP file exists
+    # Check if ZIP files exists
     zips_directory = Path(".") / "zips"
     release_zip_file = zips_directory / f"{release.lower()}.zip"
     if not os.path.exists(release_zip_file):
@@ -108,39 +171,62 @@ def main():
             print(f"  - {available_zip}")
         sys.exit(1)
 
-    unsl_zip_file = ""
-    match syntax_version:
-        case "4":
-            unsl_zip_file = zips_directory / "sl40219.zip"
-        case "3":
-            unsl_zip_file = zips_directory / f"unsl{edi_directory.lower()}.zip"
-        case "2":
-            unsl_zip_file = zips_directory / "-.zip"  # FIXME
-        case "1":
-            unsl_zip_file = zips_directory / "-.zip"  # FIXME
-        case _:
-            print(f"ERROR: Unsupported syntax version: {syntax_version}")
-            sys.exit(1)
+    version_services_map = {
+        "1": {},
+        "2": {},
+        "3": {
+            "codes": (f"unsl{edi_directory.lower()}.zip", None),
+            "elements": ("v3-sded.zip", "Sded.s3"),
+            "composites": ("v3-sced.zip", "Sced.s3"),
+            "segments": ("v3-ssed.zip", "Ssed.s3"),
+            "messages": ("v3-smed.zip", "Smed.s3"),
+        },
+        "4": {
+            "codes": (f"sl{V4_RELEASE_NUMBER}.zip", None),  #
+            # as it is too complicated for now to match releases (e.g. 40219) with
+            # directories (d24a), we just take the newest. This is not correct and
+            # could lead to possible errors as some newer releases e.g. delete some
+            # data elements.
+            "elements": (
+                f"sl{V4_RELEASE_NUMBER}.zip",
+                f"sl{V4_RELEASE_NUMBER}.txt",
+            ),
+            "composites": "c40200.zip",
+            "segments": "s40200.zip",
+            "messages": "m40200.zip",
+        },
+    }
 
-    if not os.path.exists(unsl_zip_file):
-        print(f"ERROR: UNSL ZIP file not found: {unsl_zip_file}")
-        sys.exit(1)
+    release_map = version_services_map.get(syntax_version)
 
-    # Extract the main ZIP file
-    print(f"Extracting release zip: {release_zip_file}...")
-    if extract_zip(release_zip_file, extracted_dir):
-        print("Extraction completed successfully")
-    else:
-        print(f"ERROR: Failed to open ZIP file: {release_zip_file}")
-        sys.exit(1)
+    # ----------------- SERVICE ZIP FILES -----------------
 
-    # extract the UNSL ZIP file
-    print(f"Extracting UNSL zip: {unsl_zip_file}...")
-    if extract_zip(unsl_zip_file, extracted_dir):
-        print("Extraction completed successfully")
-    else:
-        print(f"ERROR: Failed to open UNSL ZIP file: {unsl_zip_file}")
-        sys.exit(1)
+    unsl_zip_file, unsl_members = release_map["codes"]
+    unsl_zip_file = zips_directory / unsl_zip_file
+    # if not os.path.exists(unsl_zip_file):
+    #     print(f"\nERROR: UNSL ZIP file not found: {unsl_zip_file}")
+    #     sys.exit(1)
+
+    # extract the UNSL codes ZIP file
+    expand_zip(unsl_zip_file, extracted_dir, unsl_members)
+
+    # service zip files
+    expand_zip(
+        zips_directory / release_map["elements"][0],
+        extracted_dir,
+        release_map["elements"][1],
+    )
+
+    extract_data(
+        UNSLParser(f"{extracted_dir}/UNSL.{edi_directory}"),
+        f"{services_dir}/data_elements.xml",
+        release,
+    )
+
+    # ----------------- RELEASE ZIP FILES -----------------
+
+    # Extract the release ZIP file
+    expand_zip(release_zip_file, extracted_dir)
 
     # Create the EDMD directory
     edmd_dir = f"{extracted_dir}/MESSAGES"
@@ -161,16 +247,18 @@ def main():
         if file.lower().endswith(".zip"):
             zip_path = os.path.join(extracted_dir, file)
 
-            # EDSD - segments (TRSD)
-            # EDCD - composite data elements (TRCD)
-            # EDED - data elements (TRED)
-            # UNCL - codes list
-            # EDMD - messages (TRMD)
+            # EDSD/IDSD - segments (TRSD)
+            # EDCD/IDCD - composite data elements (TRCD)
+            # EDED      - data elements (TRED)
+            # EDMD/IDMD - messages (TRMD)
+            # UNCL      - codes list
 
+            # TODO: evtl. move IDMD into separate directory?
             if re.search(r"(idmd|edmd|trmd)\.zip", file.lower()):
-                extract_zip(zip_path, edmd_dir)
+                expand_zip(zip_path, edmd_dir)
             else:
-                extract_zip(zip_path, extracted_dir)
+                expand_zip(zip_path, extracted_dir)
+
         else:
             if re.search(
                 rf"(sl4\d{{4}}\.txt|unsl\.{edi_directory.lower()})", file.lower()
@@ -215,115 +303,33 @@ def main():
         sys.exit(1)
 
     # Parse UNCL (code list)
-    print("Parsing UNCL... (User codes directory)")
-    try:
-        p = UNCLParser(f"{extracted_dir}/UNCL.{edi_directory}")
-
-        with open(f"{generated_dir}/codes.xml", "w", encoding="utf-8") as f:
-            f.write(p.get_xml())
-
-        if p.has_warnings():
-            print("UNCL Parser Warnings:")
-            for warning in p.get_warnings():
-                print(f"  WARNING: {warning}")
-
-        if p.has_errors():
-            print("UNCL Parser Errors:")
-            for error in p.get_errors():
-                print(f"  ERROR: {error}")
-
-        codes = p.msg_xml
-        print("UNCL parsing completed successfully")
-    except Exception as e:
-        print(f"CRITICAL ERROR in UNCL parsing: {e}")
-        error_xml = f'<?xml version="1.0" encoding="utf-8" standalone="yes"?><data_elements><error>{e}</error></data_elements>'
-        with open(f"{generated_dir}/codes.xml", "w") as f:
-            f.write(error_xml)
-        raise e
+    extract_data(
+        uncl_parser := UNCLParser(f"{extracted_dir}/UNCL.{edi_directory}"),
+        f"{generated_dir}/codes.xml",
+        release,
+    )
 
     # Parse EDED (data elements)
-    print("Parsing EDED... (Data elements directory)")
-    try:
-        p = EDEDParser(f"{extracted_dir}/EDED.{edi_directory}", codes=codes)
-
-        with open(f"{generated_dir}/data_elements.xml", "w", encoding="utf-8") as f:
-            f.write(p.get_xml())
-
-        if p.has_warnings():
-            print("EDED Parser Warnings:")
-            for warning in p.get_warnings():
-                print(f"  WARNING: {warning}")
-
-        if p.has_errors():
-            print("EDED Parser Errors:")
-            for error in p.get_errors():
-                print(f"  ERROR: {error}")
-
-        data_elements = p.msg_xml
-        print("EDED parsing completed successfully")
-    except Exception as e:
-        print(f"CRITICAL ERROR in EDED parsing: {e}")
-        error_xml = f'<?xml version="1.0" encoding="utf-8" standalone="yes"?><data_elements><error>{e}</error></data_elements>'
-        with open(f"{generated_dir}/data_elements.xml", "w") as f:
-            f.write(error_xml)
-        raise e
+    extract_data(
+        data_elements_parser := EDEDParser(
+            f"{extracted_dir}/EDED.{edi_directory}", codes=uncl_parser.msg_xml
+        ),
+        f"{generated_dir}/data_elements.xml",
+        release,
+    )
 
     # Parse EDCD (composite data elements)
-    print("Parsing EDCD... (Composite data elements directory)")
-    try:
-        p = EDCDParser(
-            f"{extracted_dir}/EDCD.{edi_directory}", data_elements=data_elements
-        )
-
-        with open(
-            f"{generated_dir}/composite_data_elements.xml", "w", encoding="utf-8"
-        ) as f:
-            f.write(p.get_xml())
-
-        if p.has_warnings():
-            print("EDCD Parser Warnings:")
-            for warning in p.get_warnings():
-                print(f"  WARNING: {warning}")
-
-        if p.has_errors():
-            print("EDCD Parser Errors:")
-            for error in p.get_errors():
-                print(f"  ERROR: {error}")
-
-        print("EDCD parsing completed successfully")
-    except Exception as e:
-        print(f"CRITICAL ERROR in EDCD parsing: {e}")
-        error_xml = f'<?xml version="1.0" encoding="utf-8" standalone="yes"?><composite_data_elements><error>{e}</error></composite_data_elements>'
-        with open(f"{generated_dir}/composite_data_elements.xml", "w") as f:
-            f.write(error_xml)
-        raise e
+    extract_data(
+        EDCDParser(
+            f"{extracted_dir}/EDCD.{edi_directory}",
+            data_elements=data_elements_parser.msg_xml,
+        ),
+        f"{generated_dir}/composite_data_elements.xml",
+        release,
+    )
 
     # Parse EDSD (segments)
-    print("Parsing EDSD... (Segments directory)")
-    try:
-        p = EDSDParser(edsd_file)
-
-        # Write a simple (flat) segments file first; we'll enrich it after parsing EDCD/EDED
-        with open(f"{generated_dir}/simple_segments.xml", "w", encoding="utf-8") as f:
-            f.write(p.get_xml())
-
-        if p.has_warnings():
-            print("EDSD Parser Warnings:")
-            for warning in p.get_warnings():
-                print(f"  WARNING: {warning}")
-
-        if p.has_errors():
-            print("EDSD Parser Errors:")
-            for error in p.get_errors():
-                print(f"  ERROR: {error}")
-
-        print("EDSD parsing completed successfully")
-    except Exception as e:
-        print(f"CRITICAL ERROR in EDSD parsing: {e}")
-        error_xml = f'<?xml version="1.0" encoding="utf-8" standalone="yes"?><segments><error>{e}</error></segments>'
-        with open(f"{generated_dir}/simple_segments.xml", "w") as f:
-            f.write(error_xml)
-        raise e
+    extract_data(EDSDParser(edsd_file), f"{generated_dir}/simple_segments.xml", release)
 
     # Parse EDMD (messages)
     print("Parsing EDMD... (Messages directory)")
@@ -357,41 +363,14 @@ def main():
             with open(f"{messages_dir}/{name.lower()}.xml", "w", encoding="utf-8") as f:
                 f.write(data)
         except Exception as e:
-            print(f"CRITICAL ERROR in EDMD parsing for {file}: {e}")
-            error_xml = f'<?xml version="1.0" encoding="utf-8" standalone="yes"?><message><error>{e}</error></message>'
-            with open(f"{messages_dir}/{name.lower()}.xml", "w") as f:
-                f.write(error_xml)
+            # print(f"CRITICAL ERROR in EDMD parsing for {file}: {e}")
+            # error_xml = f'<?xml version="1.0" encoding="utf-8" standalone="yes"?><message><error>{e}</error></message>'
+            # with open(f"{messages_dir}/{name.lower()}.xml", "w") as f:
+            #     f.write(error_xml)
             message_parse_errors += 1
             raise e
 
     print("EDMD parsing completed")
-
-    # Parse UNSL (service elements)
-    print("Parsing UNSL... (Service elements directory)")
-    try:
-
-        p = UNSLParser(f"{extracted_dir}/UNSL.{edi_directory}")
-
-        with open(f"{services_dir}/data_elements.xml", "w", encoding="utf-8") as f:
-            f.write(p.get_xml())
-
-        if p.has_warnings():
-            print("UNSL Parser Warnings:")
-            for warning in p.get_warnings():
-                print(f"  WARNING: {warning}")
-
-        if p.has_errors():
-            print("UNSL Parser Errors:")
-            for error in p.get_errors():
-                print(f"  ERROR: {error}")
-
-        print("UNSL parsing completed successfully")
-    except Exception as e:
-        print(f"CRITICAL ERROR in UNSL parsing: {e}")
-        error_xml = f'<?xml version="1.0" encoding="utf-8" standalone="yes"?><data_elements><error>{e}</error></data_elements>'
-        with open(f"{generated_dir}/service_segments.xml", "w") as f:
-            f.write(error_xml)
-        raise e
 
     if message_parse_errors > 0:
         print(f" with {message_parse_errors} error(s)")

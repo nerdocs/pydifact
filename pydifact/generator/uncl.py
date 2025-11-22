@@ -9,6 +9,8 @@ from pydifact.generator.base import UntidBaseParser
 class UNCLParser(UntidBaseParser):
     """Parser for EDIFACT UN/CEFACT Code List (UNCL) files."""
 
+    name = "UNCL"
+
     def __init__(self, file_path: str):
         super().__init__()
         self.msg_xml = ElementTree.Element("data_elements")

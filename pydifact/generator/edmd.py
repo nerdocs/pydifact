@@ -9,6 +9,8 @@ from pydifact.generator.base import UntidBaseParser
 class EDMDParser(UntidBaseParser):
     """Parser for EDIFACT Message Directory (EDMD) files."""
 
+    name = "EDMD"
+
     def __init__(self, file_path: str):
         super().__init__()
         self.msg_xml = ElementTree.Element("message")

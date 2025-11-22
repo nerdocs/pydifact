@@ -5,6 +5,7 @@ from xml.etree import ElementTree
 
 
 class UntidBaseParser:
+    name: str = ""
     msg_xml: ElementTree.Element
 
     def __init__(self) -> None:

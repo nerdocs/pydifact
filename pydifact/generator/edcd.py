@@ -9,6 +9,8 @@ from pydifact.generator.base import UntidBaseParser
 class EDCDParser(UntidBaseParser):
     """Parser for EDIFACT Composite Data Element Directory (EDCD) files."""
 
+    name = "EDCD"
+
     def __init__(
         self, file_path: str, data_elements: ElementTree.Element | None = None
     ):
