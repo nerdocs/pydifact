@@ -269,10 +269,36 @@ def main():
             f.write(error_xml)
         sys.exit(1)
 
+    # Parse UNCL (code list)
+    print("Parsing UNCL... (User codes directory)")
+    try:
+        codes = UNCLParser(f"{extracted_dir}/UNCL.{edi_directory}")
+
+        with open(f"{generated_dir}/codes.xml", "w", encoding="utf-8") as f:
+            f.write(codes.get_xml())
+
+        if codes.has_warnings():
+            print("UNCL Parser Warnings:")
+            for warning in codes.get_warnings():
+                print(f"  WARNING: {warning}")
+
+        if codes.has_errors():
+            print("UNCL Parser Errors:")
+            for error in codes.get_errors():
+                print(f"  ERROR: {error}")
+
+        print("UNCL parsing completed successfully")
+    except Exception as e:
+        print(f"CRITICAL ERROR in UNCL parsing: {e}")
+        error_xml = f'<?xml version="1.0" encoding="utf-8" standalone="yes"?><data_elements><error>{e}</error></data_elements>'
+        with open(f"{generated_dir}/codes.xml", "w") as f:
+            f.write(error_xml)
+        sys.exit(1)
+
     # Parse EDED (data elements)
     print("Parsing EDED... (Data elements directory)")
     try:
-        p = EDEDParser(f"{extracted_dir}/EDED.{edi_directory}")
+        p = EDEDParser(f"{extracted_dir}/EDED.{edi_directory}", codes.msg_xml)
 
         with open(f"{generated_dir}/data_elements.xml", "w", encoding="utf-8") as f:
             f.write(p.get_xml())
@@ -292,32 +318,6 @@ def main():
         print(f"CRITICAL ERROR in EDED parsing: {e}")
         error_xml = f'<?xml version="1.0" encoding="utf-8" standalone="yes"?><data_elements><error>{e}</error></data_elements>'
         with open(f"{generated_dir}/data_elements.xml", "w") as f:
-            f.write(error_xml)
-        sys.exit(1)
-
-    # Parse UNCL (code list)
-    print("Parsing UNCL... (User codes directory)")
-    try:
-        p = UNCLParser(f"{extracted_dir}/UNCL.{edi_directory}")
-
-        with open(f"{generated_dir}/codes.xml", "w", encoding="utf-8") as f:
-            f.write(p.get_xml())
-
-        if p.has_warnings():
-            print("UNCL Parser Warnings:")
-            for warning in p.get_warnings():
-                print(f"  WARNING: {warning}")
-
-        if p.has_errors():
-            print("UNCL Parser Errors:")
-            for error in p.get_errors():
-                print(f"  ERROR: {error}")
-
-        print("UNCL parsing completed successfully")
-    except Exception as e:
-        print(f"CRITICAL ERROR in UNCL parsing: {e}")
-        error_xml = f'<?xml version="1.0" encoding="utf-8" standalone="yes"?><data_elements><error>{e}</error></data_elements>'
-        with open(f"{generated_dir}/codes.xml", "w") as f:
             f.write(error_xml)
         sys.exit(1)
 
