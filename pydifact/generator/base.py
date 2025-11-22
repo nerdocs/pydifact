@@ -64,11 +64,14 @@ class UntidBaseParser:
 
     @staticmethod
     def title2name(title: str) -> str:
-        """Format title: lowercase first, remove spaces, capitalize words"""
-
+        """Format title:remove spaces and special chars, capitalize words"""
+        for char in [","]:
+            title = title.replace(char, " ")
+        title = title.replace("/", " Or ")
         title = "".join(word.capitalize() for word in title.lower().split())
         # title = (
         #     title[0].lower() + title[1:] if title else ""
         # )
-        title = title.replace("/", "Or")
+        for char in ["'", "-"]:
+            title = title.replace(char, "")
         return title
