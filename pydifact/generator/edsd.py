@@ -8,6 +8,8 @@ from pydifact.generator.base import UntidBaseParser
 class EDSDParser(UntidBaseParser):
     """Parser for EDIFACT Segment Directory (EDSD) files."""
 
+    name = "EDSD"
+
     def __init__(self, file_path: str):
         super().__init__()
         self.msg_xml = ElementTree.Element("segments")

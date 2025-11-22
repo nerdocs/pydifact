@@ -8,6 +8,8 @@ from pydifact.generator.base import UntidBaseParser
 class EDEDParser(UntidBaseParser):
     """Parser for EDIFACT Data Element Directory (EDED) files."""
 
+    name = "EDED"
+
     def __init__(self, file_path: str, codes: ElementTree.Element | None = None):
         super().__init__()
         self.msg_xml = ElementTree.Element("data_elements")

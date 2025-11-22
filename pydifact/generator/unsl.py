@@ -9,6 +9,8 @@ from pydifact.generator.base import UntidBaseParser
 class UNSLParser(UntidBaseParser):
     """Parser for EDIFACT UN Service List (UNSL) files."""
 
+    name = "UNSL"
+
     def __init__(self, file_path: str):
         super().__init__()
         self.msg_xml = ElementTree.Element("data_elements")
