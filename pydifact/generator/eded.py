@@ -68,7 +68,8 @@ class EDEDParser(UntidBaseParser):
             element_use = ""
             element_description = ""
             element_type = ""
-            element_max_size = ""
+            element_length = ""
+            is_range: bool = False
             element_note = ""
 
             def_xml = ElementTree.SubElement(self.msg_xml, "data_element")
@@ -138,12 +139,7 @@ class EDEDParser(UntidBaseParser):
 
                 # Parse representation
                 if element_type == "":
-                    match = re.match(r"^.{1}\s{4}Repr: (a?n?)[\.]*(\d+)", row)
-                    if not match:
-                        self.warnings.append(f"Could not parse representation: {row}")
-                    else:
-                        element_type = match.group(1).strip()
-                        element_max_size = match.group(2).strip()
+                    element_type, is_range, element_length = self.parse_repr_line(row)
                     i += 1
                     continue
 
@@ -167,19 +163,16 @@ class EDEDParser(UntidBaseParser):
             # Add attributes to XML element
             def_xml.set("id", element_code)
 
-            # Format title: lowercase first, remove spaces, capitalize words
-            element_title = element_title.lower()
-            element_title = "".join(word.capitalize() for word in element_title.split())
-            # element_title = (
-            #     element_title[0].lower() + element_title[1:] if element_title else ""
-            # )
-            element_title = element_title.replace("/", "Or")
+            element_title = self.title2name(element_title)
 
             def_xml.set("name", element_title)
             def_xml.set("usage", element_use)
             def_xml.set("desc", element_description)
             def_xml.set("type", element_type)
-            def_xml.set("maxlength", element_max_size)
+            if is_range:
+                def_xml.set("length", element_length)
+            else:
+                def_xml.set("maxlength", element_length)
 
             # if codes are available, fill the codes into the tree
             if self.codes:

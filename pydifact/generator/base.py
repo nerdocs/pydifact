@@ -1,3 +1,4 @@
+import re
 from typing import List
 from xml.dom import minidom
 from xml.etree import ElementTree
@@ -37,3 +38,36 @@ class UntidBaseParser:
 
     def _process(self, file_path: str) -> None:
         raise NotImplementedError
+
+    def parse_repr(self, repr: str) -> tuple[str, bool, str]:
+        """Parse representation string and return type, is_range, and number."""
+        match = re.match(r"^(a?n?)(\.\.)?(\d+)", repr)
+        if not match:
+            self.warnings.append(f"Could not parse representation: {repr}")
+            return "", False, ""
+        else:
+            _range = match.group(2)
+            return (
+                match.group(1).strip(),
+                _range.strip() != ".." if _range else False,
+                match.group(3).strip(),
+            )
+
+    def parse_repr_line(self, row: str) -> tuple[str, bool, str]:
+        match = re.match(r"^.{1}\s{4}Repr: (a?n?(?:\.\.)?\d+)", row)
+        if not match:
+            self.warnings.append(f"Could not parse representation: {row}")
+            return "", False, ""
+        else:
+            return self.parse_repr(match.group(1))
+
+    @staticmethod
+    def title2name(title: str) -> str:
+        """Format title: lowercase first, remove spaces, capitalize words"""
+
+        title = "".join(word.capitalize() for word in title.lower().split())
+        # title = (
+        #     title[0].lower() + title[1:] if title else ""
+        # )
+        title = title.replace("/", "Or")
+        return title
