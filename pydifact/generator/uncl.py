@@ -46,25 +46,25 @@ class UNCLParser(UntidBaseParser):
             with open(file_path, "r", encoding="iso8859-1", errors="replace") as f:
                 file_lines = f.read()
 
-            # Replace special character
+            # Replace special characters
             file_lines = file_lines.replace("\xc4", "-")
 
             # Split by separator line (70 dashes)
-            uncl_arr = re.split(r"-{70}", file_lines)
+            uncl_list = re.split(r"-{70}", file_lines)
 
-            if len(uncl_arr) < 2:
+            if len(uncl_list) < 2:
                 self.warnings.append(
-                    f"File may not be properly formatted - found only {len(uncl_arr)} sections"
+                    f"File may not be properly formatted - found only {len(uncl_list)} sections"
                 )
 
-            # Remove first empty section
-            uncl_arr = uncl_arr[1:]
+            # Remove the first empty section
+            uncl_list = uncl_list[1:]
 
             processed_elements = 0
 
-            for section_index, uncl_elm in enumerate(uncl_arr, start=1):
+            for section_index, uncl_element in enumerate(uncl_list, start=1):
                 try:
-                    elm_arr = re.split(r"[\r\n]+", uncl_elm)
+                    lines = re.split(r"[\r\n]+", uncl_element)
 
                     element_status = ""
                     element_code = ""
@@ -78,8 +78,8 @@ class UNCLParser(UntidBaseParser):
                     def_xml = ElementTree.SubElement(self.msg_xml, "data_element")
 
                     i = 0
-                    while i < len(elm_arr):
-                        row = elm_arr[i]
+                    while i < len(lines):
+                        row = lines[i]
                         if len(row) < 1:
                             i += 1
                             continue
@@ -103,20 +103,20 @@ class UNCLParser(UntidBaseParser):
                                 element_title = match.group(3).strip()
                                 i += 1
 
-                                if i >= len(elm_arr):
+                                if i >= len(lines):
                                     self.warnings.append(
                                         f"Section {section_index}: Unexpected end of section while parsing element header continuation"
                                     )
                                     break
 
                                 match2 = re.match(
-                                    r"^[\s]{11}(.*)\[([A-Z]?)\]", elm_arr[i]
+                                    r"^[\s]{11}(.*)\[([A-Z]?)\]", lines[i]
                                 )
                                 if not match2:
                                     self.warnings.append(
-                                        f"Section {section_index}: Could not parse element usage: {elm_arr[i]}"
+                                        f"Section {section_index}: Could not parse element usage: {lines[i]}"
                                     )
-                                    element_title += " " + elm_arr[i].strip()
+                                    element_title += " " + lines[i].strip()
                                 else:
                                     element_title += " " + match2.group(1).strip()
                                     element_use = match2.group(2)
@@ -136,8 +136,8 @@ class UNCLParser(UntidBaseParser):
                             if match:
                                 element_description = match.group(1)
                                 i += 1
-                                while i < len(elm_arr) and len(elm_arr[i]) > 1:
-                                    match2 = re.match(r"^[\s]{11}(.*)", elm_arr[i])
+                                while i < len(lines) and len(lines[i]) > 1:
+                                    match2 = re.match(r"^[\s]{11}(.*)", lines[i])
                                     if match2:
                                         element_description += " " + match2.group(1)
                                         i += 1
@@ -170,15 +170,15 @@ class UNCLParser(UntidBaseParser):
                             if value_value == "":
                                 continue
 
-                            while i < len(elm_arr) and len(elm_arr[i]) > 1:
-                                match2 = re.match(r"^[\s]{14}(.*)", elm_arr[i])
+                            while i < len(lines) and len(lines[i]) > 1:
+                                match2 = re.match(r"^[\s]{14}(.*)", lines[i])
                                 if match2:
                                     if value_description:
                                         value_description += " "
                                     value_description += match2.group(1)
                                     i += 1
                                 else:
-                                    match3 = re.match(r"^[\s]{11}(.*)", elm_arr[i])
+                                    match3 = re.match(r"^[\s]{11}(.*)", lines[i])
                                     if match3:
                                         if match3.group(1).strip() == "Note:":
                                             break

@@ -62,8 +62,8 @@ class UNSLParser(UntidBaseParser):
         # Remove first empty section
         unsl_list = unsl_list[1:]
 
-        for unsl_elm in unsl_list:
-            lines = re.split(r"[\r\n]+", unsl_elm)
+        for unsl_element in unsl_list:
+            lines = re.split(r"[\r\n]+", unsl_element)
 
             element_status = ""
             element_code = ""

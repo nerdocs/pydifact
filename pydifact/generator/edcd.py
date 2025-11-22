@@ -59,8 +59,8 @@ class EDCDParser(UntidBaseParser):
         # Remove the first empty section
         edcd_list = edcd_list[1:]
 
-        for edcd_elm in edcd_list:
-            element_list = re.split(r"[\r\n]+", edcd_elm)
+        for edcd_element in edcd_list:
+            element_list = re.split(r"[\r\n]+", edcd_element)
 
             segment_code = ""
             segment_title = ""
