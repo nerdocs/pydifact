@@ -9,9 +9,21 @@ from pydifact.generator.base import UntidBaseParser
 class EDCDParser(UntidBaseParser):
     """Parser for EDIFACT Composite Data Element Directory (EDCD) files."""
 
-    def __init__(self, file_path: str):
+    def __init__(
+        self, file_path: str, data_elements: ElementTree.Element | None = None
+    ):
+        """
+        Initialize EDCDParser.
+
+        Args:
+            file_path (str): Path to EDCD file.
+            data_elements (ElementTree.Element): ElementTree object representing data elements.
+                This is used to compare agains the data elements and, if differences
+                arise, show them.
+        """
         super().__init__()
         self.msg_xml = ElementTree.Element("composite_data_elements")
+        self.data_elements = data_elements
 
         try:
             self._validate_input(file_path)
@@ -113,7 +125,7 @@ class EDCDParser(UntidBaseParser):
                 if match:
                     data_element = {
                         "elementId": match.group(1),
-                        "elementName": match.group(2).strip(),
+                        "elementTitle": match.group(2).strip(),
                     }
 
                     # Check if composite (starts with 'C')
@@ -138,7 +150,7 @@ class EDCDParser(UntidBaseParser):
                             i += 1
                             continue
 
-                        data_element["elementName"] += " " + match2.group(1).strip()
+                        data_element["elementTitle"] += " " + match2.group(1).strip()
                         data_element["elementCondition"] = match2.group(2)
                         data_element["elementRepetition"] = match2.group(3).strip()
                         if match2.group(4):
@@ -164,5 +176,28 @@ class EDCDParser(UntidBaseParser):
                 cdef_xml = ElementTree.SubElement(def_xml, ctype)
                 cdef_xml.set("id", child["elementId"])
 
+                # Preserve requirement flag
                 if child.get("elementCondition") == "M":
                     cdef_xml.set("required", "true")
+
+                # Enrich with additional details when available.
+                title = child.get("elementTitle")
+                if title:
+                    cdef_xml.set("name", self.title2name(title))
+
+                usage = child.get("elementCondition")
+                if usage:
+                    cdef_xml.set("usage", usage)
+
+                repetition = child.get("elementRepetition")
+                if repetition:
+                    cdef_xml.set("repetition", repetition)
+
+                el_type = child.get("elementType")
+                if el_type:
+                    element_type, is_fixed_length, length = self.parse_repr(el_type)
+                    cdef_xml.set("type", element_type)
+                    if is_fixed_length:
+                        cdef_xml.set("length", length)
+                    else:
+                        cdef_xml.set("maxlength", length)

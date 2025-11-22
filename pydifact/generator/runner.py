@@ -214,37 +214,66 @@ def main():
                 print(f"  - {file}")
         sys.exit(1)
 
-    # Parse EDSD (segments)
-    print("Parsing EDSD... (Segments directory)")
+    # Parse UNCL (code list)
+    print("Parsing UNCL... (User codes directory)")
     try:
-        p = EDSDParser(edsd_file)
+        p = UNCLParser(f"{extracted_dir}/UNCL.{edi_directory}")
 
-        # Write a simple (flat) segments file first; we'll enrich it after parsing EDCD/EDED
-        with open(f"{generated_dir}/simple_segments.xml", "w", encoding="utf-8") as f:
+        with open(f"{generated_dir}/codes.xml", "w", encoding="utf-8") as f:
             f.write(p.get_xml())
 
         if p.has_warnings():
-            print("EDSD Parser Warnings:")
+            print("UNCL Parser Warnings:")
             for warning in p.get_warnings():
                 print(f"  WARNING: {warning}")
 
         if p.has_errors():
-            print("EDSD Parser Errors:")
+            print("UNCL Parser Errors:")
             for error in p.get_errors():
                 print(f"  ERROR: {error}")
 
-        print("EDSD parsing completed successfully")
+        codes = p.msg_xml
+        print("UNCL parsing completed successfully")
     except Exception as e:
-        print(f"CRITICAL ERROR in EDSD parsing: {e}")
-        error_xml = f'<?xml version="1.0" encoding="utf-8" standalone="yes"?><segments><error>{e}</error></segments>'
-        with open(f"{generated_dir}/simple_segments.xml", "w") as f:
+        print(f"CRITICAL ERROR in UNCL parsing: {e}")
+        error_xml = f'<?xml version="1.0" encoding="utf-8" standalone="yes"?><data_elements><error>{e}</error></data_elements>'
+        with open(f"{generated_dir}/codes.xml", "w") as f:
+            f.write(error_xml)
+        sys.exit(1)
+
+    # Parse EDED (data elements)
+    print("Parsing EDED... (Data elements directory)")
+    try:
+        p = EDEDParser(f"{extracted_dir}/EDED.{edi_directory}", codes=codes)
+
+        with open(f"{generated_dir}/data_elements.xml", "w", encoding="utf-8") as f:
+            f.write(p.get_xml())
+
+        if p.has_warnings():
+            print("EDED Parser Warnings:")
+            for warning in p.get_warnings():
+                print(f"  WARNING: {warning}")
+
+        if p.has_errors():
+            print("EDED Parser Errors:")
+            for error in p.get_errors():
+                print(f"  ERROR: {error}")
+
+        data_elements = p.msg_xml
+        print("EDED parsing completed successfully")
+    except Exception as e:
+        print(f"CRITICAL ERROR in EDED parsing: {e}")
+        error_xml = f'<?xml version="1.0" encoding="utf-8" standalone="yes"?><data_elements><error>{e}</error></data_elements>'
+        with open(f"{generated_dir}/data_elements.xml", "w") as f:
             f.write(error_xml)
         sys.exit(1)
 
     # Parse EDCD (composite data elements)
     print("Parsing EDCD... (Composite data elements directory)")
     try:
-        p = EDCDParser(f"{extracted_dir}/EDCD.{edi_directory}")
+        p = EDCDParser(
+            f"{extracted_dir}/EDCD.{edi_directory}", data_elements=data_elements
+        )
 
         with open(
             f"{generated_dir}/composite_data_elements.xml", "w", encoding="utf-8"
@@ -269,55 +298,30 @@ def main():
             f.write(error_xml)
         sys.exit(1)
 
-    # Parse UNCL (code list)
-    print("Parsing UNCL... (User codes directory)")
+    # Parse EDSD (segments)
+    print("Parsing EDSD... (Segments directory)")
     try:
-        codes = UNCLParser(f"{extracted_dir}/UNCL.{edi_directory}")
+        p = EDSDParser(edsd_file)
 
-        with open(f"{generated_dir}/codes.xml", "w", encoding="utf-8") as f:
-            f.write(codes.get_xml())
-
-        if codes.has_warnings():
-            print("UNCL Parser Warnings:")
-            for warning in codes.get_warnings():
-                print(f"  WARNING: {warning}")
-
-        if codes.has_errors():
-            print("UNCL Parser Errors:")
-            for error in codes.get_errors():
-                print(f"  ERROR: {error}")
-
-        print("UNCL parsing completed successfully")
-    except Exception as e:
-        print(f"CRITICAL ERROR in UNCL parsing: {e}")
-        error_xml = f'<?xml version="1.0" encoding="utf-8" standalone="yes"?><data_elements><error>{e}</error></data_elements>'
-        with open(f"{generated_dir}/codes.xml", "w") as f:
-            f.write(error_xml)
-        sys.exit(1)
-
-    # Parse EDED (data elements)
-    print("Parsing EDED... (Data elements directory)")
-    try:
-        p = EDEDParser(f"{extracted_dir}/EDED.{edi_directory}", codes.msg_xml)
-
-        with open(f"{generated_dir}/data_elements.xml", "w", encoding="utf-8") as f:
+        # Write a simple (flat) segments file first; we'll enrich it after parsing EDCD/EDED
+        with open(f"{generated_dir}/simple_segments.xml", "w", encoding="utf-8") as f:
             f.write(p.get_xml())
 
         if p.has_warnings():
-            print("EDED Parser Warnings:")
+            print("EDSD Parser Warnings:")
             for warning in p.get_warnings():
                 print(f"  WARNING: {warning}")
 
         if p.has_errors():
-            print("EDED Parser Errors:")
+            print("EDSD Parser Errors:")
             for error in p.get_errors():
                 print(f"  ERROR: {error}")
 
-        print("EDED parsing completed successfully")
+        print("EDSD parsing completed successfully")
     except Exception as e:
-        print(f"CRITICAL ERROR in EDED parsing: {e}")
-        error_xml = f'<?xml version="1.0" encoding="utf-8" standalone="yes"?><data_elements><error>{e}</error></data_elements>'
-        with open(f"{generated_dir}/data_elements.xml", "w") as f:
+        print(f"CRITICAL ERROR in EDSD parsing: {e}")
+        error_xml = f'<?xml version="1.0" encoding="utf-8" standalone="yes"?><segments><error>{e}</error></segments>'
+        with open(f"{generated_dir}/simple_segments.xml", "w") as f:
             f.write(error_xml)
         sys.exit(1)
 
