@@ -151,13 +151,7 @@ class EDCDParser(UntidBaseParser):
             # Add attributes to XML element
             def_xml.set("id", segment_code)
 
-            # Format title: lowercase first, remove spaces, capitalize words
-            segment_title = segment_title.lower()
-            segment_title = "".join(word.capitalize() for word in segment_title.split())
-            # segment_title = (
-            #     segment_title[0].lower() + segment_title[1:] if segment_title else ""
-            # )
-            segment_title = segment_title.replace("/", "Or")
+            segment_title = self.title2name(segment_title)
 
             def_xml.set("name", segment_title)
             def_xml.set("desc", segment_function)
