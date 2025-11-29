@@ -5,6 +5,7 @@ from xml.etree import ElementTree
 from pathlib import Path
 import re
 
+
 from pydifact.generator.base import UntidBaseParser
 from pydifact.generator.edsd import EDSDParser
 from pydifact.generator.edcd import EDCDParser
@@ -12,11 +13,42 @@ from pydifact.generator.eded import EDEDParser
 from pydifact.generator.uncl import UNCLParser
 from pydifact.generator.edmd import EDMDParser
 from pydifact.generator.unsl import UNSLParser
+from .downloads import (
+    V3_SERVICE_CODE_LISTS,
+    V4_SERVICE_CODE_LISTS,
+    services_map,
+    download_file,
+    directories_urls,
+    is_prehistoric,
+    renames,
+)
 
 from os import PathLike
 
 
 V4_RELEASE_NUMBER = "40219"
+zips_directory = Path(".") / "zips"
+
+
+def print_usage() -> None:
+    print(
+        """
+Usage: python edifact_generator.py  ( release | "service" syntax-version ) 
+Options:
+    release             EDIFACT Directory release, e.g. 'd24a', 'D21B', '90-1', 'service'
+    service-release     If release is 'service', you have to provide a service release 
+                        or syntax version like
+                            '1', '2'          (for syntax v1+2)
+                            '19A', '21A'      (for syntax v3)
+                            '40100', '40219'  (for syntax v4)
+Examples:
+    pydifact-generator d24a
+    pydifact-generator 90-1
+    pydifact-generator service 19A
+    pydifact-generator service 40219
+    pydifact-generator service 1
+"""
+    )
 
 
 def xml_adopt(root: ElementTree.Element, new: ElementTree.Element) -> None:
@@ -27,7 +59,7 @@ def xml_adopt(root: ElementTree.Element, new: ElementTree.Element) -> None:
         root: The parent element to adopt into
         new: The new element to be adopted
     """
-    # Create new child node
+    # Create a new child node
     node = ElementTree.SubElement(root, new.tag)
     node.text = new.text
 
@@ -45,7 +77,7 @@ def _expand_zip(
     extract_to: PathLike[str] | str,
     members: list[str] | str | None = None,
 ) -> bool:
-    """Internal work function to expand a ZIP file."""
+    """Internal worker function to expand a ZIP file."""
     try:
         if isinstance(members, str):
             members = [members]
@@ -57,7 +89,7 @@ def _expand_zip(
         return False
 
 
-def expand_zip(
+def extract_zip(
     zip_path: PathLike[str] | str,
     extract_to: PathLike[str] | str,
     members: list[str] | str | None = None,
@@ -99,8 +131,27 @@ def uppercase_files(directory: PathLike[str] | str) -> None:
                 pass  # File might already exist with an uppercase name
 
 
-def extract_data(parser: UntidBaseParser, output_file: str, release: str) -> None:
-    # Parse UNSL (service elements)
+def extract_edifact_data(
+    parser: UntidBaseParser, output_file: str, release: str
+) -> None:
+    """
+    Parse EDIFACT data using the provided parser and write the XML output to a file.
+
+    Args:
+        parser: An instance of UntidBaseParser or its subclass that will parse the
+            EDIFACT data and generate XML output. The input file is passed to the
+            parser.
+        output_file: The file path where the generated XML output should be written.
+            The file will be created or overwritten with UTF-8 encoding.
+        release: The EDIFACT release identifier (e.g., 'D24A', 'service') used for
+            logging and status messages during the parsing process.
+
+    Returns:
+        None
+
+    Raises:
+        Exception: Re-raises any exception that occurs during parsing or file writing.
+    """
     print(f"Parsing {parser.name}... for {release}")
     try:
 
@@ -126,217 +177,62 @@ def extract_data(parser: UntidBaseParser, output_file: str, release: str) -> Non
         raise e
 
 
-def main():
-    # Default version and edi directory
-    syntax_version = "4"
-    edi_directory = "24A"
+def get_syntax_version(argv: list) -> tuple[str, str, str]:
+    """Parses service/syntax_version foo_release from command line argument"""
+    if len(argv) > 1:
+        if len(sys.argv) != 3:
+            print("ERROR: if you specify 'service', you must provide a syntax version")
+            print_usage()
+            sys.exit(1)
 
-    # Get version and edi_directory from command line argument
-    if len(sys.argv) > 2:
-        syntax_version = sys.argv[1]
-        edi_directory = sys.argv[2].upper()
-        if edi_directory.startswith("D"):
-            edi_directory = edi_directory[1:]
-    # Determine folder based on version
-    folder = "../"
-    if edi_directory == "99A" or (
-        edi_directory[:2].isdigit() and 80 < int(edi_directory[:2]) < 99
-    ):
-        folder = "../pre99B/"
+        syntax_version: str = argv[2].upper()
 
-    release = f"D{edi_directory}"
+        match syntax_version:
+            case "1":
+                syntax_version = service_subrelease = "1"
+                extended_syntax_version = "100"
+            case "2":
+                syntax_version = service_subrelease = "2"
+                extended_syntax_version = "200"
+            case "3":
+                syntax_version = "3"
+                # use latest supported v3 syntax release
+                service_subrelease = list(V3_SERVICE_CODE_LISTS.keys())[-1]
+                extended_syntax_version = "300"
+            case "4":
+                syntax_version = "3"
+                # use latest supported v4 syntax release
+                service_subrelease = list(V4_SERVICE_CODE_LISTS.keys())[-1]
+                extended_syntax_version = "402"
+            case _:
+                # maybe a very certain syntax is provided, then derive syntax
+                # version from it
+                service_subrelease = syntax_version
+                if service_subrelease in V3_SERVICE_CODE_LISTS:
+                    syntax_version = "3"
+                    extended_syntax_version = "300"
+                elif service_subrelease in V4_SERVICE_CODE_LISTS:
+                    syntax_version = "4"
+                    extended_syntax_version = service_subrelease[:3]
+                else:
+                    print(f"ERROR: Unsupported service release: {service_subrelease}.")
+                    print("Could not determine syntax version")
+                    print_usage()
+                    sys.exit(1)
 
-    if syntax_version not in ["1", "2", "3", "4"]:
-        print(f"ERROR: Unsupported syntax version: {syntax_version}")
-        sys.exit(1)
+        return syntax_version, extended_syntax_version, service_subrelease
 
-    # Create the necessary directories
-    extracted_dir = f"extracted/{release}"
-    generated_dir = f"generated/{release}"
-    services_dir = f"generated/services/v{syntax_version}"
-    messages_dir = f"{generated_dir}/messages"
+    print_usage()
+    sys.exit(1)
 
-    os.makedirs(extracted_dir, exist_ok=True)
-    os.makedirs(generated_dir, exist_ok=True)
-    os.makedirs(messages_dir, exist_ok=True)
-    os.makedirs(os.path.join(services_dir), exist_ok=True)
 
-    # Check if ZIP files exists
-    zips_directory = Path(".") / "zips"
-    release_zip_file = zips_directory / f"{release.lower()}.zip"
-    if not os.path.exists(release_zip_file):
-        print(f"ERROR: ZIP file not found: {release_zip_file}")
-        print("Available ZIP files:")
-        for available_zip in Path(".").glob("*.zip"):
-            print(f"  - {available_zip}")
-        sys.exit(1)
-
-    version_services_map = {
-        "1": {},
-        "2": {},
-        "3": {
-            "codes": (f"unsl{edi_directory.lower()}.zip", None),
-            "elements": ("v3-sded.zip", "Sded.s3"),
-            "composites": ("v3-sced.zip", "Sced.s3"),
-            "segments": ("v3-ssed.zip", "Ssed.s3"),
-            "messages": ("v3-smed.zip", "Smed.s3"),
-        },
-        "4": {
-            "codes": (f"sl{V4_RELEASE_NUMBER}.zip", None),  #
-            # as it is too complicated for now to match releases (e.g. 40219) with
-            # directories (d24a), we just take the newest. This is not correct and
-            # could lead to possible errors as some newer releases e.g. delete some
-            # data elements.
-            "elements": (
-                f"sl{V4_RELEASE_NUMBER}.zip",
-                f"sl{V4_RELEASE_NUMBER}.txt",
-            ),
-            "composites": "c40200.zip",
-            "segments": "s40200.zip",
-            "messages": "m40200.zip",
-        },
-    }
-
-    release_map = version_services_map.get(syntax_version)
-
-    # ----------------- SERVICE ZIP FILES -----------------
-
-    unsl_zip_file, unsl_members = release_map["codes"]
-    unsl_zip_file = zips_directory / unsl_zip_file
-    # if not os.path.exists(unsl_zip_file):
-    #     print(f"\nERROR: UNSL ZIP file not found: {unsl_zip_file}")
-    #     sys.exit(1)
-
-    # extract the UNSL codes ZIP file
-    expand_zip(unsl_zip_file, extracted_dir, unsl_members)
-
-    # service zip files
-    expand_zip(
-        zips_directory / release_map["elements"][0],
-        extracted_dir,
-        release_map["elements"][1],
-    )
-
-    extract_data(
-        UNSLParser(f"{extracted_dir}/UNSL.{edi_directory}"),
-        f"{services_dir}/data_elements.xml",
-        release,
-    )
-
-    # ----------------- RELEASE ZIP FILES -----------------
-
-    # Extract the release ZIP file
-    expand_zip(release_zip_file, extracted_dir)
-
-    # Create the EDMD directory
-    edmd_dir = f"{extracted_dir}/MESSAGES"
-    os.makedirs(edmd_dir, exist_ok=True)
-
-    # NOTES ON RELEASES
-    # 15B, 16A, 16B: zip contains a single folder
-    # 15A: zip contains zip archives, each one containing a single folder
-    # 03A: zips inside a Edifact/Directory/Files tree
-    # 06A: zips inside a Edifact/Directory/Files tree and one folder per zip
-    # 99B: zips inside EDIFACT/DIRECTOR
-    # 97A: zips inside EDIFACT/D97ADISK, each zip contains EDIFACT/DIRECTOR folders
-    # 96B: zips inside /EDIFACT/DIRECTOR/ARCHIVES/96B/DISK-ASC/
-    # <=96B: FORMAT CHECK
-
-    # Extract nested ZIP files
-    for file in os.listdir(extracted_dir):
-        if file.lower().endswith(".zip"):
-            zip_path = os.path.join(extracted_dir, file)
-
-            # EDSD/IDSD - segments (TRSD)
-            # EDCD/IDCD - composite data elements (TRCD)
-            # EDED      - data elements (TRED)
-            # EDMD/IDMD - messages (TRMD)
-            # UNCL      - codes list
-
-            # TODO: evtl. move IDMD into separate directory?
-            if re.search(r"(idmd|edmd|trmd)\.zip", file.lower()):
-                expand_zip(zip_path, edmd_dir)
-            else:
-                expand_zip(zip_path, extracted_dir)
-
-        else:
-            if re.search(
-                rf"(sl4\d{{4}}\.txt|unsl\.{edi_directory.lower()})", file.lower()
-            ):
-                os.rename(
-                    f"{extracted_dir}/{file}",
-                    f"{extracted_dir}/UNSL.{edi_directory}",
-                )
-
-    # Convert all filenames to uppercase
-    uppercase_files(extracted_dir)
-    uppercase_files(edmd_dir)
-
-    # Rename TR* files to ED* files
-    renames = [
-        (
-            f"{extracted_dir}/TRSD.{edi_directory}",
-            f"{extracted_dir}/EDSD.{edi_directory}",
-        ),
-        (
-            f"{extracted_dir}/TRCD.{edi_directory}",
-            f"{extracted_dir}/EDCD.{edi_directory}",
-        ),
-        (
-            f"{extracted_dir}/TRED.{edi_directory}",
-            f"{extracted_dir}/EDED.{edi_directory}",
-        ),
-    ]
-
-    for old_path, new_path in renames:
-        if os.path.exists(old_path):
-            os.rename(old_path, new_path)
-
-    # Verify EDSD file exists
-    edsd_file = f"{extracted_dir}/EDSD.{edi_directory}"
-    if not os.path.exists(edsd_file):
-        print(f"ERROR: No EDSD file found in {release} extraction")
-        print(f"Available files in {extracted_dir}:")
-        for file in os.listdir(extracted_dir):
-            if file not in [".", ".."]:
-                print(f"  - {file}")
-        sys.exit(1)
-
-    # Parse UNCL (code list)
-    extract_data(
-        uncl_parser := UNCLParser(f"{extracted_dir}/UNCL.{edi_directory}"),
-        f"{generated_dir}/codes.xml",
-        release,
-    )
-
-    # Parse EDED (data elements)
-    extract_data(
-        data_elements_parser := EDEDParser(
-            f"{extracted_dir}/EDED.{edi_directory}", codes=uncl_parser.msg_xml
-        ),
-        f"{generated_dir}/data_elements.xml",
-        release,
-    )
-
-    # Parse EDCD (composite data elements)
-    extract_data(
-        EDCDParser(
-            f"{extracted_dir}/EDCD.{edi_directory}",
-            data_elements=data_elements_parser.msg_xml,
-        ),
-        f"{generated_dir}/composite_data_elements.xml",
-        release,
-    )
-
-    # Parse EDSD (segments)
-    extract_data(EDSDParser(edsd_file), f"{generated_dir}/simple_segments.xml", release)
-
+def parse_messages(source_dir, target_dir) -> None:
     # Parse EDMD (messages)
     print("Parsing EDMD... (Messages directory)")
     message_parse_errors = 0
     message_parse_warnings = 0
 
-    for file in os.listdir(edmd_dir):
+    for file in os.listdir(source_dir):
         if file in [".", ".."]:
             continue
 
@@ -345,7 +241,7 @@ def main():
             continue
 
         try:
-            p = EDMDParser(os.path.join(edmd_dir, file))
+            p = EDMDParser(os.path.join(source_dir, file))
             data = p.get_xml()
 
             if p.has_warnings():
@@ -360,7 +256,7 @@ def main():
                     print(f"  ERROR: {error}")
                 message_parse_errors += 1
 
-            with open(f"{messages_dir}/{name.lower()}.xml", "w", encoding="utf-8") as f:
+            with open(f"{target_dir}/{name.lower()}.xml", "w", encoding="utf-8") as f:
                 f.write(data)
         except Exception as e:
             # print(f"CRITICAL ERROR in EDMD parsing for {file}: {e}")
@@ -370,8 +266,6 @@ def main():
             message_parse_errors += 1
             raise e
 
-    print("EDMD parsing completed")
-
     if message_parse_errors > 0:
         print(f" with {message_parse_errors} error(s)")
     else:
@@ -380,7 +274,200 @@ def main():
     if message_parse_warnings > 0:
         print(f"Warnings: {message_parse_warnings}")
 
-    print("All parsing completed.")
+
+def generate_service_codes(
+    syntax_version: str, extended_syntax_version: str, service_subrelease: str
+):
+
+    specific_release = service_subrelease.lower()
+    version_dir = f"v{specific_release}"
+    extracted_dir = f"extracted/service/{version_dir}"
+    generated_dir = f"generated/service/{version_dir}"
+    extracted_messages_dir = f"{extracted_dir}/messages"
+    generated_messages_dir = f"{generated_dir}/messages"
+    syntax_specific_config: dict = services_map[extended_syntax_version]
+
+    print(
+        f"Preparing EDIFACT service file download for syntax version:"
+        f" {syntax_version} (release {specific_release})"
+    )
+    os.makedirs(extracted_dir, exist_ok=True)
+    os.makedirs(generated_dir, exist_ok=True)
+    os.makedirs(extracted_messages_dir, exist_ok=True)
+    os.makedirs(generated_messages_dir, exist_ok=True)
+
+    # ----------------- SERVICE ZIP FILES -----------------
+    for element in ["e", "c", "s"]:  # data element, composite, segment
+        filename = syntax_specific_config[element]["url"].split("/")[-1]
+        download_file(syntax_specific_config[element]["url"], zips_directory / filename)
+        extract_zip(
+            zips_directory / filename,
+            extracted_dir,
+            syntax_specific_config[element].get("extract", None),
+        )
+    # messages in a different directory
+    filename = syntax_specific_config["m"]["url"].split("/")[-1]
+    download_file(syntax_specific_config["m"]["url"], zips_directory / filename)
+    extract_zip(
+        zips_directory / syntax_specific_config["m"]["url"].split("/")[-1],
+        extracted_messages_dir,
+        syntax_specific_config["m"].get("extract", None),
+    )
+    for frm, to in syntax_specific_config["m"].get("rename", {}).items():
+        os.rename(
+            f"{extracted_dir}/{frm}",
+            f"{extracted_dir}/{to}",
+        )
+
+    # ----------------- SUB-RELEASE SPECIFIC UNSL SERVICE ZIP FILES -----------------
+    # UNSL service codes are specific to syntax subversion
+    unsl_config = syntax_specific_config["unsl"]
+    url = unsl_config["url"].format(release=specific_release)
+    unsl_zip_file = zips_directory / url.split("/")[-1]
+
+    download_file(url, unsl_zip_file)
+
+    # extract the UNSL codes ZIP file
+    extract: str = unsl_config.get("extract", None)
+    if extract:
+        extract = extract.format(release=specific_release)
+    extract_zip(unsl_zip_file, extracted_dir, extract)
+
+    for old, new in unsl_config.get("rename", {}).items():
+        old = Path(f"{extracted_dir}/{old}".format(release=specific_release))
+        new = Path(f"{extracted_dir}/{new}".format(release=specific_release))
+        if old.exists():
+            os.rename(old, new)
+
+    extract_edifact_data(
+        UNSLParser(f"{extracted_dir}/UNSL.{specific_release}"),
+        f"{generated_dir}/data_elements.xml",
+        service_subrelease,
+    )
+
+    parse_messages(extracted_messages_dir, generated_messages_dir)
+
+
+def generate_directory_release(release_upper: str):
+    # EDIFACT Message/Directory releases
+    release_upper = release_upper.upper().replace(".", "").replace("-", "")
+
+    if release_upper.startswith("D"):
+        # remove "D" prefix
+        release_upper = release_upper[1:]
+
+    if is_prehistoric(release_upper):
+        folder = "../pre99B/"  # TODO
+
+    # Determine folder based on version
+    directory_release = f"d{release_upper.lower()}"
+
+    print(f"Preparing EDIFACT download for directory release {directory_release}...")
+    # Create the necessary directories
+    extracted_dir = Path(f"extracted/{directory_release}")
+    generated_dir = Path(f"generated/{directory_release}")
+    extracted_messages_dir = f"{extracted_dir}/MESSAGES"
+    generated_messages_dir = f"{generated_dir}/messages"
+
+    os.makedirs(extracted_dir, exist_ok=True)
+    os.makedirs(generated_dir, exist_ok=True)
+    os.makedirs(extracted_messages_dir, exist_ok=True)
+    os.makedirs(generated_messages_dir, exist_ok=True)
+
+    # NOTES ON RELEASES
+    # 15B, 16A, 16B: zip contains a single folder
+    # 15A: zip contains zip archives, each one containing a single folder
+    # 03A: zips inside a Edifact/Directory/Files tree
+    # 06A: zips inside a Edifact/Directory/Files tree and one folder per zip
+    # 99B: zips inside EDIFACT/DIRECTOR
+    # 97A: zips inside EDIFACT/D97ADISK, each zip contains EDIFACT/DIRECTOR folders
+    # 96B: zips inside /EDIFACT/DIRECTOR/ARCHIVES/96B/DISK-ASC/
+    # <=96B: FORMAT CHECK
+
+    # ----------------- RELEASE ZIP FILES -----------------
+    release_zip_file = zips_directory / f"{directory_release.lower()}.zip"
+    download_file(directories_urls[directory_release], release_zip_file)
+    if not os.path.exists(release_zip_file):
+        print(f"ERROR: ZIP file not found: {release_zip_file}")
+        print("Available ZIP files:")
+        for available_zip in Path(".").glob("*.zip"):
+            print(f"  - {available_zip}")
+        sys.exit(1)
+
+    # Extract the release ZIP file
+    extract_zip(release_zip_file, extracted_dir)
+    # Extract nested ZIP files
+    for file in os.listdir(extracted_dir):
+        if file.lower().endswith(".zip"):
+            zip_path = os.path.join(extracted_dir, file)
+
+            # EDSD/IDSD - segments (TRSD)
+            # EDCD/IDCD - composite data elements (TRCD)
+            # EDED      - data elements (TRED)
+            # EDMD/IDMD - messages (TRMD)
+            # UNCL      - codes list
+
+            # TODO: evtl. move IDMD into separate directory?
+            if re.search(r"(idmd|edmd|trmd)\.zip", file.lower()):
+                extract_zip(zip_path, extracted_messages_dir)
+            else:
+                extract_zip(zip_path, extracted_dir)
+
+    # Convert all filenames to uppercase
+    uppercase_files(extracted_dir)
+    uppercase_files(extracted_messages_dir)
+
+    # Rename TR* files and ED?D-{release}.ASC to ED?D.{release} files
+
+    for old_path, new_path in renames:
+        if Path(extracted_dir / old_path.format(release=release_upper)).exists():
+            os.rename(
+                extracted_dir / old_path.format(release=release_upper),
+                extracted_dir / new_path.format(release=release_upper),
+            )
+
+    # Verify EDSD file exists
+    edsd_file = f"{extracted_dir}/EDSD.{release_upper.upper()}"
+    if not os.path.exists(edsd_file):
+        print(f"ERROR: No EDSD file found in {directory_release} extraction")
+        print(f"Available files in {extracted_dir}:")
+        for file in os.listdir(extracted_dir):
+            if file not in [".", ".."]:
+                print(f"  - {file}")
+        sys.exit(1)
+
+    # Parse UNCL (code list)
+    extract_edifact_data(
+        uncl_parser := UNCLParser(f"{extracted_dir}/UNCL.{release_upper}"),
+        f"{generated_dir}/codes.xml",
+        directory_release,
+    )
+
+    # Parse EDED (data elements)
+    extract_edifact_data(
+        data_elements_parser := EDEDParser(
+            f"{extracted_dir}/EDED.{release_upper}", codes=uncl_parser.msg_xml
+        ),
+        f"{generated_dir}/data_elements.xml",
+        directory_release,
+    )
+
+    # Parse EDCD (composite data elements)
+    extract_edifact_data(
+        EDCDParser(
+            f"{extracted_dir}/EDCD.{release_upper}",
+            data_elements=data_elements_parser.msg_xml,
+        ),
+        f"{generated_dir}/composite_data_elements.xml",
+        directory_release,
+    )
+
+    # Parse EDSD (segments)
+    extract_edifact_data(
+        EDSDParser(edsd_file), f"{generated_dir}/simple_segments.xml", directory_release
+    )
+
+    parse_messages(extracted_messages_dir, generated_messages_dir)
 
     # Merge: enrich simple segments with composite and data element details
     try:
@@ -503,4 +590,8 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    # check if we are in "service codes" generating mode, or directory releases
+    if sys.argv[1].upper() == "SERVICE":
+        generate_service_codes(*get_syntax_version(sys.argv))
+    else:
+        generate_directory_release(sys.argv[1])

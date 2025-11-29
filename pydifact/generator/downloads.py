@@ -1,0 +1,304 @@
+import os
+import sys
+
+import requests
+
+gefeg = "https://service.gefeg.com/jwg1/Archive"
+
+directories_urls = {
+    "d24a": "https://service.unece.org/trade/untdid/d24a/d24a.zip",
+    "d23a": "https://service.unece.org/trade/untdid/d23a/d23a.zip",
+    "d22a": "https://service.unece.org/trade/untdid/d22a/d22a.zip",
+    "d22b": "https://service.unece.org/trade/untdid/d22b/d22b.zip",
+    "d21a": "https://service.unece.org/trade/untdid/d21a/d21a.zip",
+    "d21b": "https://service.unece.org/trade/untdid/d21b/d21b.zip",
+    "d20a": "http://www.unece.org/fileadmin/DAM/trade/untdid/d20a/d20a.zip",
+    "d20b": "https://service.unece.org/trade/untdid/d20b/d20b.zip",
+    "d19a": "http://www.unece.org/fileadmin/DAM/trade/untdid/d19a/d19a.zip",
+    "d19b": "http://www.unece.org/fileadmin/DAM/trade/untdid/d19b/d19b.zip",
+    "d18a": "http://www.unece.org/fileadmin/DAM/trade/untdid/d18a/d18a.zip",
+    "d18b": "http://www.unece.org/fileadmin/DAM/trade/untdid/d18b/d18b.zip",
+    "d17a": "http://www.unece.org/fileadmin/DAM/trade/untdid/d17a/d17a.zip",
+    "d17b": "http://www.unece.org/fileadmin/DAM/trade/untdid/d17b/d17b.zip",
+    "d16a": "http://www.unece.org/fileadmin/DAM/trade/untdid/d16a/d16a.zip",
+    "d16b": "http://www.unece.org/fileadmin/DAM/trade/untdid/d16b/d16b.zip",
+    "d15a": "http://www.unece.org/fileadmin/DAM/trade/untdid/d15a/d15a.zip",
+    "d15b": "http://www.unece.org/fileadmin/DAM/trade/untdid/d15b/d15b.zip",
+    "d14a": "http://www.unece.org/fileadmin/DAM/trade/untdid/d14a/d14a.zip",
+    "d14b": "http://www.unece.org/fileadmin/DAM/trade/untdid/d14b/d14b.zip",
+    "d13a": "http://www.unece.org/fileadmin/DAM/trade/untdid/d13a/d13a.zip",
+    "d13b": "http://www.unece.org/fileadmin/DAM/trade/untdid/d13b/d13b.zip",
+    "d12a": "http://www.unece.org/fileadmin/DAM/trade/untdid/d12a/d12a.zip",
+    "d12b": "http://www.unece.org/fileadmin/DAM/trade/untdid/d12b/d12b.zip",
+    "d11a": "http://www.unece.org/fileadmin/DAM/trade/untdid/d11a/d11a.zip",
+    "d11b": "http://www.unece.org/fileadmin/DAM/trade/untdid/d11b/d11b.zip",
+    "d10a": "https://unece.org/DAM/trade/untdid/d10a/d10a.zip",
+    "d10b": "https://unece.org/DAM/trade/untdid/d10b/d10b.zip",
+    "d09a": "https://unece.org/DAM/trade/untdid/d09a/d09a.zip",
+    "d09b": "https://unece.org/DAM/trade/untdid/d09b/d09b.zip",
+    "d08a": "https://unece.org/DAM/trade/untdid/d08a/d08a.zip",
+    "d08b": "https://unece.org/DAM/trade/untdid/d08b/d08b.zip",
+    "d07a": "https://unece.org/DAM/trade/untdid/d07a/d07a.zip",
+    "d07b": "https://unece.org/DAM/trade/untdid/d07b/d07b.zip",
+    "d06a": "https://unece.org/DAM/trade/untdid/d06a/d06a.zip",
+    "d06b": "https://unece.org/DAM/trade/untdid/d06b/d06b.zip",
+    "d05a": "https://unece.org/DAM/trade/untdid/d05a/d05a.zip",
+    "d05b": "https://unece.org/DAM/trade/untdid/d05b/d05b.zip",
+    "d04a": "https://unece.org/DAM/trade/untdid/d04a/d04a.zip",
+    "d04b": "https://unece.org/DAM/trade/untdid/d04b/d04b.zip",
+    "d03a": "https://unece.org/DAM/trade/untdid/d03a/d03a.zip",
+    "d03b": "https://unece.org/DAM/trade/untdid/d03b/d03b.zip",
+    "d02a": "https://unece.org/DAM/trade/untdid/d02a/d02a.zip",
+    "d02b": "https://unece.org/DAM/trade/untdid/d02b/d02b.zip",
+    "d01a": "https://unece.org/DAM/trade/untdid/d01a/d01a.zip",
+    "d01b": "https://unece.org/DAM/trade/untdid/d01b/d01b.zip",
+    "d01c": "https://unece.org/DAM/trade/untdid/d01c/d01c.zip",
+    "d00a": "https://unece.org/DAM/trade/untdid/d00a/d00a.zip",
+    "d00b": "https://unece.org/DAM/trade/untdid/d00b/d00b.zip",
+    "d99a": "https://unece.org/DAM/trade/untdid/d99a/d99a.zip",
+    "d99b": "https://unece.org/DAM/trade/untdid/d99b/d99b.zip",
+    "d98a": "https://unece.org/DAM/trade/untdid/d98a/d98a.zip",
+    "d98b": "https://unece.org/DAM/trade/untdid/d98b/d98b.zip",
+    "d97a": "https://unece.org/DAM/trade/untdid/d97a/d97a.zip",
+    "d97b": "https://unece.org/DAM/trade/untdid/d97b/d97b.zip",
+    "d96a": "https://unece.org/DAM/trade/untdid/d96a/d96a.zip",
+    "d96b": "https://unece.org/DAM/trade/untdid/d96b/d96b.zip",
+    "d95a": "https://unece.org/DAM/trade/untdid/d95a/d95a.zip",
+    "d95b": "https://unece.org/DAM/trade/untdid/d95b/d95b.zip",
+    "d94a": "https://unece.org/DAM/trade/untdid/d94a/d94a.zip",
+    "d94b": "https://unece.org/DAM/trade/untdid/d94b/d94b.zip",
+    "d93a": "https://unece.org/DAM/trade/untdid/d93/d93a.zip",
+    "d932": "https://unece.org/DAM/trade/untdid/d93/93-2.zip",
+    "ds93a": "https://unece.org/DAM/trade/untdid/d93/s93a.zip",
+    "d921": "https://unece.org/DAM/trade/untdid/d92/92-1.zip",
+    "d911": "https://unece.org/DAM/trade/untdid/d91/91-1.zip",
+    "d912": "https://unece.org/DAM/trade/untdid/d91/91-2.zip",
+    "d901": "https://unece.org/DAM/trade/untdid/d90/90-1.zip",
+    "d902": "https://unece.org/DAM/trade/untdid/d90/90-2.zip",
+    "d881": "https://unece.org/DAM/trade/untdid/d88/88-1.zip",
+}
+# Service code lists for v3:
+V3_SERVICE_CODE_LISTS: dict[str, tuple[str, str]] = {
+    "99A": ("unsl.99A", "1999-01-18"),
+    "99B": ("unsl.99B", "1999-10-15"),
+    "00A": ("unsl.00A", "2000-04-25"),
+    "00B": ("unsl.00B", "2000-06-28"),
+    "01A": ("unsl.01A", "2000-11-05"),
+    "01B": ("unsl.01B", "2001-05-19"),
+    "01C": ("unsl.01C", "2001-12-02"),
+    "02A": ("unsl.02A", "2002-05-23"),
+    "02B": ("unsl.02B", "2002-02-28"),
+    "03A": ("unsl.03A", "2003-05-25"),
+    "03B": ("unsl.03B", "2003-12-09"),
+    "06A": ("unsl.06A", "2006-05-17"),
+    "06B": ("unsl.06B", "2006-12-05"),
+    "07A": ("unsl.07A", "2007-05-11"),
+    "08A": ("unsl.08A", "2008-05-15"),
+    "09A": ("unsl.09A", "2009-05-10"),
+    "10A": ("unsl.10A", "2010-05-01"),
+    "10B": ("unsl.10B", "2010-12-10"),
+    "11A": ("unsl.11A", "2011-05-10"),
+    "11B": ("unsl.11B", "2012-09-10"),
+    "12A": ("unsl.12A", "2012-09-17"),
+    "12B": ("unsl.12B", "2012-11-20"),
+    "13A": ("unsl.13A", "2013-07-31"),
+    "13B": ("unsl.13B", "2014-03-12"),
+    "14A": ("unsl.14A", "2014-06-10"),
+    "14B": ("unsl.14B", "2014-12-23"),
+    "15A": ("unsl.15A", "2015-06-24"),
+    "15B": ("unsl.15B", "2016-01-12"),
+    "16A": ("unsl.16A", "2016-06-10"),
+    "16B": ("unsl.16B", "2016-10-24"),
+    "17A": ("unsl.17A", "2017-05-17"),
+    "17B": ("unsl.17B", "2017-10-19"),
+    "18A": ("unsl.18A", "2018-05-14"),
+    "18B": ("unsl.18B", "2018-10-19"),
+    "19A": ("unsl.19A", "2019-04-18"),
+    "19B": ("unsl.19B", "2019-11-28"),
+    "20A": ("unsl.20A", "2020-06-16"),
+    "20B": ("unsl.20B", "2021-01-13"),
+    "21A": ("unsl.21A", "2021-06-23"),
+}
+
+# Service code lists for v4
+V4_SERVICE_CODE_LISTS: dict[str, tuple[str, str]] = {
+    "40000": ("40000", "1999-05-01"),
+    "40001": ("40001", "1999-10-15"),
+    "40002": ("40002", "2000-04-25"),
+    "40003": ("40003", "2000-06-28"),
+    "40004": ("40004", "2000-11-05"),
+    "40005": ("40005", "2001-05-19"),
+    "40006": ("40006", "2001-12-02"),
+    "40007": ("40007", "2002-05-23"),
+    "40100": ("40100", "2003-02-28"),
+    "40101": ("40101", "2003-05-25"),
+    "40102": ("40102", "2003-12-09"),
+    "40103": ("40103", "2006-05-17"),
+    "40104": ("40104", "2006-12-05"),
+    "40105": ("40105", "2007-05-11"),
+    "40106": ("40106", "2008-05-15"),
+    "40107": ("40107", "2009-05-10"),
+    "40108": ("40108", "2010-05-01"),
+    "40109": ("40109", "2010-12-10"),
+    "40110": ("40110", "2011-05-10"),
+    "40200": ("40200", "2012-09-10"),
+    "40201": ("40201", "2012-09-17"),
+    "40202": ("40202", "2012-11-20"),
+    "40203": ("40203", "2013-07-31"),
+    "40204": ("40204", "2014-03-12"),
+    "40205": ("40205", "2014-06-10"),
+    "40206": ("40206", "2014-12-23"),
+    "40207": ("40207", "2015-06-24"),
+    "40208": ("40208", "2016-01-12"),
+    "40209": ("40209", "2016-06-10"),
+    "40210": ("40210", "2016-10-24"),
+    "40211": ("40211", "2017-05-17"),
+    "40212": ("40212", "2017-10-19"),
+    "40213": ("40213", "2018-05-14"),
+    "40214": ("40214", "2018-10-19"),
+    "40215": ("40215", "2019-04-18"),
+    "40216": ("40216", "2019-11-28"),
+    "40217": ("40217", "2020-06-16"),
+    "40218": ("40218", "2021-01-13"),
+    "40219": ("40219", "2021-06-23"),
+}
+
+# dict keys here are the first 3 numbers of the "full extended" version
+# this is not really valid in v1-3, but anyway, EDIFACT is inconsistent anyway
+services_map = {
+    "100": {
+        "sl_list": {},
+        "e": {"url": ""},
+        "c": {"url": ""},
+        "s": {"url": ""},
+        "m": {"url": ""},
+        "unsl": {"url": "", "extract": None, "rename": {}},
+    },
+    "200": {
+        "sl_list": {},
+        "e": {"url": ""},
+        "c": {"url": ""},
+        "s": {"url": ""},
+        "m": {"url": ""},
+        "unsl": {"url": "", "extract": None, "rename": {}},
+    },
+    "300": {
+        "sl_list": V3_SERVICE_CODE_LISTS,
+        "e": {"url": f"{gefeg}/v3/data/v3-sded.zip", "extract": "Sded.s3"},
+        "c": {"url": f"{gefeg}/v3/data/v3-sced.zip", "extract": "Sced.s3"},
+        "s": {"url": f"{gefeg}/v3/data/v3-ssed.zip", "extract": "Ssed.s3"},
+        "m": {"url": f"{gefeg}/v3/data/v3-smed.zip", "extract": "Contrl.s3"},
+        "unsl": {
+            "url": f"{gefeg}" + "/cl/data/unsl{release}.zip",
+            # "extract": "unsl.{release}",  # FIXME: Unsl, unsl...
+            "rename": {
+                "unsl.{release}": "UNSL.{release}",
+                "Unsl.{release}": "UNSL.{release}",
+            },
+        },
+    },
+    "400": {
+        "sl_list": V4_SERVICE_CODE_LISTS,
+        "e": {"url": f"{gefeg}/v4/data/e40000.zip", "extract": "Se40000.txt"},
+        "c": {"url": f"{gefeg}/v4/data/c40000.zip", "extract": "Sc40000.txt"},
+        "s": {"url": f"{gefeg}/v4/data/s40000.zip", "extract": "Ss40000.txt"},
+        "m": {
+            "url": f"{gefeg}/v4/data/m40000.zip",
+            "extract": ["Autack_0.txt", "Contrl_0.txt", "Keyman_0.txt"],
+        },
+        "unsl": {
+            "url": f"{gefeg}" + "/cl/data/sl{release}.zip",  # 40000-40007
+            "extract": "Sl{release}.txt",
+            "rename": {
+                "sl{release}.txt": "UNSL.{release}",
+                "Sl{release}.txt": "UNSL.{release}",
+            },
+        },
+    },
+    "401": {
+        "sl_list": V4_SERVICE_CODE_LISTS,
+        "e": {"url": f"{gefeg}/v4/data/e40000.zip", "extract": "Se40000.txt"},
+        "c": {"url": f"{gefeg}/v4/data/c40000.zip", "extract": "Sc40000.txt"},
+        "s": {"url": f"{gefeg}/v4/data/s40000.zip", "extract": "Ss40000.txt"},
+        "m": {
+            "url": f"{gefeg}/v4/data/m40000.zip",
+            "extract": ["Autack_0.txt", "Contrl_0.txt", "Keyman_0.txt"],
+        },
+        "unsl": {
+            "url": f"{gefeg}" + "/cl/data/sl{release}.zip",  # 40100-40110
+            "extract": None,
+            "rename": {
+                "sl{release}.txt": "UNSL.{release}",
+                "Sl{release}.txt": "UNSL.{release}",
+            },
+        },
+    },
+    "402": {
+        "sl_list": V4_SERVICE_CODE_LISTS,
+        "e": {"url": f"{gefeg}/v4/data/e40000.zip", "extract": "Se40000.txt"},
+        "c": {"url": f"{gefeg}/v4/data/c40000.zip", "extract": "Sc40000.txt"},
+        "s": {"url": f"{gefeg}/v4/data/s40000.zip", "extract": "Ss40000.txt"},
+        "m": {
+            "url": f"{gefeg}/v4/data/m40000.zip",
+            "extract": ["Autack_0.txt", "Contrl_0.txt", "Keyman_0.txt"],
+        },
+        "unsl": {
+            "url": f"{gefeg}" + "/cl/data/sl{release}.zip",  # 40200 - 40219
+            "extract": None,
+            "rename": {
+                "sl{release}.txt": "UNSL.{release}",
+                "Sl{release}.txt": "UNSL.{release}",
+            },
+        },
+    },
+}
+
+
+renames = [
+    ("TRSD.{release}", "EDSD.{release}"),
+    ("TRCD.{release}", "EDCD.{release}"),
+    ("TRED.{release}", "EDED.{release}"),
+    ("EDED-{release}.ASC", "EDED.{release}"),
+    ("EDCD-{release}.ASC", "EDCD.{release}"),
+    ("EDSD-{release}.ASC", "EDSD.{release}"),
+    ("EDCL-{release}.ASC", "UNCL.{release}"),
+]
+
+
+# https://service.unece.org/trade/untdid/d24a/d24a.zip
+def download_file(url, output_file_path: os.PathLike | str) -> bool:
+    """Download a file from a URL and save it to a local file.
+
+    Returns:
+        True if the file was downloaded successfully, False if it already exists.
+    Raises:
+        RequestException: If the download fails.
+    """
+    if not os.path.exists(output_file_path):
+        response = requests.get(url, stream=True)
+        if response.status_code == 403:  # Forbidden
+            print(
+                f"Cound not download {url} to {output_file_path}, as it is "
+                f"forbidden."
+            )
+            print("Maybe there is a captcha on the page.")
+            print(
+                "Please manually download the file and place it into the zips "
+                "folder."
+            )
+            sys.exit(1)
+
+        response.raise_for_status()  # check if the request was successful
+        with open(output_file_path, "wb") as f:
+            for chunk in response.iter_content(chunk_size=8192):
+                if chunk:  # filter out keep-alive new chunks
+                    f.write(chunk)
+        return True
+
+    print(f"{output_file_path} already exists. Skipping download.")
+    return False
+
+
+def is_prehistoric(release: str) -> bool:
+    """Returns True if the release is pre-historic (<99)"""
+    return release == "99A" or (release[:2].isdigit() and 80 < int(release[:2]) < 99)
