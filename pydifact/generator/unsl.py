@@ -76,8 +76,6 @@ class UNSLParser(UntidBaseParser):
             element_note = ""
             element_values: List[Dict[str, str]] = []
 
-            def_xml = ElementTree.SubElement(self.msg_xml, "data_element")
-
             i = 0
             while i < len(lines):
                 row = lines[i]
@@ -183,6 +181,13 @@ class UNSLParser(UntidBaseParser):
 
                 i += 1
 
+            if not element_code:
+                continue
+
+            if not element_values:
+                self.warnings.append(f"No code values found for element {element_code}")
+
+            def_xml = ElementTree.SubElement(self.msg_xml, "data_element")
             # Add attributes to XML element
             def_xml.set("id", element_code)
 

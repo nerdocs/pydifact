@@ -74,8 +74,6 @@ class EDEDParser(UntidBaseParser):
             is_range: bool = False
             element_note = ""
 
-            def_xml = ElementTree.SubElement(self.msg_xml, "data_element")
-
             i = 0
             while i < len(parts):
                 row = parts[i]
@@ -162,6 +160,10 @@ class EDEDParser(UntidBaseParser):
 
                 i += 1
 
+            if not element_code:
+                continue
+
+            def_xml = ElementTree.SubElement(self.msg_xml, "data_element")
             # Add attributes to XML element
             def_xml.set("id", element_code)
 
