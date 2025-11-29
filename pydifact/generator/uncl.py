@@ -84,8 +84,6 @@ class UNCLParser(UntidBaseParser):
                     element_max_size = ""
                     element_values: List[dict[str, str]] = []
 
-                    def_xml = ElementTree.SubElement(self.msg_xml, "data_element")
-
                     i = 0
                     while i < len(lines):
                         row = lines[i].rstrip()
@@ -292,6 +290,7 @@ class UNCLParser(UntidBaseParser):
                         self.warnings.append(
                             f"Section {section_index}: No code values found for element {element_code}"
                         )
+                    def_xml = ElementTree.SubElement(self.msg_xml, "data_element")
 
                     def_xml.set("id", element_code)
 

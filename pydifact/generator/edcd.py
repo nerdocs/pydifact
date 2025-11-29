@@ -81,8 +81,6 @@ class EDCDParser(UntidBaseParser):
             segment_function = ""
             data_elements: List[Dict[str, Any]] = []
 
-            def_xml = ElementTree.SubElement(self.msg_xml, "composite_data_element")
-
             i = 0
             while i < len(element_list):
                 row = element_list[i]
@@ -161,6 +159,8 @@ class EDCDParser(UntidBaseParser):
                     data_elements.append(data_element)
 
                 i += 1
+
+            def_xml = ElementTree.SubElement(self.msg_xml, "composite_data_element")
 
             # Add attributes to XML element
             def_xml.set("id", segment_code)

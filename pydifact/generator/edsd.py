@@ -68,8 +68,6 @@ class EDSDParser(UntidBaseParser):
             segment_function = ""
             data_elements: List[Dict[str, Any]] = []
 
-            def_xml = ElementTree.SubElement(self.msg_xml, "segment")
-
             i = 0
             while i < len(parts):
                 row = parts[i]
@@ -147,6 +145,13 @@ class EDSDParser(UntidBaseParser):
 
                 i += 1
 
+            if not segment_code:
+                continue
+
+            if not data_elements:
+                self.warnings.append(f"Segment {segment_code}: No elements found.")
+
+            def_xml = ElementTree.SubElement(self.msg_xml, "segment")
             # Add attributes to XML element
             def_xml.set("id", segment_code)
 
