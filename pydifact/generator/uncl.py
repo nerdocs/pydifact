@@ -4,6 +4,7 @@ from pathlib import Path
 from typing import List
 
 from pydifact.generator.base import UntidBaseParser
+from pydifact.generator.constants import MAX_LINE_LENGTH
 
 
 class UNCLParser(UntidBaseParser):
@@ -11,9 +12,10 @@ class UNCLParser(UntidBaseParser):
 
     name = "UNCL"
 
-    def __init__(self, file_path: str):
+    def __init__(self, file_path: str, is_prehistoric: bool = False):
         super().__init__()
         self.msg_xml = ElementTree.Element("data_elements")
+        self.is_prehistoric = is_prehistoric
 
         try:
             self._validate_input(file_path)
@@ -53,6 +55,9 @@ class UNCLParser(UntidBaseParser):
 
             # Split by separator line (70 dashes)
             uncl_list = re.split(r"-{70}", file_lines)
+            if len(uncl_list) < 2:
+                # Split per lookahead pattern, search for the typical header
+                uncl_list = re.split(r"(?=^\d{4}\s+\S.+)", file_lines, flags=re.M)
 
             if len(uncl_list) < 2:
                 self.warnings.append(
@@ -65,6 +70,8 @@ class UNCLParser(UntidBaseParser):
             processed_elements = 0
 
             for section_index, uncl_element in enumerate(uncl_list, start=1):
+                value_value_found = False
+
                 try:
                     lines = re.split(r"[\r\n]+", uncl_element)
 
@@ -81,7 +88,7 @@ class UNCLParser(UntidBaseParser):
 
                     i = 0
                     while i < len(lines):
-                        row = lines[i]
+                        row = lines[i].rstrip()
                         if len(row) < 1:
                             i += 1
                             continue
@@ -89,10 +96,18 @@ class UNCLParser(UntidBaseParser):
                         # Parse element header
                         if element_code == "":
                             match = re.match(
-                                r"^(.{5})([0-9\s]{6})(.{56})\[([A-Z]?)\]", row
+                                r"^(.{5})([0-9]{4}\s{2})(.{56})\[([A-Z]?)\]", row
                             )
                             if not match:
-                                match = re.match(r"^(.{5})([0-9\s]{6})(.*)", row)
+                                if self.is_prehistoric:
+                                    # 1001  Document name, coded
+                                    match = re.match(r"^()([0-9]{4})\s{2}(.*)", row)
+                                else:
+                                    # *    1001  Document name code                  [C]
+
+                                    match = re.match(
+                                        r"^(.{5})([0-9]{4})\s{2,8}(.*)", row
+                                    )
 
                                 if not match:
                                     self.warnings.append(
@@ -111,18 +126,20 @@ class UNCLParser(UntidBaseParser):
                                     )
                                     break
 
-                                match2 = re.match(
-                                    r"^[\s]{11}(.*)\[([A-Z]?)\]", lines[i]
-                                )
-                                if not match2:
-                                    self.warnings.append(
-                                        f"Section {section_index}: Could not parse element usage: {lines[i]}"
+                                # check usage in newer releases
+                                if not self.is_prehistoric:
+                                    match2 = re.match(
+                                        r"^[\s]{11}(.*)\[([A-Z]?)\]", lines[i]
                                     )
-                                    element_title += " " + lines[i].strip()
-                                else:
-                                    element_title += " " + match2.group(1).strip()
-                                    element_use = match2.group(2)
-                                i += 1
+                                    if not match2:
+                                        self.warnings.append(
+                                            f"Section {section_index}: Could not parse element usage: {lines[i]}"
+                                        )
+                                        element_title += " " + lines[i].strip()
+                                    else:
+                                        element_title += " " + match2.group(1).strip()
+                                        element_use = match2.group(2)
+                                    i += 1
                                 continue
 
                             element_status = match.group(1).strip()
@@ -134,62 +151,124 @@ class UNCLParser(UntidBaseParser):
 
                         # Parse description
                         if element_description == "":
-                            match = re.match(r"[\s]{5}Desc: (.*)", row)
-                            if match:
-                                element_description = match.group(1)
-                                i += 1
-                                while i < len(lines) and len(lines[i]) > 1:
-                                    match2 = re.match(r"^[\s]{11}(.*)", lines[i])
-                                    if match2:
-                                        element_description += " " + match2.group(1)
+                            if self.is_prehistoric:
+                                # if there was already a code value found,
+                                # no description will follow any more.
+                                if not value_value_found:
+                                    # check for a "codes" pattern within an element code,
+                                    # and if no match, it must be a description
+                                    match = re.match(
+                                        r"^\s{6,9}((?:(?!\s{2})[\s\S])*)$", row
+                                    )
+                                    if match:
+                                        element_description = row.strip()
                                         i += 1
-                                    else:
-                                        break
-                                continue
+                                        while i < len(lines) and len(lines[i]) > 1:
+                                            row = lines[i]
+                                            element_description += " " + row.strip()
+                                            i += 1
+
+                            else:
+                                match = re.match(r"[\s]{5}Desc: (.*)", row)
+                                if match:
+                                    element_description = match.group(1)
+                                    i += 1
+                                    while i < len(lines) and len(lines[i]) > 1:
+                                        match2 = re.match(r"^[\s]{11}(.*)", lines[i])
+                                        if match2:
+                                            element_description += " " + match2.group(1)
+                                            i += 1
+                                        else:
+                                            break
+                                    continue
 
                         # Parse representation
                         if element_type == "":
-                            match = re.match(r"^\s{5}Repr: (a?n?)[\.]*(\d+)", row)
-                            if match:
-                                element_type = match.group(1).strip()
-                                element_max_size = match.group(2).strip()
+                            if self.is_prehistoric:
+                                pass  # TODO
                             else:
-                                self.warnings.append(
-                                    f"Section {section_index}: Could not parse representation: {row}"
-                                )
-                            i += 1
-                            continue
+                                match = re.match(r"^\s{5}Repr: (a?n?)[\.]*(\d+)", row)
+                                if match:
+                                    element_type = match.group(1).strip()
+                                    element_max_size = match.group(2).strip()
+                                else:
+                                    self.warnings.append(
+                                        f"Section {section_index}: Could not parse representation: {row}"
+                                    )
+                                i += 1
+                                continue
 
-                        # Parse code values
-                        match = re.match(r"(.{5})(.{5})\s(.*)", row)
+                        # Parse code values and their descriptions
+                        if self.is_prehistoric:
+                            # match e.g.:
+                            #      AAQ     Container number
+                            #      30      Health Care Industry ID number
+                            #      67      Promissory note signed by a third party and endorsed by
+                            #              a bank
+                            #      RT      UN/ECE/TRADE/WP.4/GE.1/EDIFACT Rapporteurs Teams
+                            match = re.match(r"([\s]{4,6})(\S.+?)\s{2,8}(.*)", row)
+                        else:
+                            # match e.g.:
+                            #     5     Product performance report
+                            #     142   Ship security procedures not maintained during ship-to-ship
+                            match = re.match(r"(.{5})(.{5})\s(.*)", row)
                         if match:
                             value_change = match.group(1).strip()
                             value_value = match.group(2).strip()
-                            value_title = match.group(3)
+                            value_title = match.group(3).strip()
                             value_description = ""
+                            value_value_found = True
                             i += 1
 
                             if value_value == "":
                                 continue
 
+                            # search for a code value description.
+                            # There is no reliable rule to distinguish between a text
+                            # describing the value at the next line or a longer value
+                            # itself that follows into the next line. The only hint
+                            # we have is that the line can max contain 14 + 55 chars.
+                            # If the line + the first word of the next line is longer
+                            # than 55 chars, it is most probably a continuation of the
+                            # value with a line break.
+                            # If the line is shorter than that, the next line is a
+                            # description of the value. This is a bad hack, but the
+                            # best we have, as the EDIFACT "standard" docs are really
+                            # badly structured.
                             while i < len(lines) and len(lines[i]) > 1:
-                                match2 = re.match(r"^[\s]{14}(.*)", lines[i])
-                                if match2:
-                                    if value_description:
-                                        value_description += " "
-                                    value_description += match2.group(1)
-                                    i += 1
-                                else:
-                                    match3 = re.match(r"^[\s]{11}(.*)", lines[i])
+                                if self.is_prehistoric:
+                                    match3 = re.match(r"^[\s]{14}(.*)$", lines[i])
                                     if match3:
-                                        if match3.group(1).strip() == "Note:":
-                                            break
-                                        if value_title:
-                                            value_title += " "
-                                        value_title += match3.group(1)
+                                        first_word = match3.group(1).strip().split()[0]
+                                        if len(row) + len(first_word) > MAX_LINE_LENGTH:
+                                            value_title += " " + match3.group(1)
+                                        else:
+                                            if value_description:
+                                                value_description += " "
+                                            value_description += match3.group(1)
+                                        i += 1
+                                    else:  # no additional line found, break
+                                        break
+                                else:
+
+                                    match2 = re.match(r"^[\s]{14}(.*)", lines[i])
+                                    if match2:
+                                        if value_description:
+                                            value_description += " "
+                                        value_description += match2.group(1)
                                         i += 1
                                     else:
-                                        break
+                                        # if a "Note:" is found, proceed to next
+                                        match3 = re.match(r"^[\s]{11}(.*)", lines[i])
+                                        if match3:
+                                            if match3.group(1).strip() == "Note:":
+                                                break
+                                            if value_title:
+                                                value_title += " "
+                                            value_title += match3.group(1).strip()
+                                            i += 1
+                                        else:
+                                            break
 
                             element_values.append(
                                 {

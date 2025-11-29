@@ -1,7 +1,5 @@
-import os
-import sys
-
-import requests
+# the line length in EDIFACT files where descriptions are line broken
+MAX_LINE_LENGTH = 69
 
 gefeg = "https://service.gefeg.com/jwg1/Archive"
 
@@ -77,6 +75,7 @@ directories_urls = {
     "d902": "https://unece.org/DAM/trade/untdid/d90/90-2.zip",
     "d881": "https://unece.org/DAM/trade/untdid/d88/88-1.zip",
 }
+
 # Service code lists for v3:
 V3_SERVICE_CODE_LISTS: dict[str, tuple[str, str]] = {
     "99A": ("unsl.99A", "1999-01-18"),
@@ -162,6 +161,7 @@ V4_SERVICE_CODE_LISTS: dict[str, tuple[str, str]] = {
     "40218": ("40218", "2021-01-13"),
     "40219": ("40219", "2021-06-23"),
 }
+
 
 # dict keys here are the first 3 numbers of the "full extended" version
 # this is not really valid in v1-3, but anyway, EDIFACT is inconsistent anyway
@@ -253,7 +253,7 @@ services_map = {
     },
 }
 
-
+# map for consistent renaming of extracted files
 renames = [
     ("TRSD.{release}", "EDSD.{release}"),
     ("TRCD.{release}", "EDCD.{release}"),
@@ -263,42 +263,3 @@ renames = [
     ("EDSD-{release}.ASC", "EDSD.{release}"),
     ("EDCL-{release}.ASC", "UNCL.{release}"),
 ]
-
-
-# https://service.unece.org/trade/untdid/d24a/d24a.zip
-def download_file(url, output_file_path: os.PathLike | str) -> bool:
-    """Download a file from a URL and save it to a local file.
-
-    Returns:
-        True if the file was downloaded successfully, False if it already exists.
-    Raises:
-        RequestException: If the download fails.
-    """
-    if not os.path.exists(output_file_path):
-        response = requests.get(url, stream=True)
-        if response.status_code == 403:  # Forbidden
-            print(
-                f"Cound not download {url} to {output_file_path}, as it is "
-                f"forbidden."
-            )
-            print("Maybe there is a captcha on the page.")
-            print(
-                "Please manually download the file and place it into the zips "
-                "folder."
-            )
-            sys.exit(1)
-
-        response.raise_for_status()  # check if the request was successful
-        with open(output_file_path, "wb") as f:
-            for chunk in response.iter_content(chunk_size=8192):
-                if chunk:  # filter out keep-alive new chunks
-                    f.write(chunk)
-        return True
-
-    print(f"{output_file_path} already exists. Skipping download.")
-    return False
-
-
-def is_prehistoric(release: str) -> bool:
-    """Returns True if the release is pre-historic (<99)"""
-    return release == "99A" or (release[:2].isdigit() and 80 < int(release[:2]) < 99)
