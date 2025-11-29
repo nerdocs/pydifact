@@ -13,15 +13,9 @@ from pydifact.generator.eded import EDEDParser
 from pydifact.generator.uncl import UNCLParser
 from pydifact.generator.edmd import EDMDParser
 from pydifact.generator.unsl import UNSLParser
-from .downloads import (
-    V3_SERVICE_CODE_LISTS,
-    V4_SERVICE_CODE_LISTS,
-    services_map,
-    download_file,
-    directories_urls,
-    is_prehistoric,
-    renames,
-)
+from pydifact.generator.constants import directories_urls, V3_SERVICE_CODE_LISTS, \
+    V4_SERVICE_CODE_LISTS, services_map, renames
+from pydifact.generator.utils import is_prehistoric, download_file
 
 from os import PathLike
 
@@ -438,7 +432,9 @@ def generate_directory_release(release_upper: str):
 
     # Parse UNCL (code list)
     extract_edifact_data(
-        uncl_parser := UNCLParser(f"{extracted_dir}/UNCL.{release_upper}"),
+        uncl_parser := UNCLParser(
+            f"{extracted_dir}/UNCL.{release_upper}", is_prehistoric(release_upper)
+        ),
         f"{generated_dir}/codes.xml",
         directory_release,
     )
