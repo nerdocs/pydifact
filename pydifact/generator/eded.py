@@ -7,7 +7,17 @@ from pydifact.generator.base import UntidBaseParser
 
 
 class EDEDParser(UntidBaseParser):
-    """Parser for EDIFACT Data Element Directory (EDED) files."""
+    """Parser for EDIFACT Data Element Directory (EDED) files.
+
+    Args:
+        file_path (str): Path to the EDED file.
+        codes (ElementTree.Element): ElementTree containing codes, which will be
+            included in the elements.
+        is_prehistoric (bool, optional): Whether the EDED file is prehistoric (<99).
+            Defaults to False.
+        service (bool, optional): Whether service elements should be parsed.
+            Defaults to False, which means it should parse data elements.
+    """
 
     name = "EDED"
 
@@ -16,11 +26,13 @@ class EDEDParser(UntidBaseParser):
         file_path: PathLike | str,
         codes: ElementTree.Element | None = None,
         is_prehistoric: bool = False,
+        service: bool = False,
     ):
         super().__init__()
         self.is_prehistoric = is_prehistoric
         self.msg_xml = ElementTree.Element("data_elements")
         self.codes = codes
+        self.service = service
 
         try:
             self._validate_input(file_path)
@@ -83,7 +95,7 @@ class EDEDParser(UntidBaseParser):
 
             i = 0
             while i < len(parts):
-                row = parts[i]
+                row = parts[i].rstrip()
                 if len(row) < 1:
                     i += 1
                     continue
@@ -115,7 +127,7 @@ class EDEDParser(UntidBaseParser):
                             )
                             break
 
-                        match2 = re.match(r"^[\s]{11}(.*)\[([A-Z]?)\]", parts[i])
+                        match2 = re.match(r"^[\s]{11}(.*)\[([A-Z]?)]", parts[i])
                         if not match2:
                             self.warnings.append(
                                 f"Could not parse element usage: {parts[i]}"
@@ -129,6 +141,15 @@ class EDEDParser(UntidBaseParser):
 
                     element_status = match.group(1).strip()
                     element_code = match.group(2).strip()
+                    if self.service:
+                        if int(element_code) >= 1000:
+                            # if we should only parse service data elements, skip to next element
+                            break
+                    else:
+                        if int(element_code) < 1000:
+                            # if we should only parse data elements, skip to next element
+                            break
+
                     element_title = match.group(3).strip()
                     element_use = match.group(4)
                     i += 1

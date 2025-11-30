@@ -66,7 +66,7 @@ class EDCDParser(UntidBaseParser):
         file_lines = file_lines.replace("\xc4", "-")
 
         # Split by separator line (70 dashes)
-        edcd_list = re.split(r"-{70}", file_lines)
+        edcd_list = re.split(r"(?= +C\d{3} +[A-Z/ ]+ *)", file_lines)
 
         if len(edcd_list) < 2:
             self.warnings.append(
@@ -77,44 +77,45 @@ class EDCDParser(UntidBaseParser):
         edcd_list = edcd_list[1:]
 
         for edcd_element in edcd_list:
-            element_list = re.split(r"[\r\n]+", edcd_element)
+            parts = re.split(r"[\r\n]+", edcd_element)
 
-            segment_code = ""
-            segment_title = ""
-            segment_function = ""
+            composite_code = ""
+            composite_title = ""
+            composite_function = ""
             data_elements: List[Dict[str, Any]] = []
 
             i = 0
-            while i < len(element_list):
-                row = element_list[i]
+            while i < len(parts):
+                row = parts[i].rstrip()
                 if len(row) < 1:
+                    i += 1
+                    continue
+                if row.startswith("---"):
                     i += 1
                     continue
 
                 # Parse segment name and change indicator
-                if segment_code == "":
-                    match = re.match(
-                        r"[\s]{4}.{1,3}[\s]{0,2}([A-Z0-9]{4})\s+([A-Z\s]+)", row
-                    )
+                if composite_code == "":
+                    match = re.match(r"[*+ |X]+([A-Z][0-9]{3}) +([A-Z /]+)", row)
                     if not match:
                         self.warnings.append(f"Could not parse segment header: {row}")
                         break
 
-                    segment_code = match.group(1)
-                    segment_title = match.group(2)
+                    composite_code = match.group(1)
+                    composite_title = match.group(2).strip()
                     i += 1
                     continue
 
                 # Parse function/description
-                if segment_function == "":
-                    match = re.match(r"[\s]{7}Desc: (.*)", row)
+                if composite_function == "":
+                    match = re.match(r" +Desc: (.*)", row)
                     if match:
-                        segment_function = match.group(1)
+                        composite_function = match.group(1).strip()
                         i += 1
-                        while i < len(element_list) and len(element_list[i]) > 1:
-                            match2 = re.match(r"^[\s]{13}(.*)", element_list[i])
+                        while i < len(parts) and len(parts[i]) > 1:
+                            match2 = re.match(r"^ {12,17}(.+)", parts[i])
                             if match2:
-                                segment_function += " " + match2.group(1)
+                                composite_function += " " + match2.group(1).strip()
                                 i += 1
                             else:
                                 break
@@ -123,7 +124,7 @@ class EDCDParser(UntidBaseParser):
                 # Parse element list
                 match = re.match(
                     r"[\d]{3}.{4}([\w]{4})\s([\w\s\/]{10,43})(?:([\w]{1})([\d\s]{5}))?(?:\s{1}([\w\d\.]{2,8}))*",
-                    element_list[i],
+                    parts[i],
                 )
                 if match:
                     data_element = {
@@ -142,12 +143,12 @@ class EDCDParser(UntidBaseParser):
                     else:
                         # Check second row
                         i += 1
-                        if i >= len(element_list) or len(element_list[i]) < 1:
+                        if i >= len(parts) or len(parts[i]) < 1:
                             continue
 
                         match2 = re.match(
                             r"[\s]{12}([\w\s]{43})([\w]{1})([\d\s]{5})(?:\s{1}([\w\d\.]{2,8}))*",
-                            element_list[i],
+                            parts[i],
                         )
                         if not match2:
                             i += 1
@@ -163,15 +164,18 @@ class EDCDParser(UntidBaseParser):
 
                 i += 1
 
+            if not composite_code:
+                continue
+
             def_xml = ElementTree.SubElement(self.msg_xml, "composite_data_element")
 
             # Add attributes to XML element
-            def_xml.set("id", segment_code)
+            def_xml.set("id", composite_code)
 
-            segment_title = self.title2name(segment_title)
+            composite_title = self.title2name(composite_title)
 
-            def_xml.set("name", segment_title)
-            def_xml.set("desc", segment_function)
+            def_xml.set("name", composite_title)
+            def_xml.set("desc", composite_function)
 
             # Add child elements
             for child in data_elements:
