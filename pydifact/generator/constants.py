@@ -262,4 +262,6 @@ renames = [
     ("EDCD-{release}.ASC", "EDCD.{release}"),
     ("EDSD-{release}.ASC", "EDSD.{release}"),
     ("EDCL-{release}.ASC", "UNCL.{release}"),
+    ("EDCD{release}.ASC", "EDCD.{release}"),
+    ("EDSD{release}.ASC", "EDSD.{release}"),
 ]

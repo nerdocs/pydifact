@@ -55,7 +55,7 @@ class UntidBaseParser:
             )
 
     def parse_repr_line(self, row: str) -> tuple[str, bool, str]:
-        match = re.match(r"^.{1}\s{4}Repr: (a?n?(?:\.\.)?\d+)", row)
+        match = re.match(r"^.?\s{0,4}Repr: (a?n?(?:\.\.)?\d+).*", row)
         if not match:
             self.warnings.append(f"Could not parse representation: {row}")
             return "", False, ""

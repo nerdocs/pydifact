@@ -10,8 +10,14 @@ class EDEDParser(UntidBaseParser):
 
     name = "EDED"
 
-    def __init__(self, file_path: str, codes: ElementTree.Element | None = None):
+    def __init__(
+        self,
+        file_path: str,
+        codes: ElementTree.Element | None = None,
+        is_prehistoric: bool = False,
+    ):
         super().__init__()
+        self.is_prehistoric = is_prehistoric
         self.msg_xml = ElementTree.Element("data_elements")
         self.codes = codes
 
@@ -51,7 +57,7 @@ class EDEDParser(UntidBaseParser):
         file_lines = file_lines.replace("\xc4", "-")
 
         # Split by separator line (70 dashes)
-        eded_list = re.split(r"-{70}", file_lines)
+        eded_list = re.split(r"(?=^\s{0,5}\d{4}\s+\S.+)", file_lines, flags=re.M)
 
         if len(eded_list) < 2:
             self.warnings.append(
@@ -83,9 +89,14 @@ class EDEDParser(UntidBaseParser):
 
                 # Parse element header
                 if element_code == "":
-                    match = re.match(r"^(.{5})([0-9\s]{6})(.{56})\[([A-Z]?)\]", row)
+                    if self.is_prehistoric:
+                        match = re.match(r"^()([\d]{4}\s)(.+?)\s{4,}(.*)", row)
+                    else:
+                        match = re.match(
+                            r"^(.{5})([\d]{4}\s{2})(.{56})\[([A-Z]?)\]", row
+                        )
                     if not match:
-                        match = re.match(r"^(.{5})([0-9\s]{6})(.*)", row)
+                        match = re.match(r"^(.{5})([\d]{4}\s{2})(.*)", row)
                         if not match:
                             self.warnings.append(
                                 f"Could not parse element header: {row}"
@@ -124,14 +135,14 @@ class EDEDParser(UntidBaseParser):
 
                 # Parse description
                 if element_description == "":
-                    match = re.match(r".{1}\s{4}Desc: (.*)", row)
+                    match = re.match(r"(?:.{1}\s{4})?Desc:\s(.*)", row)
                     if match:
-                        element_description = match.group(1)
+                        element_description = match.group(1).strip()
                         i += 1
                         while i < len(parts) and len(parts[i]) > 1:
-                            match2 = re.match(r"^[\s]{11}(.*)", parts[i])
+                            match2 = re.match(r"^\s{6,11}(.*)", parts[i])
                             if match2:
-                                element_description += " " + match2.group(1)
+                                element_description += " " + match2.group(1).strip()
                                 i += 1
                             else:
                                 break
@@ -144,15 +155,17 @@ class EDEDParser(UntidBaseParser):
                     continue
 
                 # Parse note
-                if element_note == "" and re.match(r"[\s]{5}Note:", row):
-                    element_note = ""
+                if element_note == "":
+                    match = re.match(r"^\s{0,5}Note: (.*)", row)
+                    if match:
+                        element_note = match.group(1).strip()
                     i += 1
                     while i < len(parts) and len(parts[i]) > 1:
-                        match = re.match(r"^[\s]{11}(.*)", parts[i])
+                        match = re.match(r"^[\s]{6,11}(.*)", parts[i])
                         if match:
                             if element_note:
                                 element_note += " "
-                            element_note += match.group(1)
+                            element_note += match.group(1).strip()
                             i += 1
                         else:
                             break

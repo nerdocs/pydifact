@@ -10,8 +10,9 @@ class EDSDParser(UntidBaseParser):
 
     name = "EDSD"
 
-    def __init__(self, file_path: str):
+    def __init__(self, file_path: str, is_prehistoric: bool = False):
         super().__init__()
+        self.is_prehistoric = is_prehistoric
         self.msg_xml = ElementTree.Element("segments")
 
         try:
@@ -46,12 +47,24 @@ class EDSDParser(UntidBaseParser):
         with open(file_path, "r", encoding="iso8859-1", errors="replace") as f:
             file_lines = f.read()
 
-        # Replace special character
+        # Replace special characters
         file_lines = file_lines.replace("\xc4", "-")
 
-        # Split by separator line (70 dashes)
-        edsd_list = re.split(r"-{70}", file_lines)
-
+        # Split by Segment headers
+        if self.is_prehistoric:
+            # snip preceeding blabla
+            file_lines = re.split(r"SEGMENTS SPECIFICATIONS", file_lines, flags=re.M)[1]
+            edsd_list = re.split(
+                r"(?=^[*+ ]? {,7}[A-Z]{3} +[A-Z /]+(?:\s{4,}[()\d.][()\d. ]{2,11})?$)",
+                file_lines,
+                flags=re.M,
+            )
+        else:
+            edsd_list = re.split(
+                r"(?=^\s{2,7}[A-Z]{3}\s\s+\S*)", file_lines, flags=re.M
+            )
+        # r"(?=^[*+\s]?([A-Z]{3})\s+([A-Z0-9\s]+?)\s{4,}\(?(\d{2}\.?\d?)\)?\s*("
+        # r"?:\d{2}\.?\d?)?$)",
         if len(edsd_list) < 2:
             self.warnings.append(
                 f"File may not be properly formatted - found only {len(edsd_list)} sections"
@@ -77,69 +90,131 @@ class EDSDParser(UntidBaseParser):
 
                 # Parse segment name
                 if segment_code == "":
-                    match = re.match(r"[\s]{4}.{1,3}[\s]{0,2}([A-Z]{3})\s+(.+)", row)
+                    if self.is_prehistoric:
+                        match = re.match(
+                            r"^[+*|]? {7}([A-Z]{3}) +([\S\s/]+?)(?: {4,}.*)?$",
+                            row,
+                        )
+                    else:
+                        match = re.match(r"[ +*#|X]{,7}([A-Z]{3}) +(.+)", row)
                     if not match:
-                        self.warnings.append(f"Could not parse segment header: {row}")
+                        self.warnings.append(f"Could not parse segment header: '{row}'")
                         break
 
                     segment_code = match.group(1)
-                    segment_title = match.group(2)
+                    segment_title = match.group(2).strip()
                     i += 1
                     continue
 
                 # Parse function
                 if segment_function == "":
-                    match = re.match(r"[\s\|]{7}Function: (.*)", row)
+                    match = re.match(r"[\s|]?\s{,7}Function: (.*)", row)
                     if match:
                         segment_function = match.group(1)
                         i += 1
                         while i < len(parts) and len(parts[i]) > 1:
-                            match2 = re.match(r"^[\s]{17}(.*)", parts[i])
+                            match2 = re.match(r"^[\s]{10,17}(.*)", parts[i])
                             if match2:
-                                segment_function += " " + match2.group(1)
+                                segment_function += " " + match2.group(1).strip()
                                 i += 1
                             else:
                                 break
                         continue
 
-                # Parse element list
-                match = re.match(
-                    r"[\d]{3}\s[\w\*\+\|\s]{1}\s{2}([\w]{4})\s(.{10,43})(?:([\w]{1})([\d\s]{5}))?(?:\s{1}([\w\d\.]{3,8}))*",
-                    parts[i],
+                ## Parse element list, prehistoric:
+                #  8053    EQUIPMENT QUALIFIER                     M  an..3  id 1  3
+                #  C271    EQUIPMENT                               C
+                #  8114      Transport equipment identification    C  an..4  an 1  4
+                #            prefix number
+                ##  ...and newer:
+                # 010   C543 AGREEMENT TYPE IDENTIFICATION              C    1
+                #       7433  Agreement type description code           C      an..3
+                #       1131  Code list identification code             C      an..17
+
+                # first check if it matches generally a data/composite element:
+                match_generic = re.match(
+                    r"[*+| ]{0,5}(\d{3}|) *([C\d]\d{3}).+", parts[i]
                 )
-                if match:
+                if match_generic:
+                    # we can be sure this is a composite/data element row.
+                    element_pos = match_generic.group(1)
+                    element_id = match_generic.group(2)
                     data_element = {
-                        "elementId": match.group(1),
-                        "elementName": match.group(2).strip(),
+                        "elementId": element_id,
                     }
+                    if not self.is_prehistoric:
+                        # if in newer versions the descriptions are multiline,
+                        # just concat them
+                        if (
+                            element_id[0] != "C"
+                            and i + 1 < len(parts)
+                            and len(parts[i + 1]) > 0
+                        ):
+                            match2 = re.match(
+                                r"^ {11,14}(.+)$",
+                                parts[i + 1],
+                            )
+                            if match2:
+                                i += 1
+                                row = row + " " + parts[i].lstrip()
+                    # First, try to match the "normal" 1-line rows
+                    match = re.match(
+                        r".*[C\d]\d{3} +(.+) *([MC]) *(?:(\d{,3})?([an]+\.*\d{1,"
+                        r"3})?)?",
+                        row,
+                    )
+                    if match:
+                        element_repitition = (
+                            "1" if self.is_prehistoric else match.group(3)
+                        )
+                        data_element["elementName"] = match.group(1).strip()
+                        data_element["elementCondition"] = match.group(2)
 
-                    # Check if composite (starts with 'C')
-                    data_element["composite"] = match.group(1)[0] == "C"
+                        # composite ids start with 'C'
+                        if element_id[0] == "C":
+                            data_element["composite"] = True
+                            data_element["elementRepetition"] = element_repitition
+                        else:
+                            data_element["composite"] = False
+                            data_element["elementType"] = match.group(4)
 
-                    if match.group(3):
-                        data_element["elementCondition"] = match.group(3)
-                        data_element["elementRepetition"] = match.group(4).strip()
-                        if match.group(5):
-                            data_element["elementType"] = match.group(5).strip()
+                            # Data elements can have a second row containing a
+                            # longer element name.
+                            # in ancient versions, this is just built with a string
+                            # that follows in the next line:
+                            #    5427    Allowance/charge percent basis          C  an..3  id 1  3
+                            #            qualifier
+                            i += 1
+                            if i >= len(parts) or len(parts[i]) < 1:
+                                continue
+
+                            match2 = re.match(
+                                r"^ {11,14}(.+)$",
+                                parts[i],
+                            )
+                            if not match2:
+                                data_elements.append(data_element)
+                                continue
+                            data_element["elementName"] += " " + match2.group(1).strip()
+                            # this maybe is already the next data/composite element,
+                            # so proceed with the parsing
+
                     else:
-                        # Check second row
-                        i += 1
-                        if i >= len(parts) or len(parts[i]) < 1:
-                            continue
-
-                        match2 = re.match(
-                            r"[\s]{12}([\w\s]{43})([\w]{1})([\d\s]{5})(?:\s{1}([\w\d\.]{2,8}))*",
+                        # This maybe is a row with continuation in the next line in
+                        # newer EDIFACT versions. So just check the element_id/name
+                        match = re.match(
+                            r"[*+| ]{0,5}(\d{3}|) *([C\d]\d{3}) +(.+) *([MC]) *(?:(\d{,3})?([an]+\.*\d{1,3})?)?",
                             parts[i],
                         )
-                        if not match2:
-                            i += 1
-                            continue
-
-                        data_element["elementName"] += " " + match2.group(1).strip()
-                        data_element["elementCondition"] = match2.group(2)
-                        data_element["elementRepetition"] = match2.group(3).strip()
-                        if match2.group(4):
-                            data_element["elementType"] = match2.group(4).strip()
+                        if match:
+                            data_element = {
+                                "elementId": match.group(1),
+                                "elementName": match.group(3).strip(),
+                                "elementCondition": match.group(4),
+                            }
+                            data_element["elementName"] += " " + match2.group(1).strip()
+                            data_element["elementCondition"] = match2.group(2)
+                            data_element["elementRepetition"] = match2.group(3).strip()
 
                     data_elements.append(data_element)
 

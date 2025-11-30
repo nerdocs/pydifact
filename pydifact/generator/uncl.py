@@ -185,7 +185,7 @@ class UNCLParser(UntidBaseParser):
                             if self.is_prehistoric:
                                 pass  # TODO
                             else:
-                                match = re.match(r"^\s{5}Repr: (a?n?)[\.]*(\d+)", row)
+                                match = re.match(r"^\s{5}Repr: (a?n?)[.]*(\d+)", row)
                                 if match:
                                     element_type = match.group(1).strip()
                                     element_max_size = match.group(2).strip()
@@ -239,11 +239,11 @@ class UNCLParser(UntidBaseParser):
                                     if match3:
                                         first_word = match3.group(1).strip().split()[0]
                                         if len(row) + len(first_word) > MAX_LINE_LENGTH:
-                                            value_title += " " + match3.group(1)
+                                            value_title += " " + match3.group(1).strip()
                                         else:
                                             if value_description:
                                                 value_description += " "
-                                            value_description += match3.group(1)
+                                            value_description += match3.group(1).strip()
                                         i += 1
                                     else:  # no additional line found, break
                                         break
@@ -253,7 +253,7 @@ class UNCLParser(UntidBaseParser):
                                     if match2:
                                         if value_description:
                                             value_description += " "
-                                        value_description += match2.group(1)
+                                        value_description += match2.group(1).strip()
                                         i += 1
                                     else:
                                         # if a "Note:" is found, proceed to next
