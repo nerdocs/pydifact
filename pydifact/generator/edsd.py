@@ -84,7 +84,7 @@ class EDSDParser(UntidBaseParser):
 
             i = 0
             while i < len(parts):
-                row = parts[i]
+                row = parts[i].rstrip()
                 if len(row) < 1:
                     i += 1
                     continue
@@ -93,11 +93,11 @@ class EDSDParser(UntidBaseParser):
                 if segment_code == "":
                     if self.is_prehistoric:
                         match = re.match(
-                            r"^[+*|]? {7}([A-Z]{3}) +([\S\s/]+?)(?: {4,}.*)?$",
+                            r"^[+*|]? {,7}([A-Z]{3}) +([A-Z/ ]+?)(?: {4,}.*)?$",
                             row,
                         )
                     else:
-                        match = re.match(r"[ +*#|X]{,7}([A-Z]{3}) +(.+)", row)
+                        match = re.match(r"[ +*#|X]{7}([A-Z]{3}) +(.+)", row)
                     if not match:
                         self.warnings.append(f"Could not parse segment header: '{row}'")
                         break

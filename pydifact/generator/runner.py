@@ -92,10 +92,11 @@ def extract_zip(
     zip_path: PathLike[str] | str,
     extract_to: PathLike[str] | str,
     members: list[str] | str | None = None,
-):
+) -> None:
     """Extract a ZIP file to a directory.
 
-    Prints status messages and errors if it fails.
+    Prints status messages and errors if it fails. If the `zip_path` is a non-zip file,
+    it is copied as-is.
 
     Args:
         zip_path: The path to the ZIP file
@@ -103,6 +104,18 @@ def extract_zip(
         members: An optional list of file names to extract
             (must be a subset of the zip file's contents)
     """
+    if not zip_path or not extract_to:
+        print("ERROR: Missing input paths for extracting.")
+        return
+
+    if not str(zip_path).lower().endswith(".zip"):
+        print(f"Copying '{zip_path}' to {extract_to}...")
+        try:
+            os.symlink(zip_path, extract_to)
+        except FileExistsError:
+            pass
+        return
+
     print(f"Extracting '{zip_path}'...", end="")
     if _expand_zip(zip_path, extract_to, members):
         print("OK")
@@ -171,7 +184,7 @@ def extract_edifact_data(
     except Exception as e:
         # print(f"CRITICAL ERROR in {parser_class.name} parsing: {e}")
         # error_xml = f'<?xml version="1.0" encoding="utf-8" standalone="yes"?><error>{e}</error>'
-        # with open(f"{generated_dir}/service_segments.xml", "w") as f:
+        # with open(f"{generated_data_dir}/service_segments.xml", "w") as f:
         #     f.write(error_xml)
         raise e
 
@@ -280,11 +293,12 @@ def generate_service_codes(
 
     specific_release = service_subrelease.lower()
     version_dir = f"v{specific_release}"
-    target_dir = Path(__file__).parent.parent / "syntax"
-    extracted_dir = f"extracted/service/{version_dir}"
+    generator_base_dir = Path(__file__).parent
+    target_dir = generator_base_dir.parent / "syntax"
+    extracted_dir = generator_base_dir / "extracted" / "service" / version_dir
     generated_data_dir = target_dir / "service" / version_dir / "data"
     extracted_messages_dir = f"{extracted_dir}/messages"
-    generated_messages_dir = f"{generated_dir}/messages"
+    generated_messages_dir = f"{generated_data_dir}/messages"
     syntax_specific_config: dict = services_map[extended_syntax_version]
 
     print(
@@ -292,58 +306,69 @@ def generate_service_codes(
         f" {syntax_version} (release {specific_release})"
     )
     os.makedirs(extracted_dir, exist_ok=True)
-    os.makedirs(generated_dir, exist_ok=True)
+    os.makedirs(generated_data_dir, exist_ok=True)
     os.makedirs(extracted_messages_dir, exist_ok=True)
     os.makedirs(generated_messages_dir, exist_ok=True)
 
     # ----------------- SERVICE ZIP FILES -----------------
     for element in ["e", "c", "s"]:  # data element, composite, segment
-        filename = syntax_specific_config[element]["url"].split("/")[-1]
-        download_file(syntax_specific_config[element]["url"], zips_directory / filename)
-        extract_zip(
-            zips_directory / filename,
-            extracted_dir,
-            syntax_specific_config[element].get("extract", None),
-        )
+        url = syntax_specific_config[element]["url"]
+        filename = url.split("/")[-1]
+        if filename:
+            download_file(
+                syntax_specific_config[element]["url"], zips_directory / filename
+            )
+            extract_zip(
+                zips_directory / filename,
+                extracted_dir,
+                syntax_specific_config[element].get("extract", None),
+            )
+            for src, dst in syntax_specific_config[element].get("rename", {}).items():
+                os.rename(
+                    f"{extracted_dir}/{src}",
+                    f"{extracted_dir}/{dst}",
+                )
     # messages in a different directory
     filename = syntax_specific_config["m"]["url"].split("/")[-1]
-    download_file(syntax_specific_config["m"]["url"], zips_directory / filename)
-    extract_zip(
-        zips_directory / syntax_specific_config["m"]["url"].split("/")[-1],
-        extracted_messages_dir,
-        syntax_specific_config["m"].get("extract", None),
-    )
-    for frm, to in syntax_specific_config["m"].get("rename", {}).items():
-        os.rename(
-            f"{extracted_dir}/{frm}",
-            f"{extracted_dir}/{to}",
+    if filename:
+        download_file(syntax_specific_config["m"]["url"], zips_directory / filename)
+        extract_zip(
+            zips_directory / syntax_specific_config["m"]["url"].split("/")[-1],
+            extracted_messages_dir,
+            syntax_specific_config["m"].get("extract", None),
         )
+        for src, dst in syntax_specific_config["m"].get("rename", {}).items():
+            os.rename(
+                f"{extracted_dir}/{src}",
+                f"{extracted_dir}/{dst}",
+            )
 
     # ----------------- SUB-RELEASE SPECIFIC UNSL SERVICE ZIP FILES -----------------
     # UNSL service codes are specific to syntax subversion
     unsl_config = syntax_specific_config["unsl"]
     url = unsl_config["url"].format(release=specific_release)
-    unsl_zip_file = zips_directory / url.split("/")[-1]
+    if url:
+        unsl_zip_file = zips_directory / url.split("/")[-1]
 
-    download_file(url, unsl_zip_file)
+        download_file(url, unsl_zip_file)
 
-    # extract the UNSL codes ZIP file
-    extract: str = unsl_config.get("extract", None)
-    if extract:
-        extract = extract.format(release=specific_release)
-    extract_zip(unsl_zip_file, extracted_dir, extract)
+        # extract the UNSL codes ZIP file
+        extract: str = unsl_config.get("extract", None)
+        if extract:
+            extract = extract.format(release=specific_release)
+        extract_zip(unsl_zip_file, extracted_dir, extract)
 
-    for old, new in unsl_config.get("rename", {}).items():
-        old = Path(f"{extracted_dir}/{old}".format(release=specific_release))
-        new = Path(f"{extracted_dir}/{new}".format(release=specific_release))
-        if old.exists():
-            os.rename(old, new)
+        for old, new in unsl_config.get("rename", {}).items():
+            old = Path(f"{extracted_dir}/{old}".format(release=specific_release))
+            new = Path(f"{extracted_dir}/{new}".format(release=specific_release))
+            if old.exists():
+                os.rename(old, new)
 
-    extract_edifact_data(
-        UNSLParser(f"{extracted_dir}/UNSL.{specific_release}"),
-        f"{generated_dir}/data_elements.xml",
-        service_subrelease,
-    )
+        extract_edifact_data(
+            UNSLParser(f"{extracted_dir}/UNSL.{specific_release}"),
+            f"{generated_data_dir}/data_elements.xml",
+            service_subrelease,
+        )
 
     parse_messages(extracted_messages_dir, generated_messages_dir)
 
@@ -364,13 +389,14 @@ def generate_directory_release(release_upper: str):
 
     print(f"Preparing EDIFACT download for directory release {directory_release}...")
     # Create the necessary directories
+    target_dir = Path(__file__).parent.parent / "syntax"
     extracted_dir = Path(f"extracted/{directory_release}")
     generated_data_dir = target_dir / directory_release / "data"
     extracted_messages_dir = f"{extracted_dir}/MESSAGES"
-    generated_messages_dir = f"{generated_dir}/messages"
+    generated_messages_dir = f"{generated_data_dir}/messages"
 
     os.makedirs(extracted_dir, exist_ok=True)
-    os.makedirs(generated_dir, exist_ok=True)
+    os.makedirs(generated_data_dir, exist_ok=True)
     os.makedirs(extracted_messages_dir, exist_ok=True)
     os.makedirs(generated_messages_dir, exist_ok=True)
 
@@ -385,7 +411,9 @@ def generate_directory_release(release_upper: str):
     # <=96B: FORMAT CHECK
 
     # ----------------- RELEASE ZIP FILES -----------------
-    release_zip_file = zips_directory / f"{directory_release.lower()}.zip"
+    release_zip_file = (
+        zips_directory / directories_urls[directory_release].split("/")[-1]
+    )
     download_file(directories_urls[directory_release], release_zip_file)
     if not os.path.exists(release_zip_file):
         print(f"ERROR: ZIP file not found: {release_zip_file}")
@@ -458,8 +486,9 @@ def generate_directory_release(release_upper: str):
             f"{extracted_dir}/EDED.{release_upper}",
             codes=uncl_parser.msg_xml if uncl_parser else None,
             is_prehistoric=is_prehistoric(release_upper),
+            service=False,
         ),
-        f"{generated_dir}/data_elements.xml",
+        f"{generated_data_dir}/data_elements.xml",
         directory_release,
     )
 
@@ -469,14 +498,14 @@ def generate_directory_release(release_upper: str):
             f"{extracted_dir}/EDCD.{release_upper}",
             data_elements=data_elements_parser.msg_xml,
         ),
-        f"{generated_dir}/composite_data_elements.xml",
+        f"{generated_data_dir}/composite_data_elements.xml",
         directory_release,
     )
 
     # Parse EDSD (segments)
     extract_edifact_data(
         EDSDParser(edsd_file, is_prehistoric(release_upper)),
-        f"{generated_dir}/simple_segments.xml",
+        f"{generated_data_dir}/simple_segments.xml",
         directory_release,
     )
 
@@ -487,14 +516,14 @@ def generate_directory_release(release_upper: str):
         print("Starting XML merge process...")
 
         # Load XML files
-        seg_tree = ElementTree.parse(f"{generated_dir}/simple_segments.xml")
+        seg_tree = ElementTree.parse(f"{generated_data_dir}/simple_segments.xml")
         segment_root = seg_tree.getroot()
 
-        data_element_tree = ElementTree.parse(f"{generated_dir}/data_elements.xml")
+        data_element_tree = ElementTree.parse(f"{generated_data_dir}/data_elements.xml")
         data_element_root = data_element_tree.getroot()
 
         composite_tree = ElementTree.parse(
-            f"{generated_dir}/composite_data_elements.xml"
+            f"{generated_data_dir}/composite_data_elements.xml"
         )
         composite_root = composite_tree.getroot()
 
@@ -574,13 +603,13 @@ def generate_directory_release(release_upper: str):
                                 child2.set(k, v)
 
         # Write final merged segments.xml
-        merged_path = f"{generated_dir}/segments.xml"
+        merged_path = f"{generated_data_dir}/segments.xml"
         # Pretty print the XML
         ElementTree.indent(seg_tree, space="  ")
         seg_tree.write(merged_path, encoding="utf-8", xml_declaration=True)
         # Remove simple_segments.xml to match PHP runner behavior
         try:
-            os.remove(f"{generated_dir}/simple_segments.xml")
+            os.remove(f"{generated_data_dir}/simple_segments.xml")
         except OSError:
             pass
 
@@ -592,10 +621,12 @@ def generate_directory_release(release_upper: str):
         # Fall back to copying simple_segments to segments.xml if merge fails
         try:
             with open(
-                f"{generated_dir}/simple_segments.xml", "r", encoding="utf-8"
+                f"{generated_data_dir}/simple_segments.xml", "r", encoding="utf-8"
             ) as src:
                 data = src.read()
-            with open(f"{generated_dir}/segments.xml", "w", encoding="utf-8") as dst:
+            with open(
+                f"{generated_data_dir}/segments.xml", "w", encoding="utf-8"
+            ) as dst:
                 dst.write(data)
         except Exception:
             pass
