@@ -1,0 +1,161 @@
+This is a manually created file from the original PDF document of the
+UN description of the EDIFACT v1 syntax ,located at
+https://service.gefeg.com/jwg1/Files/v1-9735.pdf
+
+It is manually edited and brought into a parseable format, similar to
+later used files.
+
+----------------------------------------------------------------------
+
+    UNA  Service String Advice
+
+    Function: To define the characters selected for use as delimiters and indicators in the rest of the interchange
+           that follows:
+           The specifications in the Service string advice take precedence over the specifications for delimiters etc. in segment
+           UNB. See clause 4.
+           When transmitted, the Service string advice must appear immediately before the Interchange Header (UNB) segment
+           and begin with the upper case characters UNA immediately followed by the six characters selected by the sender to
+           indicate, in sequence, the following functions
+
+Ref.  Name                                        M/C Repr. Remarks
+
+      COMPONENT DATA ELEMENT SEPARATOR            M   an1
+      DATA ELEMENT SEPARATOR                      M   an1
+      DECIMAL NOTATION                            M   an1   Comma or full stop
+      RELEASE INDICATOR                           M   an1   If not used, insert space
+      Reserved for future use                     M   an1   Insert space
+      SEGMENT TERMINATOR                          M   an1
+
+----------------------------------------------------------------------
+
+    UNB  Interchange Header
+
+    Function: To start, identify and specify an interchange
+
+Ref.  Name                                        M/C Repr.    Remarks
+
+S001  SYNTAX IDENTIFIER                           M
+0001    Syntax identifier                         M   a4       a3, upper case
+0002    Syntax version number                     M   n1
+S002  INTERCHANGE SENDER                          M
+0004    Sender identification                     M   an..35
+0007    Identification code qualifier             C   an..4
+0008    Address for reverse routing               C   an..14
+S003  INTERCHANGE RECIPIENT                       M
+0010    Recipient Identification                  M   an..35
+0007    Identification code qualifier             C   an..4
+0014    Routing address                           C   an..14
+S004  DATE/TIME OF PREPARATION                    M
+0017    Date                                      M   n6       YYMMDD
+0019    Time                                      M   n4       HHMM
+0020  INTERCHANGE CONTROL REFERENCE               M   an..14
+S005  RECIPIENTS REFERENCE, PASSWORD              C
+0022    Recipient's reference/password            M   an..14
+0025    Recipient's reference/password qualifier  C   an2
+0026  APPLICATION REFERENCE                       C   an..14
+0029  PROCESSING PRIORITY CODE                    C   a1
+0031  ACKNOWLEDGEMENT REQUEST                     C   n1
+0032  COMMUNICATIONS AGREEMENT ID                 C   an..35
+0035  TEST INDICATOR                              C   n1
+
+----------------------------------------------------------------------
+
+    UNZ  Interchange Trailer
+
+    Function: To end and check the completeness of an interchange
+
+Ref.  Name                                      M/C  Repr.    Remarks
+
+0036  INTERCHANGE CONTROL COUNT                 M    n..6
+
+0020  INTERCHANGE CONTROL REFERENCE             M    an..14   Shall be identical to 0020 in UNB
+
+----------------------------------------------------------------------
+
+    UNG  Functional Group Header
+
+    Function: To head, identify and specify a Functional Group
+
+Ref.  Name                                      M/C  Repr.    Remarks
+
+0038  FUNCTIONAL GROUP IDENTIFICATION           M    an..6
+S006  APPLICATION SENDER'S IDENTIFICATION       M
+0040    Sender identification                   M    an..35
+0007    Sender identification qualifier         C    an..4
+S007  APPLICATION RECIPIENTS IDENTIFICATION     M
+0044    Recipient's identification              M    an..35
+0007    Recipient's identification qualifier    C    an..4
+S004  DATE/TIME OF PREPARATION                  M
+0017    Date                                    M    n6       YYMMDD
+0019    Time                                    M    n4       HHMM
+0048  FUNCTIONAL GROUP REFERENCE NUMBER         M    an..14
+0051  CONTROLLING AGENCY                        M    an..2
+S008  MESSAGE VERSION                           M
+0052    Message version number                  M    n..3
+0054    Message release number                  C    n..3
+0057    Association assigned Code               C    an..6
+0058  APPLICATION PASSWORD                      C    an..14
+
+----------------------------------------------------------------------
+
+    UNE  Functional Group Trailer
+
+    Function: To end and check the completeness of a Functional Group
+
+Ref.  Name                                      M/C  Repr.    Remarks
+
+0060  NUMBER OF MESSAGES                        M    n..6
+0048  FUNCTIONAL GROUP REFERENCE NUMBER         M    an..14   Shall be identical to 0048 in UNG
+
+----------------------------------------------------------------------
+
+    UNH  Message Header
+
+    Function: To head, identify and specify a Message
+
+Ref.  Name                                      M/C Repr.     Remarks
+
+0062  MESSAGE REFERENCE NUMBER                  M   an..14
+S009  MESSAGE IDENTIFIER                        M
+0065    Message type                            M   an..6
+0052    Message version number                  M   n..3
+0054    Message release number                  C   n..3
+0051    Controlling agency                      C   an..2
+0057    Association assigned code               C   an..6
+0068  COMMON ACCESS REFERENCE                   C   an..35
+S010  STATUS OF THE TRANSFER                    C
+0070    Sequence of transfers                   M   n..2
+0073    First and last transfer                 C   a1
+
+----------------------------------------------------------------------
+
+    UNT  Message Trailer
+
+    Function: To end and check the completeness of a Message
+
+Ref.  Name                                      M/C Repr.    Remarks
+
+0074  NUMBER OF SEGMENTS IN THE MESSAGE         M   n..6
+0062  MESSAGE REFERENCE NUMBER                  M   an..14   Shall be identical to 0062 in UNH
+
+----------------------------------------------------------------------
+
+    TXT  Text
+
+    Function: To give information in addition to that in other segments in the service message, as required
+
+Ref.  Name                                      M/C Repr.    Remarks
+
+0077  TEXT REFERENCE CODE                       C   an3
+0078  FREE FORM TEXT                            M   an..70
+
+----------------------------------------------------------------------
+
+    UNS  Section Control
+
+    Function: To separate Header, Detail and Summary sections of a message
+
+Ref.  Name                                      M/C Repr.    Remarks
+
+0081  SECTION IDENTIFICATION                    M   a1       D separates the header and detail sections
+                                                             S separates the detail and summary sections
