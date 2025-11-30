@@ -86,7 +86,7 @@ class UNSLParser(UntidBaseParser):
 
                 # Parse element header
                 if element_code == "":
-                    match = re.match(r"^(.{2})([0-9\s]{6})(.{0,62})", row)
+                    match = re.match(r"^([*+| X]+)([0-9]{4}) +(.+)(\[CBI\])?", row)
                     if not match:
                         self.warnings.append(f"Could not parse element header: {row}")
                         break
