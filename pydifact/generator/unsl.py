@@ -1,4 +1,5 @@
 import re
+from os import PathLike
 from xml.etree import ElementTree
 from pathlib import Path
 from typing import List, Dict
@@ -11,7 +12,7 @@ class UNSLParser(UntidBaseParser):
 
     name = "UNSL"
 
-    def __init__(self, file_path: str):
+    def __init__(self, file_path: PathLike | str):
         super().__init__()
         self.msg_xml = ElementTree.Element("data_elements")
 
@@ -22,7 +23,7 @@ class UNSLParser(UntidBaseParser):
             self.errors.append(f"Critical error in UNSLParser: {str(e)}")
             raise
 
-    def _validate_input(self, file_path: str) -> None:
+    def _validate_input(self, file_path: PathLike | str) -> None:
         """Validate input file exists and is readable."""
         path = Path(file_path)
 
@@ -42,7 +43,7 @@ class UNSLParser(UntidBaseParser):
                 f"({file_size / 1024 / 1024:.2f} MB)"
             )
 
-    def _process(self, file_path: str) -> None:
+    def _process(self, file_path: PathLike | str) -> None:
         """Process UNSL file and build XML structure."""
         with open(file_path, "r", encoding="iso8859-1", errors="replace") as f:
             file_lines = f.read()

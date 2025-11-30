@@ -1,4 +1,5 @@
 import re
+from os import PathLike
 from typing import List
 from xml.dom import minidom
 from xml.etree import ElementTree
@@ -34,10 +35,10 @@ class UntidBaseParser:
         reparsed = minidom.parseString(rough_string)
         return reparsed.toprettyxml(indent="  ", encoding="utf-8").decode("utf-8")
 
-    def _validate_input(self, file_path: str) -> None:
+    def _validate_input(self, file_path: PathLike | str) -> None:
         raise NotImplementedError
 
-    def _process(self, file_path: str) -> None:
+    def _process(self, file_path: PathLike | str) -> None:
         raise NotImplementedError
 
     def parse_repr(self, repr: str) -> tuple[str, bool, str]:

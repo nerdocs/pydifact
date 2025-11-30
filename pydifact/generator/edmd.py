@@ -1,4 +1,5 @@
 import re
+from os import PathLike
 from xml.etree import ElementTree
 from pathlib import Path
 from typing import List, Dict, Any, Optional
@@ -11,7 +12,7 @@ class EDMDParser(UntidBaseParser):
 
     name = "EDMD"
 
-    def __init__(self, file_path: str):
+    def __init__(self, file_path: PathLike | str):
         super().__init__()
         self.msg_xml = ElementTree.Element("message")
 
@@ -72,7 +73,7 @@ class EDMDParser(UntidBaseParser):
         dct[pos_int] = segment
         return dct
 
-    def _validate_input(self, file_path: str) -> None:
+    def _validate_input(self, file_path: PathLike | str) -> None:
         """Validate input file exists and is readable."""
         path = Path(file_path)
 
@@ -92,7 +93,7 @@ class EDMDParser(UntidBaseParser):
                 f"({file_size / 1024 / 1024:.2f} MB)"
             )
 
-    def _process(self, file_path: str) -> None:
+    def _process(self, file_path: PathLike | str) -> None:
         """Process EDMD file and build XML structure."""
         path = Path(file_path)
         if path.is_dir():

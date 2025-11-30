@@ -12,7 +12,7 @@ class UNCLParser(UntidBaseParser):
 
     name = "UNCL"
 
-    def __init__(self, file_path: str, is_prehistoric: bool = False):
+    def __init__(self, file_path: PathLike | str, is_prehistoric: bool = False):
         super().__init__()
         self.msg_xml = ElementTree.Element("data_elements")
         self.is_prehistoric = is_prehistoric
@@ -24,7 +24,7 @@ class UNCLParser(UntidBaseParser):
             self.errors.append(f"Critical error in UNCLParser: {str(e)}")
             raise
 
-    def _validate_input(self, file_path: str) -> None:
+    def _validate_input(self, file_path: PathLike | str) -> None:
         """Validate input file exists and is readable."""
         path = Path(file_path)
 
@@ -44,7 +44,7 @@ class UNCLParser(UntidBaseParser):
                 f"({file_size / 1024 / 1024:.2f} MB)"
             )
 
-    def _process(self, file_path: str) -> None:
+    def _process(self, file_path: PathLike | str) -> None:
         """Process UNCL file and build XML structure."""
         try:
             with open(file_path, "r", encoding="iso8859-1", errors="replace") as f:

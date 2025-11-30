@@ -437,19 +437,26 @@ def generate_directory_release(release_upper: str):
         sys.exit(1)
 
     # Parse UNCL (code list)
-    extract_edifact_data(
-        uncl_parser := UNCLParser(
-            f"{extracted_dir}/UNCL.{release_upper}", is_prehistoric(release_upper)
-        ),
-        f"{generated_dir}/codes.xml",
-        directory_release,
-    )
+    uncl_filename = extracted_dir / f"UNCL.{release_upper}"
+    uncl_parser = None
+    if uncl_filename.exists():
+        extract_edifact_data(
+            uncl_parser := UNCLParser(uncl_filename, is_prehistoric(release_upper)),
+            f"{generated_data_dir}/codes.xml",
+            directory_release,
+        )
+    else:
+        print(f"No UNCL file found in {directory_release} extraction")
+        print(f"Available files in {extracted_dir}:")
+        for file in os.listdir(extracted_dir):
+            if file not in [".", ".."]:
+                print(f"  - {file}")
 
     # Parse EDED (data elements)
     extract_edifact_data(
         data_elements_parser := EDEDParser(
             f"{extracted_dir}/EDED.{release_upper}",
-            codes=uncl_parser.msg_xml,
+            codes=uncl_parser.msg_xml if uncl_parser else None,
             is_prehistoric=is_prehistoric(release_upper),
         ),
         f"{generated_dir}/data_elements.xml",
