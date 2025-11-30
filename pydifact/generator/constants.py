@@ -172,7 +172,7 @@ services_map = {
         "c": {"url": ""},
         "s": {"url": "internal://service/EDSD.1"},
         "m": {"url": ""},
-        "unsl": {"url": "", "extract": None, "rename": {}},
+        "unsl": {"url": "internal://service/UNSL.1"},
     },
     "200": {
         "sl_list": {},
@@ -180,7 +180,7 @@ services_map = {
         "c": {"url": ""},
         "s": {"url": "internal://service/EDSD.2"},
         "m": {"url": ""},
-        "unsl": {"url": "internal://service/UNSL.2", "extract": None, "rename": {}},
+        "unsl": {"url": "internal://service/UNSL.2"},
     },
     "300": {
         "sl_list": V3_SERVICE_CODE_LISTS,

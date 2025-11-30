@@ -59,7 +59,7 @@ class UNSLParser(UntidBaseParser):
 
         if len(unsl_list) < 2:
             self.warnings.append(
-                f"File may not be properly formatted - found only {len(unsl_list)} sections"
+                f"File '{file_path}' may not be properly formatted - found only {len(unsl_list)} sections"
             )
 
         # Remove first empty section
@@ -99,12 +99,12 @@ class UNSLParser(UntidBaseParser):
 
                 # Parse description
                 if element_description == "":
-                    match = re.match(r".{2}Desc: (.*)", row)
+                    match = re.match(r".+Desc: (.*)", row)
                     if match:
                         element_description = match.group(1)
                         i += 1
                         while i < len(lines) and len(lines[i]) > 1:
-                            match2 = re.match(r"^[\s]{8}(.*)", lines[i])
+                            match2 = re.match(r"^ {8,14}(.*)", lines[i])
                             if match2:
                                 element_description += " " + match2.group(1)
                                 i += 1
@@ -114,9 +114,11 @@ class UNSLParser(UntidBaseParser):
 
                 # Parse representation
                 if element_type == "":
-                    match = re.match(r"^.{2}Repr: (a?n?)[.]*(\d+)", row)
+                    match = re.match(r"^ +Repr: (a?n?)[.]*(\d+)", row)
                     if not match:
-                        self.warnings.append(f"Could not parse representation: {row}")
+                        self.warnings.append(
+                            f"Could not parse 'Repr 'representation: {row}"
+                        )
                     else:
                         element_type = match.group(1).strip()
                         element_max_size = match.group(2).strip()

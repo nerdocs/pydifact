@@ -70,7 +70,7 @@ class EDCDParser(UntidBaseParser):
 
         if len(edcd_list) < 2:
             self.warnings.append(
-                f"File may not be properly formatted - found only {len(edcd_list)} sections"
+                f"File '{file_path}' may not be properly formatted - found only {len(edcd_list)} sections"
             )
 
         # Remove the first empty section

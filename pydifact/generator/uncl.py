@@ -62,7 +62,7 @@ class UNCLParser(UntidBaseParser):
 
             if len(uncl_list) < 2:
                 self.warnings.append(
-                    f"File may not be properly formatted - found only {len(uncl_list)} sections"
+                    f"File '{file_path}' may not be properly formatted - found only {len(uncl_list)} sections"
                 )
 
             # Remove the first empty section
