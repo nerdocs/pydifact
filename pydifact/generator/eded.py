@@ -1,4 +1,5 @@
 import re
+from os import PathLike
 from xml.etree import ElementTree
 from pathlib import Path
 
@@ -12,7 +13,7 @@ class EDEDParser(UntidBaseParser):
 
     def __init__(
         self,
-        file_path: str,
+        file_path: PathLike | str,
         codes: ElementTree.Element | None = None,
         is_prehistoric: bool = False,
     ):
@@ -28,7 +29,7 @@ class EDEDParser(UntidBaseParser):
             self.errors.append(f"Critical error in EDEDParser: {str(e)}")
             raise
 
-    def _validate_input(self, file_path: str) -> None:
+    def _validate_input(self, file_path: PathLike | str) -> None:
         """Validate input file exists and is readable."""
         path = Path(file_path)
 
@@ -48,7 +49,7 @@ class EDEDParser(UntidBaseParser):
                 f"({file_size / 1024 / 1024:.2f} MB)"
             )
 
-    def _process(self, file_path: str) -> None:
+    def _process(self, file_path: PathLike | str) -> None:
         """Process EDED file and build XML structure."""
         with open(file_path, "r", encoding="iso8859-1", errors="replace") as f:
             file_lines = f.read()

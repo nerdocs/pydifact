@@ -1,4 +1,5 @@
 import re
+from os import PathLike
 from xml.etree import ElementTree
 from pathlib import Path
 from typing import List, Dict, Any
@@ -12,7 +13,9 @@ class EDCDParser(UntidBaseParser):
     name = "EDCD"
 
     def __init__(
-        self, file_path: str, data_elements: ElementTree.Element | None = None
+        self,
+        file_path: PathLike | str,
+        data_elements: ElementTree.Element | None = None,
     ):
         """
         Initialize EDCDParser.
@@ -34,7 +37,7 @@ class EDCDParser(UntidBaseParser):
             self.errors.append(f"Critical error in EDCDParser: {str(e)}")
             raise
 
-    def _validate_input(self, file_path: str) -> None:
+    def _validate_input(self, file_path: PathLike | str) -> None:
         """Validate input file exists and is readable."""
         path = Path(file_path)
 
@@ -54,7 +57,7 @@ class EDCDParser(UntidBaseParser):
                 f"({file_size / 1024 / 1024:.2f} MB)"
             )
 
-    def _process(self, file_path: str) -> None:
+    def _process(self, file_path: PathLike | str) -> None:
         """Process EDCD file and build XML structure."""
         with open(file_path, "r", encoding="iso8859-1", errors="replace") as f:
             file_lines = f.read()
