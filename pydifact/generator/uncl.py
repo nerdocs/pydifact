@@ -1,4 +1,5 @@
 import re
+from os import PathLike
 from xml.etree import ElementTree
 from pathlib import Path
 from typing import List
