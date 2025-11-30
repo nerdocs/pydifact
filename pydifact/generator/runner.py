@@ -280,8 +280,9 @@ def generate_service_codes(
 
     specific_release = service_subrelease.lower()
     version_dir = f"v{specific_release}"
+    target_dir = Path(__file__).parent.parent / "syntax"
     extracted_dir = f"extracted/service/{version_dir}"
-    generated_dir = f"generated/service/{version_dir}"
+    generated_data_dir = target_dir / "service" / version_dir / "data"
     extracted_messages_dir = f"{extracted_dir}/messages"
     generated_messages_dir = f"{generated_dir}/messages"
     syntax_specific_config: dict = services_map[extended_syntax_version]
@@ -364,7 +365,7 @@ def generate_directory_release(release_upper: str):
     print(f"Preparing EDIFACT download for directory release {directory_release}...")
     # Create the necessary directories
     extracted_dir = Path(f"extracted/{directory_release}")
-    generated_dir = Path(f"generated/{directory_release}")
+    generated_data_dir = target_dir / directory_release / "data"
     extracted_messages_dir = f"{extracted_dir}/MESSAGES"
     generated_messages_dir = f"{generated_dir}/messages"
 
