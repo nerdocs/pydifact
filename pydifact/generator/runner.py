@@ -26,7 +26,7 @@ from os import PathLike
 
 
 V4_RELEASE_NUMBER = "40219"
-zips_directory = Path(".") / "zips"
+zips_directory = Path(__file__).parent / "zips"
 
 
 def print_usage() -> None:
@@ -109,11 +109,13 @@ def extract_zip(
         return
 
     if not str(zip_path).lower().endswith(".zip"):
-        print(f"Copying '{zip_path}' to {extract_to}...")
-        try:
-            os.symlink(zip_path, extract_to)
-        except FileExistsError:
-            pass
+        if os.path.isdir(extract_to):
+            extract_to = os.path.join(extract_to, os.path.basename(zip_path))
+        if os.path.exists(extract_to):
+            print(f"File '{extract_to}' already exists.")
+            return
+        print(f"Linking '{zip_path}' to {extract_to}...")
+        os.symlink(zip_path, extract_to)
         return
 
     print(f"Extracting '{zip_path}'...", end="")
@@ -328,6 +330,17 @@ def generate_service_codes(
                     f"{extracted_dir}/{src}",
                     f"{extracted_dir}/{dst}",
                 )
+            match element:
+                case "s":
+                    # Parse EDSD (segments)
+                    extract_edifact_data(
+                        EDSDParser(
+                            extracted_dir / filename,
+                            is_prehistoric=syntax_version in ["1", "2"],
+                        ),
+                        f"{generated_data_dir}/simple_segments.xml",
+                        specific_release,
+                    )
     # messages in a different directory
     filename = syntax_specific_config["m"]["url"].split("/")[-1]
     if filename:

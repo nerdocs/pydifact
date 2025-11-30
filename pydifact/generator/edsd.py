@@ -3,6 +3,9 @@ from os import PathLike
 from xml.etree import ElementTree
 from pathlib import Path
 from typing import List, Dict, Any
+
+from mypy.fastparse import Match
+
 from pydifact.generator.base import UntidBaseParser
 
 
@@ -56,19 +59,17 @@ class EDSDParser(UntidBaseParser):
             # snip preceeding blabla
             file_lines = re.split(r"SEGMENTS SPECIFICATIONS", file_lines, flags=re.M)[1]
             edsd_list = re.split(
-                r"(?=^[*+ ]? {,7}[A-Z]{3} +[A-Z /]+(?:\s{4,}[()\d.][()\d. ]{2,11})?$)",
+                r"(?=^[*+ ]? {,7}[A-Z]{3} +[A-Z /]+(?: {4,}[()\d.][()\d. ]{2,11})?$)",
                 file_lines,
                 flags=re.M,
             )
         else:
-            edsd_list = re.split(
-                r"(?=^\s{2,7}[A-Z]{3}\s\s+\S*)", file_lines, flags=re.M
-            )
+            edsd_list = re.split(r"(?=^ {2,7}[A-Z]{3}  +\S*)", file_lines, flags=re.M)
         # r"(?=^[*+\s]?([A-Z]{3})\s+([A-Z0-9\s]+?)\s{4,}\(?(\d{2}\.?\d?)\)?\s*("
         # r"?:\d{2}\.?\d?)?$)",
         if len(edsd_list) < 2:
             self.warnings.append(
-                f"File may not be properly formatted - found only {len(edsd_list)} sections"
+                f"File '{file_path}' may not be properly formatted - found only {len(edsd_list)} sections"
             )
 
         # Remove first empty section
@@ -93,11 +94,11 @@ class EDSDParser(UntidBaseParser):
                 if segment_code == "":
                     if self.is_prehistoric:
                         match = re.match(
-                            r"^[+*|]? {,7}([A-Z]{3}) +([A-Z/ ]+?)(?: {4,}.*)?$",
+                            r"^[+*| ]+([A-Z]{3}) +([A-Z/ ]+?)(?: {4,}.*)?$",
                             row,
                         )
                     else:
-                        match = re.match(r"[ +*#|X]{7}([A-Z]{3}) +(.+)", row)
+                        match = re.match(r"[ +*#|X]+([A-Z]{3}) +(.+)", row)
                     if not match:
                         self.warnings.append(f"Could not parse segment header: '{row}'")
                         break
@@ -114,9 +115,11 @@ class EDSDParser(UntidBaseParser):
                         segment_function = match.group(1)
                         i += 1
                         while i < len(parts) and len(parts[i]) > 1:
-                            match2 = re.match(r"^[\s]{10,17}(.*)", parts[i])
-                            if match2:
-                                segment_function += " " + match2.group(1).strip()
+                            match_second_line = re.match(r"^[\s]{10,17}(.*)", parts[i])
+                            if match_second_line:
+                                segment_function += (
+                                    " " + match_second_line.group(1).strip()
+                                )
                                 i += 1
                             else:
                                 break
@@ -134,7 +137,7 @@ class EDSDParser(UntidBaseParser):
 
                 # first check if it matches generally a data/composite element:
                 match_generic = re.match(
-                    r"[*+| ]{0,5}(\d{3}|) *([C\d]\d{3}).+", parts[i]
+                    r"[*+|X ]{0,5}(\d{3}|) *([CS\d]\d{3}).+", parts[i]
                 )
                 if match_generic:
                     # we can be sure this is a composite/data element row.
@@ -151,25 +154,28 @@ class EDSDParser(UntidBaseParser):
                             and i + 1 < len(parts)
                             and len(parts[i + 1]) > 0
                         ):
-                            match2 = re.match(
+                            match_second_line = re.match(
                                 r"^ {11,14}(.+)$",
                                 parts[i + 1],
                             )
-                            if match2:
+                            if match_second_line:
                                 i += 1
                                 row = row + " " + parts[i].lstrip()
+
                     # First, try to match the "normal" 1-line rows
                     match = re.match(
-                        r".*[C\d]\d{3} +(.+) *([MC]) *(?:(\d{,3})?([an]+\.*\d{1,"
-                        r"3})?)?",
+                        r"^(\d{3}|)[*+|X ]*[CS\d]\d{3} +(.+) *([MC]) *"
+                        r"(?:(\d{,3})?([an]+\.*\d{1,3})?(.*)?)?",
                         row,
                     )
                     if match:
+                        element_pos = match.group(1)
                         element_repitition = (
-                            "1" if self.is_prehistoric else match.group(3)
+                            "1" if self.is_prehistoric else match.group(4)
                         )
-                        data_element["elementName"] = match.group(1).strip()
-                        data_element["elementCondition"] = match.group(2)
+                        data_element["elementName"] = match.group(2).strip()
+                        data_element["elementCondition"] = match.group(3)
+                        data_element["elementDescription"] = match.group(6).strip()
 
                         # composite ids start with 'C'
                         if element_id[0] == "C":
@@ -177,7 +183,7 @@ class EDSDParser(UntidBaseParser):
                             data_element["elementRepetition"] = element_repitition
                         else:
                             data_element["composite"] = False
-                            data_element["elementType"] = match.group(4)
+                            data_element["elementType"] = match.group(5)
 
                             # Data elements can have a second row containing a
                             # longer element name.
@@ -189,36 +195,23 @@ class EDSDParser(UntidBaseParser):
                             if i >= len(parts) or len(parts[i]) < 1:
                                 continue
 
-                            match2 = re.match(
+                            match_second_line = re.match(
                                 r"^ {11,14}(.+)$",
                                 parts[i],
                             )
-                            if not match2:
-                                data_elements.append(data_element)
-                                continue
-                            data_element["elementName"] += " " + match2.group(1).strip()
-                            # this maybe is already the next data/composite element,
-                            # so proceed with the parsing
-
-                    else:
-                        # This maybe is a row with continuation in the next line in
-                        # newer EDIFACT versions. So just check the element_id/name
-                        match = re.match(
-                            r"[*+| ]{0,5}(\d{3}|) *([C\d]\d{3}) +(.+) *([MC]) *(?:(\d{,3})?([an]+\.*\d{1,3})?)?",
-                            parts[i],
-                        )
-                        if match:
-                            data_element = {
-                                "elementId": match.group(1),
-                                "elementName": match.group(3).strip(),
-                                "elementCondition": match.group(4),
-                            }
-                            data_element["elementName"] += " " + match2.group(1).strip()
-                            data_element["elementCondition"] = match2.group(2)
-                            data_element["elementRepetition"] = match2.group(3).strip()
+                            if match_second_line:
+                                data_element["elementName"] += (
+                                    " " + match_second_line.group(1).strip()
+                                )
+                            data_elements.append(data_element)
+                            continue
 
                     data_elements.append(data_element)
 
+                else:
+                    # debug
+                    # print("ignore line:", row)
+                    pass
                 i += 1
 
             if not segment_code:
@@ -246,3 +239,5 @@ class EDSDParser(UntidBaseParser):
 
                 if child.get("elementCondition") == "M":
                     cdef_xml.set("required", "true")
+                if child.get("elementDescription"):
+                    cdef_xml.set("desc", child["elementDescription"])

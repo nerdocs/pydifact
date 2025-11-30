@@ -1,0 +1,47 @@
+----------------------------------------------------------------------
+
+     0031  Acknowledgement request
+
+     Desc: Acknowledgement request from the sender to the receiver
+
+     Repr: n1
+
+     1       if sender requests acknowledgement, i.e. UNB and UNZ segments received and identified
+
+----------------------------------------------------------------------
+
+
+     0035 Test indicator
+
+     Desc: Test indicator
+
+     Repr: n1
+
+     1       if the interchange is a test. Otherwise not used
+
+----------------------------------------------------------------------
+
+     0073   First and last transfer
+
+     Desc:  Indicators for first and last transfer
+
+     Repr: a1
+
+     C      Creation, must be present for first transfer if more than one foreseen
+
+     F      Final, must be present for last transfer
+
+----------------------------------------------------------------------
+
+     0081  Section identification
+
+     Desc:   Separates sections in a message by one of the following codes
+
+     Repr: a1
+
+     D     separates the header and detail sections
+
+     S     separates the detail and summary sections
+
+
+# TODO: 0004, 0010
