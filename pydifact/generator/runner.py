@@ -13,8 +13,13 @@ from pydifact.generator.eded import EDEDParser
 from pydifact.generator.uncl import UNCLParser
 from pydifact.generator.edmd import EDMDParser
 from pydifact.generator.unsl import UNSLParser
-from pydifact.generator.constants import directories_urls, V3_SERVICE_CODE_LISTS, \
-    V4_SERVICE_CODE_LISTS, services_map, renames
+from pydifact.generator.constants import (
+    directories_urls,
+    V3_SERVICE_CODE_LISTS,
+    V4_SERVICE_CODE_LISTS,
+    services_map,
+    renames,
+)
 from pydifact.generator.utils import is_prehistoric, download_file
 
 from os import PathLike
@@ -442,7 +447,9 @@ def generate_directory_release(release_upper: str):
     # Parse EDED (data elements)
     extract_edifact_data(
         data_elements_parser := EDEDParser(
-            f"{extracted_dir}/EDED.{release_upper}", codes=uncl_parser.msg_xml
+            f"{extracted_dir}/EDED.{release_upper}",
+            codes=uncl_parser.msg_xml,
+            is_prehistoric=is_prehistoric(release_upper),
         ),
         f"{generated_dir}/data_elements.xml",
         directory_release,
@@ -460,7 +467,9 @@ def generate_directory_release(release_upper: str):
 
     # Parse EDSD (segments)
     extract_edifact_data(
-        EDSDParser(edsd_file), f"{generated_dir}/simple_segments.xml", directory_release
+        EDSDParser(edsd_file, is_prehistoric(release_upper)),
+        f"{generated_dir}/simple_segments.xml",
+        directory_release,
     )
 
     parse_messages(extracted_messages_dir, generated_messages_dir)

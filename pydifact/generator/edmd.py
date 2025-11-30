@@ -119,28 +119,38 @@ class EDMDParser(UntidBaseParser):
             line = line.replace("\xd9", "+").replace("\xc1", "+").replace("\xbf", "+")
 
             # Parse message metadata
-            match = re.match(r"[\s]{43}Message Type : ([A-Z]{6})\r?\n?", line)
+            match = re.match(r"^ {,43}Message [Tt]ype {,7}: ([A-Z]{6}) *$", line)
             if match:
                 defaults["0065"] = match.group(1)
                 cdef_xml = ElementTree.SubElement(def_xml, "data_element")
                 cdef_xml.set("id", "0065")  # Message type
                 cdef_xml.set("value", match.group(1))
 
-            match = re.match(r"[\s]{43}Version      : ([A-Z]{1})\r?\n?", line)
+            match = re.match(
+                r"^ {,43}(?:Message )?[Vv]ersion(?: [Nn]umber){,7}: ([A-Z]{1}) *$",
+                line,
+            )
             if match:
                 defaults["0052"] = match.group(1)
                 cdef_xml = ElementTree.SubElement(def_xml, "data_element")
                 cdef_xml.set("id", "0052")  # Message version number
                 cdef_xml.set("value", match.group(1))
 
-            match = re.match(r"[\s]{43}Release      : ([A-Z0-9]{3})\r?\n?", line)
+            match = re.match(
+                r"^ {,43}(?:Message )?[Rr]elease(?: [Nn]umber){,7}: ([A-Z0-9]{"
+                r"3}).*$",
+                line,
+            )
             if match:
                 defaults["0054"] = match.group(1)
                 cdef_xml = ElementTree.SubElement(def_xml, "data_element")
                 cdef_xml.set("id", "0054")  # Message type release number
                 cdef_xml.set("value", match.group(1))
 
-            match = re.match(r"[\s]{43}Contr. Agency: ([A-Z]{2})\r?\n?", line)
+            match = re.match(
+                r"^ {,43}(?:Contr.|Controlling) [Aa]gency{,7}: ([A-Z]{2}).*$",
+                line,
+            )
             if match:
                 defaults["0051"] = match.group(1)
                 cdef_xml = ElementTree.SubElement(def_xml, "data_element")

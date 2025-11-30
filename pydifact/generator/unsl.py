@@ -113,7 +113,7 @@ class UNSLParser(UntidBaseParser):
 
                 # Parse representation
                 if element_type == "":
-                    match = re.match(r"^.{2}Repr: (a?n?)[\.]*(\d+)", row)
+                    match = re.match(r"^.{2}Repr: (a?n?)[.]*(\d+)", row)
                     if not match:
                         self.warnings.append(f"Could not parse representation: {row}")
                     else:
@@ -143,12 +143,12 @@ class UNSLParser(UntidBaseParser):
                 match = re.match(r"(.{3})(.{6})\s(.*)", row)
                 if match:
                     value_change = match.group(1).strip()
-                    value_value = match.group(2)
-                    value_title = match.group(3)
+                    value_value = match.group(2).strip()
+                    value_title = match.group(3).strip()
                     value_description = ""
                     i += 1
 
-                    if value_value.strip() == "":
+                    if value_value == "":
                         continue
 
                     while i < len(lines) and len(lines[i]) > 1:
@@ -156,7 +156,7 @@ class UNSLParser(UntidBaseParser):
                         if match2:
                             if value_description:
                                 value_description += " "
-                            value_description += match2.group(1)
+                            value_description += match2.group(1).strip()
                             i += 1
                         else:
                             match3 = re.match(r"^[\s]{10}(.*)", lines[i])
@@ -165,14 +165,14 @@ class UNSLParser(UntidBaseParser):
                                     break
                                 if value_title:
                                     value_title += " "
-                                value_title += match3.group(1)
+                                value_title += match3.group(1).strip()
                                 i += 1
                             else:
                                 break
 
                     element_values.append(
                         {
-                            "value": value_value.strip(),
+                            "value": value_value,
                             "title": value_title,
                             "descr": value_description,
                         }
