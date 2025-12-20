@@ -457,12 +457,25 @@ class Interchange(AbstractSegmentsContainer):
     def from_file(
         cls, file: str, encoding: str = "iso8859-1", parser: Parser | None = None
     ) -> "Interchange":
-        """Create a Interchange instance from a file.
+        """Create an Interchange instance from a file.
 
-        Raises FileNotFoundError if filename is not found.
-        :param encoding: an optional string which specifies the encoding. Default is "iso8859-1".
-        :param file: The full path to a file that contains an EDI message.
-        :rtype: FileSourcableMixin
+        Args:
+            file : str
+                The full path to a file that contains an EDI message.
+            encoding : str, default='iso8859-1'
+                The encoding to use when reading the file.
+            parser : Parser, optional
+                A parser to convert the tokens to segments.
+
+        Returns:
+            Interchange
+                A new Interchange instance created from the file contents.
+
+        Raises:
+            FileNotFoundError
+                If the specified file is not found.
+            LookupError
+                If the specified encoding is not recognized.
         """
         # codecs.lookup raises an LookupError if given codec was not found:
         codecs.lookup(encoding)
