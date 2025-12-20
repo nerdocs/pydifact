@@ -22,8 +22,12 @@
 import warnings
 from typing import overload
 
-from pydifact.constants import EDI_DEFAULT_VERSION, M, EDI_DEFAULT_SYNTAX, Element, \
-    Elements
+from pydifact.constants import (
+    EDI_DEFAULT_VERSION,
+    M,
+    EDI_DEFAULT_SYNTAX,
+    Element
+)
 from pydifact.exceptions import (
     ValidationError,
     MissingImplementationWarning,
@@ -85,6 +89,7 @@ class Segment:
                 f"Segment {self.tag} is empty, and should be omitted completely.",
                 category=SyntaxWarning,
             )
+        # Validate segment tag is uppercase alphanumeric 3‑letter string
         if (
             not isinstance(self.tag, str)
             or not self.tag.isalnum()
