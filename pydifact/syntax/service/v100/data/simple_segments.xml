@@ -4,51 +4,51 @@
     <data_element required="true" type="an" length="6"/>
   </segment>
   <segment id="UNB" name="InterchangeHeader" desc="To start, identify and specify an interchange">
-    <composite_data_element id="S001" required="true" repetition="1"/>
-    <composite_data_element id="S002" required="true" repetition="1"/>
-    <composite_data_element id="S003" required="true" repetition="1"/>
-    <composite_data_element id="S004" required="true" repetition="1"/>
-    <data_element id="0020" required="true" repetition="1" type="an" maxlength="14"/>
-    <composite_data_element id="S005" repetition="1"/>
-    <data_element id="0026" repetition="1" type="an" maxlength="14"/>
-    <data_element id="0029" repetition="1" type="a" maxlength="1"/>
-    <data_element id="0031" repetition="1" type="n" maxlength="1"/>
-    <data_element id="0032" repetition="1" type="an" maxlength="35"/>
-    <data_element id="0035" repetition="1" type="n" maxlength="1"/>
+    <composite_data_element id="S001" name="SyntaxIdentifier" required="true" repetition="1"/>
+    <composite_data_element id="S002" name="InterchangeSender" required="true" repetition="1"/>
+    <composite_data_element id="S003" name="InterchangeRecipient" required="true" repetition="1"/>
+    <composite_data_element id="S004" name="DateOrTimeOfPreparation" required="true" repetition="1"/>
+    <data_element id="0020" name="InterchangeControlReference" required="true" repetition="1" type="an" maxlength="14"/>
+    <composite_data_element id="S005" name="RecipientsReferencePassword" repetition="1"/>
+    <data_element id="0026" name="ApplicationReference" repetition="1" type="an" maxlength="14"/>
+    <data_element id="0029" name="ProcessingPriorityCode" repetition="1" type="a" maxlength="1"/>
+    <data_element id="0031" name="AcknowledgementRequest" repetition="1" type="n" maxlength="1"/>
+    <data_element id="0032" name="CommunicationsAgreementId" repetition="1" type="an" maxlength="35"/>
+    <data_element id="0035" name="TestIndicator" repetition="1" type="n" maxlength="1"/>
   </segment>
   <segment id="UNZ" name="InterchangeTrailer" desc="To end and check the completeness of an interchange">
-    <data_element id="0036" required="true" repetition="1" type="n" maxlength="6"/>
-    <data_element id="0020" required="true" desc="Shall be identical to 0020 in UNB" repetition="1" type="an" maxlength="14"/>
+    <data_element id="0036" name="InterchangeControlCount" required="true" repetition="1" type="n" maxlength="6"/>
+    <data_element id="0020" name="InterchangeControlReference" required="true" desc="Shall be identical to 0020 in UNB" repetition="1" type="an" maxlength="14"/>
   </segment>
   <segment id="UNG" name="FunctionalGroupHeader" desc="To head, identify and specify a Functional Group">
-    <data_element id="0038" required="true" repetition="1" type="an" maxlength="6"/>
-    <composite_data_element id="S006" required="true" repetition="1"/>
-    <composite_data_element id="S007" required="true" repetition="1"/>
-    <composite_data_element id="S004" required="true" repetition="1"/>
-    <data_element id="0048" required="true" repetition="1" type="an" maxlength="14"/>
-    <data_element id="0051" required="true" repetition="1" type="an" maxlength="2"/>
-    <composite_data_element id="S008" required="true" repetition="1"/>
-    <data_element id="0058" repetition="1" type="an" maxlength="14"/>
+    <data_element id="0038" name="FunctionalGroupIdentification" required="true" repetition="1" type="an" maxlength="6"/>
+    <composite_data_element id="S006" name="ApplicationSendersIdentification" required="true" repetition="1"/>
+    <composite_data_element id="S007" name="ApplicationRecipientsIdentification" required="true" repetition="1"/>
+    <composite_data_element id="S004" name="DateOrTimeOfPreparation" required="true" repetition="1"/>
+    <data_element id="0048" name="FunctionalGroupReferenceNumber" required="true" repetition="1" type="an" maxlength="14"/>
+    <data_element id="0051" name="ControllingAgency" required="true" repetition="1" type="an" maxlength="2"/>
+    <composite_data_element id="S008" name="MessageVersion" required="true" repetition="1"/>
+    <data_element id="0058" name="ApplicationPassword" repetition="1" type="an" maxlength="14"/>
   </segment>
   <segment id="UNE" name="FunctionalGroupTrailer" desc="To end and check the completeness of a Functional Group">
-    <data_element id="0060" required="true" repetition="1" type="n" maxlength="6"/>
-    <data_element id="0048" required="true" desc="Shall be identical to 0048 in UNG" repetition="1" type="an" maxlength="14"/>
+    <data_element id="0060" name="NumberOfMessages" required="true" repetition="1" type="n" maxlength="6"/>
+    <data_element id="0048" name="FunctionalGroupReferenceNumber" required="true" desc="Shall be identical to 0048 in UNG" repetition="1" type="an" maxlength="14"/>
   </segment>
   <segment id="UNH" name="MessageHeader" desc="To head, identify and specify a Message">
-    <data_element id="0062" required="true" repetition="1" type="an" maxlength="14"/>
-    <composite_data_element id="S009" required="true" repetition="1"/>
-    <data_element id="0068" repetition="1" type="an" maxlength="35"/>
-    <composite_data_element id="S010" repetition="1"/>
+    <data_element id="0062" name="MessageReferenceNumber" required="true" repetition="1" type="an" maxlength="14"/>
+    <composite_data_element id="S009" name="MessageIdentifier" required="true" repetition="1"/>
+    <data_element id="0068" name="CommonAccessReference" repetition="1" type="an" maxlength="35"/>
+    <composite_data_element id="S010" name="StatusOfTheTransfer" repetition="1"/>
   </segment>
   <segment id="UNT" name="MessageTrailer" desc="To end and check the completeness of a Message">
-    <data_element id="0074" required="true" repetition="1" type="n" maxlength="6"/>
-    <data_element id="0062" required="true" desc="Shall be identical to 0062 in UNH" repetition="1" type="an" maxlength="14"/>
+    <data_element id="0074" name="NumberOfSegmentsInTheMessage" required="true" repetition="1" type="n" maxlength="6"/>
+    <data_element id="0062" name="MessageReferenceNumber" required="true" desc="Shall be identical to 0062 in UNH" repetition="1" type="an" maxlength="14"/>
   </segment>
   <segment id="TXT" name="Text" desc="To give information in addition to that in other segments in the service message, as required">
-    <data_element id="0077" repetition="1" type="an" maxlength="3"/>
-    <data_element id="0078" required="true" repetition="1" type="an" maxlength="70"/>
+    <data_element id="0077" name="TextReferenceCode" repetition="1" type="an" maxlength="3"/>
+    <data_element id="0078" name="FreeFormText" required="true" repetition="1" type="an" maxlength="70"/>
   </segment>
   <segment id="UNS" name="SectionControl" desc="To separate Header, Detail and Summary sections of a message">
-    <data_element id="0081" required="true" repetition="1" type="a" maxlength="1"/>
+    <data_element id="0081" name="SectionIdentification" required="true" repetition="1" type="a" maxlength="1"/>
   </segment>
 </segments>

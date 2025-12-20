@@ -172,7 +172,7 @@ class EDSDParser(UntidBaseParser):
 
                     # First, try to match the top level data 1-line rows
                     if match := re.match(
-                        r"^(\d{3}|)[*+|X ]*[CS\d]\d{3} +([A-Z,\- '\/]+) +([MC])"
+                        r"^(\d{3}|)[*+|X ]*[CS\d]\d{3} +([A-Z,\- '\/]{7,}) +([MC])"
                         r"( *\d{1,3}|) *([an]+\.*\d{1,3}|) *(.+|)$",
                         row,
                     ):
@@ -218,7 +218,7 @@ class EDSDParser(UntidBaseParser):
                         else:
                             last_element = data_elements[-1]
                             # TODO: add children
-                            # last_element["children"].append(data_element)
+                            last_element["children"].append(data_element)
                         continue
 
                     # Then find the sub elements
@@ -311,6 +311,7 @@ class EDSDParser(UntidBaseParser):
 
                 cdef_xml = ElementTree.SubElement(def_xml, ctype)
                 cdef_xml.set("id", top_level_element["elementId"])
+                cdef_xml.set("name", self.title2name(top_level_element["elementName"]))
 
                 if top_level_element.get("elementCondition") == "M":
                     cdef_xml.set("required", "true")
