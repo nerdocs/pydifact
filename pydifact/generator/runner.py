@@ -481,8 +481,12 @@ def generate_directory_release(release_upper: str):
                 extracted_dir / new_path.format(release=release_upper),
             )
 
+    # special case D23A release: uses EDCD.22B (OMG. What a mess.)
+    if release_upper == "23A":
+        os.rename(extracted_dir / "EDCD.22B", extracted_dir / "EDCD.23A")
+
     # Verify EDSD file exists
-    edsd_file = f"{extracted_dir}/EDSD.{release_upper.upper()}"
+    edsd_file = f"{extracted_dir}/EDSD.{release_upper}"
     if not os.path.exists(edsd_file):
         print(f"ERROR: No EDSD file found in {directory_release} extraction")
         print(f"Available files in {extracted_dir}:")
