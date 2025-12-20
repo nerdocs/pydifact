@@ -99,7 +99,7 @@ class UNSLParser(UntidBaseParser):
 
                 # Parse description
                 if element_description == "":
-                    match = re.match(r".+Desc: (.*)", row)
+                    match = re.match(r"^ +Desc: *(.*|)$", row)
                     if match:
                         element_description = match.group(1)
                         i += 1
