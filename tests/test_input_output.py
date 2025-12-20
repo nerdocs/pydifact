@@ -74,12 +74,6 @@ def test_invoice_file():
     assert message.get_segment("RFF") == Segment("RFF", ["VA", "382324067"])
 
 
-# def test_order_file():
-#     _test_file_read(f"{path}/order.edi")
-#
-#
-# def test_patient1_file():
-#     _test_file_read(f"{path}/patient1.edi")
 def test_order_file():
     message = Interchange.from_file(f"{path}/order.edi")
     assert message.HEADER_TAG == "UNB"
@@ -92,3 +86,7 @@ def test_order_file():
     assert len(message.segments) == 16
     assert message.recipient == ["WBDZDD", "ZZ"]
     assert message.sender == ["12345678", "8"]
+
+
+def test_patient1_file():
+    message = Interchange.from_file(f"{path}/patient1.edi")
