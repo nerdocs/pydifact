@@ -169,7 +169,7 @@ class Segment:
     def __setitem__(self, key: int, value: Element) -> None:
         self.elements[key] = value
 
-    def validate(self, syntax_version: str = "", directory: str = "") -> None:
+    def validate(self, syntax_version: str, directory: str) -> None:
         """
         Segment validation against a given syntax version and EDIFACT directory.
 
@@ -246,7 +246,6 @@ class SegmentFactory:
         validate: bool = True,
         version: str = EDI_DEFAULT_VERSION,
         directory: str = EDI_DEFAULT_DIRECTORY,
-        syntax_identifier: str = EDI_DEFAULT_SYNTAX,  # unused yet
     ) -> Segment:
         """Create a new instance of the relevant class type.
 
@@ -256,6 +255,7 @@ class SegmentFactory:
             validate: bool if True, the created segment is validated before return
             version: The version of the EDI standard this segment is based on
                     (default: 4)
+            directory: The EDIFACT directory to validate against
         """
         # Basic segment type validation is done here.
         # The more special validation must be done in the corresponding Segment
