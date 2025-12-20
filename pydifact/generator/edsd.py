@@ -199,17 +199,15 @@ class EDSDParser(UntidBaseParser):
                         #    5427    Allowance/charge percent basis          C  an..3  id 1  3
                         #            qualifier
                         i += 1
-                        if i >= len(parts) or len(parts[i]) < 1:
-                            continue
-
-                        match_second_line = re.match(
-                            r"^ {11,14}(.+)$",
-                            parts[i],
-                        )
-                        if match_second_line:
-                            data_element["elementName"] += (
-                                " " + match_second_line.group(1).strip()
+                        if i < len(parts) and parts[i].strip():
+                            match_second_line = re.match(
+                                r"^ {11,14}(.+)$",
+                                parts[i],
                             )
+                            if match_second_line:
+                                data_element["elementName"] += (
+                                    " " + match_second_line.group(1).strip()
+                                )
 
                         # if name consists only of CAPITALS, this is a top level
                         # element.
