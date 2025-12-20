@@ -22,8 +22,12 @@
 
 from collections.abc import Iterator
 
-from pydifact.constants import EDI_DEFAULT_VERSION, EDI_DEFAULT_SYNTAX, Element, \
+from pydifact.constants import (
+    EDI_DEFAULT_VERSION,
+    EDI_DEFAULT_SYNTAX,
+    Element,
     Elements
+)
 from pydifact.exceptions import EDISyntaxError
 from pydifact.tokenizer import Tokenizer
 from pydifact.token import Token
@@ -48,6 +52,7 @@ class Parser:
         syntax_identifier: str | None = None,
         version: int | None = None,
     ) -> None:
+        """Initializes parser with segment factory and control characters"""
         self.factory = factory or SegmentFactory()
         self.characters = characters or Characters()
         self.syntax_identifier = syntax_identifier
@@ -64,7 +69,7 @@ class Parser:
         :rtype:
         """
 
-        # If there is a UNA, take the following 6 characters
+        # If there is a UNA segment, take the following 6 characters
         # unconditionally, strip them, and make control Characters()
         # for further parsing
 
@@ -88,17 +93,22 @@ class Parser:
             message = message[idx_end:].lstrip("\r\n")
 
         else:
-            # if no UNA header present, use default control characters
+            # if no UNA header present, the default control characters
             # given on call take precedence over the stored defaults.
             if characters is None:
                 characters = self.characters
 
+        # if UNA is available, yield the UNA segment first, even before tokenizing
+        if una_found:
+            yield self.factory.create_segment("UNA", str(characters))
+
         tokenizer = Tokenizer()
-        return self.convert_tokens_to_segments(
+        raw_segments = self.convert_tokens_to_raw_segments(
             tokenizer.get_tokens(message, characters),
-            characters,
-            with_una=una_found,
         )
+
+        for raw_segment in raw_segments:
+            yield self.convert_raw_segment_to_segment(raw_segment)
 
     @staticmethod
     def get_control_characters(
@@ -137,26 +147,24 @@ class Parser:
 
         return characters
 
-    def convert_tokens_to_segments(
-        self, tokens: Iterator[Token], characters: Characters, with_una: bool = False
-    ) -> Iterator[Segment]:
+    def convert_tokens_to_raw_segments(
+        self, tokens: Iterator[Token]
+    ) -> Iterator[Elements]:
         """Convert the tokenized message into an array of segments.
-        :param tokens: The tokens that make up the message
-        :param characters: the control characters to use
-        :param with_una: whether the UNA segment should be included
-        :type tokens: list of Token
-        :rtype list of Segment
+
+        Args:
+            tokens (Iterator[Token]): The tokens that make up the message
+            characters (Characters): The control characters to use
+
+        Returns:
+            Iterator[Segment]: An iterator of Segment objects
         """
 
-        raw_segments: list[Elements] = []
         current_segment: Elements = []
         data_element: list[str] = []
         data_element_value: Element
         in_segment = False
         empty_component_counter = 0
-
-        if with_una:
-            yield self.factory.create_segment("UNA", str(characters))
 
         for token in tokens:
             # If we're in the middle of a segment, check if we've reached the end
@@ -173,6 +181,7 @@ class Parser:
 
                     current_segment.append(data_element_value)
                     data_element = []
+                    yield current_segment
                     continue
 
             # If we're not in a segment, then start a new empty one now
@@ -181,7 +190,7 @@ class Parser:
             # an empty string to save into the segment then.
             else:
                 current_segment = []
-                raw_segments.append(current_segment)
+                # raw_segments.append(current_segment)
                 data_element = []
                 empty_component_counter = 0
                 in_segment = True
@@ -225,43 +234,43 @@ class Parser:
 
             data_element.append(token.value)
             empty_component_counter = 0
-            continue
 
-        for segment in raw_segments:
-            name = segment.pop(0)
-            if isinstance(name, list):
-                raise EDISyntaxError("Invalid segment name: {name}")
-            if with_una and name == "UNA":
-                # We found another UNA segment.
-                # This is not in the specs, so raise an error
-                raise EDISyntaxError("There are not multiple UNA segments allowed.")
-            if name == "UNB":
-                # here we have the chance to determine the syntax/style and version
-                # of the EDI file. We have to inform the factory about it.
-                # However, if the syntax is set by force (Parser init parameter),
-                # then we don't override it here, even if the UNB segment has another
-                # value. The user might want to override this manually.
+    def convert_raw_segment_to_segment(self, raw_segment: Elements) -> Segment:
+        name = raw_segment.pop(0)
+        if isinstance(name, list):
+            raise EDISyntaxError("Invalid segment name: {name}")
 
-                print(f"Found edifact syntax '{segment[0][0]}' in UNB header", end="")
-                if self.syntax_identifier:
-                    print(", but using override syntax '{self.syntax_identifier}'")
-                else:
-                    print(".")
-                    self.syntax_identifier = segment[0][0]
+        if name == "UNA":
+            # We found another UNA segment.
+            # This is not in the specs, so raise an error
+            raise EDISyntaxError("There are not multiple UNA segments allowed.")
+        if name == "UNB":
+            # here we have the chance to determine the syntax/style and version
+            # of the EDI file. We have to inform the factory about it.
+            # However, if the syntax is set by force (Parser init parameter),
+            # then we don't override it here, even if the UNB segment has another
+            # value. The user might want to override this manually.
 
-                print(
-                    f"Found edifact version '{int(segment[0][1])}' in UNB header",
-                    end="",
-                )
-                if self.version:
-                    print(f", but using override version '{self.version}'.")
+            print(f"Found edifact syntax '{raw_segment[0][0]}' in UNB header", end="")
+            if self.syntax_identifier:
+                print(", but using override syntax '{self.syntax_identifier}'")
+            else:
+                print(".")
+                self.syntax_identifier = raw_segment[0][0]
 
-                else:
-                    self.version = int(segment[0][1])
-                    print(".")
-            yield self.factory.create_segment(
-                name,
-                *segment,
-                syntax_identifier=self.syntax_identifier or EDI_DEFAULT_SYNTAX,
-                version=self.version or EDI_DEFAULT_VERSION,
+            print(
+                f"Found edifact version '{int(raw_segment[0][1])}' in UNB header",
+                end="",
             )
+            if self.version:
+                print(f", but using override version '{self.version}'.")
+
+            else:
+                self.version = int(raw_segment[0][1])
+                print(".")
+        return self.factory.create_segment(
+            name,
+            *raw_segment,
+            syntax_identifier=self.syntax_identifier or EDI_DEFAULT_SYNTAX,
+            version=self.version or EDI_DEFAULT_VERSION,
+        )
