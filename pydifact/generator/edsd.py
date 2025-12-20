@@ -48,7 +48,7 @@ class EDSDParser(UntidBaseParser):
 
     def _process(self, file_path: PathLike | str) -> None:
         """Process EDSD file and build XML structure."""
-        with open(file_path, "r", encoding="ibm437", errors="replace") as f:
+        with open(file_path, "r", errors="replace") as f:
             file_lines = f.read()
 
         # Replace special characters
