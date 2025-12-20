@@ -25,6 +25,7 @@ service_segments = [
     "UIR",
     "UIT",
     "UIZ",
+    "UNA",
     "UNB",
     "UNE",
     "UNG",
