@@ -164,8 +164,8 @@ V4_SERVICE_CODE_LISTS: dict[str, tuple[str, str]] = {
 
 
 # dict keys here are the first 3 numbers of the "full extended" version
-# this is not really valid in v1-3, but anyway, EDIFACT is inconsistent anyway
-services_map = {
+# this is not really valid in v1-3, but anyway, EDIFACT is inconsistent
+services_map: dict[str, Any] = {
     "100": {
         "sl_list": {},
         "e": {"url": ""},
