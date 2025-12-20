@@ -257,11 +257,34 @@ class EDSDParser(UntidBaseParser):
             if not segment_code:
                 continue
             if segment_code == "UNA":
-                # UNA is so special, we don't want to save that in XML
+                # UNA is so special, and not consistently documented in EDSD files, we
+                # don't want to save that in XML, but generate it manually
                 continue
+            else:
+                if not data_elements:
+                    self.warnings.append(f"Segment {segment_code}: No elements found.")
 
-            if not data_elements:
-                self.warnings.append(f"Segment {segment_code}: No elements found.")
+            if (
+                segment_code == "UNB"
+                and self.msg_xml.find("segment[@id='UNA']") is None
+            ):
+                # ---- special case UNA header: create it manually just before UNB: ----
+                def_xml = ElementTree.SubElement(self.msg_xml, "segment")
+                def_xml.set("id", "UNA")
+                def_xml.set("name", "ServiceStringAdvice")
+                def_xml.set(
+                    "desc",
+                    "To define the characters selected for use as delimiters "
+                    "and indicators in the rest of the interchange that follows",
+                )
+
+                cdef_xml = ElementTree.SubElement(def_xml, "data_element")
+                # cdef_xml.set("id", "0000")
+                # cdef_xml.set("title", "Service String Advice")
+                cdef_xml.set("required", "true")
+                cdef_xml.set("type", "an")
+                cdef_xml.set("length", "6")
+                # ----------------------------------------------------------------------
 
             def_xml = ElementTree.SubElement(self.msg_xml, "segment")
             # Add attributes to XML element

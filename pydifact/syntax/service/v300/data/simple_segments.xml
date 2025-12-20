@@ -34,6 +34,9 @@
     <data_element id="0096" required="true" repetition="1" type="n" maxlength="6"/>
     <data_element id="0085" repetition="1" type="an" maxlength="3"/>
   </segment>
+  <segment id="UNA" name="ServiceStringAdvice" desc="To define the characters selected for use as delimiters and indicators in the rest of the interchange that follows">
+    <data_element required="true" type="an" length="6"/>
+  </segment>
   <segment id="UNB" name="InterchangeHeader" desc="To start, identify and specify an interchange.">
     <composite_data_element id="S001" required="true" repetition="1"/>
     <composite_data_element id="S002" required="true" repetition="1"/>

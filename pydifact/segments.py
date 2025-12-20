@@ -200,8 +200,9 @@ class Segment:
                     logger.warning(f"No definition found for segment {self.tag}")
                 else:
                     # Validate against XML schema
-                    xml_elements = segment_def.findall(".//element")
 
+                    # get sub elements, if this is a composite
+                    xml_elements = segment_def.findall(".//data_element")
                     for index, element in enumerate(self.elements):
                         if index >= len(xml_elements):
                             raise ValidationError(
@@ -211,12 +212,15 @@ class Segment:
 
                         xml_element = xml_elements[index]
                         is_mandatory = (
-                            xml_element.get("mandatory", "false").lower() == "true"
+                            xml_element.get("required", "false").lower() == "true"
                         )
+                        repeat = int(xml_element.get("repeat", "1"))
 
                         if is_mandatory and (element is None or element == ""):
                             raise ValidationError(
-                                f"{self.tag} Segment, pos. {index}: Mandatory element is missing"
+                                f"{self.tag} Segment, pos. {index}: "
+                                f"element {xml_element.get('name')}"
+                                f"is required."
                             )
 
             except FileNotFoundError:
@@ -227,43 +231,9 @@ class Segment:
                 )
             except ET.ParseError as e:
                 warnings.warn(
-                    f"Failed to parse segments.xml: {e}. "
-                    f"Falling back to schema-based validation.",
+                    f"Failed to parse segments.xml: {e}. ",
                     category=MissingImplementationWarning,
                 )
-
-        for index, element in enumerate(self.elements):
-            # validation is only done in specific segments, not in generic "Segment"
-            if self.__class__ is not Segment:
-                # if there are codes defined, use them for validation
-                if self.schema:
-                    if index >= len(self.schema):
-                        raise ValidationError(
-                            f"{self.__class__.__name__}: odd element at position {index}: "
-                            f"'{element}'"
-                        )
-                    schema = self.schema[index]
-                    template_cls = schema[0]
-                    mandatory = (schema[1] == M) if len(schema) > 1 else True
-                    repeat = schema[2] if len(schema) > 2 else 1  # TODO implement
-                    if len(schema) > 3:
-                        repr = schema[3]
-                    else:
-                        repr = getattr(template_cls, "repr", None)
-
-                    if mandatory:
-                        try:
-                            template_cls(element).validate(mandatory, repr)
-                        except ValidationError as e:
-                            raise ValidationError(
-                                f"{self.tag} Segment, pos. {index}: {e}"
-                            )
-                else:
-                    warnings.warn(
-                        f"{self.__class__.__name__} does not "
-                        f"implement codes for element {index}: '{element}'",
-                        category=MissingImplementationWarning,
-                    )
 
 
 class SegmentFactory:

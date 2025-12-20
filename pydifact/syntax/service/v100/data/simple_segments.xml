@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <segments>
+  <segment id="UNA" name="ServiceStringAdvice" desc="To define the characters selected for use as delimiters and indicators in the rest of the interchange that follows">
+    <data_element required="true" type="an" length="6"/>
+  </segment>
   <segment id="UNB" name="InterchangeHeader" desc="To start, identify and specify an interchange">
     <composite_data_element id="S001" required="true" repetition="1"/>
     <composite_data_element id="S002" required="true" repetition="1"/>
