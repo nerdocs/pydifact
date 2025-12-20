@@ -59,7 +59,7 @@ def test_has_plugin():
 
         __omitted__ = False
 
-        def validate(self):
+        def validate(self, *args, **kwargs):
             pass
 
     assert TestSegment in Segment.plugins
