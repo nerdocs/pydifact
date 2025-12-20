@@ -6,7 +6,7 @@
     <data_element id="3055" name="CodeListResponsibleAgencyCode" usage="C" type="an" maxlength="3"/>
     <data_element id="8178" name="TransportMeansDescription" usage="C" type="an" maxlength="17"/>
   </composite_data_element>
-  <composite_data_element id="C002" name="Document" desc="Identification of a type of document/message by code or name. Code preferred.">
+  <composite_data_element id="C002" name="DocumentOrMessageName" desc="Identification of a type of document/message by code or name. Code preferred.">
     <data_element id="1001" name="DocumentNameCode" usage="C" type="an" maxlength="3"/>
     <data_element id="1131" name="CodeListIdentificationCode" usage="C" type="an" maxlength="17"/>
     <data_element id="3055" name="CodeListResponsibleAgencyCode" usage="C" type="an" maxlength="3"/>
@@ -195,7 +195,7 @@
     <data_element id="3055" name="CodeListResponsibleAgencyCode" usage="C" type="an" maxlength="3"/>
     <data_element id="3482" name="ReligionName" usage="C" type="an" maxlength="35"/>
   </composite_data_element>
-  <composite_data_element id="C106" name="Document" desc="Identification of a document/message by its number and eventually its version or revision.">
+  <composite_data_element id="C106" name="DocumentOrMessageIdentification" desc="Identification of a document/message by its number and eventually its version or revision.">
     <data_element id="1004" name="DocumentIdentifier" usage="C" type="an" maxlength="70"/>
     <data_element id="1056" name="VersionIdentifier" usage="C" type="an" maxlength="9"/>
     <data_element id="1060" name="RevisionIdentifier" usage="C" type="an" maxlength="6"/>
@@ -222,7 +222,7 @@
     <data_element id="5394" required="true" name="PriceMultiplierRate" usage="M" type="n" maxlength="12"/>
     <data_element id="5393" name="PriceMultiplierTypeCodeQualifier" usage="C" type="an" maxlength="3"/>
   </composite_data_element>
-  <composite_data_element id="C174" name="Value" desc="Measurement value and relevant minimum and maximum values of the measurement range.">
+  <composite_data_element id="C174" name="ValueOrRange" desc="Measurement value and relevant minimum and maximum values of the measurement range.">
     <data_element id="6411" name="MeasurementUnitCode" usage="C" type="an" maxlength="8"/>
     <data_element id="6314" name="Measure" usage="C" type="an" maxlength="18"/>
     <data_element id="6162" name="RangeMinimumQuantity" usage="C" type="n" maxlength="18"/>
@@ -248,7 +248,7 @@
     <data_element id="3055" name="CodeListResponsibleAgencyCode" usage="C" type="an" maxlength="3"/>
     <data_element id="7064" name="TypeOfPackages" usage="C" type="an" maxlength="35"/>
   </composite_data_element>
-  <composite_data_element id="C203" name="Rate" desc="Identification of the applicable rate/tariff class.">
+  <composite_data_element id="C203" name="RateOrTariffClass" desc="Identification of the applicable rate/tariff class.">
     <data_element id="5243" required="true" name="RateOrTariffClassDescriptionCode" usage="M" type="an" maxlength="9"/>
     <data_element id="1131" name="CodeListIdentificationCode" usage="C" type="an" maxlength="17"/>
     <data_element id="3055" name="CodeListResponsibleAgencyCode" usage="C" type="an" maxlength="3"/>
@@ -406,7 +406,7 @@
     <data_element id="7036" name="CharacteristicDescription" usage="C" type="an" maxlength="35"/>
     <data_element id="7036" name="CharacteristicDescription" usage="C" type="an" maxlength="35"/>
   </composite_data_element>
-  <composite_data_element id="C241" name="Duty" desc="Code and/or name identifying duty, tax or fee.">
+  <composite_data_element id="C241" name="DutyOrTaxOrFeeType" desc="Code and/or name identifying duty, tax or fee.">
     <data_element id="5153" name="DutyOrTaxOrFeeTypeNameCode" usage="C" type="an" maxlength="3"/>
     <data_element id="1131" name="CodeListIdentificationCode" usage="C" type="an" maxlength="17"/>
     <data_element id="3055" name="CodeListResponsibleAgencyCode" usage="C" type="an" maxlength="3"/>
@@ -419,7 +419,7 @@
     <data_element id="7186" name="ProcessTypeDescription" usage="C" type="an" maxlength="35"/>
     <data_element id="7186" name="ProcessTypeDescription" usage="C" type="an" maxlength="35"/>
   </composite_data_element>
-  <composite_data_element id="C243" name="Duty" desc="Rate of duty/tax/fee applicable to commodities or of tax applicable to services.">
+  <composite_data_element id="C243" name="DutyOrTaxOrFeeDetail" desc="Rate of duty/tax/fee applicable to commodities or of tax applicable to services.">
     <data_element id="5279" name="DutyOrTaxOrFeeRateCode" usage="C" type="an" maxlength="7"/>
     <data_element id="1131" name="CodeListIdentificationCode" usage="C" type="an" maxlength="17"/>
     <data_element id="3055" name="CodeListResponsibleAgencyCode" usage="C" type="an" maxlength="3"/>
@@ -541,7 +541,7 @@
     <data_element id="6313" name="MeasuredAttributeCode" usage="C" type="an" maxlength="3"/>
     <data_element id="6321" name="MeasurementSignificanceCode" usage="C" type="an" maxlength="3"/>
   </composite_data_element>
-  <composite_data_element id="C503" name="Document" desc="Identification of document/message by number, status, source and/or language.">
+  <composite_data_element id="C503" name="DocumentOrMessageDetails" desc="Identification of document/message by number, status, source and/or language.">
     <data_element id="1004" name="DocumentIdentifier" usage="C" type="an" maxlength="70"/>
     <data_element id="1373" name="DocumentStatusCode" usage="C" type="an" maxlength="3"/>
     <data_element id="1366" name="DocumentSourceDescription" usage="C" type="an" maxlength="70"/>
@@ -562,7 +562,7 @@
     <data_element id="1056" name="VersionIdentifier" usage="C" type="an" maxlength="9"/>
     <data_element id="1060" name="RevisionIdentifier" usage="C" type="an" maxlength="6"/>
   </composite_data_element>
-  <composite_data_element id="C507" name="Date" desc="Date and/or time, or period relevant to the specified date/time/period type.">
+  <composite_data_element id="C507" name="DateOrTimeOrPeriod" desc="Date and/or time, or period relevant to the specified date/time/period type.">
     <data_element id="2005" required="true" name="DateOrTimeOrPeriodFunctionCodeQualifier" usage="M" type="an" maxlength="3"/>
     <data_element id="2380" name="DateOrTimeOrPeriodText" usage="C" type="an" maxlength="35"/>
     <data_element id="2379" name="DateOrTimeOrPeriodFormatCode" usage="C" type="an" maxlength="3"/>
@@ -653,7 +653,7 @@
     <data_element id="6313" name="MeasuredAttributeCode" usage="C" type="an" maxlength="3"/>
     <data_element id="6321" name="MeasurementSignificanceCode" usage="C" type="an" maxlength="3"/>
   </composite_data_element>
-  <composite_data_element id="C528" name="Commodity" desc="Identification of commodity/rates.">
+  <composite_data_element id="C528" name="CommodityOrRateDetail" desc="Identification of commodity/rates.">
     <data_element id="7357" name="CommodityIdentificationCode" usage="C" type="an" maxlength="18"/>
     <data_element id="1131" name="CodeListIdentificationCode" usage="C" type="an" maxlength="17"/>
     <data_element id="3055" name="CodeListResponsibleAgencyCode" usage="C" type="an" maxlength="3"/>
@@ -667,7 +667,7 @@
     <data_element id="8395" name="ReturnablePackageFreightPaymentResponsibilityCode" usage="C" type="an" maxlength="3"/>
     <data_element id="8393" name="ReturnablePackageLoadContentsCode" usage="C" type="an" maxlength="3"/>
   </composite_data_element>
-  <composite_data_element id="C533" name="Duty" desc="Indication of account reference for duties, taxes and/or fees.">
+  <composite_data_element id="C533" name="DutyOrTaxOrFeeAccountDetail" desc="Indication of account reference for duties, taxes and/or fees.">
     <data_element id="5289" required="true" name="DutyOrTaxOrFeeAccountCode" usage="M" type="an" maxlength="6"/>
     <data_element id="1131" name="CodeListIdentificationCode" usage="C" type="an" maxlength="17"/>
     <data_element id="3055" name="CodeListResponsibleAgencyCode" usage="C" type="an" maxlength="3"/>
@@ -713,7 +713,7 @@
     <data_element id="3055" name="CodeListResponsibleAgencyCode" usage="C" type="an" maxlength="3"/>
     <data_element id="5006" name="MonetaryAmountFunctionDescription" usage="C" type="an" maxlength="70"/>
   </composite_data_element>
-  <composite_data_element id="C550" name="Requirement" desc="To identify the specific rule/condition requirement.">
+  <composite_data_element id="C550" name="RequirementOrConditionIdentification" desc="To identify the specific rule/condition requirement.">
     <data_element id="7295" required="true" name="RequirementOrConditionDescriptionIdentifier" usage="M" type="an" maxlength="17"/>
     <data_element id="1131" name="CodeListIdentificationCode" usage="C" type="an" maxlength="17"/>
     <data_element id="3055" name="CodeListResponsibleAgencyCode" usage="C" type="an" maxlength="3"/>
@@ -724,7 +724,7 @@
     <data_element id="1131" name="CodeListIdentificationCode" usage="C" type="an" maxlength="17"/>
     <data_element id="3055" name="CodeListResponsibleAgencyCode" usage="C" type="an" maxlength="3"/>
   </composite_data_element>
-  <composite_data_element id="C552" name="Allowance" desc="Identification of allowance/charge information by number and/or code.">
+  <composite_data_element id="C552" name="AllowanceOrChargeInformation" desc="Identification of allowance/charge information by number and/or code.">
     <data_element id="1230" name="AllowanceOrChargeIdentifier" usage="C" type="an" maxlength="35"/>
     <data_element id="5189" name="AllowanceOrChargeIdentificationCode" usage="C" type="an" maxlength="3"/>
   </composite_data_element>
@@ -734,7 +734,7 @@
     <data_element id="3055" name="CodeListResponsibleAgencyCode" usage="C" type="an" maxlength="3"/>
     <data_element id="3232" name="SecondRelatedLocationName" usage="C" type="an" maxlength="70"/>
   </composite_data_element>
-  <composite_data_element id="C554" name="Rate" desc="Identification of the applicable rate/tariff class.">
+  <composite_data_element id="C554" name="RateOrTariffClassDetail" desc="Identification of the applicable rate/tariff class.">
     <data_element id="5243" name="RateOrTariffClassDescriptionCode" usage="C" type="an" maxlength="9"/>
     <data_element id="1131" name="CodeListIdentificationCode" usage="C" type="an" maxlength="17"/>
     <data_element id="3055" name="CodeListResponsibleAgencyCode" usage="C" type="an" maxlength="3"/>
@@ -909,7 +909,7 @@
     <data_element id="3055" name="CodeListResponsibleAgencyCode" usage="C" type="an" maxlength="3"/>
     <data_element id="7502" name="DamageAreaDescription" usage="C" type="an" maxlength="35"/>
   </composite_data_element>
-  <composite_data_element id="C823" name="TypeOfUnit" desc="To identify the type of unit/component of an object (e.g. lock, door, tyre).">
+  <composite_data_element id="C823" name="TypeOfUnitOrComponent" desc="To identify the type of unit/component of an object (e.g. lock, door, tyre).">
     <data_element id="7505" name="UnitOrComponentTypeDescriptionCode" usage="C" type="an" maxlength="3"/>
     <data_element id="1131" name="CodeListIdentificationCode" usage="C" type="an" maxlength="17"/>
     <data_element id="3055" name="CodeListResponsibleAgencyCode" usage="C" type="an" maxlength="3"/>
@@ -1030,7 +1030,7 @@
     <data_element id="1050" name="SequencePositionIdentifier" usage="C" type="an" maxlength="10"/>
     <data_element id="1159" name="SequenceIdentifierSourceCode" usage="C" type="an" maxlength="3"/>
   </composite_data_element>
-  <composite_data_element id="C878" name="Charge" desc="Identification of the account for charge or allowance.">
+  <composite_data_element id="C878" name="ChargeOrAllowanceAccount" desc="Identification of the account for charge or allowance.">
     <data_element id="3434" required="true" name="InstitutionBranchIdentifier" usage="M" type="an" maxlength="17"/>
     <data_element id="1131" name="CodeListIdentificationCode" usage="C" type="an" maxlength="17"/>
     <data_element id="3055" name="CodeListResponsibleAgencyCode" usage="C" type="an" maxlength="3"/>
