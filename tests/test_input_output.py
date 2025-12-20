@@ -80,3 +80,15 @@ def test_invoice_file():
 #
 # def test_patient1_file():
 #     _test_file_read(f"{path}/patient1.edi")
+def test_order_file():
+    message = Interchange.from_file(f"{path}/order.edi")
+    assert message.HEADER_TAG == "UNB"
+    assert message.FOOTER_TAG == "UNZ"
+    assert message.has_una_segment is True
+    # UNH+1+ORDERS:D:96A:UN:EAN008'
+    assert message.get_segment("UNH") == Segment(
+        "UNH", "1", ["ORDERS", "D", "96A", "UN", "EAN008"]
+    )
+    assert len(message.segments) == 16
+    assert message.recipient == ["WBDZDD", "ZZ"]
+    assert message.sender == ["12345678", "8"]
