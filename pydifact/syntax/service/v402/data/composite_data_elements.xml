@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<composite_data_elements>
+  <composite_data_element id="S001" name="SyntaxIdentifier" desc="Identification of the agency controlling the syntax, the syntax level and version number, and the service code directory."/>
+  <composite_data_element id="S002" name="InterchangeSender" desc="Identification of the sender of the interchange."/>
+  <composite_data_element id="S003" name="InterchangeRecipient" desc="Identification of the recipient of the interchange."/>
+  <composite_data_element id="S004" name="DateAndTimeOfPreparation" desc="Date and time of preparation of the interchange."/>
+  <composite_data_element id="S005" name="RecipientReferenceOrPasswordDetails" desc="Reference or password as agreed between the communicating partners."/>
+  <composite_data_element id="S006" name="ApplicationSenderIdentification" desc="Sender identification of for example a division, branch or application computer system/process."/>
+  <composite_data_element id="S007" name="ApplicationRecipientIdentification" desc="Recipient identification of for example a division, branch or application computer system/process."/>
+  <composite_data_element id="S008" name="MessageVersion" desc="Specification of the version and release numbers of all of the messages of a single type in the group."/>
+  <composite_data_element id="S009" name="MessageIdentifier" desc="Identification of the type, version, etc. of the message being interchanged."/>
+  <composite_data_element id="S010" name="StatusOfTheTransfer" desc="Statement that the message is one in a sequence of transfers relating to the same topic."/>
+  <composite_data_element id="S011" name="DataElementIdentification" desc="Identification of the position for an erroneous data element. This can be the position of a stand-alone or composite data element in the definition of a segment or a component data element in the definition of a composite data element."/>
+  <composite_data_element id="S016" name="MessageSubsetIdentification" desc="Identification of a message subset by its identifier, version, release and source."/>
+  <composite_data_element id="S017" name="MessageImplementationGuidelineIdentification" desc="Identification of a message implementation guideline by its identifier, version, release and source."/>
+  <composite_data_element id="S018" name="ScenarioIdentification" desc="Identification of a scenario."/>
+  <composite_data_element id="S020" name="ReferenceIdentification" desc="Identification of the reference relating to the object."/>
+  <composite_data_element id="S021" name="ObjectTypeIdentification" desc="Identification of the attribute related to the object type."/>
+  <composite_data_element id="S022" name="StatusOfTheObject" desc="Identification of the length and if required the transfer status of the object."/>
+  <composite_data_element id="S300" name="DateAndOrOrTimeOfInitiation" desc="Date and/or time of event initiation."/>
+  <composite_data_element id="S301" name="StatusOfTransfer" desc="Identifies the sequence of the message/package within the sender's interchange and the position in a multi-message and/or package transfer."/>
+  <composite_data_element id="S302" name="DialogueReference" desc="Unique reference for the dialogue between co-operating parties within the interactive EDI transaction."/>
+  <composite_data_element id="S303" name="TransactionReference" desc="Unique reference for the business transaction to which the dialogue belongs."/>
+  <composite_data_element id="S305" name="DialogueIdentification" desc="Identification of the dialogue type being used for the interactive EDI transaction."/>
+  <composite_data_element id="S306" name="InteractiveMessageIdentifier" desc="Identification of the type, version and details of the message being interchanged."/>
+  <composite_data_element id="S307" name="ReportReason" desc="Reason for status or error report."/>
+  <composite_data_element id="S500" name="SecurityIdentificationDetails" desc="Identification of parties involved in the security process."/>
+  <composite_data_element id="S501" name="SecurityDateAndTime" desc="Security related date and time."/>
+  <composite_data_element id="S502" name="SecurityAlgorithm" desc="Identification of a security algorithm."/>
+  <composite_data_element id="S503" name="AlgorithmParameter" desc="Parameter required by a security algorithm."/>
+  <composite_data_element id="S504" name="ListParameter" desc="Identification of a parameter for a list request or delivery"/>
+  <composite_data_element id="S505" name="ServiceCharacterForSignature" desc="Identification of the characters used as syntactical service characters when a signature was computed."/>
+  <composite_data_element id="S508" name="ValidationResult" desc="Result of the application of the security mechanism."/>
+</composite_data_elements>

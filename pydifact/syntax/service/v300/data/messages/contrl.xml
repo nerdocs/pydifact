@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<message>
+  <defaults/>
+  <segment id="UNH" maxrepeat="1" required="true"/>
+  <segment id="UCI" maxrepeat="1" required="true"/>
+  <group id="SG1" maxrepeat="99999">
+    <segment id="UCM" maxrepeat="1" required="true"/>
+    <group id="SG2" maxrepeat="999">
+      <segment id="UCS" maxrepeat="1" required="true"/>
+      <segment id="UCD" maxrepeat="99"/>
+      <group id="SG3" maxrepeat="99999">
+        <segment id="UCF" maxrepeat="1" required="true"/>
+        <group id="SG4" maxrepeat="99999">
+          <segment id="UCM" maxrepeat="1" required="true"/>
+          <group id="SG5" maxrepeat="999">
+            <segment id="UCS" maxrepeat="1" required="true"/>
+            <segment id="UCD" maxrepeat="99"/>
+            <segment id="UNT" maxrepeat="1" required="true"/>
+          </group>
+        </group>
+      </group>
+    </group>
+  </group>
+</message>

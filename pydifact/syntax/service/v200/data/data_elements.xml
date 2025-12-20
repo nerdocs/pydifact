@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<data_elements>
+  <data_element id="0031" name="AcknowledgementRequest" desc="" type="n" maxlength="1">
+    <code id="1" title="if sender requests acknowledgement, i.e. UNB and UNZ segments received and identified" desc=""/>
+  </data_element>
+  <data_element id="0035" name="TestIndicator" desc="" type="n" maxlength="1">
+    <code id="1" title="if the interchange is a test. Otherwise not used" desc=""/>
+  </data_element>
+  <data_element id="0073" name="FirstAndLastTransfer" desc="" type="a" maxlength="1">
+    <code id="C" title="Creation, must be present for first transfer if more than one foreseen" desc=""/>
+    <code id="F" title="Final, must be present for last transfer" desc=""/>
+  </data_element>
+  <data_element id="0081" name="SectionIdentification" desc="Separates sections in a message by one of the following codes" type="a" maxlength="1">
+    <code id="D" title="separates the header and detail sections" desc=""/>
+    <code id="S" title="separates the detail and summary sections" desc=""/>
+  </data_element>
+</data_elements>
