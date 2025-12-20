@@ -501,7 +501,7 @@
     <code id="529" title="Re-Entry Permit" desc="A permit to re-enter a country."/>
     <code id="530" title="Insurance policy" desc="Document/message issued by the insurer evidencing an agreement to insure and containing the conditions of the agreement concluded whereby the insurer undertakes for a specific fee to indemnify the insured for the losses arising out of the perils and accidents specified in the contract."/>
     <code id="531" title="Refugee Permit" desc="Document identifying a refugee recognized by a country."/>
-    <code id="532" title="Forwarders credit note" desc="Document/message for providing credit information to the relevant party."/>
+    <code id="532" title="Forwarder�s credit note" desc="Document/message for providing credit information to the relevant party."/>
     <code id="533" title="Original accounting voucher" desc="To indicate that the document/message justifying an accounting entry is original."/>
     <code id="534" title="Copy accounting voucher" desc="To indicate that the document/message justifying an accounting entry is a copy."/>
     <code id="535" title="Pro-forma accounting voucher" desc="To indicate that the document/message justifying an accounting entry is pro-forma."/>
@@ -512,7 +512,7 @@
     <code id="550" title="Insurance declaration sheet (bordereau)" desc="A document/message used when an insured reports to his insurer details of individual shipments which are covered by an insurance contract - an open cover or a floating policy - between the parties."/>
     <code id="551" title="Transport capacity offer" desc="Offering of capacity for the transport of goods for a date and a route."/>
     <code id="552" title="Ship Security Plan" desc="Ship Security Plan (SSP) is a document prepared in terms of the ISPS Code to contribute to the prevention of illegal acts against the ship and its crew."/>
-    <code id="553" title="Forwarders invoice discrepancy report" desc="Document/message reporting invoice discrepancies indentified by the forwarder."/>
+    <code id="553" title="Forwarder�s invoice discrepancy report" desc="Document/message reporting invoice discrepancies indentified by the forwarder."/>
     <code id="554" title="Storage capacity offer" desc="Offering of capacity to store goods."/>
     <code id="575" title="Insurer's invoice" desc="Document/message issued by an insurer specifying the cost of an insurance which has been effected and claiming payment therefore."/>
     <code id="576" title="Storage capacity request" desc="Request for capacity to store goods."/>
@@ -534,7 +534,7 @@
     <code id="622" title="Forwarder's advice to exporter" desc="Document/message issued by a freight forwarder informing an exporter of the action taken in fulfillment of instructions received."/>
     <code id="623" title="Forwarder's invoice" desc="Invoice issued by a freight forwarder specifying services rendered and costs incurred and claiming payment therefore."/>
     <code id="624" title="Forwarder's certificate of receipt" desc="Non-negotiable document issued by a forwarder to certify that he has assumed control of a specified consignment, with irrevocable instructions to send it to the consignee indicated in the document or to hold it at his disposal. E.g. FIATA-FCR."/>
-    <code id="625" title="Heat Treatment Certificate" desc="A certificate verifying the heat treatment of the product is in conformance with international standards to ensure the products healthiness and/or shows the mode of heat treatment indicating the temperature and the amount of time the product or raw material used in the product was treated (such as milk)."/>
+    <code id="625" title="Heat Treatment Certificate" desc="A certificate verifying the heat treatment of the product is in conformance with international standards to ensure the product�s healthiness and/or shows the mode of heat treatment indicating the temperature and the amount of time the product or raw material used in the product was treated (such as milk)."/>
     <code id="626" title="Convention on International Trade in Endangered Species of Wild Fauna and Flora (CITES) Certificate" desc="A certificate used in the trade of endangered species in accordance with the CITES convention."/>
     <code id="627" title="Free Sale Certificate in the Country of Origin" desc="A certificate confirming that a specified product is free for sale in the country of origin."/>
     <code id="628" title="Transit license" desc="Document/message issued by the competent body in accordance with transit regulations in force, by which authorization is granted to a party to move articles under customs procedure."/>
@@ -587,7 +587,7 @@
     <code id="715" title="Letter of indemnity for non-surrender of bill of lading" desc="Document/message issued by a commercial party or a bank of an insurance company accepting responsibility to the beneficiary of the indemnity in accordance with the terms thereof."/>
     <code id="716" title="Forwarder's bill of lading" desc="Non-negotiable document issued by a freight forwarder evidencing a contract for the carriage of goods by sea and the taking over or loading of the goods by the freight forwarder, and by which the freight forwarder undertakes to deliver the goods to the consignee named in the document."/>
     <code id="717" title="Residence permit" desc="A document authorizing residence."/>
-    <code id="718" title="Seamans book" desc="A national identity document issued to professional seamen that contains a record of their rank and service career."/>
+    <code id="718" title="Seaman�s book" desc="A national identity document issued to professional seamen that contains a record of their rank and service career."/>
     <code id="719" title="General message" desc="Document/message providing agreed textual information."/>
     <code id="720" title="Rail consignment note (generic term)" desc="Transport document constituting a contract for the carriage of goods between the sender and the carrier (the railway). For international rail traffic, this document must conform to the model prescribed by the international conventions concerning carriage of goods by rail, e.g. CIM Convention, SMGS Convention."/>
     <code id="721" title="Product data response" desc="Document/message responding to a previously received Product Data document/message."/>
@@ -1408,7 +1408,7 @@
     <code id="AWQ" title="Accounting entry" desc="Accounting entry to which this item is related."/>
     <code id="AWR" title="Document reference, original" desc="The original reference of a document."/>
     <code id="AWS" title="Hygienic Certificate number, national" desc="Nationally set Hygienic Certificate number, such as sanitary, epidemiologic."/>
-    <code id="AWT" title="Administrative Reference Code" desc="Reference number assigned by Customs to a shipment of excise goods."/>
+    <code id="AWT" title="Administrative Reference Code" desc="Reference number assigned by Customs to a �shipment of excise goods�."/>
     <code id="AWU" title="Pick-up sheet number" desc="Reference number assigned to a pick-up sheet."/>
     <code id="AWV" title="Phone number" desc="A sequence of digits used to call from one telephone line to another in a public telephone network."/>
     <code id="AWW" title="Buyer's fund number" desc="A reference number indicating the fund number used by the buyer."/>
@@ -3277,7 +3277,7 @@
     <code id="DGL" title="Metered Data Administrator" desc="A party responsible for storing and distributing validated measured data."/>
     <code id="DGM" title="Consumer" desc="The person who purchases goods and services for personal use."/>
     <code id="DGN" title="Farmer" desc="The party engaged in agriculture business, field crop growing, cattle rearing and other productions (hides, milk, wool, etc)."/>
-    <code id="DGO" title="Recycler" desc="The party who collects waste in order to produce materials that can be used again."/>
+    <code id="DGO" title="Recycler" desc="The party who collects waste in�order�to�produce�materials�that can be used again."/>
     <code id="DGP" title="Retailer" desc="The party who sells goods to the public in relatively small quantities for use or consumption rather than for resale."/>
     <code id="DGQ" title="Second Party" desc="The party related to another party."/>
     <code id="DGR" title="Waste Disposal Provider" desc="The party providing waste disposal services."/>
@@ -3946,7 +3946,7 @@
     <code id="272" title="Joint Automotive Industry agency" desc="The Joint Automotive Industry (JAI) agency is in charge of code lists that are common to automotive industry groups."/>
     <code id="273" title="CH, SCC (Swiss Chambers of Commerce)" desc="Swiss Chambers of Commerce."/>
     <code id="274" title="ITIGG (International Transport Implementation Guidelines Group)" desc="ITIGG is the UN/EDIFACT transport message development group's organisation responsible for the issuance of globally harmonised transport-related codes."/>
-    <code id="275" title="ES, Banco de España" desc="The Spanish central bank."/>
+    <code id="275" title="ES, Banco de Espa�a" desc="The Spanish central bank."/>
     <code id="276" title="Assigned by Port Community" desc="Codes assigned by the Port Community."/>
     <code id="277" title="BIGNet (Business Information Group Network)" desc="Identifies the Business Information Group Network, an international trade alliance that administers code lists on behalf of business information users and providers."/>
     <code id="278" title="Eurogate" desc="An international trade alliance that administers code lists on behalf of business information users and providers."/>
@@ -3956,9 +3956,9 @@
     <code id="282" title="DE, Creditreform International e.V." desc="Identifies the Creditreform International e.V. in Germany (e.V.: eingetragener Verein)."/>
     <code id="283" title="DE, Hermes Kreditversicherungs AG" desc="Identifies the Hermes Kreditversicherungs AG in Germany (AG: Aktiengesellschaft)."/>
     <code id="284" title="TW, Taiwanese Bankers' Association" desc="Code identifying the organization responsible for the issuance of bank related codes in Taiwan."/>
-    <code id="285" title="ES, Asociación Española de Banca" desc="Code identifying the organization responsible for the issuance of bank related codes in Spain."/>
-    <code id="286" title="SE, TCO (Tjänstemännes Central Organisation)" desc="The Swedish Confederation of Professional Employees."/>
-    <code id="287" title="DE, FORTRAS (Forschungs- und Entwicklungsgesellschaft für Transportwesen GMBH)" desc="German research and development institute for transport matters."/>
+    <code id="285" title="ES, Asociaci�n Espa�ola de Banca" desc="Code identifying the organization responsible for the issuance of bank related codes in Spain."/>
+    <code id="286" title="SE, TCO (Tj�nstem�nnes Central Organisation)" desc="The Swedish Confederation of Professional Employees."/>
+    <code id="287" title="DE, FORTRAS (Forschungs- und Entwicklungsgesellschaft f�r Transportwesen GMBH)" desc="German research and development institute for transport matters."/>
     <code id="288" title="OSJD (Organizacija Sotrudnichestva Zeleznih Dorog)" desc="Code identifying OSJD, Organisation for Co-operation of Railways."/>
     <code id="289" title="JP.JIPDEC" desc="JIPDEC is a nonprofit foundation promoting electronic commerce, and is the registration agency of the standard company code in Japan."/>
     <code id="290" title="JP, JAMA" desc="Japan Automobile Manufacturers Association, Inc."/>
@@ -4031,7 +4031,7 @@
     <code id="358" title="US, Army Corp of Engineers (USACE)" desc="A division of the US Department of Defense (Army). USACE protects the US aquatic resources, while allowing reasonable development through fair, flexible and balanced permit decisions."/>
     <code id="359" title="US, Agency for International Development (USAID)" desc="USAID is an independent US federal government agency. USAID supports long-term and equitable economic growth and advances US foreign policy objectives."/>
     <code id="360" title="US, Coast Guard (USCG)" desc="A division of US Department of Homeland Security. USCG is a military branch of the United States involved in maritime law, mariner assistance, and search and rescue."/>
-    <code id="361" title="US, Office of the United States Trade Representative (USTR)" desc="An office within the US Executive Branch, Office of the President. USTR negotiates directly with foreign governments to create trade agreements; resolves disputes and participates in global trade policy organizations; meets with governments, business groups, legislators and public interest groups to gather input on trade issues; and explains the presidents trade policy positions."/>
+    <code id="361" title="US, Office of the United States Trade Representative (USTR)" desc="An office within the US Executive Branch, Office of the President. USTR negotiates directly with foreign governments to create trade agreements; resolves disputes and participates in global trade policy organizations; meets with governments, business groups, legislators and public interest groups to gather input on trade issues; and explains the president�s trade policy positions."/>
     <code id="362" title="International Commission for the Conservation of Atlantic Tunas (ICCAT)" desc="An inter-governmental fishery organization responsible for the conservation of tunas and tuna-like species in the Atlantic Ocean and its adjacent seas."/>
     <code id="363" title="Inter-American Tropical Tuna Commission (IATTC)" desc="An organization responsible for the conservation and management of fisheries for tunas and other species taken by tuna-fishing vessels in the eastern Pacific Ocean."/>
     <code id="364" title="Commission for the Conservation of Southern Bluefin Tuna (CCSBT)" desc="An organization which oversees the management and conservation of southern blue fin tuna."/>
@@ -4053,7 +4053,7 @@
     <code id="380" title="Korea Customs Service" desc="The customs services department of the Government of the Republic of Korea."/>
     <code id="381" title="Israel Tax Authority" desc="The customs and taxation services department of the State of Israel."/>
     <code id="382" title="Israeli Ministry of Interior" desc="The Ministry of the State of Israel that is responsible for interior affairs including the issue of passports / travel documents."/>
-    <code id="383" title="FR, LUMD (Logistique Urbaine Mutualisée Durable)" desc="Logistique Urbaine Mutualisée Durable, French organisation in charge of Urban Logistics."/>
+    <code id="383" title="FR, LUMD (Logistique Urbaine Mutualis�e Durable)" desc="Logistique Urbaine Mutualis�e Durable, French organisation in charge of Urban Logistics."/>
     <code id="384" title="DE, BiPRO (Brancheninitiative Prozessoptimierung)" desc="BiPRO is the German association of Insurance Companies, Brokers and Software Suppliers responsible for the development of standards for use by the insurance industry."/>
     <code id="385" title="JO, Jordan Ministry of Agriculture" desc="The Authority for agriculture in the Hashemite Kingdom of Jordan."/>
     <code id="386" title="JO, Jordan Customs" desc="The Customs Authority of the Hashemite Kingdom of Jordan."/>
@@ -4073,15 +4073,15 @@
     <code id="400" title="FAO (Food and Agriculture Organisation)" desc="Food and Agriculture Organisation of the United Nations."/>
     <code id="401" title="CH, Spedlogswiss" desc="Swiss Freight Forwarding and Logistics Association."/>
     <code id="402" title="JP, National Tax Agency" desc="National Tax Agency Japan."/>
-    <code id="403" title="Comite Européen de Normalisation" desc="Comite Européen de Normalisation (CEN), European committee for standardization."/>
+    <code id="403" title="Comite Europ�en de Normalisation" desc="Comite Europ�en de Normalisation (CEN), European committee for standardization."/>
     <code id="404" title="Assigned by logistics service provider" desc="Codes assigned by a logistics service provider."/>
     <code id="405" title="Assigned by transport ministry" desc="The code is assigned by a ministry of transport."/>
-    <code id="406" title="AR, Customs Administration of Argentina" desc="Administración Federal de Ingresos Públicos."/>
+    <code id="406" title="AR, Customs Administration of Argentina" desc="Administraci�n Federal de Ingresos P�blicos."/>
     <code id="407" title="BO, Customs Administration of Bolivia" desc="Aduana Nacional."/>
     <code id="408" title="BR, Customs Administration of Brazil" desc="Receita Federal."/>
-    <code id="409" title="PY, Customs Administration of Paraguay" desc="Dirección Nacional de Aduanas."/>
-    <code id="410" title="UY, Customs Administration of Uruguay" desc="Dirección Nacional de Aduanas."/>
-    <code id="411" title="VE, Customs Administration of Venezuela" desc="Servicio Nacional Integrado de Administración Aduanera y Tributaria."/>
+    <code id="409" title="PY, Customs Administration of Paraguay" desc="Direcci�n Nacional de Aduanas."/>
+    <code id="410" title="UY, Customs Administration of Uruguay" desc="Direcci�n Nacional de Aduanas."/>
+    <code id="411" title="VE, Customs Administration of Venezuela" desc="Servicio Nacional Integrado de Administraci�n Aduanera y Tributaria."/>
     <code id="412" title="IN, Customs Administration of India" desc="India Customs."/>
     <code id="413" title="JP, JEC (UN/CEFACT Japan Committee)" desc="JEC is the liaison association of Japan for UN/CEFACT, promoting UN/CEFACT standards and coordinating standards development in Japan."/>
     <code id="ZZZ" title="Mutually defined" desc="A code assigned within a code list to be used on an interim basis and as defined among trading partners until a precise code can be assigned to the code list."/>
@@ -4157,7 +4157,7 @@
     <code id="BM" title="Automated clearing house (ACH) contact" desc="Code specifying a person to be contacted at an automated clearing house."/>
     <code id="BN" title="Certification contact" desc="Code specifying a contact with knowledge of a certification action."/>
     <code id="BO" title="After business hours contact" desc="Department/person to contact after normal working hours."/>
-    <code id="BP" title="Company Security Officers 24-hour contact" desc="The round the clock contact of the Company Security Officer who is responsible for the vessel."/>
+    <code id="BP" title="Company Security Officer�s 24-hour contact" desc="The round the clock contact of the Company Security Officer who is responsible for the vessel."/>
     <code id="BQ" title="Agent of ship at the intended port of arrival" desc="Contact details of the agent of the ship at the intended port of arrival."/>
     <code id="BR" title="Cook" desc="Person responsible for cooking."/>
     <code id="BS" title="Customer contact" desc="The main department/person to be contacted at the customer."/>
@@ -4608,9 +4608,9 @@
     <code id="311" title="Manufacturing facility" desc="A facility where an operation or a series of operations are performed in the making or treatment of a product."/>
     <code id="312" title="Animal Farm" desc="An area of land, water or a building that is primarily devoted to animals for the purpose of obtaining their meat, wool, hides, milk, eggs, etc."/>
     <code id="313" title="Tannery" desc="A facility where the animal hides and/or skins are processed with tanning agents."/>
-    <code id="314" title="Textile mill" desc="A facility where textiles, or types of cloth, are produced or processed into finished products, such as clothing."/>
+    <code id="314" title="Textile mill" desc="A�facility where�textiles, or types of�cloth, are produced or processed into finished products, such as clothing."/>
     <code id="315" title="Textile dyeing mill" desc="A facility where textile products like fibres, yarns, and fabrics are dyed."/>
-    <code id="316" title="Forest Management Unit" desc="An identified area of land covered predominantly by forests, managed to a set of explicit objectives and according to a long-term forest management plan."/>
+    <code id="316" title="Forest Management Unit" desc="An identified area of land covered predominantly by forests, managed to a set of explicit objectives and according to a long-term forest management plan.�"/>
     <code id="ZZZ" title="Mutually defined" desc="Place or location as agreed between the relevant parties."/>
   </data_element>
   <data_element id="3237">
@@ -6394,7 +6394,7 @@
     <code id="BMD" title="Package material description" desc="A description of the type of material for packaging beyond the level covered by standards such as UN Recommendation 21."/>
     <code id="BME" title="Consumer level package marking" desc="Textual representation of the markings on a consumer level package."/>
     <code id="BMF" title="SIMA measure in force" desc="Identifies the specific Special Import Measures Act measure related to the goods"/>
-    <code id="BMG" title="Pre-CARM" desc="Identifiication of how the transmission should be processed regarding submissions transmitted prior to implementation of Canada Border Services Agencys Assessment and Revenue Management (CARM) project"/>
+    <code id="BMG" title="Pre-CARM" desc="Identifiication of how the transmission should be processed regarding submissions transmitted prior to implementation of Canada Border Services Agency�s Assessment and Revenue Management (CARM) project"/>
     <code id="BMH" title="SIMA measure type" desc="Identification of the type of Special Import Measures Act measure"/>
     <code id="CCI" title="Customs clearance instructions" desc="Any coded or clear instruction agreed by customer and carrier regarding the declaration of the goods."/>
     <code id="CCJ" title="Sub Type Code" desc="Code which identifies a secondary form type"/>
@@ -7336,7 +7336,7 @@
     <code id="397" title="Advertising amount" desc="Amount related to advertising."/>
     <code id="398" title="Fixed sum advance base amount" desc="The base amount on which a fixed sum advance is calculated."/>
     <code id="399" title="Optional advance amount" desc="The monetary amount which may be advanced on a payment."/>
-    <code id="400" title="Rebate amount" desc="An amount returned by the supplier to the buyer (or credited to the buyers account) in consideration of some specified factor."/>
+    <code id="400" title="Rebate amount" desc="An amount returned by the supplier to the buyer (or credited to the buyer�s account) in consideration of some specified factor."/>
     <code id="401" title="Penalty basis amount" desc="Amount used as the basis to calculate a penalty."/>
     <code id="402" title="Total retail value" desc="The total retail value of all products."/>
     <code id="403" title="Exemption amount" desc="(5408) To specify an exempted amount."/>
@@ -8015,11 +8015,11 @@
     <code id="F" title="Value Added Tax (VAT) margin scheme - second-hand goods" desc="Indication that the VAT margin scheme for second-hand goods is applied."/>
     <code id="G" title="Free export item, tax not charged" desc="Code specifying that the item is free export and taxes are not charged."/>
     <code id="H" title="Higher rate" desc="Code specifying a higher rate of duty or tax or fee."/>
-    <code id="I" title="Value Added Tax (VAT) margin scheme - works of art Margin scheme  Works of art" desc="Indication that the VAT margin scheme for works of art is applied."/>
-    <code id="J" title="Value Added Tax (VAT) margin scheme - collectors items and antiques" desc="Indication that the VAT margin scheme for collectors items and antiques is applied."/>
+    <code id="I" title="Value Added Tax (VAT) margin scheme - works of art Margin scheme � Works of art" desc="Indication that the VAT margin scheme for works of art is applied."/>
+    <code id="J" title="Value Added Tax (VAT) margin scheme - collector�s items and antiques" desc="Indication that the VAT margin scheme for collector�s items and antiques is applied."/>
     <code id="K" title="VAT exempt for EEA intra-community supply of goods and services" desc="A tax category code indicating the item is VAT exempt due to an intra-community supply in the European Economic Area."/>
     <code id="L" title="Canary Islands general indirect tax" desc="Impuesto General Indirecto Canario (IGIC) is an indirect tax levied on goods and services supplied in the Canary Islands (Spain) by traders and professionals, as well as on import of goods."/>
-    <code id="M" title="Tax for production, services and importation in Ceuta and Melilla" desc="Impuesto sobre la Producción, los Servicios y la Importación (IPSI) is an indirect municipal tax, levied on the production, processing and import of all kinds of movable tangible property, the supply of services and the transfer of immovable property located in the cities of Ceuta and Melilla."/>
+    <code id="M" title="Tax for production, services and importation in Ceuta and Melilla" desc="Impuesto sobre la Producci�n, los Servicios y la Importaci�n (IPSI) is an indirect municipal tax, levied on the production, processing and import of all kinds of movable tangible property, the supply of services and the transfer of immovable property located in the cities of Ceuta and Melilla."/>
     <code id="O" title="Services outside scope of tax" desc="Code specifying that taxes are not applicable to the services."/>
     <code id="S" title="Standard rate" desc="Code specifying the standard rate."/>
     <code id="Z" title="Zero rated goods" desc="Code specifying that the goods are at a zero rate."/>
@@ -10128,7 +10128,7 @@
     <code id="SSP" title="International Code of Botanical Nomenclature (ICBN)" desc="A code established by the International Code of Botanical Nomenclature (ICBN) used to classify and identify botanical articles and commodities."/>
     <code id="SSQ" title="International Code of Zoological Nomenclature (ICZN)" desc="A code established by the International Code of Zoological Nomenclature (ICZN) used to classify and identify animals."/>
     <code id="SSR" title="International Code of Nomenclature for Cultivated Plants (ICNCP)" desc="A code established by the International Code of Nomenclature for Cultivated Plants (ICNCP) used to classify and identify animals."/>
-    <code id="SSS" title="Distributors article identifier" desc="Identifier assigned to an article by the distributor of that article."/>
+    <code id="SSS" title="Distributor�s article identifier" desc="Identifier assigned to an article by the distributor of that article."/>
     <code id="SST" title="Norwegian Classification system ENVA" desc="Product classification system used in the Norwegian market."/>
     <code id="SSU" title="Supplier assigned classification" desc="Product classification assigned by the supplier."/>
     <code id="SSV" title="Mexican classification system AMECE" desc="Product classification system used in the Mexican market."/>
@@ -10149,7 +10149,7 @@
     <code id="STJ" title="IFDA (International Foodservice Distributors Association)" desc="International Foodservice Distributors Association (IFDA)."/>
     <code id="STK" title="AHFS (American Hospital Formulary Service) pharmacologic - therapeutic classification" desc="Pharmacologic - therapeutic classification maintained by the American Hospital Formulary Service (AHFS)."/>
     <code id="STL" title="ATC (Anatomical Therapeutic Chemical) classification system" desc="Anatomical Therapeutic Chemical classification system maintained by the World Health Organisation (WHO)."/>
-    <code id="STM" title="CLADIMED (Classification des Dispositifs Médicaux)" desc="A five level classification system for medical decvices maintained by the CLADIMED organisation used in the French market."/>
+    <code id="STM" title="CLADIMED (Classification des Dispositifs M�dicaux)" desc="A five level classification system for medical decvices maintained by the CLADIMED organisation used in the French market."/>
     <code id="STN" title="CMDR (Canadian Medical Device Regulations) classification system" desc="Classification system related to the Canadian Medical Device Regulations maintained by Health Canada."/>
     <code id="STO" title="CNDM (Classificazione Nazionale dei Dispositivi Medici)" desc="A classification system for medical devices used in the Italian market."/>
     <code id="STP" title="UK DM&amp;D (Dictionary of Medicines &amp; Devices) standard coding scheme" desc="A classification system for medicines and devices used in the UK market."/>
@@ -10170,7 +10170,7 @@
     <code id="SUE" title="GS1 Global Returnable Asset Identifier, non-serialised" desc="A unique, 13-digit number assigned according to the numbering structure of the GS1 system and used to identify a type of Reusable Transport Item (RTI)."/>
     <code id="SUF" title="IMEI" desc="The International Mobile Station Equipment Identity (IMEI) is a unique number to identify mobile phones. It includes the origin, model and serial number of the device. The structure is specified in 3GPP TS 23.003."/>
     <code id="SUG" title="Waste Type (EMSA)" desc="Classification of waste as defined by the European Maritime Safety Agency (EMSA)."/>
-    <code id="SUH" title="Ship's store classification type" desc="Classification of ships stores."/>
+    <code id="SUH" title="Ship's store classification type" desc="Classification of ship�s stores."/>
     <code id="SUI" title="Emergency fire code" desc="Classification for emergency response procedures related to fire."/>
     <code id="SUJ" title="Emergency spillage code" desc="Classification for emergency response procedures related to spillage."/>
     <code id="SUK" title="IMDG packing group" desc="Packing group as defined in the International Marititme Dangerous Goods (IMDG) specification."/>
@@ -10524,7 +10524,7 @@
     <code id="105" title="Breeding" desc="The process of breeding."/>
     <code id="106" title="Chemical recycling" desc="The process of chemical recycling."/>
     <code id="107" title="Combing" desc="The process of combing (e.g. in textiles named 'top making' of fibres)."/>
-    <code id="108" title="Agricultural cultivation" desc="The process of managing the growth, development, and yield of agricultural crops."/>
+    <code id="108" title="Agricultural cultivation" desc="The process of managing the growth, development, and yield of�agricultural crops."/>
     <code id="109" title="Designing" desc="The process of designing."/>
     <code id="110" title="Disposing" desc="The process of disposing."/>
     <code id="111" title="Extrusion" desc="The process of shaping a material by forcing it through a hole."/>
@@ -10543,13 +10543,13 @@
     <code id="124" title="Recycling" desc="The process of recycling."/>
     <code id="125" title="Refining" desc="The process of refining."/>
     <code id="126" title="Retailing" desc="The process of retailing."/>
-    <code id="127" title="Retanning" desc="The process of a second tanning stage in which different tanning agents are generally used in comparison to the initial tanning process."/>
+    <code id="127" title="Retanning" desc="The process of a second�tanning stage in which different�tanning�agents are generally used in comparison to the initial tanning process."/>
     <code id="128" title="Retting" desc="The process of employing the action of bacteria and moisture on plants to dissolve the cellular tissues and substances."/>
-    <code id="129" title="Returns management" desc="The process by which activities are associated with returns."/>
+    <code id="129" title="Returns management" desc="The process by which activities are associated with�returns."/>
     <code id="130" title="Setting out leather" desc="The process of reducing wrinkles from hides/skins."/>
     <code id="131" title="Shaving hides" desc="The process of making the thickness of hides uniform."/>
     <code id="132" title="Shearing" desc="The process of shearing"/>
-    <code id="133" title="Silk reeling" desc="The process by which cocoon baves are reeled together to produce a single thread."/>
+    <code id="133" title="Silk reeling" desc="The process by which cocoon baves are�reeled�together to produce a single thread.�"/>
     <code id="134" title="Softening" desc="The process of softening."/>
     <code id="135" title="Sorting" desc="The process of sorting."/>
     <code id="136" title="Spinning" desc="The process of spinning."/>
@@ -10620,7 +10620,7 @@
     <code id="77" title="Material wrapping specification" desc="Identification of the material wrapping specification."/>
     <code id="78" title="Package bar-coded and EPC tagged" desc="The package is bar-coded and tagged with an EPC (Electronic Product Code) transponder."/>
     <code id="79" title="Package EPC tagged only" desc="The package is tagged with an EPC (Electronic Product Code) transponder only."/>
-    <code id="80" title="Marked with display until date" desc="Package is marked with the date by which the product should be removed from the display location."/>
+    <code id="80" title="Marked with �display until date�" desc="Package is marked with the date by which the product should be removed from the display location."/>
     <code id="81" title="Package marked with a variable measure barcode" desc="The package is marked with a variable measure barcode."/>
     <code id="82" title="Package marked with fixed measure barcode." desc="The package is marked with a fixed measure barcode."/>
     <code id="83" title="RFID not on packaging" desc="To indicate that the packaging of the trade item is not tagged with a Radio Frequency ID."/>
@@ -11146,11 +11146,11 @@
     <code id="4" title="Reserved inventory" desc="Inventory related to reserved products."/>
     <code id="5" title="Awaiting inspection inventory" desc="Inventory of products awaiting quality inspection."/>
     <code id="6" title="Finished goods" desc="Inventory of products that are complete and ready for sale."/>
-    <code id="7" title="Maintenance, repair &amp; operations (MRO)" desc="Inventory of items used within the manufacture of products, but without making up any part of a finished product."/>
+    <code id="7" title="Maintenance, repair &amp; operations (MRO)" desc="Inventory of items�used within the manufacture�of products, but without making up any part of a finished product."/>
     <code id="8" title="Packing materials" desc="Inventory of anything used for packing and protecting goods while in storage, or during shipping."/>
-    <code id="9" title="Raw materials" desc="Inventory of raw materials used to manufacture finished products."/>
+    <code id="9" title="Raw materials" desc="Inventory of raw materials used to manufacture�finished products."/>
     <code id="10" title="Unfinished Products." desc="Inventory of products that are incomplete and not ready for sale."/>
-    <code id="11" title="Work in progress (WIP)" desc="Inventory of unfinished items or components currently in production."/>
+    <code id="11" title="Work in progress (WIP)" desc="Inventory of unfinished items or components�currently in production."/>
   </data_element>
   <data_element id="7493">
     <code id="1" title="Equipment damage" desc="The damage details relate to equipment, e.g. a container."/>
