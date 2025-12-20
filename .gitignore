@@ -64,4 +64,4 @@ Pipfile.lock
 # Local History for Visual Studio Code
 .history/
 /pydifact/generator/extracted/
-/pydifact/generator/zips/*.zip
+/pydifact/generator/zips/*

@@ -45,7 +45,6 @@ class UntidBaseParser:
         """Parse representation string and return type, is_range, and number."""
         match = re.match(r"^(a?n?)(\.\.)?(\d+)", repr)
         if not match:
-            self.warnings.append(f"Could not parse representation: {repr}")
             return "", False, ""
         else:
             _range = match.group(2)
@@ -56,9 +55,9 @@ class UntidBaseParser:
             )
 
     def parse_repr_line(self, row: str) -> tuple[str, bool, str]:
+        """Parse representation string and return type, is_range, and number."""
         match = re.match(r"^.?\s{0,4}Repr: (a?n?(?:\.\.)?\d+).*", row)
         if not match:
-            self.warnings.append(f"Could not parse representation: {row}")
             return "", False, ""
         else:
             return self.parse_repr(match.group(1))

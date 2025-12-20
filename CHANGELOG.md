@@ -25,7 +25,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 [0.1.9]
 ### CHANGES
-- BREAKING CHANGE (possibly): Characters can be set up with reserved character now. If anyone used args instead of kwargs, this could lead to problems as the 2nd last parameter now is "reserved". But I suppose this not harm anyone's implementations.
+- BREAKING CHANGE (possibly): Characters can be set up with reserved character now. If anyone used args instead of kwargs, this could lead to problems as the 2nd last parameter now is "reserved". But I suppose this will not harm anyone's implementations.
 
 ### FIXES
 - Token creation with the wrong type fixed

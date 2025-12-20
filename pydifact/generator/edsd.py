@@ -48,25 +48,31 @@ class EDSDParser(UntidBaseParser):
 
     def _process(self, file_path: PathLike | str) -> None:
         """Process EDSD file and build XML structure."""
-        with open(file_path, "r", encoding="iso8859-1", errors="replace") as f:
+        with open(file_path, "r", encoding="ibm437", errors="replace") as f:
             file_lines = f.read()
 
         # Replace special characters
-        file_lines = file_lines.replace("\xc4", "-")
+        file_lines = file_lines.replace("\xc4", "-")  # replace "─" with "-"
 
         # Split by Segment headers
         if self.is_prehistoric:
             # snip preceeding blabla
-            file_lines = re.split(r"SEGMENTS SPECIFICATIONS", file_lines, flags=re.M)[1]
+            file_lines = re.split(
+                r"SEGMENTS SPECIFICATIONS",
+                file_lines,
+                flags=re.MULTILINE | re.IGNORECASE,
+            )[1]
+            # split files at Segment headers, preserving them
             edsd_list = re.split(
-                r"(?=^[*+ ]? {,7}[A-Z]{3} +[A-Z /]+(?: {4,}[()\d.][()\d. ]{2,11})?$)",
+                r"(?=^[ +*#|X]+[A-Z]{3} {1,3}[\w -,/]+(?: {4,}[()\d.][()\d. "
+                r"]{2,11})?$)",
                 file_lines,
                 flags=re.M,
             )
         else:
+            # split files at Segment headers, preserving them
             edsd_list = re.split(r"(?=^ {2,7}[A-Z]{3}  +\S*)", file_lines, flags=re.M)
-        # r"(?=^[*+\s]?([A-Z]{3})\s+([A-Z0-9\s]+?)\s{4,}\(?(\d{2}\.?\d?)\)?\s*("
-        # r"?:\d{2}\.?\d?)?$)",
+
         if len(edsd_list) < 2:
             self.warnings.append(
                 f"File '{file_path}' may not be properly formatted - found only {len(edsd_list)} sections"
@@ -94,7 +100,7 @@ class EDSDParser(UntidBaseParser):
                 if segment_code == "":
                     if self.is_prehistoric:
                         match = re.match(
-                            r"^[+*| ]+([A-Z]{3}) +([A-Z/ ]+?)(?: {4,}.*)?$",
+                            r"^[+*| ]*([A-Z]{3}) +([\w -,/]+?)(?: {4,}.*)?$",
                             row,
                         )
                     else:
@@ -126,6 +132,8 @@ class EDSDParser(UntidBaseParser):
                         continue
 
                 ## Parse element list, prehistoric:
+                #     C198  PRODUCT IDENTIFICATION                      C
+                #     C198    PRODUCT IDENTIFICATION                  C
                 #  8053    EQUIPMENT QUALIFIER                     M  an..3  id 1  3
                 #  C271    EQUIPMENT                               C
                 #  8114      Transport equipment identification    C  an..4  an 1  4
@@ -137,7 +145,7 @@ class EDSDParser(UntidBaseParser):
 
                 # first check if it matches generally a data/composite element:
                 match_generic = re.match(
-                    r"[*+|X ]{0,5}(\d{3}|) *([CS\d]\d{3}).+", parts[i]
+                    r"[*+|X ]{0,5}(\d{3}|) *([CS\d]\d{3}) .+", parts[i]
                 )
                 if match_generic:
                     # we can be sure this is a composite/data element row.
@@ -162,13 +170,67 @@ class EDSDParser(UntidBaseParser):
                                 i += 1
                                 row = row + " " + parts[i].lstrip()
 
-                    # First, try to match the "normal" 1-line rows
-                    match = re.match(
+                    # First, try to match the top level data 1-line rows
+                    if match := re.match(
+                        r"^(\d{3}|)[*+|X ]*[CS\d]\d{3} +([A-Z,\- '\/]+) +([MC])"
+                        r"( *\d{1,3}|) *([an]+\.*\d{1,3}|) *(.+|)$",
+                        row,
+                    ):
+                        # Extract composite data element attributes from matched row
+                        element_pos = match.group(1)
+                        element_repitition = (
+                            "1" if self.is_prehistoric else match.group(4).strip()
+                        )
+                        data_element["elementRepetition"] = element_repitition
+                        data_element["elementName"] = match.group(2).strip()
+                        data_element["elementCondition"] = match.group(3)
+                        data_element["elementDescription"] = match.group(6).strip()
+
+                        if element_id[0] in ["C", "S"]:
+                            data_element["composite"] = True
+                        else:
+                            data_element["composite"] = False
+                            data_element["elementType"] = match.group(5)
+
+                        # Data elements can have a second row containing a
+                        # longer element name.
+                        # in ancient versions, this is just built with a string
+                        # that follows in the next line:
+                        #    5427    Allowance/charge percent basis          C  an..3  id 1  3
+                        #            qualifier
+                        i += 1
+                        if i >= len(parts) or len(parts[i]) < 1:
+                            continue
+
+                        match_second_line = re.match(
+                            r"^ {11,14}(.+)$",
+                            parts[i],
+                        )
+                        if match_second_line:
+                            data_element["elementName"] += (
+                                " " + match_second_line.group(1).strip()
+                            )
+
+                        # if name consists only of CAPITALS, this is a top level
+                        # element.
+                        if re.match(r"^[A-Z,\- '\/]+$", data_element["elementName"]):
+                            if data_element["composite"]:
+                                data_element["children"] = []
+                            data_elements.append(data_element)
+                        else:
+                            last_element = data_elements[-1]
+                            # TODO: add children
+                            # last_element["children"].append(data_element)
+                        continue
+
+                    # Then find the sub elements
+                    elif match := re.match(
                         r"^(\d{3}|)[*+|X ]*[CS\d]\d{3} +(.+) *([MC]) *"
                         r"(?:(\d{,3})?([an]+\.*\d{1,3})?(.*)?)?",
                         row,
-                    )
-                    if match:
+                    ):
+                        i += 1
+                        continue
                         element_pos = match.group(1)
                         element_repitition = (
                             "1" if self.is_prehistoric else match.group(4)
@@ -177,44 +239,25 @@ class EDSDParser(UntidBaseParser):
                         data_element["elementCondition"] = match.group(3)
                         data_element["elementDescription"] = match.group(6).strip()
 
-                        # composite ids start with 'C'
-                        if element_id[0] == "C":
-                            data_element["composite"] = True
-                            data_element["elementRepetition"] = element_repitition
-                        else:
-                            data_element["composite"] = False
-                            data_element["elementType"] = match.group(5)
+                        data_element["composite"] = False
+                        data_element["elementType"] = match.group(5)
 
-                            # Data elements can have a second row containing a
-                            # longer element name.
-                            # in ancient versions, this is just built with a string
-                            # that follows in the next line:
-                            #    5427    Allowance/charge percent basis          C  an..3  id 1  3
-                            #            qualifier
-                            i += 1
-                            if i >= len(parts) or len(parts[i]) < 1:
-                                continue
-
-                            match_second_line = re.match(
-                                r"^ {11,14}(.+)$",
-                                parts[i],
-                            )
-                            if match_second_line:
-                                data_element["elementName"] += (
-                                    " " + match_second_line.group(1).strip()
-                                )
-                            data_elements.append(data_element)
-                            continue
-
-                    data_elements.append(data_element)
+                        data_elements.append(data_element)
+                    else:
+                        self.warnings.append(
+                            f'Could not parse possible element header: "{row}"'
+                        )
 
                 else:
                     # debug
-                    # print("ignore line:", row)
+                    # print("ignoring line:", row)
                     pass
                 i += 1
 
             if not segment_code:
+                continue
+            if segment_code == "UNA":
+                # UNA is so special, we don't want to save that in XML
                 continue
 
             if not data_elements:
@@ -230,14 +273,36 @@ class EDSDParser(UntidBaseParser):
             def_xml.set("desc", segment_function)
 
             # Add child elements
-            for child in data_elements:
-                ctype = (
-                    "composite_data_element" if child["composite"] else "data_element"
-                )
-                cdef_xml = ElementTree.SubElement(def_xml, ctype)
-                cdef_xml.set("id", child["elementId"])
+            for top_level_element in data_elements:
+                # check if the element was created successfully
+                if "composite" not in top_level_element:
+                    print(
+                        f"❌ Element {top_level_element} is malformed (parsing error?), "
+                        f"skipping..."
+                    )
+                    continue
 
-                if child.get("elementCondition") == "M":
+                ctype = (
+                    "composite_data_element"
+                    if top_level_element["composite"]
+                    else "data_element"
+                )
+
+                cdef_xml = ElementTree.SubElement(def_xml, ctype)
+                cdef_xml.set("id", top_level_element["elementId"])
+
+                if top_level_element.get("elementCondition") == "M":
                     cdef_xml.set("required", "true")
-                if child.get("elementDescription"):
-                    cdef_xml.set("desc", child["elementDescription"])
+                if top_level_element.get("elementDescription"):
+                    cdef_xml.set("desc", top_level_element["elementDescription"])
+                if top_level_element.get("elementRepetition"):
+                    cdef_xml.set("repetition", top_level_element["elementRepetition"])
+                if top_level_element.get("elementType"):
+                    element_type, is_fixed_length, length = self.parse_repr(
+                        top_level_element["elementType"]
+                    )
+                    cdef_xml.set("type", element_type)
+                    if is_fixed_length:
+                        cdef_xml.set("length", length)
+                    else:
+                        cdef_xml.set("maxlength", length)

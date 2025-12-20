@@ -166,7 +166,7 @@ def extract_edifact_data(
     Raises:
         Exception: Re-raises any exception that occurs during parsing or file writing.
     """
-    print(f"Parsing {parser.name}... for {release}")
+    print(f"Parsing {parser.name}... for release '{release}'")
     try:
 
         with open(output_file, "w", encoding="utf-8") as f:
@@ -175,14 +175,14 @@ def extract_edifact_data(
         if parser.has_warnings():
             print(f"{parser.name} parser warnings:")
             for warning in parser.get_warnings():
-                print(f"  WARNING: {warning}")
+                print(f"❗ {warning}")
 
         if parser.has_errors():
             print(f"{parser.name} parser errors:")
             for error in parser.get_errors():
-                print(f"  ERROR: {error}")
+                print(f"❌ {error}")
 
-        print(f"{parser.name} parsing completed successfully")
+        print(f"✅ {parser.name} parsing completed successfully.\n")
     except Exception as e:
         # print(f"CRITICAL ERROR in {parser_class.name} parsing: {e}")
         # error_xml = f'<?xml version="1.0" encoding="utf-8" standalone="yes"?><error>{e}</error>'
@@ -332,13 +332,27 @@ def generate_service_codes(
                 )
             match element:
                 case "s":
-                    # Parse EDSD (segments)
+                    # Parse service segments (EDSD)
                     extract_edifact_data(
                         EDSDParser(
-                            extracted_dir / filename,
+                            extracted_dir / "EDSD.txt",
                             is_prehistoric=syntax_version in ["1", "2"],
                         ),
                         f"{generated_data_dir}/simple_segments.xml",
+                        specific_release,
+                    )
+                case "c":
+                    # Parse service composite data elements (EDCD)
+                    extract_edifact_data(
+                        EDCDParser(extracted_dir / "EDCD.txt"),
+                        f"{generated_data_dir}/composite_data_elements.xml",
+                        specific_release,
+                    )
+                case "e":
+                    # Parse service data elements (EDED)
+                    extract_edifact_data(
+                        EDEDParser(extracted_dir / "EDED.txt"),
+                        f"{generated_data_dir}/data_elements.xml",
                         specific_release,
                     )
     # messages in a different directory
@@ -378,7 +392,7 @@ def generate_service_codes(
                 os.rename(old, new)
 
         extract_edifact_data(
-            UNSLParser(f"{extracted_dir}/UNSL.{specific_release}"),
+            UNSLParser(f"{extracted_dir}/UNSL.txt"),
             f"{generated_data_dir}/data_elements.xml",
             service_subrelease,
         )
@@ -626,7 +640,7 @@ def generate_directory_release(release_upper: str):
         except OSError:
             pass
 
-        print("XML merge completed successfully")
+        print("✅ XML merge completed successfully.\n")
         if merge_errors:
             print(f"Merge completed with {merge_errors} warning(s)")
     except Exception as e:

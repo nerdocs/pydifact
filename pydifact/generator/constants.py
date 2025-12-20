@@ -1,4 +1,6 @@
 # the line length in EDIFACT files where descriptions are line broken
+from typing import Any
+
 MAX_LINE_LENGTH = 69
 
 gefeg = "https://service.gefeg.com/jwg1/Archive"
@@ -170,38 +172,68 @@ services_map: dict[str, Any] = {
         "sl_list": {},
         "e": {"url": ""},
         "c": {"url": ""},
-        "s": {"url": "internal://service/EDSD.1"},
+        "s": {"url": "internal://service/v1/EDSD.1", "rename": {"EDSD.1": "EDSD.txt"}},
         "m": {"url": ""},
-        "unsl": {"url": "internal://service/UNSL.1"},
+        "unsl": {
+            "url": "internal://service/v1/UNSL.1",
+            "rename": {"UNSL.1": "UNSL.txt"},
+        },
     },
     "200": {
         "sl_list": {},
         "e": {"url": ""},
         "c": {"url": ""},
-        "s": {"url": "internal://service/EDSD.2"},
+        "s": {"url": "internal://service/v2/EDSD.2", "rename": {"EDSD.2": "EDSD.txt"}},
         "m": {"url": ""},
-        "unsl": {"url": "internal://service/UNSL.2"},
+        "unsl": {
+            "url": "internal://service/v2/UNSL.2",
+            "rename": {"UNSL.2": "UNSL.txt"},
+        },
     },
     "300": {
         "sl_list": V3_SERVICE_CODE_LISTS,
-        "e": {"url": f"{gefeg}/v3/data/v3-sded.zip", "extract": "Sded.s3"},
-        "c": {"url": f"{gefeg}/v3/data/v3-sced.zip", "extract": "Sced.s3"},
-        "s": {"url": f"{gefeg}/v3/data/v3-ssed.zip", "extract": "Ssed.s3"},
+        "e": {
+            "url": f"{gefeg}/v3/data/v3-sded.zip",
+            "extract": "Sded.s3",
+            "rename": {"Sded.s3": "EDED.txt"},
+        },
+        "c": {
+            "url": f"{gefeg}/v3/data/v3-sced.zip",
+            "extract": "Sced.s3",
+            "rename": {"Sced.s3": "EDCD.txt"},
+        },
+        "s": {
+            "url": f"{gefeg}/v3/data/v3-ssed.zip",
+            "extract": "Ssed.s3",
+            "rename": {"Ssed.s3": "EDSD.txt"},
+        },
         "m": {"url": f"{gefeg}/v3/data/v3-smed.zip", "extract": "Contrl.s3"},
         "unsl": {
             "url": f"{gefeg}" + "/cl/data/unsl{release}.zip",
-            # "extract": "unsl.{release}",  # FIXME: Unsl, unsl...
             "rename": {
-                "unsl.{release}": "UNSL.{release}",
-                "Unsl.{release}": "UNSL.{release}",
+                "unsl.{release}": "UNSL.txt",
+                "Unsl.{release}": "UNSL.txt",
+                "UNSL.{release}": "UNSL.txt",
             },
         },
     },
     "400": {
         "sl_list": V4_SERVICE_CODE_LISTS,
-        "e": {"url": f"{gefeg}/v4/data/e40000.zip", "extract": "Se40000.txt"},
-        "c": {"url": f"{gefeg}/v4/data/c40000.zip", "extract": "Sc40000.txt"},
-        "s": {"url": f"{gefeg}/v4/data/s40000.zip", "extract": "Ss40000.txt"},
+        "e": {
+            "url": f"{gefeg}/v4/data/e40000.zip",
+            "extract": "Se40000.txt",
+            "rename": {"Se40000.txt": "EDED.txt"},
+        },
+        "c": {
+            "url": f"{gefeg}/v4/data/c40000.zip",
+            "extract": "Sc40000.txt",
+            "rename": {"Sc40000.txt": "EDCD.txt"},
+        },
+        "s": {
+            "url": f"{gefeg}/v4/data/s40000.zip",
+            "extract": "Ss40000.txt",
+            "rename": {"Ss40000.txt": "EDSD.txt"},
+        },
         "m": {
             "url": f"{gefeg}/v4/data/m40000.zip",
             "extract": ["Autack_0.txt", "Contrl_0.txt", "Keyman_0.txt"],
@@ -210,16 +242,28 @@ services_map: dict[str, Any] = {
             "url": f"{gefeg}" + "/cl/data/sl{release}.zip",  # 40000-40007
             "extract": "Sl{release}.txt",
             "rename": {
-                "sl{release}.txt": "UNSL.{release}",
-                "Sl{release}.txt": "UNSL.{release}",
+                "sl{release}.txt": "UNSL.txt",
+                "Sl{release}.txt": "UNSL.txt",
             },
         },
     },
     "401": {
         "sl_list": V4_SERVICE_CODE_LISTS,
-        "e": {"url": f"{gefeg}/v4/data/e40000.zip", "extract": "Se40000.txt"},
-        "c": {"url": f"{gefeg}/v4/data/c40000.zip", "extract": "Sc40000.txt"},
-        "s": {"url": f"{gefeg}/v4/data/s40000.zip", "extract": "Ss40000.txt"},
+        "e": {
+            "url": f"{gefeg}/v4/data/e40000.zip",
+            "extract": "Se40000.txt",
+            "rename": {"Se40000.txt": "EDED.txt"},
+        },
+        "c": {
+            "url": f"{gefeg}/v4/data/c40000.zip",
+            "extract": "Sc40000.txt",
+            "rename": {"Sc40000.txt": "EDCD.txt"},
+        },
+        "s": {
+            "url": f"{gefeg}/v4/data/s40000.zip",
+            "extract": "Ss40000.txt",
+            "rename": {"Ss40000.txt": "EDSD.txt"},
+        },
         "m": {
             "url": f"{gefeg}/v4/data/m40000.zip",
             "extract": ["Autack_0.txt", "Contrl_0.txt", "Keyman_0.txt"],
@@ -228,16 +272,28 @@ services_map: dict[str, Any] = {
             "url": f"{gefeg}" + "/cl/data/sl{release}.zip",  # 40100-40110
             "extract": None,
             "rename": {
-                "sl{release}.txt": "UNSL.{release}",
-                "Sl{release}.txt": "UNSL.{release}",
+                "sl{release}.txt": "UNSL.txt",
+                "Sl{release}.txt": "UNSL.txt",
             },
         },
     },
     "402": {
         "sl_list": V4_SERVICE_CODE_LISTS,
-        "e": {"url": f"{gefeg}/v4/data/e40000.zip", "extract": "Se40000.txt"},
-        "c": {"url": f"{gefeg}/v4/data/c40000.zip", "extract": "Sc40000.txt"},
-        "s": {"url": f"{gefeg}/v4/data/s40000.zip", "extract": "Ss40000.txt"},
+        "e": {
+            "url": f"{gefeg}/v4/data/e40000.zip",
+            "extract": "Se40000.txt",
+            "rename": {"Se40000.txt": "EDED.txt"},
+        },
+        "c": {
+            "url": f"{gefeg}/v4/data/c40000.zip",
+            "extract": "Sc40000.txt",
+            "rename": {"Sc40000.txt": "EDCD.txt"},
+        },
+        "s": {
+            "url": f"{gefeg}/v4/data/s40000.zip",
+            "extract": "Ss40000.txt",
+            "rename": {"Ss40000.txt": "EDSD.txt"},
+        },
         "m": {
             "url": f"{gefeg}/v4/data/m40000.zip",
             "extract": ["Autack_0.txt", "Contrl_0.txt", "Keyman_0.txt"],
@@ -246,8 +302,8 @@ services_map: dict[str, Any] = {
             "url": f"{gefeg}" + "/cl/data/sl{release}.zip",  # 40200 - 40219
             "extract": None,
             "rename": {
-                "sl{release}.txt": "UNSL.{release}",
-                "Sl{release}.txt": "UNSL.{release}",
+                "sl{release}.txt": "UNSL.txt",
+                "Sl{release}.txt": "UNSL.txt",
             },
         },
     },

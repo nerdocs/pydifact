@@ -109,6 +109,13 @@ class EDEDParser(UntidBaseParser):
                             r"^(.{5})([\d]{4}\s{2})(.{56})\[([A-Z]?)\]", row
                         )
                     if not match:
+                        match = re.match(r"^ {2,5}([\d]{4})\s{2}(.*)", row)
+                        if match:
+                            element_code = match.group(1).strip()
+                            element_title = match.group(2).strip()
+                            i += 1
+                            continue
+
                         match = re.match(r"^(.{5})([\d]{4}\s{2})(.*)", row)
                         if not match:
                             self.warnings.append(
@@ -172,9 +179,27 @@ class EDEDParser(UntidBaseParser):
 
                 # Parse representation
                 if element_type == "":
-                    element_type, is_range, element_length = self.parse_repr_line(row)
-                    i += 1
-                    continue
+                    if "Repr: " in row:
+                        element_type, is_range, element_length = self.parse_repr_line(
+                            row
+                        )
+                    elif "Desc: " in row:
+                        # Skip if it's a description and we haven't found a representation yet
+                        # Some files have Desc and Repr swapped or missing Repr
+                        pass
+                    else:
+                        element_type, is_range, element_length = self.parse_repr_line(
+                            row
+                        )
+
+                    if not element_type and "Desc: " not in row:
+                        self.warnings.append(
+                            f"Could not parse representation in {element_code} "
+                            f"element, line {i}: '{row}'"
+                        )
+                    if element_type:
+                        i += 1
+                        continue
 
                 # Parse note
                 if element_note == "":
