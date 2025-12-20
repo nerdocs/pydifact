@@ -224,7 +224,7 @@ class Segment:
                     if len(self.elements) > len(xml_elements):
                         raise ValidationError(
                             f"{self.tag}: Too many elements. Expected {len(xml_elements)}, "
-                            f"got {len(self.elements)}"
+                            f"got {len(self.elements)}: {self.elements}"
                         )
 
                     for index, xml_element in enumerate(xml_elements):
@@ -245,11 +245,11 @@ class Segment:
 
                         if element:
                             if xml_element.tag == "composite_data_element":
-                                if not isinstance(element, list):
+                                if not isinstance(element, (list, str)):
                                     raise ValidationError(
                                         f"{self.tag} Segment, pos. {index}: "
                                         f"Element {xml_element.get('id')} must be a "
-                                        f"composite data element, "
+                                        f"composite data element (list or str), "
                                         f"but got '{type(element).__name__}': '{element}'"
                                     )
                                 # TODO: validate internal structure of composite
