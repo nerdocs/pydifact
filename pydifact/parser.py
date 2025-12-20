@@ -52,22 +52,21 @@ class Parser:
         self,
         factory: SegmentFactory | None = None,
         characters: Characters | None = None,
-        version_override: str = "",
+        version: str = "",
         directory: str = "",
         syntax_identifier: str = "",
     ) -> None:
         """Initializes parser with segment factory and control characters"""
         self.factory = factory or SegmentFactory()
         self.characters = characters or Characters()
-        self.version = version_override or EDI_DEFAULT_VERSION
-        self.directory = directory or EDI_DEFAULT_DIRECTORY
-        self.syntax_identifier = syntax_identifier or EDI_DEFAULT_SYNTAX
+        self.version = version
+        self.directory = directory
+        self.syntax_identifier = syntax_identifier
 
     def parse(
         self,
         message: str,
         characters: Characters | None = None,
-        directory: str = EDI_DEFAULT_DIRECTORY,
     ) -> Iterator[Segment]:
         """Parse the message into a list of segments.
 
@@ -121,7 +120,9 @@ class Parser:
         )
 
         for raw_segment in raw_segments:
-            yield self.convert_raw_segment_to_segment(raw_segment, directory=directory)
+            yield self.convert_raw_segment_to_segment(
+                raw_segment, version=self.version, directory=self.directory
+            )
 
     @staticmethod
     def get_control_characters(
@@ -291,5 +292,4 @@ class Parser:
             *raw_segment,
             version=self.version,
             directory=directory,
-            syntax_identifier=self.syntax_identifier or EDI_DEFAULT_SYNTAX,
         )
