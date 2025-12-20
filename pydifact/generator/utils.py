@@ -25,7 +25,11 @@ def download_file(url: str, output_file_path: os.PathLike | str) -> bool:
 
     if url.startswith("internal://"):
         internal_path = url[11:]  # remove "internal://" prefix
-        os.symlink(Path(__file__).parent / "internal" / internal_path, output_file_path)
+        if not os.path.exists(output_file_path):
+            os.symlink(
+                Path(__file__).parent / "internal" / internal_path,
+                output_file_path,
+            )
         return False
 
     response = requests.get(url, stream=True)
