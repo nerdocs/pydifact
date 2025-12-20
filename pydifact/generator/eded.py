@@ -164,7 +164,7 @@ class EDEDParser(UntidBaseParser):
 
                 # Parse description
                 if element_description == "":
-                    match = re.match(r"(?:.{1}\s{4})?Desc:\s(.*)", row)
+                    match = re.match(r"^[*+ |X]*Desc:\s(.*)", row)
                     if match:
                         element_description = match.group(1).strip()
                         i += 1
