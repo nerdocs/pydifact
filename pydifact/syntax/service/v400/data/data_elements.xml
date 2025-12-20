@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="utf-8"?>
+<data_elements>
+  <data_element id="0001" name="SyntaxIdentifier" usage="" desc="Coded identification of the agency controlling the syntax, and of the character repertoire used in an interchange." type="a" maxlength="4"/>
+  <data_element id="0002" name="SyntaxVersionNumber" usage="" desc="Version number of the syntax." type="an" maxlength="1"/>
+  <data_element id="0004" name="InterchangeSenderIdentification" usage="" desc="Name or coded identification of the sender of the interchange." type="an" maxlength="35"/>
+  <data_element id="0007" name="IdentificationCodeQualifier" usage="" desc="Qualifier referring to the identification code." type="an" maxlength="4"/>
+  <data_element id="0008" name="InterchangeSenderInternalIdentification" usage="" desc="Identification (for example, a division, branch or computer system/process) specified by the sender of interchange, to be included if agreed, by the recipient in response interchanges, to facilitate internal routing." type="an" maxlength="35"/>
+  <data_element id="0010" name="InterchangeRecipientIdentification" usage="" desc="Name or coded identification of the recipient of the interchange." type="an" maxlength="35"/>
+  <data_element id="0014" name="InterchangeRecipientInternalIdentification" usage="" desc="Identification (for example, a division, branch or computer system/process) specified by the recipient of interchange, to be included if agreed, by the sender in response interchanges, to facilitate internal routing." type="an" maxlength="35"/>
+  <data_element id="0017" name="Date" usage="" desc="Local date when an interchange or a group was prepared." type="n" maxlength="8"/>
+  <data_element id="0019" name="Time" usage="" desc="Local time of day when an interchange or a group was prepared." type="n" maxlength="4"/>
+  <data_element id="0020" name="InterchangeControlReference" usage="" desc="Unique reference assigned by the sender to an interchange." type="an" maxlength="14"/>
+  <data_element id="0022" name="RecipientReferenceOrPassword" usage="" desc="Reference or password to the recipient's system or to a third party network as specified in the partners' interchange agreement." type="an" maxlength="14"/>
+  <data_element id="0025" name="RecipientReferenceOrPasswordQualifier" usage="" desc="Qualifier for the recipient's reference or password." type="an" maxlength="2"/>
+  <data_element id="0026" name="ApplicationReference" usage="" desc="Identification of the application area assigned by the sender, to which the messages in the interchange relate e.g. the message type, if all the messages in the interchange are of the same type." type="an" maxlength="14"/>
+  <data_element id="0029" name="ProcessingPriorityCode" usage="" desc="Code determined by the sender requesting processing priority for the interchange." type="a" maxlength="1"/>
+  <data_element id="0031" name="AcknowledgementRequest" usage="" desc="Code requesting acknowledgement for the interchange." type="n" maxlength="1"/>
+  <data_element id="0032" name="InterchangeAgreementIdentifier" usage="" desc="Identification by name or code of the type of agreement under which the interchange takes place." type="an" maxlength="35"/>
+  <data_element id="0035" name="TestIndicator" usage="" desc="Indication that the structural level containing the test indicator is a test." type="n" maxlength="1"/>
+  <data_element id="0036" name="InterchangeControlCount" usage="" desc="The number of messages and packages in an interchange or, if used, the number of groups in an interchange." type="n" maxlength="6"/>
+  <data_element id="0040" name="ApplicationSenderIdentification" usage="" desc="Name or coded identification of the application sender (for example, a division, branch or computer system/process)." type="an" maxlength="35"/>
+  <data_element id="0042" name="InterchangeSenderInternalSubidentification" usage="" desc="Sub-level of sender internal identification, when further sub-level identification is required." type="an" maxlength="35"/>
+  <data_element id="0044" name="ApplicationRecipientIdentification" usage="" desc="Name or coded identification of the application recipient (for example, a division, branch or computer system/process)." type="an" maxlength="35"/>
+  <data_element id="0046" name="InterchangeRecipientInternalSubidentification" usage="" desc="Sub-level of recipient internal identification, when further sub-level identification is required." type="an" maxlength="35"/>
+  <data_element id="0048" name="GroupReferenceNumber" usage="" desc="Unique reference number for the group within an interchange." type="an" maxlength="14"/>
+  <data_element id="0051" name="ControllingAgencyCoded" usage="" desc="Code identifying a controlling agency." type="an" maxlength="3"/>
+  <data_element id="0052" name="MessageVersionNumber" usage="" desc="Version number of a message type." type="an" maxlength="3"/>
+  <data_element id="0054" name="MessageReleaseNumber" usage="" desc="Release number within the current message version number." type="an" maxlength="3"/>
+  <data_element id="0057" name="AssociationAssignedCode" usage="" desc="Code, assigned by the association responsible for the design and maintenance of the message type concerned, which further identifies the message." type="an" maxlength="6"/>
+  <data_element id="0058" name="ApplicationPassword" usage="" desc="Password to the recipient's division, department or sectional application system/process." type="an" maxlength="14"/>
+  <data_element id="0060" name="GroupControlCount" usage="" desc="The number of messages and packages in the group." type="n" maxlength="6"/>
+  <data_element id="0062" name="MessageReferenceNumber" usage="" desc="Unique message reference assigned by the sender." type="an" maxlength="14"/>
+  <data_element id="0065" name="MessageType" usage="" desc="Code identifying a type of message and assigned by its controlling agency." type="an" maxlength="6"/>
+  <data_element id="0068" name="CommonAccessReference" usage="" desc="Reference serving as a key to relate all subsequent transfers of data to the same business case or file." type="an" maxlength="35"/>
+  <data_element id="0070" name="SequenceOfTransfers" usage="" desc="Number assigned by the sender indicating the transfer sequence of a message related to the same topic. The message could be an addition or a change to an earlier transfer related to the same topic." type="n" maxlength="2"/>
+  <data_element id="0073" name="FirstAndLastTransfer" usage="" desc="Indication used for the first and last message in a sequence of messages related to the same topic." type="a" maxlength="1"/>
+  <data_element id="0074" name="NumberOfSegmentsInAMessage" usage="" desc="The number of segments in a message body, plus the message header segment and message trailer segment." type="n" maxlength="10"/>
+  <data_element id="0080" name="ServiceCodeListDirectoryVersionNumber" usage="" desc="Version number of the service code list directory." type="an" maxlength="6"/>
+  <data_element id="0081" name="SectionIdentification" usage="" desc="Identification of the separation of sections of a message." type="a" maxlength="1"/>
+  <data_element id="0083" name="ActionCoded" usage="" desc="A code indicating acknowledgement, or rejection (the action taken) of a subject interchange, or part of the subject interchange, or indication of interchange receipt." type="an" maxlength="3"/>
+  <data_element id="0085" name="SyntaxErrorCoded" usage="" desc="A code indicating the error detected." type="an" maxlength="3"/>
+  <data_element id="0087" name="AnticollisionSegmentGroupIdentification" usage="" desc="To identify uniquely an anti-collision segment group in a message." type="an" maxlength="4"/>
+  <data_element id="0096" name="SegmentPositionInMessageBody" usage="" desc="The numerical count position of a specific segment that is within the actual received message body. The numbering starts with, and includes, the UNH segment as segment number 1. To identify a segment that contains an error, this is the numerical count position of that segment. To report that a segment is missing, this is the numerical count position of the last segment that was processed before the position where the missing segment was expected to be. A missing segment group is denoted by identifying the first segment in the group as missing." type="n" maxlength="6"/>
+  <data_element id="0098" name="ErroneousDataElementPositionInSegment" usage="" desc="The numerical count position of the stand-alone or composite data element in error. The segment code and each following stand-alone or composite data element defined in the segment description shall cause the count to be incremented. The segment tag has position number 1." type="n" maxlength="3"/>
+  <data_element id="0104" name="ErroneousComponentDataElementPosition" usage="" desc="The numerical count position of the component data element in error. Each component data element position defined in the composite data element description shall cause the count to be incremented. The count starts at 1." type="n" maxlength="3"/>
+  <data_element id="0110" name="CodeListDirectoryVersionNumber" usage="" desc="Version number of the code list directory." type="an" maxlength="6"/>
+  <data_element id="0113" name="MessageTypeSubfunctionIdentification" usage="" desc="Code identifying a sub-function of a message type." type="an" maxlength="6"/>
+  <data_element id="0115" name="MessageSubsetIdentification" usage="" desc="Coded identification of a message subset, assigned by its controlling agency." type="an" maxlength="14"/>
+  <data_element id="0116" name="MessageSubsetVersionNumber" usage="" desc="Version number of the message subset." type="an" maxlength="3"/>
+  <data_element id="0118" name="MessageSubsetReleaseNumber" usage="" desc="Release number within the message subset version number." type="an" maxlength="3"/>
+  <data_element id="0121" name="MessageImplementationGuidelineIdentification" usage="" desc="Coded identification of the message implementation guideline, assigned by its controlling agency." type="an" maxlength="14"/>
+  <data_element id="0122" name="MessageImplementationGuidelineVersionNumber" usage="" desc="Version number of the message implementation guideline." type="an" maxlength="3"/>
+  <data_element id="0124" name="MessageImplementationGuidelineReleaseNumber" usage="" desc="Release number within the message implementation guideline version number." type="an" maxlength="3"/>
+  <data_element id="0127" name="ScenarioIdentification" usage="" desc="Code identifying scenario." type="an" maxlength="14"/>
+  <data_element id="0128" name="ScenarioVersionNumber" usage="" desc="Version number of a scenario." type="an" maxlength="3"/>
+  <data_element id="0130" name="ScenarioReleaseNumber" usage="" desc="Release number within the scenario version number." type="an" maxlength="3"/>
+  <data_element id="0133" name="CharacterEncodingCoded" usage="" desc="Coded identification of the character encoding used in the interchange." type="an" maxlength="3"/>
+  <data_element id="0135" name="ServiceSegmentTagCoded" usage="" desc="Code identifying a service segment." type="an" maxlength="3"/>
+  <data_element id="0136" name="ErroneousDataElementOccurrence" usage="" desc="The numerical occurrence of the repeating stand-alone or composite data element in error. Each occurrence (as indicated by the repetition separator) shall cause the count to be incremented. The count starts at 1." type="n" maxlength="6"/>
+  <data_element id="0138" name="SecuritySegmentPosition" usage="" desc="The numerical count position of a specific security segment that is within the actual received security header/trailer segment group pair, identified by its security reference number. The numbering starts with, and includes, the USH segment as segment number 1. To identify a security segment that contains an error, this is the numerical count position of that security segment. To report that a security segment is missing, this is the numerical count position of the last security segment that was processed before the position where the missing security segment was expected to be. A missing security segment group is denoted by identifying the first segment in the security segment group as missing." type="n" maxlength="6"/>
+  <data_element id="0300" name="InitiatorControlReference" usage="" desc="A reference assigned by the dialogue initiator." type="an" maxlength="35"/>
+  <data_element id="0303" name="InitiatorReferenceIdentification" usage="" desc="Organisation code or name assigned by the party that initiated the transaction or dialogue." type="an" maxlength="35"/>
+  <data_element id="0304" name="ResponderControlReference" usage="" desc="A reference assigned by the dialogue responder." type="an" maxlength="35"/>
+  <data_element id="0306" name="TransactionControlReference" usage="" desc="A reference assigned by the transaction initiator." type="an" maxlength="35"/>
+  <data_element id="0311" name="DialogueIdentification" usage="" desc="Code identifying a dialogue." type="an" maxlength="14"/>
+  <data_element id="0314" name="EventTime" usage="" desc="Time of event." type="an" maxlength="15"/>
+  <data_element id="0320" name="SenderSequenceNumber" usage="" desc="Identification of the sequence number of the message or package within the sender interchange." type="n" maxlength="6"/>
+  <data_element id="0323" name="TransferPositionCoded" usage="" desc="Indication of the position of a transfer." type="a" maxlength="1"/>
+  <data_element id="0325" name="DuplicateIndicator" usage="" desc="Indication that the structure is a duplicate of a previously sent structure." type="a" maxlength="1"/>
+  <data_element id="0331" name="ReportFunctionCoded" usage="" desc="Coded value identifying type of status or error report." type="an" maxlength="3"/>
+  <data_element id="0332" name="ReportReasonText" usage="" desc="Textual explanation of the reason for the status or error report." type="an" maxlength="70"/>
+  <data_element id="0333" name="ReportReasonCoded" usage="" desc="Code identifying the reason for the status or error report." type="an" maxlength="3"/>
+  <data_element id="0335" name="ReportLanguageCoded" usage="" desc="Coded identification of language." type="an" maxlength="3"/>
+  <data_element id="0336" name="TimeOffset" usage="" desc="UTC (Universal Co-ordinated Time) offset from event time." type="n" maxlength="4"/>
+  <data_element id="0338" name="EventDate" usage="" desc="Date of event." type="n" maxlength="8"/>
+  <data_element id="0340" name="InteractiveMessageReferenceNumber" usage="" desc="Unique interactive message reference assigned by the sender." type="an" maxlength="35"/>
+  <data_element id="0342" name="DialogueVersionNumber" usage="" desc="Version number of a dialogue." type="an" maxlength="3"/>
+  <data_element id="0344" name="DialogueReleaseNumber" usage="" desc="Release number of a dialogue." type="an" maxlength="3"/>
+  <data_element id="0501" name="SecurityServiceCoded" usage="" desc="Specification of the security service applied." type="an" maxlength="3"/>
+  <data_element id="0503" name="ResponseTypeCoded" usage="" desc="Specification of the type of response expected from the recipient." type="an" maxlength="3"/>
+  <data_element id="0505" name="FilterFunctionCoded" usage="" desc="Identification of the filtering function used to reversibly map any bit pattern on to a restricted character set." type="an" maxlength="3"/>
+  <data_element id="0507" name="OriginalCharacterSetEncodingCoded" usage="" desc="Identification of the character set in which the secured EDIFACT structure was encoded when security mechanisms were applied." type="an" maxlength="3"/>
+  <data_element id="0509" name="RoleOfSecurityProviderCoded" usage="" desc="Identification of the role of the security provider in relation to the secured item." type="an" maxlength="3"/>
+  <data_element id="0511" name="SecurityPartyIdentification" usage="" desc="Identification of a party involved in the security process, according to a defined registry of security parties." type="an" maxlength="512"/>
+  <data_element id="0513" name="SecurityPartyCodeListQualifier" usage="" desc="Identification of the type of identification used to register the security parties." type="an" maxlength="3"/>
+  <data_element id="0515" name="SecurityPartyCodeListResponsibleAgencyCoded" usage="" desc="Identification of the agency in charge of registration of the security parties." type="an" maxlength="3"/>
+  <data_element id="0517" name="DateAndTimeQualifier" usage="" desc="Specification of the type of date and time." type="an" maxlength="3"/>
+  <data_element id="0518" name="EncryptionReferenceNumber" usage="" desc="Reference number to the encrypted EDIFACT structure." type="an" maxlength="35"/>
+  <data_element id="0520" name="SecuritySequenceNumber" usage="" desc="Sequence number assigned to the EDIFACT structure to which security is applied." type="an" maxlength="35"/>
+  <data_element id="0523" name="UseOfAlgorithmCoded" usage="" desc="Specification of the usage made of the algorithm." type="an" maxlength="3"/>
+  <data_element id="0525" name="CryptographicModeOfOperationCoded" usage="" desc="Specification of the mode of operation used for the algorithm." type="an" maxlength="3"/>
+  <data_element id="0527" name="AlgorithmCoded" usage="" desc="Identification of the algorithm." type="an" maxlength="3"/>
+  <data_element id="0529" name="AlgorithmCodeListIdentifier" usage="" desc="Specification of the code list used to identify the algorithm." type="an" maxlength="3"/>
+  <data_element id="0531" name="AlgorithmParameterQualifier" usage="" desc="Specification of the type of parameter value." type="an" maxlength="3"/>
+  <data_element id="0533" name="ModeOfOperationCodeListIdentifier" usage="" desc="Specification of the code list used to identify the cryptographic mode of operation." type="an" maxlength="3"/>
+  <data_element id="0534" name="SecurityReferenceNumber" usage="" desc="Unique reference number assigned by the security originator to a pair of security header and security trailer groups." type="an" maxlength="14"/>
+  <data_element id="0536" name="CertificateReference" usage="" desc="Identifies one certificate for a certification authority." type="an" maxlength="35"/>
+  <data_element id="0538" name="KeyName" usage="" desc="Name used to establish a key relationship between the parties." type="an" maxlength="35"/>
+  <data_element id="0541" name="ScopeOfSecurityApplicationCoded" usage="" desc="Specification of the scope of application of the security service defined in the security header." type="an" maxlength="3"/>
+  <data_element id="0543" name="CertificateOriginalCharacterSetRepertoireCoded" usage="" desc="Identification of the character set repertoire used to create the certificate it was signed." type="an" maxlength="3"/>
+  <data_element id="0545" name="CertificateSyntaxAndVersionCoded" usage="" desc="Coded identification of the syntax and version used to create the certificate." type="an" maxlength="3"/>
+  <data_element id="0546" name="UserAuthorisationLevel" usage="" desc="Specification of the authorisation level associated with the owner of the certificate." type="an" maxlength="35"/>
+  <data_element id="0548" name="ServiceCharacterForSignature" usage="" desc="Service character used when the signature was computed." type="an" maxlength="4"/>
+  <data_element id="0551" name="ServiceCharacterForSignatureQualifier" usage="" desc="Identification of the type of service character used when the signature was computed." type="an" maxlength="3"/>
+  <data_element id="0554" name="AlgorithmParameterValue" usage="" desc="Value of a parameter required by the algorithm." type="an" maxlength="512"/>
+  <data_element id="0556" name="LengthOfDataInOctetsOfBits" usage="" desc="A count of the data octets of bits." type="n" maxlength="18"/>
+  <data_element id="0558" name="ListParameter" usage="" desc="Specification of the list requested or delivered." type="an" maxlength="70"/>
+  <data_element id="0560" name="ValidationValue" usage="" desc="Security result corresponding to the security function specified." type="an" maxlength="512"/>
+  <data_element id="0563" name="ValidationValueQualifier" usage="" desc="Identification of the type of validation value." type="an" maxlength="3"/>
+  <data_element id="0565" name="MessageRelationCoded" usage="" desc="Relationship with another message, past or future." type="an" maxlength="3"/>
+  <data_element id="0567" name="SecurityStatusCoded" usage="" desc="Identification of the security element (key or certificate, for instance) status." type="an" maxlength="3"/>
+  <data_element id="0569" name="RevocationReasonCoded" usage="" desc="Identification of the reason why the certificate has been revoked." type="an" maxlength="3"/>
+  <data_element id="0571" name="SecurityErrorCoded" usage="" desc="Identifies the security error causing the rejection of the EDIFACT structure." type="an" maxlength="3"/>
+  <data_element id="0572" name="CertificateSequenceNumber" usage="" desc="Specification of a certificate's position within a certification path." type="n" maxlength="4"/>
+  <data_element id="0575" name="ListParameterQualifier" usage="" desc="Specification of the type of list parameter." type="an" maxlength="3"/>
+  <data_element id="0577" name="SecurityPartyQualifier" usage="" desc="Identification of the role of the security party." type="an" maxlength="3"/>
+  <data_element id="0579" name="KeyManagementFunctionQualifier" usage="" desc="Specification of the type of key management function." type="an" maxlength="3"/>
+  <data_element id="0582" name="NumberOfPaddingBytes" usage="" desc="Count of the number of padding bytes." type="n" maxlength="2"/>
+  <data_element id="0586" name="SecurityPartyName" usage="" desc="Name of the security party." type="an" maxlength="35"/>
+  <data_element id="0588" name="NumberOfSecuritySegments" usage="" desc="The number of security segments in a security header/trailer group pair, plus the USD and USU segments where the security header/trailer group pair is used for encryption." type="n" maxlength="10"/>
+  <data_element id="0591" name="PaddingMechanismCoded" usage="" desc="Padding mechanism or padding scheme applied." type="an" maxlength="3"/>
+  <data_element id="0601" name="PaddingMechanismCodeListIdentifier" usage="" desc="Specification of the code list used to identify the padding mechanism or padding scheme." type="an" maxlength="3"/>
+  <data_element id="0800" name="PackageReferenceNumber" usage="" desc="Unique package reference number assigned by the sender." type="an" maxlength="35"/>
+  <data_element id="0802" name="ReferenceIdentificationNumber" usage="" desc="Reference number to identify a message, message group and/or interchange, which relates to the object." type="an" maxlength="35"/>
+  <data_element id="0805" name="ObjectTypeQualifier" usage="" desc="Qualifier referring to the type of object." type="an" maxlength="3"/>
+  <data_element id="0808" name="ObjectTypeAttribute" usage="" desc="The attribute applying to the object type." type="an" maxlength="256"/>
+  <data_element id="0809" name="ObjectTypeAttributeIdentification" usage="" desc="Coded identification of the attribute applying to the object type." type="an" maxlength="256"/>
+  <data_element id="0810" name="LengthOfObjectInOctetsOfBits" usage="" desc="Count of the number of octets of bits in the object." type="n" maxlength="18"/>
+  <data_element id="0813" name="ReferenceQualifier" usage="" desc="Code giving specific meaning to a reference identification number." type="an" maxlength="3"/>
+  <data_element id="0814" name="NumberOfSegmentsBeforeObject" usage="" desc="A count of the number of segments appearing between the UNO segment and the start of the object." type="n" maxlength="3"/>
+</data_elements>

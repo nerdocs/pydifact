@@ -1,0 +1,446 @@
+<?xml version="1.0" encoding="utf-8"?>
+<data_elements>
+  <data_element id="0001" name="SyntaxIdentifier" desc="Coded identification of the agency controlling a syntax and syntax level used in an interchange." type="a" maxlength="4">
+    <code id="UNOA" title="UN/ECE level A" desc="As defined in the basic code table of ISO 646 with the exceptions of lower case letters, alternative graphic character allocations and national or application- oriented graphic character allocations."/>
+    <code id="UNOB" title="UN/ECE level B" desc="As defined in the basic code table of ISO 646 with the exceptions of alternative graphic character allocations and national or application-oriented graphic character allocations."/>
+    <code id="UNOC" title="UN/ECE level C" desc="As defined in ISO/IEC 8859-1 : Information technology - Part 1: Latin alphabet No. 1."/>
+    <code id="UNOD" title="UN/ECE level D" desc="As defined in ISO/IEC 8859-2 : Information technology - Part 2: Latin alphabet No. 2."/>
+    <code id="UNOE" title="UN/ECE level E" desc="As defined in ISO/IEC 8859-5 : Information technology - Part 5: Latin/Cyrillic alphabet."/>
+    <code id="UNOF" title="UN/ECE level F" desc="As defined in ISO 8859-7 : Information processing - Part 7: Latin/Greek alphabet."/>
+  </data_element>
+  <data_element id="0002" name="SyntaxVersionNumber" desc="Version number of the syntax." type="n" maxlength="1">
+    <code id="1" title="Version 1" desc="ISO 9735:1988."/>
+    <code id="2" title="Version 2" desc="ISO 9735:1990."/>
+    <code id="3" title="Version 3" desc="ISO 9735 Amendment 1:1992."/>
+  </data_element>
+  <data_element id="0007" name="PartnerIdentificationCodeQualifier" desc="Qualifier referring to the source of codes for the identifiers of interchanging partners." type="an" maxlength="4">
+    <code id="1" title="DUNS (Data Universal Numbering System)" desc="Partner identification code assigned by Dun &amp; Bradstreet."/>
+    <code id="4" title="IATA (International Air Transport Association)" desc="Partner identification code assigned by the International Air Transport Association."/>
+    <code id="5" title="INSEE (Institut National de la Statistique et des Etudes Economiques) - SIRET" desc="French national statistics institute. SIRET means Systeme Informatique du Repertoire des entreprises et de leurs ETablissements."/>
+    <code id="8" title="UCC Communications ID (Uniform Code Council Communications Identifier)" desc="The Uniform Code Council Communications Identifier is a ten digit code used to uniquely identify physical and logical locations."/>
+    <code id="9" title="DUNS (Data Universal Numbering System) with 4 digit suffix" desc="Partner identification code assigned by Dun &amp; Bradstreet with the 4 digit suffix."/>
+    <code id="12" title="Telephone number" desc="Partner identification code corresponds to the partner telephone number."/>
+    <code id="14" title="GS1" desc="Partner identification code assigned by GS1, an international organization of GS1 Member Organizations that manages the GS1 System."/>
+    <code id="18" title="AIAG (Automotive Industry Action Group)" desc="Partner identification code assigned by the Automotive Industry Action Group."/>
+    <code id="22" title="INSEE (Institut National de la Statistique et des Etudes Economiques) - SIREN" desc="French national statistics institute. SIREN means Systeme Informatique du Repertoire des ENtreprises (et de leurs etablissements)."/>
+    <code id="30" title="ISO 6523: Organization identification" desc="Partner identification code specified in ISO 6523 (Structures for the identification of organizations)."/>
+    <code id="31" title="DIN (Deutsches Institut fuer Normung)" desc="German standardization institute."/>
+    <code id="33" title="BfA (Bundesversicherungsanstalt fuer Angestellte)" desc="German social security association."/>
+    <code id="34" title="National Statistical Agency" desc="Partner identification code assigned by a national statistical agency."/>
+    <code id="51" title="GEIS (General Electric Information Services)" desc="Partner identification code assigned by General Electric Information Services."/>
+    <code id="52" title="INS (IBM Network Services)" desc="Partner identification code assigned by IBM Network Services."/>
+    <code id="53" title="Datenzentrale des Einzelhandels" desc="German data centre for retail trade."/>
+    <code id="54" title="Bundesverband der Deutschen Baustoffhaendler" desc="German building material trade association."/>
+    <code id="55" title="Bank identifier code" desc="Partner identification code corresponds to the partner bank identification code."/>
+    <code id="57" title="KTNet (Korea Trade Network Services)" desc="Partner identification code assigned by Korea Trade Network Services."/>
+    <code id="58" title="UPU (Universal Postal Union)" desc="Partner identification code assigned by the Universal Postal Union."/>
+    <code id="59" title="ODETTE (Organization for Data Exchange through Tele- Transmission in Europe)" desc="European automotive industry project."/>
+    <code id="61" title="SCAC (Standard Carrier Alpha Code)" desc="Directory of standard multimodal carriers and tariff agent codes. The SCAC lists and codes transportation companies."/>
+    <code id="63" title="ECA (Electronic Commerce Australia)" desc="Australian association for electronic commerce."/>
+    <code id="65" title="TELEBOX 400 (Deutsche Telekom)" desc="German telecommunications service."/>
+    <code id="80" title="NHS (National Health Service)" desc="United Kingdom National Health Service."/>
+    <code id="82" title="Statens Teleforvaltning" desc="Norwegian telecommunications regulatory authority (NTRA)."/>
+    <code id="84" title="Athens Chamber of Commerce" desc="Greek Chamber of Commerce."/>
+    <code id="85" title="Swiss Chamber of Commerce" desc="Swiss Chamber of Commerce."/>
+    <code id="86" title="US Council for International Business" desc="United States Council for International Business."/>
+    <code id="87" title="National Federation of Chambers of Commerce and Industry" desc="Belgium National Federation of Chambers of Commerce and Industry."/>
+    <code id="89" title="Association of British Chambers of Commerce" desc="Association of British Chambers of Commerce."/>
+    <code id="90" title="SITA (Societe Internationale de Telecommunications Aeronautiques)" desc="SITA (Societe Internationale de Telecommunications Aeronautiques)."/>
+    <code id="91" title="Assigned by seller or seller's agent" desc="Partner identification code assigned by the seller or seller's agent."/>
+    <code id="92" title="Assigned by buyer or buyer's agent" desc="Partner identification code assigned by the buyer or buyer's agent."/>
+    <code id="103" title="TW, Trade-van" desc="Trade-van is an EDI VAN service center for customs, transport, and insurance in national and international trade."/>
+    <code id="128" title="CH, BCNR (Swiss Clearing Bank Number)" desc="Code for the identification of a Swiss clearing bank as a sender and/or receiver of an electronic message."/>
+    <code id="129" title="CH, BPI (Swiss Business Partner Identification)" desc="Code for the identification of a corporate or a Swiss non-clearing bank as a sender and/or receiver of an electronic message."/>
+    <code id="144" title="US, DoDAAC (Department of Defense Activity Address Code)" desc="Code assigned to uniquely identify all military units in the United States Department of Defense."/>
+    <code id="145" title="FR, DGCP (Direction Generale de la Comptabilite Publique)" desc="Code assigned by the French public accounting office."/>
+    <code id="146" title="FR, DGI (Direction Generale des Impots)" desc="Code assigned by the French taxation authority."/>
+    <code id="147" title="JP, JIPDEC/ECPC (Japan Information Processing Development Corporation / Electronic Commerce Promotion Center)" desc="Partner identification code which is registered with JIPDEC/ECPC."/>
+    <code id="148" title="ITU (International Telecommunications Union) Data Network Identification Code (DNIC)" desc="Data network identification code assigned by the ITU."/>
+    <code id="500" title="DE, BDEW (Bundesverband der Energie- und Wasserwirtschaft e.V.)" desc="The Federal Association of Energy and Water (BDEW) is the trade association of the German industries for natural gas, electricity supply, long-distance heating and water supply."/>
+    <code id="501" title="EASEE-gas (European Association for the Streamlining of Energy Exchange)" desc="Partner identification code which is registered with EASEE-gas."/>
+    <code id="502" title="DE, DVGW (Deutsche Vereinigung des Gas- und Wasserfaches e.V.)" desc="The DVGW is the German Technical and Scientific Association for Gas and Water."/>
+    <code id="Z01" title="Vehicle registration number" desc="Registration number of a vehicle assigned by a recognised authority."/>
+    <code id="ZZZ" title="Mutually defined" desc="Mutually defined between trading partners."/>
+  </data_element>
+  <data_element id="0013" name="ServiceSegmentTagCoded" desc="Code identifying a service segment." type="a" maxlength="3">
+    <code id="UCD" title="Data element error indication" desc="To identify an erroneous simple, composite or component data element, and to identify the nature of the error."/>
+    <code id="UCF" title="Functional group response" desc="To identify a functional group in the subject interchange and to indicate acknowledgement or rejection (action taken) of the UNG and UNE segments, and to identify any error related to these segments. Depending on the action code, it may also indicate the action taken on the messages within that functional group."/>
+    <code id="UCI" title="Interchange response" desc="To identify the subject interchange, to indicate interchange receipt, to indicate acknowledgement or rejection (action taken) of the UNA, UNB and UNZ segments, and to identify any error related to these segments. Depending on the action code, it may also indicate the action taken on the functional groups and messages within that interchange."/>
+    <code id="UCM" title="Message response" desc="To identify a message in the subject interchange, and to indicate that message's acknowledgement or rejection (action taken), and to identify any error related to the UNH and UNT segments."/>
+    <code id="UCS" title="Segment error indication" desc="To identify either a segment containing an error or a missing segment, and to identify any error related to the complete segment."/>
+    <code id="UNA" title="Service string advice" desc="To define the characters selected for use as delimiters and indicators in the rest of the interchange that follows."/>
+    <code id="UNB" title="Interchange header" desc="To start, identify and specify an interchange."/>
+    <code id="UNE" title="Functional group trailer" desc="To end and check the completeness of a functional group."/>
+    <code id="UNG" title="Functional group header" desc="To head, identify and specify a functional group."/>
+    <code id="UNH" title="Message header" desc="To head, identify and specify a message."/>
+    <code id="UNS" title="Section control" desc="To separate header, detail and summary sections of a message."/>
+    <code id="UNT" title="Message trailer" desc="To end and check the completeness of a message."/>
+    <code id="UNZ" title="Interchange trailer" desc="To end and check the completeness of an interchange."/>
+  </data_element>
+  <data_element id="0025" name="RecipientsReferenceOrPasswordQualifier" desc="Qualifier for the recipient's reference or password." type="an" maxlength="2">
+    <code id="AA" title="Reference" desc="Recipient's reference/password is a reference."/>
+    <code id="BB" title="Password" desc="Recipient's reference/password is a password."/>
+  </data_element>
+  <data_element id="0029" name="ProcessingPriorityCode" desc="Code determined by the sender requesting processing priority for the interchange." type="a" maxlength="1">
+    <code id="A" title="Highest priority" desc="Requested processing priority is the highest."/>
+  </data_element>
+  <data_element id="0031" name="AcknowledgementRequest" desc="Code determined by the sender for acknowledgement of the interchange." type="n" maxlength="1">
+    <code id="1" title="Requested" desc="Acknowledgement is requested."/>
+  </data_element>
+  <data_element id="0035" name="TestIndicator" desc="Indication that the interchange is a test." type="n" maxlength="1">
+    <code id="1" title="Interchange is a test" desc="Indicates that the interchange is a test."/>
+    <code id="5" title="Interchange is a service provider test" desc="Indicates that this interchange is a test with a service provider."/>
+  </data_element>
+  <data_element id="0051" name="ControllingAgency" desc="Code identifying the agency controlling the specification, maintenance and publication of the message type." type="an" maxlength="2">
+    <code id="AA" title="EDICONSTRUCT" desc="French construction project."/>
+    <code id="AB" title="DIN (Deutsches Institut fuer Normung)" desc="German standardization institute."/>
+    <code id="AC" title="ICS (International Chamber of Shipping)" desc="The International Chamber of Shipping."/>
+    <code id="AD" title="UPU (Union Postale Universelle)" desc="Universal Postal Union."/>
+    <code id="AE" title="United Kingdom ANA (Article Numbering Association)" desc="Identifies the Article Numbering Association of the United Kingdom."/>
+    <code id="AF" title="ANSI ASC X12 (American National Standard Institute Accredited Standards Committee X12)" desc="Identifies the United States electronic data interchange standards body."/>
+    <code id="AG" title="US DoD (United States Department of Defense)" desc="The United States Department of Defense is the entity controlling the message specification."/>
+    <code id="AH" title="US Federal Government" desc="The United States Federal Government is the entity controlling the message specification."/>
+    <code id="AI" title="EDIFICAS" desc="European EDI association for financial, informational, cost, accounting, auditing and social areas."/>
+    <code id="AJ" title="UN/ECE/TRANS" desc="United Nations Economic Commission for Europe (UN/ECE), Sustainable Transport Division (TRANS)"/>
+    <code id="CC" title="CCC (Customs Co-operation Council)" desc="The Customs Co-operation Council."/>
+    <code id="CE" title="CEFIC (Conseil Europeen des Federations de l'Industrie Chimique)" desc="EDI project for chemical industry."/>
+    <code id="EC" title="EDICON" desc="UK Construction project."/>
+    <code id="ED" title="EDIFICE (Electronic industries project)" desc="EDI Forum for companies with Interest in Computing and Electronics (EDI project for EDP/ADP sector)."/>
+    <code id="EE" title="EC + EFTA (European Communities and European Free Trade Association)" desc="The European Communities and the European Free Trade Association."/>
+    <code id="EN" title="GS1" desc="Partner identification code assigned by GS1, an international organization of GS1 Member Organizations that manages the GS1 System."/>
+    <code id="ER" title="UIC (International Union of railways)" desc="European railways."/>
+    <code id="EU" title="European Union" desc="The European Union."/>
+    <code id="EW" title="UN/EDIFACT Working Group (EWG)" desc="United Nations working group responsible for UN/EDIFACT (United Nations, Electronic Data Interchange for Administration, Commerce and Transport)."/>
+    <code id="EX" title="IECC (International Express Carriers Conference)" desc="The International Express Carriers Conference."/>
+    <code id="IA" title="IATA (International Air Transport Association)" desc="The International Air Transport Association."/>
+    <code id="KE" title="KEC (Korea EDIFACT Committee)" desc="The Korea EDIFACT Committee."/>
+    <code id="LI" title="LIMNET" desc="UK Insurance project."/>
+    <code id="OD" title="ODETTE (Organization for Data Exchange through Tele- Transmission in Europe)" desc="European automotive industry project."/>
+    <code id="RI" title="RINET (Reinsurance and Insurance Network)" desc="The Reinsurance and Insurance Network."/>
+    <code id="RT" title="UN/ECE/TRADE/WP.4/GE.1/EDIFACT Rapporteurs' Teams" desc="United Nations Economic UN Economic Commission for Europe (UN/ECE), Committee on the development of trade (TRADE), Working Party on facilitation of international trade procedures (WP.4), Group of Experts on data elements and automatic data interchange (GE.1), EDIFACT Rapporteurs' Teams."/>
+    <code id="UN" title="UN/CEFACT" desc="United Nations Centre for Trade Facilitation and Electronic Business (UN/CEFACT)."/>
+  </data_element>
+  <data_element id="0052" name="MessageVersionNumber" desc="Version number of a message type." type="an" maxlength="3">
+    <code id="1" title="Status 1 version" desc="Message approved and issued as a status 1 (trial) message. (Valid for directories published after March 1990 and prior to March 1993)."/>
+    <code id="2" title="Status 2 version" desc="Message approved and issued as a status 2 (formal recommendation) message. (Valid for directories published after March 1990 and prior to March 1993)."/>
+    <code id="88" title="1988 version" desc="Message approved and issued in the 1988 release of the UNTDID (United Nations Trade Data Interchange Directory) as a status 2 (formal recommendation) message."/>
+    <code id="89" title="1989 version" desc="Message approved and issued in the 1989 release of the UNTDID (United Nations Trade Data Interchange Directory) as a status 2 (formal recommendation) message."/>
+    <code id="90" title="1990 version" desc="Message approved and issued in the 1990 release of the UNTDID (United Nations Trade Data Interchange Directory) as a status 2 (formal recommendation) message."/>
+    <code id="D" title="Draft version/UN/EDIFACT Directory" desc="Message approved and issued as a draft message (Valid for directories published after March 1993 and prior to March 1997). Message approved as a standard message (Valid for directories published after March 1997)."/>
+    <code id="S" title="Standard version" desc="Message approved and issued as a standard message. (Valid for directories published after March 1993 and prior to March 1997)."/>
+  </data_element>
+  <data_element id="0054" name="MessageReleaseNumber" desc="Release number within the current message version number." type="an" maxlength="3">
+    <code id="1" title="First release" desc="Message approved and issued in the first release of the year of the UNTDID (United Nations Trade Data Interchange Directory). (Valid for directories published prior to March 1990)"/>
+    <code id="2" title="Second release" desc="Message approved and issued in the second release of the year of the UNTDID (United Nations Trade Data Interchange Directory) (Valid for directories published prior to March 1990)."/>
+    <code id="3" title="Third release, CONTRL message" desc="Third release of the service message type CONTRL. Approved and issued as document TRADE/WP.4/R.1186/Rev.1 (including Corr.1) for use with version 2 and 3 of the syntax."/>
+    <code id="902" title="Trial release 1990" desc="Message approved and issued in the 1990 status 1 (trial) release of the UNTDID (United Nations Trade Data Interchange Directory)."/>
+    <code id="911" title="Trial release 1991" desc="Message approved and issued in the 1991 status 1 (trial) release of the UNTDID (United Nations Trade Data Interchange Directory)."/>
+    <code id="912" title="Standard release 1991" desc="Message approved and issued in the 1991 status 2 (standard) release of the UNTDID (United Nations Trade Data Interchange Directory)."/>
+    <code id="921" title="Trial release 1992" desc="Message approved and issued in the 1992 status 1 (trial) release of the UNTDID (United Nations Trade Data Interchange Directory)."/>
+    <code id="932" title="Standard release 1993" desc="Message approved and issued in the 1993 status 2 (standard) release of the UNTDID (United Nations Trade Data Interchange Directory)."/>
+    <code id="00A" title="Release 2000 - A" desc="Message approved and issued in the first 2000 release of the UNTDID (United Nations Trade Data Interchange Directory)."/>
+    <code id="00B" title="Release 2000 - B" desc="Message approved and issued in the second 2000 release of the UNTDID (United Nations Trade Data Interchange Directory)."/>
+    <code id="01A" title="Release 2001 - A" desc="Message approved and issued in the first 2001 release of the UNTDID (United Nations Trade Data Interchange Directory)."/>
+    <code id="01B" title="Release 2001 - B" desc="Message approved and issued in the second 2001 release of the UNTDID (United Nations Trade Data Interchange Directory)."/>
+    <code id="01C" title="Release 2001 - C" desc="Message approved and issued in the third 2001 release of the UNTDID (United Nations Trade Data Interchange Directory)."/>
+    <code id="02A" title="Release 2002 - A" desc="Message approved and issued in the first 2002 release of the UNTDID (United Nations Trade Data Interchange Directory)."/>
+    <code id="02B" title="Release 2002 - B" desc="Message approved and issued in the second 2002 release of the UNTDID (United Nations Trade Data Interchange Directory)."/>
+    <code id="03A" title="Release 2003 - A" desc="Message approved and issued in the first 2003 release of the UNTDID (United Nations Trade Data Interchange Directory)."/>
+    <code id="03B" title="Release 2003 - B" desc="Message approved and issued in the second 2003 release of the UNTDID (United Nations Trade Data Interchange Directory)."/>
+    <code id="04A" title="Release 2004 - A" desc="Message approved and issued in the first 2004 release of the UNTDID (United Nations Trade Data Interchange Directory)."/>
+    <code id="04B" title="Release 2004 - B" desc="Message approved and issued in the second 2004 release of the UNTDID (United Nations Trade Data Interchange Directory)."/>
+    <code id="05A" title="Release 2005 - A" desc="Message approved and issued in the first 2005 release of the UNTDID (United Nations Trade Data Interchange Directory)."/>
+    <code id="05B" title="Release 2005 - B" desc="Message approved and issued in the second 2005 release of the UNTDID (United Nations Trade Data Interchange Directory)."/>
+    <code id="06A" title="Release 2006 - A" desc="Message approved and issued in the first 2006 release of the UNTDID (United Nations Trade Data Interchange Directory)."/>
+    <code id="06B" title="Release 2006 - B" desc="Message approved and issued in the second 2006 release of the UNTDID (United Nations Trade Data Interchange Directory)."/>
+    <code id="07A" title="Release 2007 - A" desc="Message approved and issued in the first 2007 release of the UNTDID (United Nations Trade Data Interchange Directory)."/>
+    <code id="07B" title="Release 2007 - B" desc="Message approved and issued in the second 2007 release of the UNTDID (United Nations Trade Data Interchange Directory)."/>
+    <code id="08A" title="Release 2008 - A" desc="Message approved and issued in the first 2008 release of the UNTDID (United Nations Trade Data Interchange Directory)."/>
+    <code id="08B" title="Release 2008 - B" desc="Message approved and issued in the second 2008 release of the UNTDID (United Nations Trade Data Interchange Directory)."/>
+    <code id="09A" title="Release 2009 - A" desc="Message approved and issued in the first 2009 release of the UNTDID (United Nations Trade Data Interchange Directory)."/>
+    <code id="09B" title="Release 2009 - B" desc="Message approved and issued in the second 2009 release of the UNTDID (United Nations Trade Data Interchange Directory)."/>
+    <code id="10A" title="Release 2010 - A" desc="Message approved and issued in the first 2010 release of the UNTDID (United Nations Trade Data Interchange Directory)."/>
+    <code id="10B" title="Release 2010 - B" desc="Message approved and issued in the second 2010 release of the UNTDID (United Nations Trade Data Interchange Directory)."/>
+    <code id="11A" title="Release 2011 - A" desc="Message approved and issued in the first 2011 release of the UNTDID (United Nations Trade Data Interchange Directory)."/>
+    <code id="11B" title="Release 2011 - B" desc="Message approved and issued in the second 2011 release of the UNTDID (United Nations Trade Data Interchange Directory)."/>
+    <code id="12A" title="Release 2012 - A" desc="Message approved and issued in the first 2012 release of the UNTDID (United Nations Trade Data Interchange Directory)."/>
+    <code id="12B" title="Release 2012 - B" desc="Message approved and issued in the second 2012 release of the UNTDID (United Nations Trade Data Interchange Directory)."/>
+    <code id="13A" title="Release 2013 - A" desc="Message approved and issued in the first 2013 release of the UNTDID (United Nations Trade Data Interchange Directory)."/>
+    <code id="13B" title="Release 2013 - B" desc="Message approved and issued in the second 2013 release of the UNTDID (United Nations Trade Data Interchange Directory)."/>
+    <code id="14A" title="Release 2014 - A" desc="Message approved and issued in the first 2014 release of the UNTDID (United Nations Trade Data Interchange Directory)."/>
+    <code id="14B" title="Release 2014 - B" desc="Message approved and issued in the second 2014 release of the UNTDID (United Nations Trade Data Interchange Directory)."/>
+    <code id="15A" title="Release 2015 - A" desc="Message approved and issued in the first 2015 release of the UNTDID (United Nations Trade Data Interchange Directory)."/>
+    <code id="15B" title="Release 2015 - B" desc="Message approved and issued in the second 2015 release of the UNTDID (United Nations Trade Data Interchange Directory)."/>
+    <code id="16A" title="Release 2016 - A" desc="Message approved and issued in the first 2016 release of the UNTDID (United Nations Trade Data Interchange Directory)."/>
+    <code id="16B" title="Release 2016 - B" desc="Message approved and issued in the second 2016 release of the UNTDID (United Nations Trade Data Interchange Directory)."/>
+    <code id="17A" title="Release 2017 - A" desc="Message approved and issued in the first 2017 release of the UNTDID (United Nations Trade Data Interchange Directory)."/>
+    <code id="17B" title="Release 2017 - B" desc="Message approved and issued in the second 2017 release of the UNTDID (United Nations Trade Data Interchange Directory)."/>
+    <code id="18A" title="Release 2018 - A" desc="Message approved and issued in the first 2018 release of the UNTDID (United Nations Trade Data Interchange Directory)."/>
+    <code id="18B" title="Release 2018 - B" desc="Message approved and issued in the second 2018 release of the UNTDID (United Nations Trade Data Interchange Directory)."/>
+    <code id="19A" title="Release 2019 - A" desc="Message approved and issued in the first 2019 release of the UNTDID (United Nations Trade Data Interchange Directory)."/>
+    <code id="19B" title="Release 2019 - B" desc="Message approved and issued in the second 2019 release of the UNTDID (United Nations Trade Data Interchange Directory)."/>
+    <code id="20A" title="Release 2020 - A" desc="Message approved and issued in the first 2020 release of the UNTDID (United Nations Trade Data Interchange Directory)."/>
+    <code id="20B" title="Release 2020 - B" desc="Message approved and issued in the second 2020 release of the UNTDID (United Nations Trade Data Interchange Directory)."/>
+    <code id="21A" title="Release 2021 - A" desc="Message approved and issued in the first 2021 release of the UNTDID (United Nations Trade Data Interchange Directory)."/>
+    <code id="93A" title="Release 1993 - A" desc="Message approved and issued in the 1993 release of the UNTDID (United Nations Trade Data Interchange Directory)."/>
+    <code id="94A" title="Release 1994 - A" desc="Message approved and issued in the first 1994 release of the UNTDID (United Nations Trade Data Interchange Directory)."/>
+    <code id="94B" title="Release 1994 - B" desc="Message approved and issued in the second 1994 release of the UNTDID (United Nations Trade Data Interchange Directory)."/>
+    <code id="95A" title="Release 1995 - A" desc="Message approved and issued in the first 1995 release of the UNTDID (United Nations Trade Data Interchange Directory)."/>
+    <code id="95B" title="Release 1995 - B" desc="Message approved and issued in the second 1995 release of the UNTDID (United Nations Trade Data Interchange Directory)."/>
+    <code id="96A" title="Release 1996 - A" desc="Message approved and issued in the first 1996 release of the UNTDID (United Nations Trade Data Interchange Directory)."/>
+    <code id="96B" title="Release 1996 - B" desc="Message approved and issued in the second 1996 release of the UNTDID (United Nations Trade Data Interchange Directory)."/>
+    <code id="97A" title="Release 1997 - A" desc="Message approved and issued in the first 1997 release of the UNTDID (United Nations Trade Data Interchange Directory)."/>
+    <code id="97B" title="Release 1997 - B" desc="Message approved and issued in the second 1997 release of the UNTDID (United Nations Trade Data Interchange Directory)."/>
+    <code id="98A" title="Release 1998 - A" desc="Message approved and issued in the first 1998 release of the UNTDID (United Nations Trade Data Interchange Directory)."/>
+    <code id="98B" title="Release 1998 - B" desc="Message approved and issued in the second 1998 release of the UNTDID (United Nations Trade Data Interchange Directory)."/>
+    <code id="99A" title="Release 1999 - A" desc="Message approved and issued in the first 1999 release of the UNTDID (United Nations Trade Data Interchange Directory)."/>
+    <code id="99B" title="Release 1999 - B" desc="Message approved and issued in the second 1999 release of the UNTDID (United Nations Trade Data Interchange Directory)."/>
+  </data_element>
+  <data_element id="0065" name="MessageTypeIdentifier" desc="Code identifying a type of message and assigned by its controlling agency." type="an" maxlength="6">
+    <code id="APERAK" title="Application error and acknowledgement message" desc="A code to identify the application error and acknowledgement message."/>
+    <code id="AUTHOR" title="Authorization message" desc="A code to identify the authorization message."/>
+    <code id="BALANC" title="Balance message" desc="A code to identify the balance message."/>
+    <code id="BANSTA" title="Banking status message" desc="A code to identify the banking status message."/>
+    <code id="BAPLIE" title="Bayplan/stowage plan occupied and empty locations message" desc="A code to identify the bayplan/stowage plan occupied and empty locations message."/>
+    <code id="BERMAN" title="Berth management message" desc="A code to identify the berth management message."/>
+    <code id="BMISRM" title="Bulk marine inspection summary report message" desc="A code to identify the bulk marine inspection summary report message."/>
+    <code id="BOPBNK" title="Bank transactions and portfolio transactions report message" desc="A code to identify the bank transactions and portfolio transactions report message."/>
+    <code id="BOPCUS" title="Balance of payment customer transaction report message" desc="A code to identify the balance of payment customer transaction report message."/>
+    <code id="BOPDIR" title="Direct balance of payment declaration message" desc="A code to identify the direct balance of payment declaration message."/>
+    <code id="BOPINF" title="Balance of payment information from customer message" desc="A code to identify the balance of payment information from customer message."/>
+    <code id="BUSCRD" title="Business credit report message" desc="A code to identify the business credit report message."/>
+    <code id="CALINF" title="Vessel call information message" desc="A code to identify the vessel call information message."/>
+    <code id="CASINT" title="Request for legal administration action in civil proceedings message" desc="A code to identify the request for legal administration action in civil proceedings message."/>
+    <code id="CASRES" title="Legal administration response in civil proceedings message" desc="A code to identify the legal administration response in civil proceedings message."/>
+    <code id="CHACCO" title="Chart of accounts message" desc="A code to identify the chart of accounts message."/>
+    <code id="CLASET" title="Classification information set message" desc="A code to identify the classification information set message."/>
+    <code id="CNTCND" title="Contractual conditions message" desc="A code to identify the contractual conditions message."/>
+    <code id="COACSU" title="Commercial account summary message" desc="A code to identify the commercial account summary message."/>
+    <code id="COARRI" title="Container discharge/loading report message" desc="A code to identify the container discharge/loading report message."/>
+    <code id="CODECO" title="Container gate-in/gate-out report message" desc="A code to identify the container gate-in/gate-out report message."/>
+    <code id="CODENO" title="Permit expiration/clearance ready notice message" desc="A code to identify the permit expiration/clearance ready notice message."/>
+    <code id="COEDOR" title="Container stock report message" desc="A code to identify the container stock report message."/>
+    <code id="COHAOR" title="Container special handling order message" desc="A code to identify the container special handling order message."/>
+    <code id="COLREQ" title="Request for a documentary collection message" desc="A code to identify the request for a documentary collection message."/>
+    <code id="COMDIS" title="Commercial dispute message" desc="A code to identify the commercial dispute message."/>
+    <code id="CONAPW" title="Advice on pending works message" desc="A code to identify the advice on pending works message."/>
+    <code id="CONDPV" title="Direct payment valuation message" desc="A code to identify the direct payment valuation message."/>
+    <code id="CONDRA" title="Drawing administration message" desc="A code to identify the drawing administration message."/>
+    <code id="CONDRO" title="Drawing organisation message" desc="A code to identify the drawing organisation message."/>
+    <code id="CONEST" title="Establishment of contract message" desc="A code to identify the establishment of contract message."/>
+    <code id="CONITT" title="Invitation to tender message" desc="A code to identify the invitation to tender message."/>
+    <code id="CONPVA" title="Payment valuation message" desc="A code to identify the payment valuation message."/>
+    <code id="CONQVA" title="Quantity valuation message" desc="A code to identify the quantity valuation message."/>
+    <code id="CONRPW" title="Response of pending works message" desc="A code to identify the response of pending works message."/>
+    <code id="CONTEN" title="Tender message" desc="A code to identify the tender message."/>
+    <code id="CONTRL" title="Syntax and service report message" desc="A code to identify the syntax and service report message."/>
+    <code id="CONWQD" title="Work item quantity determination message" desc="A code to identify the work item quantity determination message."/>
+    <code id="COPARN" title="Container announcement message" desc="A code to identify the container announcement message."/>
+    <code id="COPAYM" title="Contributions for payment" desc="A code to identify the contributions for payment."/>
+    <code id="COPINO" title="Container pre-notification message" desc="A code to identify the container pre-notification message."/>
+    <code id="COPRAR" title="Container discharge/loading order message" desc="A code to identify the container discharge/loading order message."/>
+    <code id="COREOR" title="Container release order message" desc="A code to identify the container release order message."/>
+    <code id="COSTCO" title="Container stuffing/stripping confirmation message" desc="A code to identify the container stuffing/stripping confirmation message."/>
+    <code id="COSTOR" title="Container stuffing/stripping order message" desc="A code to identify the container stuffing/stripping order message."/>
+    <code id="CREADV" title="Credit advice message" desc="A code to identify the credit advice message."/>
+    <code id="CREEXT" title="Extended credit advice message" desc="A code to identify the extended credit advice message."/>
+    <code id="CREMUL" title="Multiple credit advice message" desc="A code to identify the multiple credit advice message."/>
+    <code id="CUSCAR" title="Customs cargo report message" desc="A code to identify the customs cargo report message."/>
+    <code id="CUSDEC" title="Customs declaration message" desc="A code to identify the customs declaration message."/>
+    <code id="CUSEXP" title="Customs express consignment declaration message" desc="A code to identify the customs express consignment declaration message."/>
+    <code id="CUSPED" title="Periodic customs declaration message" desc="A code to identify the periodic customs declaration message."/>
+    <code id="CUSREP" title="Customs conveyance report message" desc="A code to identify the customs conveyance report message."/>
+    <code id="CUSRES" title="Customs response message" desc="A code to identify the customs response message."/>
+    <code id="DAPLOS" title="Data plot sheet message" desc="A code to identify the data plot sheet message."/>
+    <code id="DEBADV" title="Debit advice message" desc="A code to identify the debit advice message."/>
+    <code id="DEBMUL" title="Multiple debit advice message" desc="A code to identify the multiple debit advice message."/>
+    <code id="DEBREC" title="Debts recovery message" desc="A code to identify the debts recovery message."/>
+    <code id="DELFOR" title="Delivery schedule message" desc="A code to identify the delivery schedule message."/>
+    <code id="DELJIT" title="Delivery just in time message" desc="A code to identify the delivery just in time message."/>
+    <code id="DESADV" title="Despatch advice message" desc="A code to identify the despatch advice message."/>
+    <code id="DESTIM" title="Equipment damage and repair estimate message" desc="A code to identify the equipment damage and repair estimate message."/>
+    <code id="DGRECA" title="Dangerous goods recapitulation message" desc="A code to identify the dangerous goods recapitulation message."/>
+    <code id="DIRDEB" title="Direct debit message" desc="A code to identify the direct debit message."/>
+    <code id="DIRDEF" title="Directory definition message" desc="A code to identify the directory definition message."/>
+    <code id="DMRDEF" title="Data maintenance request definition message" desc="A code to identify the data maintenance request definition message."/>
+    <code id="DMSTAT" title="Data maintenance status report/query message" desc="A code to identify the data maintenance status report/query message."/>
+    <code id="DOCADV" title="Documentary credit advice message" desc="A code to identify the documentary credit advice message."/>
+    <code id="DOCAMA" title="Advice of an amendment of a documentary credit message" desc="A code to identify the advice of an amendment of a documentary credit message."/>
+    <code id="DOCAMI" title="Documentary credit amendment information message" desc="A code to identify the documentary credit amendment information message."/>
+    <code id="DOCAMR" title="Request for an amendment of a documentary credit message" desc="A code to identify the request for an amendment of a documentary credit message."/>
+    <code id="DOCAPP" title="Documentary credit application message" desc="A code to identify the documentary credit application message."/>
+    <code id="DOCARE" title="Response to an amendment of a documentary credit message" desc="A code to identify the response to an amendment of a documentary credit message."/>
+    <code id="DOCINF" title="Documentary credit issuance information message" desc="A code to identify the documentary credit issuance information message."/>
+    <code id="ENTREC" title="Accounting entries message" desc="A code to identify the accounting entries message."/>
+    <code id="FINCAN" title="Financial cancellation message" desc="A code to identify the financial cancellation message."/>
+    <code id="FINPAY" title="Multiple interbank funds transfer message" desc="A code to identify the multiple interbank funds transfer message."/>
+    <code id="FINSTA" title="Financial statement of an account message" desc="A code to identify the financial statement of an account message."/>
+    <code id="GENRAL" title="General purpose message" desc="A code to identify the general purpose message."/>
+    <code id="GESMES" title="Generic statistical message" desc="A code to identify the generic statistical message."/>
+    <code id="GOVCBR" title="Government cross border regulatory message" desc="A code to identify the government cross border regulatory message."/>
+    <code id="HANMOV" title="Cargo/goods handling and movement message" desc="A code to identify the cargo/goods handling and movement message."/>
+    <code id="ICASRP" title="Insurance claim assessment and reporting message" desc="A code to identify the insurance claim assessment and reporting message."/>
+    <code id="ICSOLI" title="Insurance claim solicitor�s instruction message" desc="A code to identify the insurance claim solicitor�s instruction message."/>
+    <code id="IFCSUM" title="Forwarding and consolidation summary message" desc="A code to identify the forwarding and consolidation summary message."/>
+    <code id="IFTCCA" title="Forwarding and transport shipment charge calculation message" desc="A code to identify the forwarding and transport shipment charge calculation message."/>
+    <code id="IFTDGN" title="Dangerous goods notification message" desc="A code to identify the dangerous goods notification message."/>
+    <code id="IFTFCC" title="International transport freight costs and other charges message" desc="A code to identify the international transport freight costs and other charges message."/>
+    <code id="IFTICL" title="Cargo insurance claims message" desc="A code to identify the cargo insurance claims message."/>
+    <code id="IFTMAN" title="Arrival notice message" desc="A code to identify the arrival notice message."/>
+    <code id="IFTMBC" title="Booking confirmation message" desc="A code to identify the booking confirmation message."/>
+    <code id="IFTMBF" title="Firm booking message" desc="A code to identify the firm booking message."/>
+    <code id="IFTMBP" title="Provisional booking message" desc="A code to identify the provisional booking message."/>
+    <code id="IFTMCA" title="Consignment advice message" desc="A code to identify the consignment advice message."/>
+    <code id="IFTMCS" title="Instruction contract status message" desc="A code to identify the instruction contract status message."/>
+    <code id="IFTMIN" title="Instruction message" desc="A code to identify the instruction message."/>
+    <code id="IFTRIN" title="Forwarding and transport rate information message" desc="A code to identify the forwarding and transport rate information message."/>
+    <code id="IFTSAI" title="Forwarding and transport schedule and availability information message" desc="A code to identify the forwarding and transport schedule and availability information message."/>
+    <code id="IFTSTA" title="International multimodal status report message" desc="A code to identify the international multimodal status report message."/>
+    <code id="IFTSTQ" title="International multimodal status request message" desc="A code to identify the international multimodal status request message."/>
+    <code id="IMPDEF" title="EDI implementation guide definition message" desc="A code to identify the EDI implementation guide definition message."/>
+    <code id="INFCON" title="Infrastructure condition message" desc="A code to identify the infrastructure condition message."/>
+    <code id="INFENT" title="Enterprise accounting information message" desc="A code to identify the enterprise accounting information message."/>
+    <code id="INSDES" title="Instruction to despatch message" desc="A code to identify the instruction to despatch message."/>
+    <code id="INSPRE" title="Insurance premium message" desc="A code to identify the insurance premium message."/>
+    <code id="INSREQ" title="Inspection request message" desc="A code to identify the inspection request message."/>
+    <code id="INSRPT" title="Inspection report message" desc="A code to identify the inspection report message."/>
+    <code id="INVOIC" title="Invoice message" desc="A code to identify the invoice message."/>
+    <code id="INVRPT" title="Inventory report message" desc="A code to identify the inventory report message."/>
+    <code id="IPPOAD" title="Insurance policy administration message" desc="A code to identify the insurance policy administration message."/>
+    <code id="IPPOMO" title="Motor insurance policy message" desc="A code to identify the motor insurance policy message."/>
+    <code id="ISENDS" title="Intermediary system enablement or disablement message" desc="A code to identify the intermediary system enablement or disablement message."/>
+    <code id="ITRRPT" title="In transit report detail message" desc="A code to identify the in transit report detail message."/>
+    <code id="JAPRES" title="Job application result message" desc="A code to identify the job application result message."/>
+    <code id="JINFDE" title="Job information demand message" desc="A code to identify the job information demand message."/>
+    <code id="JOBAPP" title="Job application proposal message" desc="A code to identify the job application proposal message."/>
+    <code id="JOBCON" title="Job order confirmation message" desc="A code to identify the job order confirmation message."/>
+    <code id="JOBMOD" title="Job order modification message" desc="A code to identify the job order modification message."/>
+    <code id="JOBOFF" title="Job order message" desc="A code to identify the job order message."/>
+    <code id="JUPREQ" title="Justified payment request message" desc="A code to identify the justified payment request message."/>
+    <code id="LEDGER" title="Ledger message" desc="A code to identify the ledger message."/>
+    <code id="LREACT" title="Life reinsurance activity message" desc="A code to identify the life reinsurance activity message."/>
+    <code id="LRECLM" title="Life reinsurance claims message" desc="A code to identify the life reinsurance claims message."/>
+    <code id="MEDPID" title="Person identification message" desc="A code to identify the person identification message."/>
+    <code id="MEDPRE" title="Medical prescription message" desc="A code to identify the medical prescription message."/>
+    <code id="MEDREQ" title="Medical service request message" desc="A code to identify the medical service request message."/>
+    <code id="MEDRPT" title="Medical service report message" desc="A code to identify the medical service report message."/>
+    <code id="MEDRUC" title="Medical resource usage and cost message" desc="A code to identify the medical resource usage and cost message."/>
+    <code id="MEQPOS" title="Means of transport and equipment position message" desc="A code to identify the means of transport and equipment position message."/>
+    <code id="MOVINS" title="Stowage instruction message" desc="A code to identify the stowage instruction message."/>
+    <code id="MSCONS" title="Metered services consumption report message" desc="A code to identify the metered services consumption report message."/>
+    <code id="ORDCHG" title="Purchase order change request message" desc="A code to identify the purchase order change request message."/>
+    <code id="ORDERS" title="Purchase order message" desc="A code to identify the purchase order message."/>
+    <code id="ORDRSP" title="Purchase order response message" desc="A code to identify the purchase order response message."/>
+    <code id="OSTENQ" title="Order status enquiry message" desc="A code to identify the order status enquiry message."/>
+    <code id="OSTRPT" title="Order status report message" desc="A code to identify the order status report message."/>
+    <code id="PARTIN" title="Party information message" desc="A code to identify the party information message."/>
+    <code id="PAXLST" title="Passenger list message" desc="A code to identify the passenger list message."/>
+    <code id="PAYDUC" title="Payroll deductions advice message" desc="A code to identify the payroll deductions advice message."/>
+    <code id="PAYEXT" title="Extended payment order message" desc="A code to identify the extended payment order message."/>
+    <code id="PAYMUL" title="Multiple payment order message" desc="A code to identify the multiple payment order message."/>
+    <code id="PAYORD" title="Payment order message" desc="A code to identify the payment order message."/>
+    <code id="PRICAT" title="Price/sales catalogue message" desc="A code to identify the price/sales catalogue message."/>
+    <code id="PRIHIS" title="Pricing history message" desc="A code to identify the pricing history message."/>
+    <code id="PROCST" title="Project cost reporting message" desc="A code to identify the project cost reporting message."/>
+    <code id="PRODAT" title="Product data message" desc="A code to identify the product data message."/>
+    <code id="PRODEX" title="Product exchange reconciliation message" desc="A code to identify the product exchange reconciliation message."/>
+    <code id="PROINQ" title="Product inquiry message" desc="A code to identify the product inquiry message."/>
+    <code id="PROSRV" title="Product service message" desc="A code to identify the product service message."/>
+    <code id="PROTAP" title="Project tasks planning message" desc="A code to identify the project tasks planning message."/>
+    <code id="PRPAID" title="Insurance premium payment message" desc="A code to identify the insurance premium payment message."/>
+    <code id="QALITY" title="Quality data message" desc="A code to identify the quality data message."/>
+    <code id="QUOTES" title="Quote message" desc="A code to identify the quote message."/>
+    <code id="RDRMES" title="Raw data reporting message" desc="A code to identify the raw data reporting message."/>
+    <code id="REBORD" title="Reinsurance bordereau message" desc="A code to identify the reinsurance bordereau message."/>
+    <code id="RECADV" title="Receiving advice message" desc="A code to identify the receiving advice message."/>
+    <code id="RECALC" title="Reinsurance calculation message" desc="A code to identify the reinsurance calculation message."/>
+    <code id="RECECO" title="Credit risk cover message" desc="A code to identify the credit risk cover message."/>
+    <code id="RECLAM" title="Reinsurance claims message" desc="A code to identify the reinsurance claims message."/>
+    <code id="RECORD" title="Reinsurance core data message" desc="A code to identify the reinsurance core data message."/>
+    <code id="REGENT" title="Registration of enterprise message" desc="A code to identify the registration of enterprise message."/>
+    <code id="RELIST" title="Reinsured objects list message" desc="A code to identify the reinsured objects list message."/>
+    <code id="REMADV" title="Remittance advice message" desc="A code to identify the remittance advice message."/>
+    <code id="REPREM" title="Reinsurance premium message" desc="A code to identify the reinsurance premium message."/>
+    <code id="REQDOC" title="Request for document message" desc="A code to identify the request for document message."/>
+    <code id="REQOTE" title="Request for quote message" desc="A code to identify the request for quote message."/>
+    <code id="RESETT" title="Reinsurance settlement message" desc="A code to identify the reinsurance settlement message."/>
+    <code id="RESMSG" title="Reservation message" desc="A code to identify the reservation message."/>
+    <code id="RETACC" title="Reinsurance technical account message" desc="A code to identify the reinsurance technical account message."/>
+    <code id="RETANN" title="Announcement for returns message" desc="A code to identify the announcement for returns message."/>
+    <code id="RETINS" title="Instruction for returns message" desc="A code to identify the instruction for returns message."/>
+    <code id="RPCALL" title="Repair call message" desc="A code to identify the repair call message."/>
+    <code id="SAFHAZ" title="Safety and hazard data message" desc="A code to identify the safety and hazard data message."/>
+    <code id="SANCRT" title="International movement of goods governmental regulatory message" desc="A code to identify the international movement of goods governmental regulatory message."/>
+    <code id="SLSFCT" title="Sales forecast message" desc="A code to identify the sales forecast message."/>
+    <code id="SLSRPT" title="Sales data report message" desc="A code to identify the sales data report message."/>
+    <code id="SOCADE" title="Social administration message" desc="A code to identify the social administration message."/>
+    <code id="SSIMOD" title="Modification of identity details message" desc="A code to identify the modification of identity details message."/>
+    <code id="SSRECH" title="Worker's insurance history message" desc="A code to identify the worker's insurance history message."/>
+    <code id="SSREGW" title="Notification of registration of a worker message" desc="A code to identify the notification of registration of a worker message."/>
+    <code id="STATAC" title="Statement of account message" desc="A code to identify the statement of account message."/>
+    <code id="STLRPT" title="Settlement transaction reporting message" desc="A code to identify the settlement transaction reporting message."/>
+    <code id="SUPCOT" title="Superannuation contributions advice message" desc="A code to identify the superannuation contributions advice message."/>
+    <code id="SUPMAN" title="Superannuation maintenance message" desc="A code to identify the superannuation maintenance message."/>
+    <code id="SUPRES" title="Supplier response message" desc="A code to identify the supplier response message."/>
+    <code id="TANSTA" title="Tank status report message" desc="A code to identify the tank status report message."/>
+    <code id="TAXCON" title="Tax control message" desc="A code to identify the tax control message."/>
+    <code id="TPFREP" title="Terminal performance message" desc="A code to identify the terminal performance message."/>
+    <code id="UTILMD" title="Utilities master data message" desc="A code to identify the utilities master data message."/>
+    <code id="UTILTS" title="Utilities time series message" desc="A code to identify the utilities time series message."/>
+    <code id="VATDEC" title="Value added tax message" desc="A code to identify the value added tax message."/>
+    <code id="VERMAS" title="Verified gross mass message" desc="A code to identify the verified gross mass message."/>
+    <code id="VESDEP" title="Vessel departure message" desc="A code to identify the vessel departure message."/>
+    <code id="WASDIS" title="Waste disposal information message" desc="A code to identify the waste disposal information message."/>
+    <code id="WKGRDC" title="Work grant decision message" desc="A code to identify the work grant decision message."/>
+    <code id="WKGRRE" title="Work grant request message" desc="A code to identify the work grant request message."/>
+  </data_element>
+  <data_element id="0073" name="FirstOrLastSequenceMessageTransferIndication" desc="Indication used for the first and last message in a sequence of the same type of message relating to the same topic." type="a" maxlength="1">
+    <code id="C" title="Creation" desc="First transmission of a number of transfers of the same message."/>
+    <code id="F" title="Final" desc="Last transmission of a number of transfers of the same message."/>
+  </data_element>
+  <data_element id="0081" name="SectionIdentification" desc="A character identifying the next section in a message." type="a" maxlength="1">
+    <code id="D" title="Header/detail section separation" desc="To qualify the segment UNS, when separating the header from the detail section of a message."/>
+    <code id="S" title="Detail/summary section separation" desc="To qualify the segment UNS, when separating the detail from the summary section of a message."/>
+  </data_element>
+  <data_element id="0083" name="ActionCoded" desc="A code indicating acknowledgement, or rejection (the action taken) of a subject interchange, or part of the subject interchange." type="an" maxlength="3">
+    <code id="4" title="This level and all lower levels rejected" desc="The corresponding referenced-level and all its lower referenced-levels are rejected. One or more errors are reported at this reporting-level or a lower reporting- level."/>
+    <code id="7" title="This level acknowledged, next lower level acknowledged if not explicitly rejected" desc="The corresponding referenced-level is acknowledged. All messages or functional groups at the next lower referenced-level are acknowledged except those explicitly reported as rejected at the next lower reporting-level in this CONTRL message."/>
+    <code id="8" title="Interchange received" desc="Indication of interchange receipt implies that the recipient of the subject interchange: has received the interchange; and acknowledges the parts of the interchange that have been checked in order to assure that the data elements copied into the reporting UCI segment are syntactically correct; and has accepted liability for notifying the sender of acknowledgement or rejection of the other parts of the interchange; and has taken reasonable precautions in order to ensure that the sender is so notified."/>
+  </data_element>
+  <data_element id="0085" name="SyntaxErrorCoded" desc="A code indicating the syntax error detected." type="an" maxlength="3">
+    <code id="2" title="Syntax version or level not supported" desc="Notification that the syntax version and/or level is not supported by the recipient."/>
+    <code id="7" title="Interchange recipient not actual recipient" desc="Notification that the Interchange recipient (S003) is different from the actual recipient."/>
+    <code id="12" title="Invalid value" desc="Notification that the value of a simple data element, composite data element or component data element does not conform to the relevant specifications for the value."/>
+    <code id="13" title="Missing" desc="Notification that a mandatory (or otherwise required) service or user segment, data element, composite data element or component data element is missing"/>
+    <code id="14" title="Value not supported in this position" desc="Notification that the recipient does not support use of the specific value of an identified simple data element, composite data element or component data element in the position where it is used. The value may be valid according to the relevant specifications and may be supported if it is used in another position."/>
+    <code id="15" title="Not supported in this position" desc="Notification that the recipient does not support use of the segment type, simple data element type, composite data element type or component data element type in the specific in the identified position."/>
+    <code id="16" title="Too many constituents" desc="Notification that the identified segment contained too many data elements or that the identified composite data element contained too many component data elements."/>
+    <code id="17" title="No agreement" desc="No agreement exist that allows receipt of an interchange, functional group or message with the value of the identified simple data element, composite data element or component data element."/>
+    <code id="18" title="Unspecified error" desc="Notification that an error has been identified, but the nature of the error is not reported."/>
+    <code id="19" title="Invalid decimal notation" desc="Notification that the character indicated as decimal notation in UNA is invalid, or the decimal notation used in a data element is not consistent with the one indicated in UNA."/>
+    <code id="20" title="Character invalid as service character" desc="Notification that a character advised in UNA is invalid as service character."/>
+    <code id="21" title="Invalid character(s)" desc="Notification that one or more character(s) used in the interchange is not a valid character as defined by the syntax level indicated in UNB. The invalid character is part of the referenced-level, or followed immediately after the identified part of the interchange."/>
+    <code id="22" title="Invalid service character(s)" desc="Notification that the service character(s) used in the interchange is not a valid service character as advised in UNA or not one of the service characters in the syntax level indicated in UNB or defined in an interchange agreement. If the code is used in UCS or UCD, the invalid character followed immediately after the identified part of the interchange."/>
+    <code id="23" title="Unknown Interchange sender" desc="Notification that the Interchange sender (S002) is unknown."/>
+    <code id="24" title="Too old" desc="Notification that the received interchange or functional group is older than a limit specified in an IA or determined by the recipient."/>
+    <code id="25" title="Test indicator not supported" desc="Notification that a test processing could not be performed for the identified interchange, functional group or message."/>
+    <code id="26" title="Duplicate detected" desc="Notification that a possible duplication of a previously received interchange, functional group or message has been detected. The earlier transmission may have been rejected."/>
+    <code id="27" title="Security function not supported" desc="Notification that a security function related to the referenced-level or data element is not supported."/>
+    <code id="28" title="References do not match" desc="Notification that the control reference in UNB/UNG/UNH does not match the one in UNZ/UNE/UNT."/>
+    <code id="29" title="Control count does not match number of instances received" desc="Notification that the number of functional groups/ messages/segments does not match the number given in UNZ/UNE/UNT."/>
+    <code id="30" title="Functional groups and messages mixed" desc="Notification that individual messages and functional groups have been mixed at the same level in the interchange."/>
+    <code id="31" title="More than one message type in group" desc="Notification that different message types are contained in a functional group."/>
+    <code id="32" title="Lower level empty" desc="Notification that the interchange did not contain any messages or functional groups, or a functional group did not contain any messages."/>
+    <code id="33" title="Invalid occurrence outside message or functional group" desc="Notification that an invalid segment or data element occurred in the interchange, between messages or between functional groups. Rejection is reported at the level above."/>
+    <code id="34" title="Nesting indicator not allowed" desc="Notification that explicit nesting has been used in a message where it shall not be used."/>
+    <code id="35" title="Too many segment repetitions" desc="Notification that a segment was repeated too many times."/>
+    <code id="36" title="Too many segment group repetitions" desc="Notification that a segment group is repeated to many times."/>
+    <code id="37" title="Invalid type of character(s)" desc="Notification that one or more numeric characters were used in an alphabetic (component) data element or that one or more alphabetic characters were used in a numeric (component) data element."/>
+    <code id="38" title="Missing digit in front of decimal sign" desc="Notification that a decimal sign is not preceded by one or more digits."/>
+    <code id="39" title="Data element too long" desc="Notification that the length of the data element received exceeded the maximum length specified in the data element description."/>
+    <code id="40" title="Data element too short" desc="Notification that the length of the data element received is shorter than the minimum length specified in the data element description."/>
+    <code id="41" title="Permanent communication network error" desc="Notification that a permanent error was reported by the communication network used for transfer of the interchange. Re-transmission of an identical interchange with the same parameters at network level will not succeed."/>
+    <code id="42" title="Temporary communication network error" desc="Notification that a temporary error was reported by the communication network used for transfer of the interchange. Re-transmissions of an identical interchange may succeed."/>
+    <code id="43" title="Unknown interchange recipient" desc="Notification that the interchange recipient is not known by a network provider."/>
+  </data_element>
+</data_elements>

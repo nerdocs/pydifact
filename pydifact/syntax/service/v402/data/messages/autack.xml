@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<message>
+  <defaults/>
+  <segment id="UNH" maxrepeat="1" required="true"/>
+  <group id="SG1" maxrepeat="99" required="true">
+    <segment id="USH" maxrepeat="1" required="true"/>
+    <segment id="USA" maxrepeat="3"/>
+    <group id="SG2" maxrepeat="2">
+      <segment id="USC" maxrepeat="1" required="true"/>
+      <segment id="USA" maxrepeat="3"/>
+      <segment id="USR" maxrepeat="1"/>
+      <segment id="USB" maxrepeat="1" required="true"/>
+      <group id="SG3" maxrepeat="9999" required="true">
+        <segment id="USX" maxrepeat="1" required="true"/>
+        <segment id="USY" maxrepeat="9" required="true"/>
+        <group id="SG4" maxrepeat="99" required="true">
+          <segment id="UST" maxrepeat="1" required="true"/>
+          <segment id="USR" maxrepeat="1"/>
+          <segment id="UNT" maxrepeat="1" required="true"/>
+        </group>
+      </group>
+    </group>
+  </group>
+</message>

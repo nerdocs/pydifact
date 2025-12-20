@@ -1,0 +1,1355 @@
+<?xml version="1.0" encoding="utf-8"?>
+<data_elements>
+  <data_element id="0001" name="SyntaxIdentifier" desc="Coded identification of the agency controlling the syntax, and of the character repertoire used in an interchange." type="a" maxlength="4">
+    <code id="UNOA" title="UN/ECE level A" desc="As defined in the basic code table of ISO/IEC 646 with the exceptions of lower case letters, alternative graphic character allocations and national or application- oriented graphic character allocations."/>
+    <code id="UNOB" title="UN/ECE level B" desc="As defined in the basic code table of ISO/IEC 646 with the exceptions of alternative graphic character allocations and national or application-oriented graphic character allocations."/>
+    <code id="UNOC" title="UN/ECE level C" desc="As defined in ISO/IEC 8859-1 (Latin alphabet No. 1)"/>
+    <code id="UNOD" title="UN/ECE level D" desc="As defined in ISO/IEC 8859-2 (Latin alphabet No. 2)"/>
+    <code id="UNOE" title="UN/ECE level E" desc="As defined in ISO/IEC 8859-5 (Latin/Cyrillic alphabet)"/>
+    <code id="UNOF" title="UN/ECE level F" desc="As defined in ISO/IEC 8859-7 (Latin/Greek alphabet)"/>
+    <code id="UNOG" title="UN/ECE level G" desc="As defined in ISO/IEC 8859-3 (Latin alphabet No. 3)"/>
+    <code id="UNOH" title="UN/ECE level H" desc="As defined in ISO/IEC 8859-4 (Latin alphabet No. 4)"/>
+    <code id="UNOI" title="UN/ECE level I" desc="As defined in ISO/IEC 8859-6 (Latin/Arabic alphabet)"/>
+    <code id="UNOJ" title="UN/ECE level J" desc="As defined in ISO/IEC 8859-8 (Latin/Hebrew alphabet)"/>
+    <code id="UNOK" title="UN/ECE level K" desc="As defined in ISO/IEC 8859-9 (Latin alphabet No. 5)"/>
+    <code id="UNOL" title="UN/ECE level L" desc="As defined in ISO/IEC 8859-15 (Latin alphabet No. 9)"/>
+    <code id="UNOW" title="UN/ECE level W" desc="ISO/IEC 10646 octet with code extension technique to support UTF-8 (UCS Transformation Format, 8 bit) encoding."/>
+    <code id="UNOX" title="UN/ECE level X" desc="Code extension technique as defined by ISO/IEC 2022 utilizing the escape techniques in accordance with ISO/IEC 2375."/>
+    <code id="UNOY" title="UN/ECE level Y" desc="ISO/IEC 10646 octet without code extension technique."/>
+  </data_element>
+  <data_element id="0002" name="SyntaxVersionNumber" desc="Version number of the syntax." type="an" maxlength="1">
+    <code id="1" title="Version 1" desc="ISO 9735:1988."/>
+    <code id="2" title="Version 2" desc="ISO 9735:1988 (amended and reprinted in 1990)."/>
+    <code id="3" title="Version 3" desc="ISO 9735:1988 and ISO 9735:1988/Amd 1:1992"/>
+    <code id="4" title="Version 4" desc="ISO 9735:1998 (all parts)"/>
+  </data_element>
+  <data_element id="0007" name="IdentificationCodeQualifier" desc="Qualifier referring to the identification code." type="an" maxlength="4">
+    <code id="1" title="DUNS (Data Universal Numbering System)" desc="Partner identification code assigned by Dun and Bradstreet."/>
+    <code id="4" title="IATA (International Air Transport Association)" desc="Partner identification code assigned by the International Air Transport Association."/>
+    <code id="5" title="INSEE (Institut National de la Statistique et des Etudes Economiques) - SIRET" desc="French national statistics institute. SIRET means Systeme Informatique du Repertoire des entreprises et de leurs ETablissements."/>
+    <code id="8" title="UCC Communications ID (Uniform Code Council Communications Identifier)" desc="The Uniform Code Council Communications Identifier is a 10 digit code used to uniquely identify physical and logical locations."/>
+    <code id="9" title="DUNS (Data Universal Numbering System) with 4 digit suffix" desc="Partner identification code assigned by Dun and Bradstreet with the 4 digit suffix."/>
+    <code id="12" title="Telephone number" desc="Partner identification code corresponds to the partner telephone number."/>
+    <code id="14" title="GS1" desc="Partner identification code assigned by GS1, an international organization of GS1 Member Organizations that manages the GS1 System."/>
+    <code id="18" title="AIAG (Automotive Industry Action Group)" desc="Partner identification code assigned by the Automotive Industry Action Group."/>
+    <code id="22" title="INSEE (Institut National de la Statistique et des Etudes Economiques) - SIREN" desc="French national statistics institute. SIREN means Systeme Informatique du Repertoire des ENtreprises (et de leurs etablissements)."/>
+    <code id="30" title="ISO/IEC 6523: Organization identification" desc="Partner identification code specified in ISO/IEC 6523 (Structures for the identification of organizations)."/>
+    <code id="31" title="DIN (Deutsches Institut f�r Normung)" desc="German standardization institute."/>
+    <code id="33" title="BfA (Bundesversicherungsanstalt f�r Angestellte)" desc="German social security association."/>
+    <code id="34" title="National Statistical Agency" desc="Partner identification code assigned by a national statistical agency."/>
+    <code id="51" title="GEIS (General Electric Information Services)" desc="Partner identification code assigned by General Electric Information Services."/>
+    <code id="52" title="INS (IBM Network Services)" desc="Partner identification code assigned by IBM Network Services."/>
+    <code id="53" title="Datenzentrale des Einzelhandels" desc="German data centre for retail trade."/>
+    <code id="54" title="Bundesverband der Deutschen Baustoffhaendler" desc="German building material trade association."/>
+    <code id="55" title="Bank identifier code" desc="Partner identification code corresponds to the partner bank identification code."/>
+    <code id="57" title="KTNet (Korea Trade Network Services)" desc="Partner identification code assigned by Korea Trade Network Services."/>
+    <code id="58" title="UPU (Universal Postal Union)" desc="Partner identification code assigned by the Universal Postal Union."/>
+    <code id="59" title="ODETTE (Organization for Data Exchange through Tele- Transmission in Europe)" desc="European automotive industry project."/>
+    <code id="61" title="SCAC (Standard Carrier Alpha Code)" desc="Directory of standard multimodal carriers and tariff agent codes. The SCAC lists and codes transportation companies."/>
+    <code id="63" title="ECA (Electronic Commerce Australia)" desc="Australian association for electronic commerce."/>
+    <code id="65" title="TELEBOX 400 (Deutsche Telekom)" desc="German telecommunications service."/>
+    <code id="80" title="NHS (National Health Service)" desc="United Kingdom National Health Service."/>
+    <code id="82" title="Statens Teleforvaltning" desc="Norwegian telecommunications regulatory authority (NTRA)."/>
+    <code id="84" title="Athens Chamber of Commerce" desc="Greek Chamber of Commerce."/>
+    <code id="85" title="Swiss Chamber of Commerce" desc="Swiss Chamber of Commerce."/>
+    <code id="86" title="US Council for International Business" desc="United States Council for International Business."/>
+    <code id="87" title="National Federation of Chambers of Commerce and Industry" desc="Belgium National Federation of Chambers of Commerce and Industry."/>
+    <code id="89" title="Association of British Chambers of Commerce" desc="Association of British Chambers of Commerce."/>
+    <code id="90" title="SITA (Societe Internationale de Telecommunications Aeronautiques)" desc="SITA (Societe Internationale de Telecommunications Aeronautiques)."/>
+    <code id="91" title="Assigned by seller or seller's agent" desc="Partner identification code assigned by the seller or seller's agent."/>
+    <code id="92" title="Assigned by buyer or buyer's agent" desc="Partner identification code assigned by the buyer or buyer's agent."/>
+    <code id="103" title="TW, Trade-van" desc="Trade-van is an EDI VAN service centre for customs, transport, and insurance in national and international trade."/>
+    <code id="128" title="CH, BCNR (Swiss Clearing Bank Number)" desc="Code for the identification of a Swiss clearing bank as a sender and/or receiver of an electronic message."/>
+    <code id="129" title="CH, BPI (Swiss Business Partner Identification)" desc="Code for the identification of a corporate or a Swiss non-clearing bank as a sender and/or receiver of an electronic message."/>
+    <code id="144" title="US, DoDAAC (Department of Defence Activity Address Code)" desc="Code assigned to uniquely identify all military units in the United States Department of Defence."/>
+    <code id="145" title="FR, DGCP (Direction Generale de la Comptabilite Publique)" desc="Code assigned by the French public accounting office."/>
+    <code id="146" title="FR, DGI (Direction Generale des Impots)" desc="Code assigned by the French taxation authority."/>
+    <code id="147" title="JP, JIPDEC/ECPC (Japan Information Processing Development Corporation / Electronic Commerce Promotion Center)" desc="Partner identification code which is registered with JIPDEC/ECPC."/>
+    <code id="148" title="ITU (International Telecommunications Union) Data Network Identification Code (DNIC)" desc="Data network identification code assigned by the ITU."/>
+    <code id="500" title="DE, BDEW (Bundesverband der Energie- und Wasserwirtschaft e.V.)" desc="The Federal Association of Energy and Water (BDEW) is the trade association of the German industries for natural gas, electricity supply, long-distance heating and water supply."/>
+    <code id="501" title="EASEE-gas (European Association for the Streamlining of Energy Exchange)" desc="Partner identification code which is registered with EASEE-gas."/>
+    <code id="502" title="DE, DVGW (Deutsche Vereinigung des Gas- und Wasserfaches e.V.)" desc="The DVGW is the German Technical and Scientific Association for Gas and Water."/>
+    <code id="Z01" title="Vehicle registration number" desc="Registration number of a vehicle assigned by a recognized authority."/>
+    <code id="ZZZ" title="Mutually defined" desc="Mutually defined between trading partners."/>
+  </data_element>
+  <data_element id="0025" name="RecipientReferenceOrPasswordQualifier" desc="Qualifier for the recipient's reference or password." type="an" maxlength="2">
+    <code id="AA" title="Reference" desc="Recipient's reference/password is a reference."/>
+    <code id="BB" title="Password" desc="Recipient's reference/password is a password."/>
+  </data_element>
+  <data_element id="0029" name="ProcessingPriorityCode" desc="Code determined by the sender requesting processing priority for the interchange." type="a" maxlength="1">
+    <code id="A" title="Highest priority" desc="Requested processing priority is the highest."/>
+  </data_element>
+  <data_element id="0031" name="AcknowledgementRequest" desc="Code requesting acknowledgement for the interchange." type="n" maxlength="1">
+    <code id="1" title="Acknowledgement requested" desc="Acknowledgement is requested."/>
+    <code id="2" title="Indication of receipt" desc="Confirmation of receipt only."/>
+  </data_element>
+  <data_element id="0035" name="TestIndicator" desc="Indication that the structural level containing the test indicator is a test." type="n" maxlength="1">
+    <code id="1" title="Interchange is a test" desc="Indicates that the interchange is a test."/>
+    <code id="2" title="Syntax only test" desc="Test only syntax of structure."/>
+    <code id="3" title="Echo request" desc="To be returned without change, except for this data element to have the value 4."/>
+    <code id="4" title="Echo response" desc="Returned without change except for this data element changing from 3 to 4."/>
+    <code id="5" title="Interchange is a service provider test" desc="Indicates that this interchange is a test with a service provider."/>
+  </data_element>
+  <data_element id="0051" name="ControllingAgencyCoded" desc="Code identifying a controlling agency." type="an" maxlength="3">
+    <code id="AA" title="EDICONSTRUCT" desc="French construction project."/>
+    <code id="AB" title="DIN (Deutsches Institut f�r Normung)" desc="German standardization institute."/>
+    <code id="AC" title="ICS (International Chamber of Shipping)" desc="The International Chamber of Shipping."/>
+    <code id="AD" title="UPU (Union Postale Universelle)" desc="Universal Postal Union."/>
+    <code id="AE" title="United Kingdom ANA (Article Numbering Association)" desc="Identifies the Article Numbering Association of the United Kingdom."/>
+    <code id="AF" title="ANSI ASC X12 (American National Standard Institute Accredited Standards Committee X12)" desc="Identifies the United States electronic data interchange standards body."/>
+    <code id="AG" title="US DoD (United States Department of Defence)" desc="The United States Department of Defence is the entity controlling the message specification."/>
+    <code id="AH" title="US Federal Government" desc="The United States Federal Government is the entity controlling the message specification."/>
+    <code id="AI" title="EDIFICAS" desc="European EDI association for financial, informational, cost, accounting, auditing and social areas."/>
+    <code id="AJ" title="UN/ECE/TRANS" desc="United Nations Economic Commission for Europe (UN/ECE), Sustainable Transport Division (TRANS)"/>
+    <code id="CC" title="CCC (Customs Co-operation Council)" desc="The Customs Co-operation Council."/>
+    <code id="CE" title="CEFIC (Conseil Europeen des Federations de l'Industrie Chimique)" desc="EDI project for chemical industry."/>
+    <code id="EC" title="EDICON" desc="UK Construction project."/>
+    <code id="ED" title="EDIFICE (Electronic industries project)" desc="EDI Forum for companies with Interest in Computing and Electronics (EDI project for EDP/ADP sector)."/>
+    <code id="EE" title="EC + EFTA (European Communities and European Free Trade Association)" desc="The European Communities and the European Free Trade Association."/>
+    <code id="EN" title="GS1" desc="Partner identification code assigned by GS1, an international organization of GS1 Member Organizations that manages the GS1 System."/>
+    <code id="ER" title="UIC (International Union of railways)" desc="European railways."/>
+    <code id="EU" title="European Union" desc="The European Union."/>
+    <code id="EW" title="UN/EDIFACT Working Group (EWG)" desc="United Nations working group responsible for UN/EDIFACT (United Nations, Electronic Data Interchange for Administration, Commerce and Transport)."/>
+    <code id="EX" title="IECC (International Express Carriers Conference)" desc="The International Express Carriers Conference."/>
+    <code id="IA" title="IATA (International Air Transport Association)" desc="The International Air Transport Association."/>
+    <code id="KE" title="KEC (Korea EDIFACT Committee)" desc="The Korea EDIFACT Committee."/>
+    <code id="LI" title="LIMNET" desc="UK Insurance project."/>
+    <code id="OD" title="ODETTE (Organization for Data Exchange through Tele- Transmission in Europe)" desc="European automotive industry project."/>
+    <code id="RI" title="RINET (Reinsurance and Insurance Network)" desc="The Reinsurance and Insurance Network."/>
+    <code id="RT" title="UN/ECE/TRADE/WP.4/GE.1/EDIFACT Rapporteurs' Teams" desc="United Nations Economic UN Economic Commission for Europe (UN/ECE), Committee on the development of trade (TRADE), Working Party on facilitation of international trade procedures (WP.4), Group of Experts on data elements and automatic data interchange (GE.1), EDIFACT Rapporteurs' Teams."/>
+    <code id="UN" title="UN/CEFACT" desc="United Nations Centre for Trade Facilitation and Electronic Business (UN/CEFACT)."/>
+  </data_element>
+  <data_element id="0052" name="MessageVersionNumber" desc="Version number of a message type." type="an" maxlength="3">
+    <code id="1" title="Status 1 version" desc="Message approved and issued as a status 1 (trial) message. (Valid for directories published after March 1990 and prior to March 1993)."/>
+    <code id="2" title="Status 2 version" desc="Message approved and issued as a status 2 (formal recommendation) message. (Valid for directories published after March 1990 and prior to March 1993)."/>
+    <code id="4" title="Service message, version 4" desc="Service messages approved and issued as a part of ISO 9735/Version 4, for use with that version of the syntax."/>
+    <code id="88" title="1988 version" desc="Message approved and issued in the 1988 release of the UNTDID (United Nations Trade Data Interchange Directory) as a status 2 (formal recommendation) message."/>
+    <code id="89" title="1989 version" desc="Message approved and issued in the 1989 release of the UNTDID (United Nations Trade Data Interchange Directory) as a status 2 (formal recommendation) message."/>
+    <code id="90" title="1990 version" desc="Message approved and issued in the 1990 release of the UNTDID (United Nations Trade Data Interchange Directory) as a status 2 (formal recommendation) message."/>
+    <code id="D" title="Draft version/UN/EDIFACT Directory" desc="Message approved and issued as a draft message (Valid for directories published after March 1993 and prior to March 1997). Message approved as a standard message (Valid for directories published after March 1997)."/>
+    <code id="S" title="Standard version" desc="Message approved and issued as a standard message. (Valid for directories published after March 1993 and prior to March 1997)."/>
+  </data_element>
+  <data_element id="0054" name="MessageReleaseNumber" desc="Release number within the current message version number." type="an" maxlength="3">
+    <code id="1" title="First release" desc="User message approved and issued in the first release of the year of the UNTDID (United Nations Trade Data Interchange Directory); valid for directories published prior to March 1990. Service message approved and issued as the first release of the message within a version of ISO 9735; valid for version 4 of IS0 9735 and later."/>
+    <code id="2" title="Second release" desc="User message approved and issued in the second release of the year of the UNTDID (United Nations Trade Data Interchange Directory); valid for directories published prior to March 1990.  Service message approved and issued as the second release of the message within a version of ISO 9735; valid for version 4 of IS0 9735 and later."/>
+    <code id="902" title="Trial release 1990" desc="Message approved and issued in the 1990 status 1 (trial) release of the UNTDID (United Nations Trade Data Interchange Directory)."/>
+    <code id="911" title="Trial release 1991" desc="Message approved and issued in the 1991 status 1 (trial) release of the UNTDID (United Nations Trade Data Interchange Directory)."/>
+    <code id="912" title="Standard release 1991" desc="Message approved and issued in the 1991 status 2 (standard) release of the UNTDID (United Nations Trade Data Interchange Directory)."/>
+    <code id="921" title="Trial release 1992" desc="Message approved and issued in the 1992 status 1 (trial) release of the UNTDID (United Nations Trade Data Interchange Directory)."/>
+    <code id="932" title="Standard release 1993" desc="Message approved and issued in the 1993 status 2 (standard) release of the UNTDID (United Nations Trade Data Interchange Directory)."/>
+    <code id="00A" title="Release 2000 - A" desc="Message approved and issued in the first 2000 release of the UNTDID (United Nations Trade Data Interchange Directory)."/>
+    <code id="00B" title="Release 2000 - B" desc="Message approved and issued in the second 2000 release of the UNTDID (United Nations Trade Data Interchange Directory)."/>
+    <code id="01A" title="Release 2001 - A" desc="Message approved and issued in the first 2001 release of the UNTDID (United Nations Trade Data Interchange Directory)."/>
+    <code id="01B" title="Release 2001 - B" desc="Message approved and issued in the second 2001 release of the UNTDID (United Nations Trade Data Interchange Directory)."/>
+    <code id="01C" title="Release 2001 - C" desc="Message approved and issued in the third 2001 release of the UNTDID (United Nations Trade Data Interchange Directory)."/>
+    <code id="02A" title="Release 2002 - A" desc="Message approved and issued in the first 2002 release of the UNTDID (United Nations Trade Data Interchange Directory)."/>
+    <code id="02B" title="Release 2002 - B" desc="Message approved and issued in the second 2002 release of the UNTDID (United Nations Trade Data Interchange Directory)."/>
+    <code id="03A" title="Release 2003 - A" desc="Message approved and issued in the first 2003 release of the UNTDID (United Nations Trade Data Interchange Directory)."/>
+    <code id="03B" title="Release 2003 - B" desc="Message approved and issued in the second 2003 release of the UNTDID (United Nations Trade Data Interchange Directory)."/>
+    <code id="04A" title="Release 2004 - A" desc="Message approved and issued in the first 2004 release of the UNTDID (United Nations Trade Data Interchange Directory)."/>
+    <code id="04B" title="Release 2004 - B" desc="Message approved and issued in the second 2004 release of the UNTDID (United Nations Trade Data Interchange Directory)."/>
+    <code id="05A" title="Release 2005 - A" desc="Message approved and issued in the first 2005 release of the UNTDID (United Nations Trade Data Interchange Directory)."/>
+    <code id="05B" title="Release 2005 - B" desc="Message approved and issued in the second 2005 release of the UNTDID (United Nations Trade Data Interchange Directory)."/>
+    <code id="06A" title="Release 2006 - A" desc="Message approved and issued in the first 2006 release of the UNTDID (United Nations Trade Data Interchange Directory)."/>
+    <code id="06B" title="Release 2006 - B" desc="Message approved and issued in the second 2006 release of the UNTDID (United Nations Trade Data Interchange Directory)."/>
+    <code id="07A" title="Release 2007 - A" desc="Message approved and issued in the first 2007 release of the UNTDID (United Nations Trade Data Interchange Directory)."/>
+    <code id="07B" title="Release 2007 - B" desc="Message approved and issued in the second 2007 release of the UNTDID (United Nations Trade Data Interchange Directory)."/>
+    <code id="08A" title="Release 2008 - A" desc="Message approved and issued in the first 2008 release of the UNTDID (United Nations Trade Data Interchange Directory)."/>
+    <code id="08B" title="Release 2008 - B" desc="Message approved and issued in the second 2008 release of the UNTDID (United Nations Trade Data Interchange Directory)."/>
+    <code id="09A" title="Release 2009 - A" desc="Message approved and issued in the first 2009 release of the UNTDID (United Nations Trade Data Interchange Directory)."/>
+    <code id="09B" title="Release 2009 - B" desc="Message approved and issued in the second 2009 release of the UNTDID (United Nations Trade Data Interchange Directory)."/>
+    <code id="10A" title="Release 2010 - A" desc="Message approved and issued in the first 2010 release of the UNTDID (United Nations Trade Data Interchange Directory)."/>
+    <code id="10B" title="Release 2010 - B" desc="Message approved and issued in the second 2010 release of the UNTDID (United Nations Trade Data Interchange Directory)."/>
+    <code id="11A" title="Release 2011 - A" desc="Message approved and issued in the first 2011 release of the UNTDID (United Nations Trade Data Interchange Directory)."/>
+    <code id="11B" title="Release 2011 - B" desc="Message approved and issued in the second 2011 release of the UNTDID (United Nations Trade Data Interchange Directory)."/>
+    <code id="12A" title="Release 2012 - A" desc="Message approved and issued in the first 2012 release of the UNTDID (United Nations Trade Data Interchange Directory)."/>
+    <code id="12B" title="Release 2012 - B" desc="Message approved and issued in the second 2012 release of the UNTDID (United Nations Trade Data Interchange Directory)."/>
+    <code id="13A" title="Release 2013 - A" desc="Message approved and issued in the first 2013 release of the UNTDID (United Nations Trade Data Interchange Directory)."/>
+    <code id="13B" title="Release 2013 - B" desc="Message approved and issued in the second 2013 release of the UNTDID (United Nations Trade Data Interchange Directory)."/>
+    <code id="14A" title="Release 2014 - A" desc="Message approved and issued in the first 2014 release of the UNTDID (United Nations Trade Data Interchange Directory)."/>
+    <code id="14B" title="Release 2014 - B" desc="Message approved and issued in the second 2014 release of the UNTDID (United Nations Trade Data Interchange Directory)."/>
+    <code id="15A" title="Release 2015 - A" desc="Message approved and issued in the first 2015 release of the UNTDID (United Nations Trade Data Interchange Directory)."/>
+    <code id="15B" title="Release 2015 - B" desc="Message approved and issued in the second 2015 release of the UNTDID (United Nations Trade Data Interchange Directory)."/>
+    <code id="16A" title="Release 2016 - A" desc="Message approved and issued in the first 2016 release of the UNTDID (United Nations Trade Data Interchange Directory)."/>
+    <code id="16B" title="Release 2016 - B" desc="Message approved and issued in the second 2016 release of the UNTDID (United Nations Trade Data Interchange Directory)."/>
+    <code id="17A" title="Release 2017 - A" desc="Message approved and issued in the first 2017 release of the UNTDID (United Nations Trade Data Interchange Directory)."/>
+    <code id="17B" title="Release 2017 - B" desc="Message approved and issued in the second 2017 release of the UNTDID (United Nations Trade Data Interchange Directory)."/>
+    <code id="18A" title="Release 2018 - A" desc="Message approved and issued in the first 2018 release of the UNTDID (United Nations Trade Data Interchange Directory)."/>
+    <code id="18B" title="Release 2018 - B" desc="Message approved and issued in the second 2018 release of the UNTDID (United Nations Trade Data Interchange Directory)."/>
+    <code id="19A" title="Release 2019 - A" desc="Message approved and issued in the first 2019 release of the UNTDID (United Nations Trade Data Interchange Directory)."/>
+    <code id="19B" title="Release 2019 - B" desc="Message approved and issued in the second 2019 release of the UNTDID (United Nations Trade Data Interchange Directory)."/>
+    <code id="20A" title="Release 2020 - A" desc="Message approved and issued in the first 2020 release of the UNTDID (United Nations Trade Data Interchange Directory)."/>
+    <code id="20B" title="Release 2020 - B" desc="Message approved and issued in the second 2020 release of the UNTDID (United Nations Trade Data Interchange Directory)."/>
+    <code id="21A" title="Release 2021 - A" desc="Message approved and issued in the first 2021 release of the UNTDID (United Nations Trade Data Interchange Directory)."/>
+    <code id="93A" title="Release 1993 - A" desc="Message approved and issued in the 1993 release of the UNTDID (United Nations Trade Data Interchange Directory)."/>
+    <code id="94A" title="Release 1994 - A" desc="Message approved and issued in the first 1994 release of the UNTDID (United Nations Trade Data Interchange Directory)."/>
+    <code id="94B" title="Release 1994 - B" desc="Message approved and issued in the second 1994 release of the UNTDID (United Nations Trade Data Interchange Directory)."/>
+    <code id="95A" title="Release 1995 - A" desc="Message approved and issued in the first 1995 release of the UNTDID (United Nations Trade Data Interchange Directory)."/>
+    <code id="95B" title="Release 1995 - B" desc="Message approved and issued in the second 1995 release of the UNTDID (United Nations Trade Data Interchange Directory)."/>
+    <code id="96A" title="Release 1996 - A" desc="Message approved and issued in the first 1996 release of the UNTDID (United Nations Trade Data Interchange Directory)."/>
+    <code id="96B" title="Release 1996 - B" desc="Message approved and issued in the second 1996 release of the UNTDID (United Nations Trade Data Interchange Directory)."/>
+    <code id="97A" title="Release 1997 - A" desc="Message approved and issued in the first 1997 release of the UNTDID (United Nations Trade Data Interchange Directory)."/>
+    <code id="97B" title="Release 1997 - B" desc="Message approved and issued in the second 1997 release of the UNTDID (United Nations Trade Data Interchange Directory)."/>
+    <code id="98A" title="Release 1998 - A" desc="Message approved and issued in the first 1998 release of the UNTDID (United Nations Trade Data Interchange Directory)."/>
+    <code id="98B" title="Release 1998 - B" desc="Message approved and issued in the second 1998 release of the UNTDID (United Nations Trade Data Interchange Directory)."/>
+    <code id="99A" title="Release 1999 - A" desc="Message approved and issued in the first 1999 release of the UNTDID (United Nations Trade Data Interchange Directory)."/>
+    <code id="99B" title="Release 1999 - B" desc="Message approved and issued in the second 1999 release of the UNTDID (United Nations Trade Data Interchange Directory)."/>
+  </data_element>
+  <data_element id="0065" name="MessageType" desc="Code identifying a type of message and assigned by its controlling agency." type="an" maxlength="6">
+    <code id="APERAK" title="Application error and acknowledgement message" desc="A code to identify the application error and acknowledgement message."/>
+    <code id="AUTACK" title="Secure authentication and acknowledgement message" desc="A code to identify the secure authentication and acknowledgement message."/>
+    <code id="AUTHOR" title="Authorization message" desc="A code to identify the authorization message."/>
+    <code id="AVLREQ" title="Availability request - interactive message" desc="A code to identify the availability request - interactive message."/>
+    <code id="AVLRSP" title="Availability response - interactive message" desc="A code to identify the availability response - interactive message."/>
+    <code id="BALANC" title="Balance message" desc="A code to identify the balance message."/>
+    <code id="BANSTA" title="Banking status message" desc="A code to identify the banking status message."/>
+    <code id="BAPLIE" title="Bayplan/stowage plan occupied and empty locations message" desc="A code to identify the bayplan/stowage plan occupied and empty locations message."/>
+    <code id="BERMAN" title="Berth management message" desc="A code to identify the berth management message."/>
+    <code id="BMISRM" title="Bulk marine inspection summary report message" desc="A code to identify the bulk marine inspection summary report message."/>
+    <code id="BOPBNK" title="Bank transactions and portfolio transactions report message" desc="A code to identify the bank transactions and portfolio transactions report message."/>
+    <code id="BOPCUS" title="Balance of payment customer transaction report message" desc="A code to identify the balance of payment customer transaction report message."/>
+    <code id="BOPDIR" title="Direct balance of payment declaration message" desc="A code to identify the direct balance of payment declaration message."/>
+    <code id="BOPINF" title="Balance of payment information from customer message" desc="A code to identify the balance of payment information from customer message."/>
+    <code id="BUSCRD" title="Business credit report message" desc="A code to identify the business credit report message."/>
+    <code id="CALINF" title="Vessel call information message" desc="A code to identify the vessel call information message."/>
+    <code id="CASINT" title="Request for legal administration action in civil proceedings message" desc="A code to identify the request for legal administration action in civil proceedings message."/>
+    <code id="CASRES" title="Legal administration response in civil proceedings message" desc="A code to identify the legal administration response in civil proceedings message."/>
+    <code id="CHACCO" title="Chart of accounts message" desc="A code to identify the chart of accounts message."/>
+    <code id="CLASET" title="Classification information set message" desc="A code to identify the classification information set message."/>
+    <code id="CNTCND" title="Contractual conditions message" desc="A code to identify the contractual conditions message."/>
+    <code id="COACSU" title="Commercial account summary message" desc="A code to identify the commercial account summary message."/>
+    <code id="COARRI" title="Container discharge/loading report message" desc="A code to identify the container discharge/loading report message."/>
+    <code id="CODECO" title="Container gate-in/gate-out report message" desc="A code to identify the container gate-in/gate-out report message."/>
+    <code id="CODENO" title="Permit expiration/clearance ready notice message" desc="A code to identify the permit expiration/clearance ready notice message."/>
+    <code id="COEDOR" title="Container stock report message" desc="A code to identify the container stock report message."/>
+    <code id="COHAOR" title="Container special handling order message" desc="A code to identify the container special handling order message."/>
+    <code id="COLREQ" title="Request for a documentary collection message" desc="A code to identify the request for a documentary collection message."/>
+    <code id="COMDIS" title="Commercial dispute message" desc="A code to identify the commercial dispute message."/>
+    <code id="CONAPW" title="Advice on pending works message" desc="A code to identify the advice on pending works message."/>
+    <code id="CONDPV" title="Direct payment valuation message" desc="A code to identify the direct payment valuation message."/>
+    <code id="CONDRA" title="Drawing administration message" desc="A code to identify the drawing administration message."/>
+    <code id="CONDRO" title="Drawing organization message" desc="A code to identify the drawing organization message."/>
+    <code id="CONEST" title="Establishment of contract message" desc="A code to identify the establishment of contract message."/>
+    <code id="CONITT" title="Invitation to tender message" desc="A code to identify the invitation to tender message."/>
+    <code id="CONPVA" title="Payment valuation message" desc="A code to identify the payment valuation message."/>
+    <code id="CONQVA" title="Quantity valuation message" desc="A code to identify the quantity valuation message."/>
+    <code id="CONRPW" title="Response of pending works message" desc="A code to identify the response of pending works message."/>
+    <code id="CONTEN" title="Tender message" desc="A code to identify the tender message."/>
+    <code id="CONTRL" title="Syntax and service report message" desc="A code to identify the syntax and service report message."/>
+    <code id="CONWQD" title="Work item quantity determination message" desc="A code to identify the work item quantity determination message."/>
+    <code id="COPARN" title="Container announcement message" desc="A code to identify the container announcement message."/>
+    <code id="COPAYM" title="Contributions for payment" desc="A code to identify the contributions for payment."/>
+    <code id="COPINO" title="Container pre-notification message" desc="A code to identify the container pre-notification message."/>
+    <code id="COPRAR" title="Container discharge/loading order message" desc="A code to identify the container discharge/loading order message."/>
+    <code id="COREOR" title="Container release order message" desc="A code to identify the container release order message."/>
+    <code id="COSTCO" title="Container stuffing/stripping confirmation message" desc="A code to identify the container stuffing/stripping confirmation message."/>
+    <code id="COSTOR" title="Container stuffing/stripping order message" desc="A code to identify the container stuffing/stripping order message."/>
+    <code id="CREADV" title="Credit advice message" desc="A code to identify the credit advice message."/>
+    <code id="CREEXT" title="Extended credit advice message" desc="A code to identify the extended credit advice message."/>
+    <code id="CREMUL" title="Multiple credit advice message" desc="A code to identify the multiple credit advice message."/>
+    <code id="CUSCAR" title="Customs cargo report message" desc="A code to identify the customs cargo report message."/>
+    <code id="CUSDEC" title="Customs declaration message" desc="A code to identify the customs declaration message."/>
+    <code id="CUSEXP" title="Customs express consignment declaration message" desc="A code to identify the customs express consignment declaration message."/>
+    <code id="CUSPED" title="Periodic customs declaration message" desc="A code to identify the periodic customs declaration message."/>
+    <code id="CUSREP" title="Customs conveyance report message" desc="A code to identify the customs conveyance report message."/>
+    <code id="CUSRES" title="Customs response message" desc="A code to identify the customs response message."/>
+    <code id="DAPLOS" title="Data plot sheet message" desc="A code to identify the data plot sheet message."/>
+    <code id="DEBADV" title="Debit advice message" desc="A code to identify the debit advice message."/>
+    <code id="DEBMUL" title="Multiple debit advice message" desc="A code to identify the multiple debit advice message."/>
+    <code id="DEBREC" title="Debts recovery message" desc="A code to identify the debts recovery message."/>
+    <code id="DELFOR" title="Delivery schedule message" desc="A code to identify the delivery schedule message."/>
+    <code id="DELJIT" title="Delivery just in time message" desc="A code to identify the delivery just in time message."/>
+    <code id="DESADV" title="Despatch advice message" desc="A code to identify the despatch advice message."/>
+    <code id="DESTIM" title="Equipment damage and repair estimate message" desc="A code to identify the equipment damage and repair estimate message."/>
+    <code id="DGRECA" title="Dangerous goods recapitulation message" desc="A code to identify the dangerous goods recapitulation message."/>
+    <code id="DIRDEB" title="Direct debit message" desc="A code to identify the direct debit message."/>
+    <code id="DIRDEF" title="Directory definition message" desc="A code to identify the directory definition message."/>
+    <code id="DMRDEF" title="Data maintenance request definition message" desc="A code to identify the data maintenance request definition message."/>
+    <code id="DMSTAT" title="Data maintenance status report/query message" desc="A code to identify the data maintenance status report/query message."/>
+    <code id="DOCADV" title="Documentary credit advice message" desc="A code to identify the documentary credit advice message."/>
+    <code id="DOCAMA" title="Advice of an amendment of a documentary credit message" desc="A code to identify the advice of an amendment of a documentary credit message."/>
+    <code id="DOCAMI" title="Documentary credit amendment information message" desc="A code to identify the documentary credit amendment information message."/>
+    <code id="DOCAMR" title="Request for an amendment of a documentary credit message" desc="A code to identify the request for an amendment of a documentary credit message."/>
+    <code id="DOCAPP" title="Documentary credit application message" desc="A code to identify the documentary credit application message."/>
+    <code id="DOCARE" title="Response to an amendment of a documentary credit message" desc="A code to identify the response to an amendment of a documentary credit message."/>
+    <code id="DOCINF" title="Documentary credit issuance information message" desc="A code to identify the documentary credit issuance information message."/>
+    <code id="ENTREC" title="Accounting entries message" desc="A code to identify the accounting entries message."/>
+    <code id="FINCAN" title="Financial cancellation message" desc="A code to identify the financial cancellation message."/>
+    <code id="FINPAY" title="Multiple interbank funds transfer message" desc="A code to identify the multiple interbank funds transfer message."/>
+    <code id="FINSTA" title="Financial statement of an account message" desc="A code to identify the financial statement of an account message."/>
+    <code id="GENRAL" title="General purpose message" desc="A code to identify the general purpose message."/>
+    <code id="GESMES" title="Generic statistical message" desc="A code to identify the generic statistical message."/>
+    <code id="GOVCBR" title="Government cross border regulatory message" desc="A code to identify the government cross border regulatory message."/>
+    <code id="HANMOV" title="Cargo/goods handling and movement message" desc="A code to identify the cargo/goods handling and movement message."/>
+    <code id="ICASRP" title="Insurance claim assessment and reporting message" desc="A code to identify the insurance claim assessment and reporting message."/>
+    <code id="ICSOLI" title="Insurance claim solicitor�s instruction message" desc="A code to identify the insurance claim solicitor�s instruction message."/>
+    <code id="IFCSUM" title="Forwarding and consolidation summary message" desc="A code to identify the forwarding and consolidation summary message."/>
+    <code id="IFTCCA" title="Forwarding and transport shipment charge calculation message" desc="A code to identify the forwarding and transport shipment charge calculation message."/>
+    <code id="IFTDGN" title="Dangerous goods notification message" desc="A code to identify the dangerous goods notification message."/>
+    <code id="IFTFCC" title="International transport freight costs and other charges message" desc="A code to identify the international transport freight costs and other charges message."/>
+    <code id="IFTICL" title="Cargo insurance claims message" desc="A code to identify the cargo insurance claims message."/>
+    <code id="IFTMAN" title="Arrival notice message" desc="A code to identify the arrival notice message."/>
+    <code id="IFTMBC" title="Booking confirmation message" desc="A code to identify the booking confirmation message."/>
+    <code id="IFTMBF" title="Firm booking message" desc="A code to identify the firm booking message."/>
+    <code id="IFTMBP" title="Provisional booking message" desc="A code to identify the provisional booking message."/>
+    <code id="IFTMCA" title="Consignment advice message" desc="A code to identify the consignment advice message."/>
+    <code id="IFTMCS" title="Instruction contract status message" desc="A code to identify the instruction contract status message."/>
+    <code id="IFTMIN" title="Instruction message" desc="A code to identify the instruction message."/>
+    <code id="IFTRIN" title="Forwarding and transport rate information message" desc="A code to identify the forwarding and transport rate information message."/>
+    <code id="IFTSAI" title="Forwarding and transport schedule and availability information message" desc="A code to identify the forwarding and transport schedule and availability information message."/>
+    <code id="IFTSTA" title="International multimodal status report message" desc="A code to identify the international multimodal status report message."/>
+    <code id="IFTSTQ" title="International multimodal status request message" desc="A code to identify the international multimodal status request message."/>
+    <code id="IHCEBI" title="Interactive health insurance eligibility and benefits inquiry and response" desc="A code to identify the interactive health insurance eligibility and benefits inquiry and response."/>
+    <code id="IHCLME" title="Health care claim or encounter request and response - interactive message" desc="A code to identify the health care claim or encounter request and response - interactive message."/>
+    <code id="IMPDEF" title="EDI implementation guide definition message" desc="A code to identify the EDI implementation guide definition message."/>
+    <code id="INFCON" title="Infrastructure condition message" desc="A code to identify the infrastructure condition message."/>
+    <code id="INFENT" title="Enterprise accounting information message" desc="A code to identify the enterprise accounting information message."/>
+    <code id="INSDES" title="Instruction to despatch message" desc="A code to identify the instruction to despatch message."/>
+    <code id="INSPRE" title="Insurance premium message" desc="A code to identify the insurance premium message."/>
+    <code id="INSREQ" title="Inspection request message" desc="A code to identify the inspection request message."/>
+    <code id="INSRPT" title="Inspection report message" desc="A code to identify the inspection report message."/>
+    <code id="INVOIC" title="Invoice message" desc="A code to identify the invoice message."/>
+    <code id="INVRPT" title="Inventory report message" desc="A code to identify the inventory report message."/>
+    <code id="IPPOAD" title="Insurance policy administration message" desc="A code to identify the insurance policy administration message."/>
+    <code id="IPPOMO" title="Motor insurance policy message" desc="A code to identify the motor insurance policy message."/>
+    <code id="ISENDS" title="Intermediary system enablement or disablement message" desc="A code to identify the intermediary system enablement or disablement message."/>
+    <code id="ITRRPT" title="In transit report detail message" desc="A code to identify the in transit report detail message."/>
+    <code id="JAPRES" title="Job application result message" desc="A code to identify the job application result message."/>
+    <code id="JINFDE" title="Job information demand message" desc="A code to identify the job information demand message."/>
+    <code id="JOBAPP" title="Job application proposal message" desc="A code to identify the job application proposal message."/>
+    <code id="JOBCON" title="Job order confirmation message" desc="A code to identify the job order confirmation message."/>
+    <code id="JOBMOD" title="Job order modification message" desc="A code to identify the job order modification message."/>
+    <code id="JOBOFF" title="Job order message" desc="A code to identify the job order message."/>
+    <code id="JUPREQ" title="Justified payment request message" desc="A code to identify the justified payment request message."/>
+    <code id="KEYMAN" title="Security key and certificate management message" desc="A code to identify the security key and certificate management message."/>
+    <code id="LEDGER" title="Ledger message" desc="A code to identify the ledger message."/>
+    <code id="LREACT" title="Life reinsurance activity message" desc="A code to identify the life reinsurance activity message."/>
+    <code id="LRECLM" title="Life reinsurance claims message" desc="A code to identify the life reinsurance claims message."/>
+    <code id="MEDPID" title="Person identification message" desc="A code to identify the person identification message."/>
+    <code id="MEDPRE" title="Medical prescription message" desc="A code to identify the medical prescription message."/>
+    <code id="MEDREQ" title="Medical service request message" desc="A code to identify the medical service request message."/>
+    <code id="MEDRPT" title="Medical service report message" desc="A code to identify the medical service report message."/>
+    <code id="MEDRUC" title="Medical resource usage and cost message" desc="A code to identify the medical resource usage and cost message."/>
+    <code id="MEQPOS" title="Means of transport and equipment position message" desc="A code to identify the means of transport and equipment position message."/>
+    <code id="MOVINS" title="Stowage instruction message" desc="A code to identify the stowage instruction message."/>
+    <code id="MSCONS" title="Metered services consumption report message" desc="A code to identify the metered services consumption report message."/>
+    <code id="ORDCHG" title="Purchase order change request message" desc="A code to identify the purchase order change request message."/>
+    <code id="ORDERS" title="Purchase order message" desc="A code to identify the purchase order message."/>
+    <code id="ORDRSP" title="Purchase order response message" desc="A code to identify the purchase order response message."/>
+    <code id="OSTENQ" title="Order status enquiry message" desc="A code to identify the order status enquiry message."/>
+    <code id="OSTRPT" title="Order status report message" desc="A code to identify the order status report message."/>
+    <code id="PARTIN" title="Party information message" desc="A code to identify the party information message."/>
+    <code id="PASREQ" title="Travel, tourism and leisure product application status request - interactive message" desc="A code to identify the travel, tourism and leisure product application status request - interactive message."/>
+    <code id="PASRSP" title="Travel, tourism and leisure product application status response - interactive message" desc="A code to identify the travel, tourism and leisure product application status response - interactive message."/>
+    <code id="PAXLST" title="Passenger list message" desc="A code to identify the passenger list message."/>
+    <code id="PAYDUC" title="Payroll deductions advice message" desc="A code to identify the payroll deductions advice message."/>
+    <code id="PAYEXT" title="Extended payment order message" desc="A code to identify the extended payment order message."/>
+    <code id="PAYMUL" title="Multiple payment order message" desc="A code to identify the multiple payment order message."/>
+    <code id="PAYORD" title="Payment order message" desc="A code to identify the payment order message."/>
+    <code id="PRICAT" title="Price/sales catalogue message" desc="A code to identify the price/sales catalogue message."/>
+    <code id="PRIHIS" title="Pricing history message" desc="A code to identify the pricing history message."/>
+    <code id="PROCST" title="Project cost reporting message" desc="A code to identify the project cost reporting message."/>
+    <code id="PRODAT" title="Product data message" desc="A code to identify the product data message."/>
+    <code id="PRODEX" title="Product exchange reconciliation message" desc="A code to identify the product exchange reconciliation message."/>
+    <code id="PROINQ" title="Product inquiry message" desc="A code to identify the product inquiry message."/>
+    <code id="PROSRV" title="Product service message" desc="A code to identify the product service message."/>
+    <code id="PROTAP" title="Project tasks planning message" desc="A code to identify the project tasks planning message."/>
+    <code id="PRPAID" title="Insurance premium payment message" desc="A code to identify the insurance premium payment message."/>
+    <code id="QALITY" title="Quality data message" desc="A code to identify the quality data message."/>
+    <code id="QUOTES" title="Quote message" desc="A code to identify the quote message."/>
+    <code id="RDRMES" title="Raw data reporting message" desc="A code to identify the raw data reporting message."/>
+    <code id="REBORD" title="Reinsurance bordereau message" desc="A code to identify the reinsurance bordereau message."/>
+    <code id="RECADV" title="Receiving advice message" desc="A code to identify the receiving advice message."/>
+    <code id="RECALC" title="Reinsurance calculation message" desc="A code to identify the reinsurance calculation message."/>
+    <code id="RECECO" title="Credit risk cover message" desc="A code to identify the credit risk cover message."/>
+    <code id="RECLAM" title="Reinsurance claims message" desc="A code to identify the reinsurance claims message."/>
+    <code id="RECORD" title="Reinsurance core data message" desc="A code to identify the reinsurance core data message."/>
+    <code id="REGENT" title="Registration of enterprise message" desc="A code to identify the registration of enterprise message."/>
+    <code id="RELIST" title="Reinsured objects list message" desc="A code to identify the reinsured objects list message."/>
+    <code id="REMADV" title="Remittance advice message" desc="A code to identify the remittance advice message."/>
+    <code id="REPREM" title="Reinsurance premium message" desc="A code to identify the reinsurance premium message."/>
+    <code id="REQDOC" title="Request for document message" desc="A code to identify the request for document message."/>
+    <code id="REQOTE" title="Request for quote message" desc="A code to identify the request for quote message."/>
+    <code id="RESETT" title="Reinsurance settlement message" desc="A code to identify the reinsurance settlement message."/>
+    <code id="RESMSG" title="Reservation message" desc="A code to identify the reservation message."/>
+    <code id="RESREQ" title="Reservation request - interactive message" desc="A code to identify the reservation request - interactive message."/>
+    <code id="RESRSP" title="Reservation response - interactive message" desc="A code to identify the reservation response - interactive message."/>
+    <code id="RETACC" title="Reinsurance technical account message" desc="A code to identify the reinsurance technical account message."/>
+    <code id="RETANN" title="Announcement for returns message" desc="A code to identify the announcement for returns message."/>
+    <code id="RETINS" title="Instruction for returns message" desc="A code to identify the instruction for returns message."/>
+    <code id="RPCALL" title="Repair call message" desc="A code to identify the repair call message."/>
+    <code id="SAFHAZ" title="Safety and hazard data message" desc="A code to identify the safety and hazard data message."/>
+    <code id="SANCRT" title="International movement of goods governmental regulatory message" desc="A code to identify the international movement of goods governmental regulatory message."/>
+    <code id="SKDREQ" title="Schedule request - interactive message" desc="A code to identify the schedule request - interactive message."/>
+    <code id="SKDUPD" title="Schedule update - interactive message" desc="A code to identify the schedule update - interactive message."/>
+    <code id="SLSFCT" title="Sales forecast message" desc="A code to identify the sales forecast message."/>
+    <code id="SLSRPT" title="Sales data report message" desc="A code to identify the sales data report message."/>
+    <code id="SOCADE" title="Social administration message" desc="A code to identify the social administration message."/>
+    <code id="SSIMOD" title="Modification of identity details message" desc="A code to identify the modification of identity details message."/>
+    <code id="SSRECH" title="Worker's insurance history message" desc="A code to identify the worker's insurance history message."/>
+    <code id="SSREGW" title="Notification of registration of a worker message" desc="A code to identify the notification of registration of a worker message."/>
+    <code id="STATAC" title="Statement of account message" desc="A code to identify the statement of account message."/>
+    <code id="STLRPT" title="Settlement transaction reporting message" desc="A code to identify the settlement transaction reporting message."/>
+    <code id="SUPCOT" title="Superannuation contributions advice message" desc="A code to identify the superannuation contributions advice message."/>
+    <code id="SUPMAN" title="Superannuation maintenance message" desc="A code to identify the superannuation maintenance message."/>
+    <code id="SUPRES" title="Supplier response message" desc="A code to identify the supplier response message."/>
+    <code id="TANSTA" title="Tank status report message" desc="A code to identify the tank status report message."/>
+    <code id="TAXCON" title="Tax control message" desc="A code to identify the tax control message."/>
+    <code id="TIQREQ" title="Travel, tourism and leisure information inquiry request - interactive message" desc="A code to identify the travel, tourism and leisure information inquiry request - interactive message."/>
+    <code id="TIQRSP" title="Travel, tourism and leisure information inquiry response - interactive message" desc="A code to identify the travel, tourism and leisure information inquiry response - interactive message."/>
+    <code id="TPFREP" title="Terminal performance message" desc="A code to identify the terminal performance message."/>
+    <code id="TSDUPD" title="Timetable static data update - interactive message" desc="A code to identify the timetable static data update - interactive message."/>
+    <code id="TUPREQ" title="Travel, tourism and leisure data update request - interactive message" desc="A code to identify the travel, tourism and leisure data update request - interactive message."/>
+    <code id="TUPRSP" title="Travel, tourism and leisure data update response - interactive message" desc="A code to identify the travel, tourism and leisure data update response - interactive message."/>
+    <code id="UTILMD" title="Utilities master data message" desc="A code to identify the utilities master data message."/>
+    <code id="UTILTS" title="Utilities time series message" desc="A code to identify the utilities time series message."/>
+    <code id="VATDEC" title="Value added tax message" desc="A code to identify the value added tax message."/>
+    <code id="VERMAS" title="Verified gross mass message" desc="A code to identify the verified gross mass message."/>
+    <code id="VESDEP" title="Vessel departure message" desc="A code to identify the vessel departure message."/>
+    <code id="WASDIS" title="Waste disposal information message" desc="A code to identify the waste disposal information message."/>
+    <code id="WKGRDC" title="Work grant decision message" desc="A code to identify the work grant decision message."/>
+    <code id="WKGRRE" title="Work grant request message" desc="A code to identify the work grant request message."/>
+  </data_element>
+  <data_element id="0073" name="FirstAndLastTransfer" desc="Indication used for the first and last message in a sequence of messages related to the same topic." type="a" maxlength="1">
+    <code id="C" title="Creation" desc="First transmission of a number of transfers of the same message."/>
+    <code id="F" title="Final" desc="Last transmission of a number of transfers of the same message."/>
+  </data_element>
+  <data_element id="0081" name="SectionIdentification" desc="Identification of the separation of sections of a message." type="a" maxlength="1">
+    <code id="D" title="Header/detail section separation" desc="To qualify the segment UNS, when separating the header from the detail section of a message."/>
+    <code id="S" title="Detail/summary section separation" desc="To qualify the segment UNS, when separating the detail from the summary section of a message."/>
+  </data_element>
+  <data_element id="0083" name="ActionCoded" desc="A code indicating acknowledgement, or rejection (the action taken) of a subject interchange, or part of the subject interchange, or indication of interchange receipt." type="an" maxlength="3">
+    <code id="4" title="This level and all lower levels rejected" desc="The corresponding referenced-level and all its lower referenced-levels are rejected. One or more errors are reported at this reporting-level or a lower reporting- level."/>
+    <code id="7" title="This level acknowledged and all lower levels acknowledged if not explicitly rejected" desc="The corresponding referenced-level is acknowledged. All messages, packages, or groups at the lower referenced- levels are acknowledged except those explicitly reported as rejected at their reporting-level in this CONTRL message."/>
+    <code id="8" title="Interchange received" desc="Indication of interchange receipt."/>
+  </data_element>
+  <data_element id="0085" name="SyntaxErrorCoded" desc="A code indicating the error detected." type="an" maxlength="3">
+    <code id="2" title="Syntax version or level not supported" desc="Notification that the syntax version and/or level is not supported by the recipient."/>
+    <code id="7" title="Interchange recipient not actual recipient" desc="Notification that the Interchange recipient (S003) is different from the actual recipient."/>
+    <code id="12" title="Invalid value" desc="Notification that the value of a stand-alone data element, composite data element or component data element does not conform to the relevant specifications for the value."/>
+    <code id="13" title="Missing" desc="Notification that a mandatory (or otherwise required) service or user segment, data element, composite data element or component data element is missing."/>
+    <code id="14" title="Value not supported in this position" desc="Notification that the recipient does not support use of the specific value of an identified stand-alone data element, composite data element or component data element in the position where it is used. The value may be valid according to the relevant specifications and may be supported if it is used in another position."/>
+    <code id="15" title="Not supported in this position" desc="Notification that the recipient does not support use of the segment type, stand-alone data element type, composite data element type or component data element type in the identified position."/>
+    <code id="16" title="Too many constituents" desc="Notification that the identified segment contained too many data elements or that the identified composite data element contained too many component data elements."/>
+    <code id="17" title="No agreement" desc="No agreement exists that allows receipt of an interchange, group, message, or package with the value of the identified stand-alone data element, composite data element or component data element."/>
+    <code id="18" title="Unspecified error" desc="Notification that an error has been identified, but the nature of the error is not reported."/>
+    <code id="20" title="Character invalid as service character" desc="Notification that a character advised in UNA is invalid as service character."/>
+    <code id="21" title="Invalid character(s)" desc="Notification that one or more character(s) used in the interchange is not a valid character as defined by the syntax identifier indicated in UNB. The invalid character is part of the referenced-level, or followed immediately after the identified part of the interchange."/>
+    <code id="22" title="Invalid service character(s)" desc="Notification that the service character(s) used in the interchange is not a valid service character as advised in UNA or not one of the default service characters. If the code is used in UCS or UCD, the invalid character followed immediately after the identified part of the interchange."/>
+    <code id="23" title="Unknown Interchange sender" desc="Notification that the Interchange sender (S002) is unknown."/>
+    <code id="24" title="Too old" desc="Notification that the received interchange or group is older than a limit specified in an IA or determined by the recipient."/>
+    <code id="25" title="Test indicator not supported" desc="Notification that test processing can not be performed for the identified interchange, group, message, or package."/>
+    <code id="26" title="Duplicate detected" desc="Notification that a possible duplication of a previously received interchange, group, message, or package has been detected. The earlier transmission may have been rejected."/>
+    <code id="28" title="References do not match" desc="Notification that the control reference in UNB, UNG, UNH, UNO, USH or USD does not match the one in UNZ, UNE, UNT, UNP, UST or USU, respectively."/>
+    <code id="29" title="Control count does not match number of instances received" desc="Notification that the number of groups, messages, or segments does not match the number given in UNZ, UNE, UNT or UST, or that the length of an object or of encrypted data are not equal to the length stated in the UNO, UNP, USD, or USU."/>
+    <code id="30" title="Groups and messages/packages mixed" desc="Notification that groups have been mixed with messages/packages outside of groups in the interchange."/>
+    <code id="32" title="Lower level empty" desc="Notification that the interchange does not contain any messages, packages, or groups, or a group does not contain any messages or packages."/>
+    <code id="33" title="Invalid occurrence outside message, package, or group" desc="Notification of an invalid segment or data element in the interchange, between messages or between packages or between groups. Rejection is reported at the level above."/>
+    <code id="35" title="Too many data element or segment repetitions" desc="Notification that a stand-alone data element, composite data element or segment is repeated too many times."/>
+    <code id="36" title="Too many segment group repetitions" desc="Notification that a segment group is repeated too many times."/>
+    <code id="37" title="Invalid type of character(s)" desc="Notification that one or more numeric characters are used in an alphabetic (component) data element or that one or more alphabetic characters are used in a numeric (component) data element."/>
+    <code id="39" title="Data element too long" desc="Notification that the length of the data element received exceeded the maximum length specified in the data element description."/>
+    <code id="40" title="Data element too short" desc="Notification that the length of the data element received is shorter than the minimum length specified in the data element description."/>
+    <code id="45" title="Trailing separator" desc="Notification of one of the following: - the last character before the segment terminator is a data element separator or a component data element separator or a repeating data element separator, or - the last character before a data element separator is a component data element separator or a repeating data element separator."/>
+    <code id="46" title="Character set not supported" desc="Notification that one or more characters used are not in the character set defined by the syntax identifier, or the character set identified by the escape sequence for the code extension technique is not supported by the recipient."/>
+    <code id="47" title="Envelope functionality not supported" desc="Notification that the envelope structure encountered is not supported by the recipient."/>
+    <code id="48" title="Dependency condition violated" desc="Notification that an error condition has occurred as the result of a dependency condition violation."/>
+  </data_element>
+  <data_element id="0113" name="MessageTypeSubfunctionIdentification" desc="Code identifying a sub-function of a message type." type="an" maxlength="6">
+    <code id="AA" title="Interactive, perform sell" desc="This sub-function is to notify the receiver that the purpose of the message is an instruction to perform a sell."/>
+    <code id="AB" title="Interactive, modify current dialogue data" desc="This sub-function is to notify the receiver that the message data are a modification to data previously sent in the current interactive dialogue."/>
+    <code id="AC" title="Interactive, modify previous dialogue data" desc="This sub-function is to notify the receiver that the message data are a modification to data sent in a previous interactive dialogue."/>
+    <code id="AD" title="Interactive, cancel reserved product" desc="This sub-function is to notify the receiver that the purpose of the message is to cancel a product previously reserved in an interactive dialogue."/>
+    <code id="AE" title="Interactive, ignore reserved product" desc="This sub-function is to notify the receiver that the purpose of the message is to ignore a product previously reserved in an interactive dialogue."/>
+    <code id="AF" title="Interactive, conclude current reservation" desc="This sub-function is to notify the receiver that the purpose of the message is to conclude the current reservation transaction."/>
+    <code id="AG" title="Interactive, display reserved product" desc="This sub-function is to notify the receiver that the purpose of the message is to display a product previously reserved in an interactive dialogue."/>
+    <code id="AH" title="Interactive, perform reference sell" desc="This sub-function is to notify the receiver that the purpose of the message is an instruction to perform a sell, based on data returned in a previous interactive response."/>
+    <code id="AI" title="Interactive, modify previous dialogue reservation" desc="This sub-function is to notify the receiver that the purpose of the message is to modify a reservation, made during a previous interactive dialogue."/>
+    <code id="AJ" title="Interactive, display voucher template" desc="This sub-function is to notify the receiver that the purpose of the message is to display the template for a voucher."/>
+    <code id="AK" title="Interactive, print voucher" desc="This sub-function is to notify the receiver that the purpose of the message is to print a voucher."/>
+    <code id="AL" title="Interactive, cancel current dialogue reservation" desc="This sub-function is to notify the receiver that the purpose of the message is to cancel a reservation made during the current interactive dialogue."/>
+    <code id="AM" title="Interactive, cancel previous dialogue reservation" desc="This sub-function is to notify the receiver that the purpose of the message is to cancel a reservation made during a previous interactive dialogue."/>
+    <code id="AN" title="Interactive, duplicate sell message" desc="This sub-function is to notify the receiver that the message is a duplicate of a previously sent interactive sell message."/>
+    <code id="AO" title="Interactive, duplicate modify current dialogue data" desc="This sub-function is to notify the receiver that the message is a duplicate of a previously sent message to modify data in the current interactive dialogue."/>
+    <code id="AP" title="Interactive, duplicate modify previous dialogue reservation" desc="This sub-function is to notify the receiver that the message is a duplicate of a previously sent message to modify a reservation made during a previous interactive dialogue."/>
+    <code id="AQ" title="Interactive, availability request, multiple suppliers" desc="This sub-function is to notify the receiver that the message is an interactive request for availability which is simultaneously being sent to multiple suppliers."/>
+    <code id="AR" title="Interactive, availability request, one specific supplier" desc="This sub-function is to notify the receiver that the message is an interactive request for availability from only one specific supplier."/>
+    <code id="AS" title="Interactive, product rules request" desc="This sub-function is to notify the receiver that the message is an interactive request for product rules."/>
+    <code id="SECACK" title="Security acknowledgment" desc="This sub-function of the AUTACK message is for the secure acknowledgement of receipt, including the reporting of any associated security violation(s)."/>
+    <code id="SECAUT" title="Security authentication and/or non-repudiation of origin" desc="This sub-function of the AUTACK message is for secure integrity, authentication and/or non-repudiation of origin."/>
+  </data_element>
+  <data_element id="0133" name="CharacterEncodingCoded" desc="Coded identification of the character encoding used in the interchange." type="an" maxlength="3">
+    <code id="1" title="ASCII 7 bit" desc="ASCII 7 bit code."/>
+    <code id="2" title="ASCII 8 bit" desc="ASCII 8 bit code."/>
+    <code id="3" title="Code page 500 (EBCDIC Multinational No. 5)" desc="Encoding schema for the repertoire as defined by the code page."/>
+    <code id="4" title="Code page 850 (IBM PC Multinational)" desc="Encoding schema for the repertoire as defined by the code page."/>
+    <code id="5" title="UCS-2" desc="Universal Multiple-Octet Coded Character Set (UCS) two- octet per character encoding schema as defined in ISO/IEC 10646."/>
+    <code id="6" title="UCS-4" desc="Universal Multiple-Octet Coded Character Set (UCS) four- octet per character encoding schema as defined in ISO/IEC 10646."/>
+    <code id="7" title="UTF-8" desc="UCS Transformation Format 8 (UTF-8) multi-octet (of length one to six octets) per character encoding schema as defined in ISO/IEC 10646, Annex R."/>
+    <code id="8" title="UTF-16" desc="UCS Transformation Format 16 (UTF-16) two-octet per character encoding schema as defined in ISO/IEC 10646, Annex Q."/>
+    <code id="ZZZ" title="Mutually agreed" desc="Mutually agreed between trading partners."/>
+  </data_element>
+  <data_element id="0135" name="ServiceSegmentTagCoded" desc="Code identifying a service segment." type="an" maxlength="3">
+    <code id="UCD" title="Data element error indication" desc="To identify an erroneous stand-alone, composite or component data element, and to identify the nature of the error."/>
+    <code id="UCF" title="Group response" desc="To identify a group in the subject interchange and to indicate acknowledgement or rejection (action taken) of the UNG and UNE segments, and to identify any error related to these segments. It can also identify errors related to the USA, USC, USD, USH, USR, UST, or USU security segments when they appear at the group level. Depending on the action code, it may also indicate the action taken on the messages and packages within that group."/>
+    <code id="UCI" title="Interchange response" desc="To identify the subject interchange, to indicate interchange receipt, to indicate acknowledgement or rejection (action taken) of the UNA, UNB and UNZ segments, and to identify any error related to these segments. It can also identify errors related to the USA, USC, USD, USH, USR, UST, or USU security segments when they appear at the interchange level. Depending on the action code, it may also indicate the action taken on the groups, messages, and packages within that interchange."/>
+    <code id="UCM" title="Message/package response" desc="To identify a message or package in the subject interchange, and to indicate that message's or package's acknowledgement or rejection (action taken), and to identify any error related to the UNH, UNT, UNO, and UNP segments. It can also identify errors related to the USA, USC, USD, USH, USR, UST, or USU security segments when they appear at the message or package level."/>
+    <code id="UCS" title="Segment error indication" desc="To identify either a segment containing an error or a missing segment, and to identify any error related to the complete segment."/>
+    <code id="UGH" title="Anti-collision segment group header" desc="To head, identify and specify an anti-collision segment group."/>
+    <code id="UGT" title="Anti-collision segment group trailer" desc="To end and check the completeness of an anti-collision segment group."/>
+    <code id="UIB" title="Interactive interchange header" desc="To head and identify an interchange."/>
+    <code id="UIH" title="Interactive message header" desc="To head, identify and specify a message."/>
+    <code id="UIR" title="Interactive status" desc="To report the status of the dialogue."/>
+    <code id="UIT" title="Interactive message trailer" desc="To end and check the completeness of a message."/>
+    <code id="UIZ" title="Interactive interchange trailer" desc="To end and check the completeness of an interchange."/>
+    <code id="UNB" title="Interchange header" desc="To identify an interchange."/>
+    <code id="UNE" title="Group trailer" desc="To end and check the completeness of a group."/>
+    <code id="UNG" title="Group header" desc="To head, identify and specify a group of messages and/or packages, which may be used for internal routing and which may contain one or more message types and/or packages."/>
+    <code id="UNH" title="Message header" desc="To head, identify and specify a message."/>
+    <code id="UNO" title="Object header" desc="To head, identify and specify an object."/>
+    <code id="UNP" title="Object trailer" desc="To end and check the completeness of an object."/>
+    <code id="UNS" title="Section control" desc="To separate header, detail and summary sections of a message."/>
+    <code id="UNT" title="Message trailer" desc="To end and check the completeness of a message."/>
+    <code id="UNZ" title="Interchange trailer" desc="To end and check the completeness of an interchange."/>
+    <code id="USA" title="Security algorithm" desc="To identify a security algorithm, the technical usage made of it, and to contain the technical parameters required."/>
+    <code id="USB" title="Secured data identification" desc="To contain details related to the AUTACK."/>
+    <code id="USC" title="Certificate" desc="To convey the public key and the credentials of its owner."/>
+    <code id="USD" title="Data encryption header" desc="To specify size (i.e. length of data in octets of bits) of encrypted data following the segment terminator of this segment."/>
+    <code id="USE" title="Security message relation" desc="To specify the relation to earlier security messages, such as response to a particular request, or request for a particular answer."/>
+    <code id="USF" title="Key management function" desc="To specify the type of key management function and the status of a corresponding key or certificate."/>
+    <code id="USH" title="Security header" desc="To specify a security mechanism applied to a EDIFACT structure (i.e.: either message/package, group or interchange)."/>
+    <code id="USL" title="Security list status" desc="To specify the status of security objects, such as keys or certificates to be delivered in a list, and the corresponding list parameters."/>
+    <code id="USR" title="Security result" desc="To contain the result of the security mechanisms."/>
+    <code id="UST" title="Security trailer" desc="To establish a link between security header and security trailer segment groups."/>
+    <code id="USU" title="Data encryption trailer" desc="To provide a trailer for the encrypted data."/>
+    <code id="USX" title="Security references" desc="To refer to the secured EDIFACT structure and its associated date and time."/>
+    <code id="USY" title="Security on references" desc="To identify the applicable header, and to contain the security result and/or to indicate the possible cause of security rejection for the referred value."/>
+  </data_element>
+  <data_element id="0323" name="TransferPositionCoded" desc="Indication of the position of a transfer." type="a" maxlength="1">
+    <code id="F" title="First message" desc="First message in sequence. Can only appear once at the start of the sequence."/>
+    <code id="I" title="Intermediate message" desc="Intermediate message in sequence. May appear zero or more times within the sequence."/>
+    <code id="L" title="Last message" desc="Last message in sequence. Can appear only once at the end of the sequence."/>
+  </data_element>
+  <data_element id="0325" name="DuplicateIndicator" desc="Indication that the structure is a duplicate of a previously sent structure." type="a" maxlength="1">
+    <code id="D" title="Duplicate" desc="A duplicate transfer."/>
+  </data_element>
+  <data_element id="0331" name="ReportFunctionCoded" desc="Coded value identifying type of status or error report." type="an" maxlength="3">
+    <code id="1" title="Information" desc="Non Error information, e.g. acknowledgement that party is still operational."/>
+    <code id="2" title="Warning" desc="Warning, e.g. resources getting low."/>
+    <code id="3" title="Non-fatal error" desc="Non-fatal error detected by party sending the UIR. Dialogue integrity may be compromised."/>
+    <code id="4" title="Abort dialogue" desc="Established dialogue cannot continue."/>
+    <code id="5" title="Query status" desc="Request for a status report from other party. Should be answered with a 'Status report' (see code value '6' below)."/>
+    <code id="6" title="Status report" desc="Reporting status of dialogue as perceived by sending party."/>
+    <code id="7" title="Pause dialogue" desc="Advise other party to stop transferring data within this dialogue until a 'Continue dialogue' is received."/>
+    <code id="8" title="Continue dialogue" desc="Advise that data flow may continue after being 'Paused' (see code value '7' above)."/>
+    <code id="9" title="Start dialogue reject" desc="Dialogue cannot be initiated."/>
+  </data_element>
+  <data_element id="0333" name="StatusCoded" desc="Code identifying the reason for the status or error report." type="an" maxlength="3">
+    <code id="1" title="OK response" desc="No further information."/>
+    <code id="2" title="Syntax error" desc="Error detected in syntax."/>
+    <code id="3" title="Invalid header" desc="Invalid header segment received."/>
+    <code id="4" title="Invalid trailer segment" desc="Invalid trailer segment received."/>
+    <code id="5" title="Unsupported syntax" desc="Syntax version/release not supported."/>
+    <code id="6" title="Unsupported scenario type" desc="Scenario type not supported."/>
+    <code id="7" title="Unsupported scenario version" desc="Scenario version/release not supported."/>
+    <code id="8" title="Unsupported dialogue type" desc="Dialogue type not supported for this scenario."/>
+    <code id="9" title="Unsupported dialogue version" desc="Dialogue type version/release not supported."/>
+    <code id="10" title="Unauthorised sender" desc="Sender not authorized."/>
+    <code id="11" title="Sender rejected" desc="Sender rejected for administrative reasons."/>
+    <code id="12" title="Multiple transactions unsupported" desc="Multiple parallel transactions not supported."/>
+    <code id="13" title="Multiple dialogues unsupported" desc="Multiple parallel dialogues not supported."/>
+    <code id="14" title="Resources unavailable" desc="Resources unavailable for requested function."/>
+    <code id="15" title="Unknown transaction" desc="Referenced transaction does not exist."/>
+    <code id="16" title="Unknown dialogue" desc="Referenced dialogue does not exist."/>
+    <code id="17" title="Invalid function" desc="Function invalid for current dialogue state."/>
+    <code id="18" title="Service unavailable" desc="Requested service is unavailable."/>
+    <code id="19" title="Application unavailable" desc="Requested application not available."/>
+    <code id="20" title="Time-out" desc="Response not received within expected time."/>
+    <code id="21" title="Unable to process interactively" desc="To notify the initiator that a specific request cannot be processed interactively."/>
+    <code id="22" title="Correctable application error" desc="To notify the initiator that an application error, that is correctable by the initiator, was made in the request message."/>
+    <code id="23" title="Nothing to return" desc="To notify the initiator that there is no information to return in response to an inquiry."/>
+    <code id="24" title="Data not accessible" desc="To notify the initiator that the requested information cannot be returned."/>
+    <code id="25" title="Non-correctable application error" desc="To notify the initiator that some type of system or processing error was encountered, not related to the data received."/>
+  </data_element>
+  <data_element id="0335" name="LanguageCoded" desc="Code identifying the language used." type="an" maxlength="3">
+    <code id="ote 1:" title="The code list for this data element is maintained by ISO (ISO 639)." desc=""/>
+    <code id="aa" title="Afar" desc=""/>
+    <code id="AA" title="Afar" desc=""/>
+    <code id="ab" title="Abkhazian" desc=""/>
+    <code id="AB" title="Abkhazian" desc=""/>
+    <code id="ae" title="Avestan" desc=""/>
+    <code id="AE" title="Avestan" desc=""/>
+    <code id="af" title="Afrikaans" desc=""/>
+    <code id="AF" title="Afrikaans" desc=""/>
+    <code id="ak" title="Akan" desc=""/>
+    <code id="AK" title="Akan" desc=""/>
+    <code id="am" title="Amharic" desc=""/>
+    <code id="AM" title="Amharic" desc=""/>
+    <code id="an" title="Aragonese" desc=""/>
+    <code id="AN" title="Aragonese" desc=""/>
+    <code id="ar" title="Arabic" desc=""/>
+    <code id="AR" title="Arabic" desc=""/>
+    <code id="as" title="Assamese" desc=""/>
+    <code id="AS" title="Assamese" desc=""/>
+    <code id="av" title="Avaric" desc=""/>
+    <code id="AV" title="Avaric" desc=""/>
+    <code id="ay" title="Aymara" desc=""/>
+    <code id="AY" title="Aymara" desc=""/>
+    <code id="az" title="Azerbaijani" desc=""/>
+    <code id="AZ" title="Azerbaijani" desc=""/>
+    <code id="ba" title="Bashkir" desc=""/>
+    <code id="BA" title="Bashkir" desc=""/>
+    <code id="be" title="Belarusian" desc=""/>
+    <code id="BE" title="Belarusian" desc=""/>
+    <code id="bg" title="Bulgarian" desc=""/>
+    <code id="BG" title="Bulgarian" desc=""/>
+    <code id="bh" title="Bihari" desc=""/>
+    <code id="BH" title="Bihari" desc=""/>
+    <code id="bi" title="Bislama" desc=""/>
+    <code id="BI" title="Bislama" desc=""/>
+    <code id="bm" title="Bambara" desc=""/>
+    <code id="BM" title="Bambara" desc=""/>
+    <code id="bn" title="Bengali" desc=""/>
+    <code id="BN" title="Bengali" desc=""/>
+    <code id="bo" title="Tibetan" desc=""/>
+    <code id="BO" title="Tibetan" desc=""/>
+    <code id="br" title="Breton" desc=""/>
+    <code id="BR" title="Breton" desc=""/>
+    <code id="bs" title="Bosnian" desc=""/>
+    <code id="BS" title="Bosnian" desc=""/>
+    <code id="ca" title="Catalan; Valencian" desc=""/>
+    <code id="CA" title="Catalan; Valencian" desc=""/>
+    <code id="ce" title="Chechen" desc=""/>
+    <code id="CE" title="Chechen" desc=""/>
+    <code id="ch" title="Chamorro" desc=""/>
+    <code id="CH" title="Chamorro" desc=""/>
+    <code id="co" title="Corsican" desc=""/>
+    <code id="CO" title="Corsican" desc=""/>
+    <code id="cr" title="Cree" desc=""/>
+    <code id="CR" title="Cree" desc=""/>
+    <code id="cs" title="Czech" desc=""/>
+    <code id="CS" title="Czech" desc=""/>
+    <code id="cu" title="Church Slavic; Old Slavonic; Church Slavonic; Old Bulgarian; Old Church Slavonic" desc=""/>
+    <code id="CU" title="Church Slavic; Old Slavonic; Church Slavonic; Old Bulgarian; Old Church Slavonic" desc=""/>
+    <code id="cv" title="Chuvash" desc=""/>
+    <code id="CV" title="Chuvash" desc=""/>
+    <code id="cy" title="Welsh" desc=""/>
+    <code id="CY" title="Welsh" desc=""/>
+    <code id="da" title="Danish" desc=""/>
+    <code id="DA" title="Danish" desc=""/>
+    <code id="de" title="German" desc=""/>
+    <code id="DE" title="German" desc=""/>
+    <code id="dv" title="Divehi; Dhivehi; Maldivian" desc=""/>
+    <code id="DV" title="Divehi; Dhivehi; Maldivian" desc=""/>
+    <code id="dz" title="Dzongkha" desc=""/>
+    <code id="DZ" title="Dzongkha" desc=""/>
+    <code id="ee" title="Ewe" desc=""/>
+    <code id="EE" title="Ewe" desc=""/>
+    <code id="el" title="Greek; Modern (1453-)" desc=""/>
+    <code id="EL" title="Greek; Modern (1453-)" desc=""/>
+    <code id="en" title="English" desc=""/>
+    <code id="EN" title="English" desc=""/>
+    <code id="eo" title="Esperanto" desc=""/>
+    <code id="EO" title="Esperanto" desc=""/>
+    <code id="es" title="Spanish; Castilian" desc=""/>
+    <code id="ES" title="Spanish; Castilian" desc=""/>
+    <code id="et" title="Estonian" desc=""/>
+    <code id="ET" title="Estonian" desc=""/>
+    <code id="eu" title="Basque" desc=""/>
+    <code id="EU" title="Basque" desc=""/>
+    <code id="fa" title="Persian" desc=""/>
+    <code id="FA" title="Persian" desc=""/>
+    <code id="ff" title="Fulah" desc=""/>
+    <code id="FF" title="Fulah" desc=""/>
+    <code id="fi" title="Finnish" desc=""/>
+    <code id="FI" title="Finnish" desc=""/>
+    <code id="fj" title="Fijian" desc=""/>
+    <code id="FJ" title="Fijian" desc=""/>
+    <code id="fo" title="Faroese" desc=""/>
+    <code id="FO" title="Faroese" desc=""/>
+    <code id="fr" title="French" desc=""/>
+    <code id="FR" title="French" desc=""/>
+    <code id="fy" title="Western Frisian" desc=""/>
+    <code id="FY" title="Western Frisian" desc=""/>
+    <code id="ga" title="Irish" desc=""/>
+    <code id="GA" title="Irish" desc=""/>
+    <code id="gd" title="Gaelic; Scottish Gaelic" desc=""/>
+    <code id="GD" title="Gaelic; Scottish Gaelic" desc=""/>
+    <code id="gl" title="Galician" desc=""/>
+    <code id="GL" title="Galician" desc=""/>
+    <code id="gn" title="Guarani" desc=""/>
+    <code id="GN" title="Guarani" desc=""/>
+    <code id="gu" title="Gujarati" desc=""/>
+    <code id="GU" title="Gujarati" desc=""/>
+    <code id="gv" title="Manx" desc=""/>
+    <code id="GV" title="Manx" desc=""/>
+    <code id="ha" title="Hausa" desc=""/>
+    <code id="HA" title="Hausa" desc=""/>
+    <code id="he" title="Hebrew" desc=""/>
+    <code id="HE" title="Hebrew" desc=""/>
+    <code id="hi" title="Hindi" desc=""/>
+    <code id="HI" title="Hindi" desc=""/>
+    <code id="ho" title="Hiri Motu" desc=""/>
+    <code id="HO" title="Hiri Motu" desc=""/>
+    <code id="hr" title="Croatian" desc=""/>
+    <code id="HR" title="Croatian" desc=""/>
+    <code id="ht" title="Haitian; Haitian Creole" desc=""/>
+    <code id="HT" title="Haitian; Haitian Creole" desc=""/>
+    <code id="hu" title="Hungarian" desc=""/>
+    <code id="HU" title="Hungarian" desc=""/>
+    <code id="hy" title="Armenian" desc=""/>
+    <code id="HY" title="Armenian" desc=""/>
+    <code id="hz" title="Herero" desc=""/>
+    <code id="HZ" title="Herero" desc=""/>
+    <code id="ia" title="Interlingua (International Auxiliary Language Association)" desc=""/>
+    <code id="IA" title="Interlingua (International Auxiliary Language Association)" desc=""/>
+    <code id="id" title="Indonesian" desc=""/>
+    <code id="ID" title="Indonesian" desc=""/>
+    <code id="ie" title="Interlingue" desc=""/>
+    <code id="IE" title="Interlingue" desc=""/>
+    <code id="ig" title="Igbo" desc=""/>
+    <code id="IG" title="Igbo" desc=""/>
+    <code id="ii" title="Sichuan Yi" desc=""/>
+    <code id="II" title="Sichuan Yi" desc=""/>
+    <code id="ik" title="Inupiaq" desc=""/>
+    <code id="IK" title="Inupiaq" desc=""/>
+    <code id="io" title="Ido" desc=""/>
+    <code id="IO" title="Ido" desc=""/>
+    <code id="is" title="Icelandic" desc=""/>
+    <code id="IS" title="Icelandic" desc=""/>
+    <code id="it" title="Italian" desc=""/>
+    <code id="IT" title="Italian" desc=""/>
+    <code id="iu" title="Inuktiut" desc=""/>
+    <code id="IU" title="Inuktiut" desc=""/>
+    <code id="ja" title="Japanese" desc=""/>
+    <code id="JA" title="Japanese" desc=""/>
+    <code id="jv" title="Javanese" desc=""/>
+    <code id="JV" title="Javanese" desc=""/>
+    <code id="ka" title="Georgian" desc=""/>
+    <code id="KA" title="Georgian" desc=""/>
+    <code id="kg" title="Kongo" desc=""/>
+    <code id="KG" title="Kongo" desc=""/>
+    <code id="ki" title="Kikuyu; Gikuyu" desc=""/>
+    <code id="KI" title="Kikuyu; Gikuyu" desc=""/>
+    <code id="kj" title="Kuanyama; Kwanyama" desc=""/>
+    <code id="KJ" title="Kuanyama; Kwanyama" desc=""/>
+    <code id="kk" title="Kazakh" desc=""/>
+    <code id="KK" title="Kazakh" desc=""/>
+    <code id="kl" title="Kalaallisut; Greenlandic" desc=""/>
+    <code id="KL" title="Kalaallisut; Greenlandic" desc=""/>
+    <code id="km" title="Central Khmer" desc=""/>
+    <code id="KM" title="Central Khmer" desc=""/>
+    <code id="kn" title="Kannada" desc=""/>
+    <code id="KN" title="Kannada" desc=""/>
+    <code id="ko" title="Korean" desc=""/>
+    <code id="KO" title="Korean" desc=""/>
+    <code id="kr" title="Kanuri" desc=""/>
+    <code id="KR" title="Kanuri" desc=""/>
+    <code id="ks" title="Kashmiri" desc=""/>
+    <code id="KS" title="Kashmiri" desc=""/>
+    <code id="ku" title="Kurdish" desc=""/>
+    <code id="KU" title="Kurdish" desc=""/>
+    <code id="kv" title="Komi" desc=""/>
+    <code id="KV" title="Komi" desc=""/>
+    <code id="kw" title="Cornish" desc=""/>
+    <code id="KW" title="Cornish" desc=""/>
+    <code id="ky" title="Kirghiz; Kyrgyz" desc=""/>
+    <code id="KY" title="Kirghiz; Kyrgyz" desc=""/>
+    <code id="la" title="Latin" desc=""/>
+    <code id="LA" title="Latin" desc=""/>
+    <code id="lb" title="Luxembourgish; Letzeburgesch" desc=""/>
+    <code id="LB" title="Luxembourgish; Letzeburgesch" desc=""/>
+    <code id="lg" title="Ganda" desc=""/>
+    <code id="LG" title="Ganda" desc=""/>
+    <code id="li" title="Limburgan; Limburger; Limburgish" desc=""/>
+    <code id="LI" title="Limburgan; Limburger; Limburgish" desc=""/>
+    <code id="ln" title="Lingala" desc=""/>
+    <code id="LN" title="Lingala" desc=""/>
+    <code id="lo" title="Lao" desc=""/>
+    <code id="LO" title="Lao" desc=""/>
+    <code id="lt" title="Lithuanian" desc=""/>
+    <code id="LT" title="Lithuanian" desc=""/>
+    <code id="lu" title="Luba-Katanga" desc=""/>
+    <code id="LU" title="Luba-Katanga" desc=""/>
+    <code id="lv" title="Latvian" desc=""/>
+    <code id="LV" title="Latvian" desc=""/>
+    <code id="mg" title="Malagasy" desc=""/>
+    <code id="MG" title="Malagasy" desc=""/>
+    <code id="mh" title="Marshallese" desc=""/>
+    <code id="MH" title="Marshallese" desc=""/>
+    <code id="mi" title="Maori" desc=""/>
+    <code id="MI" title="Maori" desc=""/>
+    <code id="mk" title="Macedonian" desc=""/>
+    <code id="MK" title="Macedonian" desc=""/>
+    <code id="ml" title="Malayalam" desc=""/>
+    <code id="ML" title="Malayalam" desc=""/>
+    <code id="mn" title="Mongolian" desc=""/>
+    <code id="MN" title="Mongolian" desc=""/>
+    <code id="mo" title="Moldavian; Moldovan" desc=""/>
+    <code id="MO" title="Moldavian; Moldovan" desc=""/>
+    <code id="mr" title="Marathi" desc=""/>
+    <code id="MR" title="Marathi" desc=""/>
+    <code id="ms" title="Malay" desc=""/>
+    <code id="MS" title="Malay" desc=""/>
+    <code id="mt" title="Maltese" desc=""/>
+    <code id="MT" title="Maltese" desc=""/>
+    <code id="my" title="Burmese" desc=""/>
+    <code id="MY" title="Burmese" desc=""/>
+    <code id="na" title="Nauru" desc=""/>
+    <code id="NA" title="Nauru" desc=""/>
+    <code id="nb" title="Bokmal Norwegian; Norwegian Bokmal" desc=""/>
+    <code id="NB" title="Bokmal Norwegian; Norwegian Bokmal" desc=""/>
+    <code id="nd" title="Ndebele; North; North Ndebele" desc=""/>
+    <code id="ND" title="Ndebele; North; North Ndebele" desc=""/>
+    <code id="ne" title="Nepali" desc=""/>
+    <code id="NE" title="Nepali" desc=""/>
+    <code id="ng" title="Ndonga" desc=""/>
+    <code id="NG" title="Ndonga" desc=""/>
+    <code id="nl" title="Dutch; Flemish" desc=""/>
+    <code id="NL" title="Dutch; Flemish" desc=""/>
+    <code id="nn" title="Norwegian Nynorsk; Nynorsk, Norwegian" desc=""/>
+    <code id="NN" title="Norwegian Nynorsk; Nynorsk, Norwegian" desc=""/>
+    <code id="no" title="Norwegian" desc=""/>
+    <code id="NO" title="Norwegian" desc=""/>
+    <code id="nr" title="Ndebele; South; South Ndebele" desc=""/>
+    <code id="NR" title="Ndebele; South; South Ndebele" desc=""/>
+    <code id="nv" title="Navajo; Navaho" desc=""/>
+    <code id="NV" title="Navajo; Navaho" desc=""/>
+    <code id="ny" title="Chichewa; Chewa; Nyanja" desc=""/>
+    <code id="NY" title="Chichewa; Chewa; Nyanja" desc=""/>
+    <code id="oc" title="Occitan (post 1500); Provencal" desc=""/>
+    <code id="OC" title="Occitan (post 1500); Provencal" desc=""/>
+    <code id="oj" title="Ojibwa" desc=""/>
+    <code id="OJ" title="Ojibwa" desc=""/>
+    <code id="om" title="Oromo" desc=""/>
+    <code id="OM" title="Oromo" desc=""/>
+    <code id="or" title="Oriya" desc=""/>
+    <code id="OR" title="Oriya" desc=""/>
+    <code id="os" title="Ossetian; Ossetic" desc=""/>
+    <code id="OS" title="Ossetian; Ossetic" desc=""/>
+    <code id="pa" title="Panjabi; Punjabi" desc=""/>
+    <code id="PA" title="Panjabi; Punjabi" desc=""/>
+    <code id="pi" title="Pali" desc=""/>
+    <code id="PI" title="Pali" desc=""/>
+    <code id="pl" title="Polish" desc=""/>
+    <code id="PL" title="Polish" desc=""/>
+    <code id="ps" title="Pushto; Pashto" desc=""/>
+    <code id="PS" title="Pushto; Pashto" desc=""/>
+    <code id="pt" title="Portuguese" desc=""/>
+    <code id="PT" title="Portuguese" desc=""/>
+    <code id="qu" title="Quechua" desc=""/>
+    <code id="QU" title="Quechua" desc=""/>
+    <code id="rm" title="Romansh" desc=""/>
+    <code id="RM" title="Romansh" desc=""/>
+    <code id="rn" title="Rundi" desc=""/>
+    <code id="RN" title="Rundi" desc=""/>
+    <code id="ro" title="Romanian" desc=""/>
+    <code id="RO" title="Romanian" desc=""/>
+    <code id="ru" title="Russian" desc=""/>
+    <code id="RU" title="Russian" desc=""/>
+    <code id="rw" title="Kinyarwanda" desc=""/>
+    <code id="RW" title="Kinyarwanda" desc=""/>
+    <code id="sa" title="Sanskrit" desc=""/>
+    <code id="SA" title="Sanskrit" desc=""/>
+    <code id="sc" title="Sardinian" desc=""/>
+    <code id="SC" title="Sardinian" desc=""/>
+    <code id="sd" title="Sindhi" desc=""/>
+    <code id="SD" title="Sindhi" desc=""/>
+    <code id="se" title="Northern Sami" desc=""/>
+    <code id="SE" title="Northern Sami" desc=""/>
+    <code id="sg" title="Sango" desc=""/>
+    <code id="SG" title="Sango" desc=""/>
+    <code id="si" title="Sinhala; Sinhalese" desc=""/>
+    <code id="SI" title="Sinhala; Sinhalese" desc=""/>
+    <code id="sk" title="Slovak" desc=""/>
+    <code id="SK" title="Slovak" desc=""/>
+    <code id="sl" title="Slovenian" desc=""/>
+    <code id="SL" title="Slovenian" desc=""/>
+    <code id="sm" title="Samoan" desc=""/>
+    <code id="SM" title="Samoan" desc=""/>
+    <code id="sn" title="Shona" desc=""/>
+    <code id="SN" title="Shona" desc=""/>
+    <code id="so" title="Somali" desc=""/>
+    <code id="SO" title="Somali" desc=""/>
+    <code id="sq" title="Albanian" desc=""/>
+    <code id="SQ" title="Albanian" desc=""/>
+    <code id="sr" title="Serbian" desc=""/>
+    <code id="SR" title="Serbian" desc=""/>
+    <code id="ss" title="Swati" desc=""/>
+    <code id="SS" title="Swati" desc=""/>
+    <code id="st" title="Sotho, Southern" desc=""/>
+    <code id="ST" title="Sotho, Southern" desc=""/>
+    <code id="su" title="Sundanese" desc=""/>
+    <code id="SU" title="Sundanese" desc=""/>
+    <code id="sv" title="Swedish" desc=""/>
+    <code id="SV" title="Swedish" desc=""/>
+    <code id="sw" title="Swahili" desc=""/>
+    <code id="SW" title="Swahili" desc=""/>
+    <code id="ta" title="Tamil" desc=""/>
+    <code id="TA" title="Tamil" desc=""/>
+    <code id="te" title="Telugu" desc=""/>
+    <code id="TE" title="Telugu" desc=""/>
+    <code id="tg" title="Tajik" desc=""/>
+    <code id="TG" title="Tajik" desc=""/>
+    <code id="th" title="Thai" desc=""/>
+    <code id="TH" title="Thai" desc=""/>
+    <code id="ti" title="Tigrinya" desc=""/>
+    <code id="TI" title="Tigrinya" desc=""/>
+    <code id="tk" title="Turkmen" desc=""/>
+    <code id="TK" title="Turkmen" desc=""/>
+    <code id="tl" title="Tagalog" desc=""/>
+    <code id="TL" title="Tagalog" desc=""/>
+    <code id="tn" title="Tswana" desc=""/>
+    <code id="TN" title="Tswana" desc=""/>
+    <code id="to" title="Tonga (Tonga Islands)" desc=""/>
+    <code id="TO" title="Tonga (Tonga Islands)" desc=""/>
+    <code id="tr" title="Turkish" desc=""/>
+    <code id="TR" title="Turkish" desc=""/>
+    <code id="ts" title="Tsonga" desc=""/>
+    <code id="TS" title="Tsonga" desc=""/>
+    <code id="tt" title="Tatar" desc=""/>
+    <code id="TT" title="Tatar" desc=""/>
+    <code id="tw" title="Twi" desc=""/>
+    <code id="TW" title="Twi" desc=""/>
+    <code id="ty" title="Tahitian" desc=""/>
+    <code id="TY" title="Tahitian" desc=""/>
+    <code id="ug" title="Uighur; Uyghur" desc=""/>
+    <code id="UG" title="Uighur; Uyghur" desc=""/>
+    <code id="uk" title="Ukrainian" desc=""/>
+    <code id="UK" title="Ukrainian" desc=""/>
+    <code id="ur" title="Urdu" desc=""/>
+    <code id="UR" title="Urdu" desc=""/>
+    <code id="uz" title="Uzbek" desc=""/>
+    <code id="UZ" title="Uzbek" desc=""/>
+    <code id="ve" title="Venda" desc=""/>
+    <code id="VE" title="Venda" desc=""/>
+    <code id="vi" title="Vietnamese" desc=""/>
+    <code id="VI" title="Vietnamese" desc=""/>
+    <code id="vo" title="Volap�k" desc=""/>
+    <code id="VO" title="Volap�k" desc=""/>
+    <code id="wa" title="Walloon" desc=""/>
+    <code id="WA" title="Walloon" desc=""/>
+    <code id="wo" title="Wolof" desc=""/>
+    <code id="WO" title="Wolof" desc=""/>
+    <code id="xh" title="Xhosa" desc=""/>
+    <code id="XH" title="Xhosa" desc=""/>
+    <code id="yi" title="Yiddish" desc=""/>
+    <code id="YI" title="Yiddish" desc=""/>
+    <code id="yo" title="Yoruba" desc=""/>
+    <code id="YO" title="Yoruba" desc=""/>
+    <code id="za" title="Zhuang; Chuang" desc=""/>
+    <code id="ZA" title="Zhuang; Chuang" desc=""/>
+    <code id="zh" title="Chinese" desc=""/>
+    <code id="ZH" title="Chinese" desc=""/>
+    <code id="zu" title="Zulu" desc=""/>
+    <code id="ZU" title="Zulu" desc=""/>
+  </data_element>
+  <data_element id="0501" name="SecurityServiceCoded" desc="Specification of the security service applied." type="an" maxlength="3">
+    <code id="1" title="Non-repudiation of origin" desc="The message includes a digital signature protecting the receiver of the message from the sender's denial of having sent the message."/>
+    <code id="2" title="Message origin authentication" desc="The actual sender of the message cannot claim to be some other (authorized) entity."/>
+    <code id="3" title="Integrity" desc="The message content is protected against the modification of data."/>
+    <code id="4" title="Confidentiality" desc="The message content is protected against the unauthorised reading, copying or disclosure of its content."/>
+    <code id="5" title="Non-repudiation of receipt" desc="Non-repudiation of receipt protects the sender of an object message from the receiver's denial of having received the message."/>
+    <code id="6" title="Receipt authentication" desc="Receipt authentication ensures the sender that the message has been received by the authenticated recipient."/>
+    <code id="7" title="Referenced EDIFACT structure non-repudiation of origin" desc="The referenced EDIFACT structure is secured by a digital signature protecting the receiver of the message from the sender's denial of  having sent the message."/>
+    <code id="8" title="Referenced EDIFACT structure origin authentication" desc="The actual sender of the referenced EDIFACT structure cannot claim to be some other (authorized) party."/>
+    <code id="9" title="Referenced EDIFACT structure integrity" desc="The referenced EDIFACT structure content is protected against the modification of data."/>
+    <code id="10" title="Time stamping request" desc="Ask for the EDIFACT structure to be time stamped."/>
+    <code id="11" title="Entity authentication" desc="The initiator and/or responder cannot claim to be another party."/>
+    <code id="12" title="Entity authentication with key establishment" desc="The initiator and/or responder cannot claim to be another party, and security keys are established."/>
+  </data_element>
+  <data_element id="0503" name="ResponseTypeCoded" desc="Specification of the type of response expected from the recipient." type="an" maxlength="3">
+    <code id="1" title="No acknowledgement required" desc="No AUTACK acknowledgement message expected."/>
+    <code id="2" title="Acknowledgement required" desc="AUTACK acknowledgement message expected."/>
+  </data_element>
+  <data_element id="0505" name="FilterFunctionCoded" desc="Identification of the filtering function used to reversibly map any bit pattern on to a restricted character set." type="an" maxlength="3">
+    <code id="1" title="No filter" desc="No filter function is used."/>
+    <code id="2" title="Hexadecimal filter" desc="Hexadecimal filter."/>
+    <code id="3" title="ISO/IEC 646 filter" desc="ASCII filter as described in ISO 10126-1."/>
+    <code id="4" title="ISO/IEC 646 Baudot filter" desc="Baudot filter as described in ISO 10126-1."/>
+    <code id="5" title="UN/EDIFACT EDA filter" desc="Filter function for UN/EDIFACT character set repertoire A as described in ISO 9735-5."/>
+    <code id="6" title="UN/EDIFACT EDC filter" desc="Filter function for UN/EDIFACT character set repertoire A as described in ISO 9735-5."/>
+    <code id="7" title="Base 64 filter" desc="Base 64 filter function as described in RFC 1521."/>
+    <code id="ZZZ" title="Mutually agreed" desc="Mutually agreed between trading partners."/>
+  </data_element>
+  <data_element id="0507" name="OriginalCharacterSetEncodingCoded" desc="Identification of the character set in which the secured EDIFACT structure was encoded when security mechanisms were applied." type="an" maxlength="3">
+    <code id="1" title="ASCII 7 bit" desc="ASCII 7 bit code."/>
+    <code id="2" title="ASCII 8 bit" desc="ASCII 8 bit code."/>
+    <code id="3" title="Code page 850 (IBM PC Multinational)" desc="Encoding schema for the repertoire as defined by the code page."/>
+    <code id="4" title="Code page 500 (EBCDIC Multinational No. 5)" desc="Encoding schema for the repertoire as defined by the code page."/>
+    <code id="5" title="UCS-2" desc="Universal Multiple-Octet Coded Character Set (UCS) two- octet per character encoding schema as defined in ISO/IEC 10646."/>
+    <code id="6" title="UCS-4" desc="Universal Multiple-Octet Coded Character Set (UCS) four- octet per character encoding schema as defined in ISO/IEC 10646."/>
+    <code id="7" title="UTF-8" desc="UCS Transformation Format 8 (UTF-8) multi-octet (of length one to six octets) per character encoding schema as defined in ISO/IEC 10646, Annex R."/>
+    <code id="8" title="UTF-16" desc="UCS Transformation Format 16 (UTF-16) two-octet per character encoding schema as defined in ISO/IEC 10646, Annex Q."/>
+    <code id="ZZZ" title="Mutually agreed" desc="Mutually agreed between trading partners."/>
+  </data_element>
+  <data_element id="0509" name="RoleOfSecurityProviderCoded" desc="Identification of the role of the security provider in relation to the secured item." type="an" maxlength="3">
+    <code id="1" title="Issuer" desc="The security provider is the rightful issuer of the signed document."/>
+    <code id="2" title="Notary" desc="The security provider acts as a notary in relation to the signed document."/>
+    <code id="3" title="Contracting party" desc="The security provider endorses the content of the signed document."/>
+    <code id="4" title="Witness" desc="The security provider is a witness, but is not responsible for  the content of the signed document."/>
+    <code id="ZZZ" title="Mutually agreed" desc="Mutually agreed between trading partners."/>
+  </data_element>
+  <data_element id="0513" name="SecurityPartyCodeListQualifier" desc="Identification of the type of identification used to register the security parties." type="an" maxlength="3">
+    <code id="1" title="ACH" desc="Automated clearing house identification."/>
+    <code id="2" title="GS1" desc="GS1, an international organization of GS1 Member Organizations that manages the GS1 System."/>
+    <code id="ZZZ" title="Mutually agreed" desc="Mutually agreed between trading partners."/>
+  </data_element>
+  <data_element id="0515" name="SecurityPartyCodeListResponsibleAgencyCoded" desc="Identification of the agency in charge of registration of the security parties." type="an" maxlength="3">
+    <code id="1" title="UN/CEFACT" desc="United Nations Centre for Trade Facilitation and Electronic Business (UN/CEFACT)."/>
+    <code id="2" title="ISO" desc="International Organization for Standardization."/>
+  </data_element>
+  <data_element id="0517" name="DateAndTimeQualifier" desc="Specification of the type of date and time." type="an" maxlength="3">
+    <code id="1" title="Security Timestamp" desc="Security timestamp of the secured message."/>
+    <code id="2" title="Certificate generation date and time" desc="Identifies the date and time of generation of the certificate by the Certification Authority."/>
+    <code id="3" title="Certificate start of validity period" desc="Identifies the date and time from which the certificate must be considered valid."/>
+    <code id="4" title="Certificate end of validity period" desc="Identifies the date and time until which the certificate must be considered valid."/>
+    <code id="5" title="EDIFACT structure generation date and time" desc="Date and time of generation of the secured EDIFACT structure."/>
+    <code id="6" title="Certificate revocation date and time" desc="Identifies the date and time of revocation of the certificate by the Certification Authority."/>
+    <code id="7" title="Key generation date and time" desc="Identifies the date and time of generation of the key(s)."/>
+  </data_element>
+  <data_element id="0523" name="UseOfAlgorithmCoded" desc="Specification of the usage made of the algorithm." type="an" maxlength="3">
+    <code id="1" title="Owner hashing" desc="Specifies that the algorithm is used by the message sender to compute the hash function on the message (as in the case of Integrity or Non-repudiation of Origin identified in the security function qualifier of USH)."/>
+    <code id="2" title="Owner symmetric" desc="Specifies that the algorithm is used by the message sender either for integrity, confidentiality, or message origin authentication (specified by security service, coded in USH)."/>
+    <code id="3" title="Issuer signing" desc="Specifies that the algorithm is used by the Certificate Issuer (CA) to sign the hash result computed on the certificate."/>
+    <code id="4" title="Issuer hashing" desc="Specifies that the algorithm is used by the Certificate Issuer (CA) to compute the hash result on the certificate."/>
+    <code id="5" title="Owner enciphering" desc="Specifies that the algorithm is used by the message sender to encrypt a symmetric key."/>
+    <code id="6" title="Owner signing" desc="Specifies that the algorithm is used by the message sender to sign either the hash result computed on the message or the symmetric keys."/>
+    <code id="7" title="Owner enciphering or signing" desc="Specifies that the algorithm may be used by the message sender either to encrypt a symmetric key or sign the hash result computed on the  message. This value may only be used in a USA segment within a USC segment group. When encrypting a symmetric key a receiver certificate shall be used. When signing a hash result a sender certificate shall be used."/>
+    <code id="8" title="Owner compressing" desc="Specifies that the algorithm is used by the message sender to compress the data before (encryption and) submission."/>
+    <code id="9" title="Owner compression integrity" desc="Specifies that the algorithm is used by the message sender on the compressed data before (encryption and) submission. The integrity value is used to verify the contents of the compressed text before expansion."/>
+    <code id="10" title="Key agreement" desc="Specifies that the algorithm is used by the initiator and responder to agree a secret key."/>
+  </data_element>
+  <data_element id="0525" name="CryptographicModeOfOperationCoded" desc="Specification of the mode of operation used for the algorithm." type="an" maxlength="3">
+    <code id="1" title="ECB" desc="DES modes of operation, Electronic Code Book; FIPS Pub 81 (1981); ANSI X3.106; ISO 8372 (64 bits); ISO/IEC 10116 (n-bits)."/>
+    <code id="2" title="CBC" desc="DES modes of operation, Cipher Block Chaining; FIPS Pub 81 (1981); ANSI X3.106; ISO 8372 (64 bits); ISO/IEC 10116 (n-bits)."/>
+    <code id="3" title="CFB1" desc="DES modes of operation, Cipher feedback; FIPS Pub 81 (1981); ANSI X3.106; ISO 8372 (64 bits); ISO/IEC 10116 (n-bits)."/>
+    <code id="4" title="CFB8" desc="DES modes of operation, Cipher feedback; FIPS Pub 81 (1981); ANSI X3.106; ISO 8372 (64 bits); ISO/IEC 10116 (n-bits)."/>
+    <code id="5" title="OFB" desc="DES modes of operation; FIPS Pub 81 (1981); ISO 8372 (64 bits); ISO/IEC 10116 (n-bits)."/>
+    <code id="16" title="DSMR" desc="Digital Signature scheme giving Message Recovery. ISO/IEC 9796."/>
+    <code id="17" title="CFB64" desc="DES mode of operation, cipher feedback; ISO/IEC 10116 (n- bits)."/>
+    <code id="23" title="TCBC" desc="TDEA mode of operation, Cipher Block Chaining, ANSI X9.52."/>
+    <code id="24" title="TCBC-I" desc="TDEA mode of operation, Cipher Block Chaining - Interleaved, ANSI X9.52."/>
+    <code id="25" title="TCFB1" desc="TDEA mode of operation, Cipher Feedback - 1 bit feedback, ANSI X9.52."/>
+    <code id="26" title="TCFB8" desc="TDEA mode of operation, Cipher Feedback - 8 bit feedback, ANSI X9.52."/>
+    <code id="27" title="TCFB64" desc="TDEA mode of operation, Cipher Feedback - 64 bit feedback, ANSI X9.52."/>
+    <code id="28" title="TCFB1-P" desc="TDEA mode of operation, Cipher Feedback Pipelined - 1 bit feedback, ANSI X9.52."/>
+    <code id="29" title="TCFB8-P" desc="TDEA mode of operation, Cipher Feedback Pipelined - 8 bit feedback, ANSI X9.52."/>
+    <code id="30" title="TCFB64-P" desc="TDEA mode of operation, Cipher Feedback Pipelined - 64 bit feedback, ANSI X9.52."/>
+    <code id="31" title="TOFB" desc="TDEA mode of operation, Output Feedback Mode, ANSI X9.52."/>
+    <code id="32" title="TOFB-P" desc="TDEA mode of operation, Output Feedback Mode Pipelined, ANSI X9.52."/>
+    <code id="33" title="TCBCM" desc="TDEA mode of operation, Cipher Block Chaining with output feedback Masking, ANSI X9.52."/>
+    <code id="34" title="TCBCM-I" desc="TDEA mode of operation, Cipher Block Chaining with output feedback Masking Interleaved, ANSI X9.52."/>
+    <code id="35" title="TECB" desc="TDEA mode of operation, Electronic Cookbook Mode, ANSI X9.52."/>
+    <code id="36" title="CTS" desc="RC5 mode of operation, Cipher Text Stealing, Published in RCF 2040."/>
+    <code id="ZZZ" title="Mutually agreed" desc="Mutually agreed between trading partners."/>
+  </data_element>
+  <data_element id="0527" name="AlgorithmCoded" desc="Identification of the algorithm." type="an" maxlength="3">
+    <code id="1" title="DES" desc="Data Encryption Standard. FIPS Pub 46 (January 1977)."/>
+    <code id="2" title="MAA" desc="Message Authentication Algorithm. Banking-Approved Algorithms for message Authentication. ISO 8731-2."/>
+    <code id="3" title="FEAL" desc="FEAL Fast Data Encipherment Algorithm."/>
+    <code id="4" title="IDEA" desc="International Data Encryption Algorithm: Lai X., Massey J. &quot;&quot;A Proposal for a New Block Encryption Standard&quot;&quot;, Proceedings of Eurocrypt'90, LNCS vol 473, Springer- Verlag, Berlin 1991, and Lai X., Massey J. &quot;&quot;Markov Ciphers and Differential Cryptanalysis&quot;&quot;, Proceedings of Eurocrypt'91, LNCS vol 547, Springer-Verlag, Berlin 1991."/>
+    <code id="5" title="MD4" desc="The MD4 Message digest algorithm. Rivest R. RSA Data Security Inc. (1990)."/>
+    <code id="6" title="MD5" desc="The MD5 Message digest algorithm. Rivest R. Dusse S. RSA Data Security Inc. (1991)."/>
+    <code id="7" title="RIPEMD" desc="Extension of the MD4 - Ripe Report CS - R9324, April 93."/>
+    <code id="8" title="SHA" desc="Secure Hashing Algorithm."/>
+    <code id="9" title="AR/DFP" desc="Hash function of the German banking industry, submitted to ISO/IEC JTC 1/SC 27/WG 2, Doc N179."/>
+    <code id="10" title="RSA" desc="Rivest, Shamir, Adleman: A Method for obtaining Digital Signatures and Public Key Cryptosystems.  Communications of the ACM, Vol.21(2), pp 120-126 (1978)."/>
+    <code id="11" title="DSA" desc="Digital Signature Algorithm/Digital Signature Standard NIST Pub 1993 Draft."/>
+    <code id="12" title="RAB" desc="Rabin, &quot;Digitalized signatures and public-key functions as intractable as factorization&quot;, MIT Laboratory for Computer Science Technical Report LCS/TR-212, Cambridge, Mass, 1979."/>
+    <code id="13" title="TDEA" desc="Triple Data Encryption Algorithm; ANSI X9.52."/>
+    <code id="14" title="RIPEMD-160" desc="Dedicated Hash-Function #1; ISO/IEC 10118-3."/>
+    <code id="15" title="RIPEMD-128" desc="Dedicated Hash-Function #2; ISO/IEC 10118-3."/>
+    <code id="16" title="SHA-1" desc="Secure Hash Algorithm, dedicated Hash-Function #3; ISO/IEC 10118-3."/>
+    <code id="17" title="ECC" desc="Elliptic Curve Algorithm, Draft IEEE P1363 standard."/>
+    <code id="18" title="ZLIB" desc="Data compression algorithm; Deflate/inflate algorithm published in RFC1950, RFC1951 and RFC1952."/>
+    <code id="20" title="INFOZIP" desc="Data compression algorithm."/>
+    <code id="21" title="OLZW" desc="Data compression algorithm; Optimized LZW; Published in 'Dr. Dobb's Journal' (Jun 1990)."/>
+    <code id="22" title="ARITCODE" desc="Data compression algorithm; Arithmetic coding; Published in 'Comm. Of the ACM' (Jun 1987)."/>
+    <code id="23" title="SHUFF" desc="Data compression algorithm; Static Huffman; Published in 'Proceedings of the I.R.E.' (Sep. 1952)."/>
+    <code id="24" title="DHUFF" desc="Data compression algorithm; Dynamic Huffman; Published in 'ACM Transaction on Mathematical Software' (Jun 1989)."/>
+    <code id="25" title="CRC-32" desc="Cyclic Redundancy Check - 32-bit; Ethernet CRC."/>
+    <code id="26" title="CRC-CCITT" desc="Cyclic Redundancy Check - 16-bit."/>
+    <code id="27" title="ISO/IEC 12042" desc="Data compression for information exchange - Binary arithmetic coding algorithm; ISO/IEC 12042."/>
+    <code id="28" title="RC4" desc="Variable-Key Size Symmetric Stream Cipher, specified by RSA Security Inc."/>
+    <code id="29" title="RC5" desc="Variable-Key Size Symmetric Block Cipher, published in RFC 2040."/>
+    <code id="30" title="HMAC-SHA1" desc="Message Authentication using keyed SHA-1 (published in RFC 2104)."/>
+    <code id="31" title="HMAC-MD5" desc="Message Authentication using keyed MD5 (published in RFC 2104)."/>
+    <code id="32" title="HMAC-RIPEMD-160" desc="Messahe Authentication using keyed RIPEMD-160 (published in RFC 2104)."/>
+    <code id="33" title="HMAC-RIPEMD-128" desc="Message Authentication using keyed RIPEMD-128 (published in RFC 2104)."/>
+    <code id="34" title="DB-MACv3" desc="MAC calculation (variant 3), using RIPEMD-160 and triple DES (published by Deutsche Bundesbank 1998)."/>
+    <code id="35" title="LZ77" desc="Lempel Ziv, 1977 data compression algorithm."/>
+    <code id="36" title="LZW" desc="Lempel Ziv Welch data compression algorithm."/>
+    <code id="37" title="MAC-ISO 8731-1" desc="Message authentication code defined in ISO 8731-1."/>
+    <code id="38" title="DIM1" desc="Data integrity mechanism using a cryptographic check function; ISO/IEC 9797, first method."/>
+    <code id="39" title="DIM2" desc="Data integrity mechanism using a cryptographic check function; ISO/IEC 9797, second method."/>
+    <code id="40" title="MDC2" desc="Modification detection code, IBM System Journal, vol 13, #2, 1991."/>
+    <code id="41" title="HDS1" desc="ISO/IEC 10118-1; hash functions using an n-bit block cipher algorithm providing a single length hash code."/>
+    <code id="42" title="HDS2" desc="ISO/IEC 10118-1; hash functions using an n-bit block cipher algorithm providing a double length hash code."/>
+    <code id="43" title="SQM" desc="ISO/IEC 9594-8. Square-Mod-N hash function for RSA."/>
+    <code id="44" title="NVB 7.1" desc="Dutch banking standard for hashing and signing using RSA."/>
+    <code id="45" title="PKCS#1-v2_MGF1" desc="Mask Generation Function defined in PKCS#1, Version 2."/>
+    <code id="46" title="NVBAK" desc="Dutch banking standard, NVB Authenticity Mark,  published by the NVB, May 1992."/>
+    <code id="47" title="MCCP" desc="Banking key management by means of asymmetric algorithms, algorithms using the RSA cryptosystem. Signature construction by means of a separate signature. ISO 11166- 2."/>
+    <code id="48" title="SHA-256" desc="Secure Hash Algorithm, dedicated Hash-Function #4; ISO/IEC 10118-3."/>
+    <code id="49" title="SHA-512" desc="Secure Hash Algorithm, dedicated Hash-Function #5; ISO/IEC 10118-3."/>
+    <code id="50" title="SHA-384" desc="Secure Hash Algorithm, dedicated Hash-Function #6; ISO/IEC 10118-3."/>
+    <code id="51" title="WHIRLPOOL" desc="Secure Hash Algorithm, dedicated Hash-Function #7; ISO/IEC 10118-3."/>
+    <code id="52" title="SHA-224" desc="Secure Hash Algorithm standard issued by NIST (National Institute of Standards and Technology) in FIPS PUB 180-2 (Change Notice 1, 2004)."/>
+    <code id="ZZZ" title="Mutually agreed" desc="Mutually agreed between trading partners."/>
+  </data_element>
+  <data_element id="0529" name="AlgorithmCodeListIdentifier" desc="Specification of the code list used to identify the algorithm." type="an" maxlength="3">
+    <code id="1" title="UN/CEFACT" desc="United Nations Centre for Trade Facilitation and Electronic Business (UN/CEFACT)."/>
+  </data_element>
+  <data_element id="0531" name="AlgorithmParameterQualifier" desc="Specification of the type of parameter value." type="an" maxlength="3">
+    <code id="1" title="Initialisation value, clear text" desc="Identifies the algorithm parameter value as an unencrypted initialisation value."/>
+    <code id="2" title="Initialisation value, encrypted under a symmetric key" desc="Identifies the algorithm parameter value as an initialisation value which is encrypted under the symmetric data key."/>
+    <code id="3" title="Initialisation value, encrypted under a public key" desc="Identifies the algorithm parameter value as an initialisation value encrypted under the public key of the  receiving party."/>
+    <code id="4" title="Initialisation value, format mutually agreed" desc="Identifies the algorithm parameter value as an initialisation value in a format agreed between the two parties."/>
+    <code id="5" title="Symmetric key, encrypted under a symmetric key" desc="Identifies the algorithm parameter value as a symmetric key which is encrypted with a previously agreed algorithm under a previously exchanged symmetric key."/>
+    <code id="6" title="Symmetric key, encrypted under a public key" desc="Identifies the algorithm parameter value as a symmetric key encrypted under the public key of the  receiving party."/>
+    <code id="7" title="Symmetric key, signed and encrypted" desc="Identifies the algorithm parameter value as a symmetric key signed under the sender's secret key, then encrypted under the receiver's public key."/>
+    <code id="8" title="Symmetric key encrypted under an asymmetric key common to the sender and the receiver" desc="Identifies the algorithm parameter value as a symmetric key encrypted under an asymmetric key common to the sender and the receiver (use of Diffie and Hellman scheme, for instance)."/>
+    <code id="9" title="Symmetric key name" desc="Identifies the algorithm parameter value as the name of a symmetric key. This may be used in the case where a key relationship has already been established between the sender and receiver."/>
+    <code id="10" title="Key encrypting key name" desc="Identifies the parameter value as the name of a key encrypting key."/>
+    <code id="11" title="Symmetric key, format mutually agreed" desc="Identifies the algorithm parameter value as a symmetric key in a format agreed between the two parties."/>
+    <code id="12" title="Modulus" desc="Identifies the algorithm parameter value as the modulus of a public key which is to be used according to the function defined by the use of algorithm."/>
+    <code id="13" title="Exponent" desc="Identifies the algorithm parameter value as the exponent of a public key which is to be used according to the function defined by the use of algorithm."/>
+    <code id="14" title="Modulus length" desc="Identifies the algorithm parameter value as the length of the modulus (in bits) of the public key used in the algorithm. The length is independent of whatever filtering function may be in use."/>
+    <code id="15" title="Generic parameter 1" desc="Identifies the algorithm parameter value as the first generic parameter."/>
+    <code id="16" title="Generic parameter 2" desc="Identifies the algorithm parameter value as the second generic parameter."/>
+    <code id="17" title="Generic parameter 3" desc="Identifies the algorithm parameter value as the third generic parameter."/>
+    <code id="18" title="Generic parameter 4" desc="Identifies the algorithm parameter value as the fourth generic parameter."/>
+    <code id="19" title="Generic parameter 5" desc="Identifies the algorithm parameter value as the fifth generic parameter."/>
+    <code id="20" title="Generic parameter 6" desc="Identifies the algorithm parameter value as the sixth generic parameter."/>
+    <code id="21" title="Generic parameter 7" desc="Identifies the algorithm parameter value as the seventh generic parameter."/>
+    <code id="22" title="Generic parameter 8" desc="Identifies the algorithm parameter value as the eighth generic parameter."/>
+    <code id="23" title="Generic parameter 9" desc="Identifies the algorithm parameter value as the ninth generic parameter."/>
+    <code id="24" title="Generic parameter 10" desc="Identifies the algorithm parameter value as the tenth generic parameter."/>
+    <code id="25" title="DSA parameter P" desc="Identifies the algorithm parameter value as the parameter P of DSA algorithm."/>
+    <code id="26" title="DSA parameter Q" desc="Identifies the algorithm parameter value as the parameter Q of DSA algorithm."/>
+    <code id="27" title="DSA parameter G" desc="Identifies the algorithm parameter value as the parameter G of DSA algorithm."/>
+    <code id="28" title="DSA parameter Y" desc="Identifies the algorithm parameter value as the parameter Y of DSA algorithm."/>
+    <code id="29" title="Initial value for CRC calculation" desc="Identifies the algorithm parameter value as the initial value for the CRC calculation."/>
+    <code id="30" title="Initial directory tree" desc="Identifies the algorithm parameter value as the initial directory tree for the data compression algorithm specified."/>
+    <code id="31" title="Integrity value offset" desc="Identifies the algorithm parameter value as the offset within the compressed text where the integrity value is located."/>
+    <code id="33" title="Generator" desc="Identifies the algorithm parameter value as the generator for a secret key agreement mechanism."/>
+    <code id="34" title="Symmetric key activation date/time" desc="Identifies the activation date/time of a symmetric key. The date/time format shall be CCYYMMDDHHMMSS."/>
+    <code id="35" title="PKCS#1-EME-OAEP HF" desc="Identifies the algorithm parameter value as the code of the hash function used by EME-OAEP padding mechanism as defined in PKCS#1, Version 2."/>
+    <code id="36" title="PKCS#1-EME-OAEP MGF" desc="Identifies the algorithm parameter value as the code of the mask generation function used by EME-OAEP padding mechanism as defined in PKCS#1, Version 2."/>
+    <code id="37" title="PKCS#1-EME-OAEP P Init" desc="Identifies the algorithm parameter value as the initial octets of the encoding parameter octet string (P) used by EME-OAEP padding mechanism as defined in PKCS#1, Version 2."/>
+    <code id="38" title="PKCS#1-EME-OAEP P Cont" desc="Identifies the algorithm parameter value as the additional octets of the encoding parameter octet string (P) following the initial octets, used by EME-OAEP padding mechanism as defined in PKCS#1, Version 2."/>
+    <code id="39" title="PKCS#1-EME-OAEP P Final" desc="Identifies the algorithm parameter value as the final octets of the encoding parameter octet string (P) following the initial or additional octets, used by EME- OAEP padding mechanism as defined in PKCS#1, Version 2."/>
+    <code id="40" title="PKCS#1-EME-OAEP HF/MGF" desc="Identifies the algorithm parameter value as the code of the hash function used by the mask generation function used by EME-OAEP padding mechanism as defined in PKCS#1, Version 2."/>
+    <code id="41" title="PKCS#1-EME-OAEP LENGTH" desc="Identifies the algorithm parameter value as the intended length of the result produced by EME-OAEP padding mechanism as defined in PKCS#1, Version 2."/>
+    <code id="ZZZ" title="Mutually agreed" desc="Mutually agreed between trading partners."/>
+  </data_element>
+  <data_element id="0533" name="ModeOfOperationCodeListIdentifier" desc="Specification of the code list used to identify the cryptographic mode of operation." type="an" maxlength="3">
+    <code id="1" title="UN/CEFACT" desc="United Nations Centre for Trade Facilitation and Electronic Business (UN/CEFACT)."/>
+  </data_element>
+  <data_element id="0541" name="ScopeOfSecurityApplicationCoded" desc="Specification of the scope of application of the security service defined in the security header." type="an" maxlength="3">
+    <code id="1" title="Security header and message body" desc="The current security header segment group and the object body itself, only. In this case no other security header or security trailer segment group shall be encompassed within this scope."/>
+    <code id="2" title="From security header to security trailer" desc="From the current security header segment group, to the associated security trailer segment group. In this case the current security header segment group, the object body and all the other embedded security header and trailer segment groups shall be encompassed within this scope."/>
+    <code id="3" title="Whole related message, package, group or interchange" desc="From the first character of the message, group, or interchange to the last character of the message, group or interchange."/>
+    <code id="4" title="Interactive security information, security header and message body" desc="Related security information, related interactive security header and interactive message body."/>
+    <code id="5" title="Interactive security information plus security header to security trailer" desc="Related security information, security header, all other embedded interactive security headers, interactive message body and all other embedded interactive security trailers."/>
+    <code id="6" title="Entire batch message" desc="From and including, the first character (&quot;U&quot;) of the message header segment (UNH) through to and including, the last character (segment  terminator) of the corresponding message trailer segment (UNT)."/>
+    <code id="ZZZ" title="Mutually agreed" desc="The scope of security application is defined in an agreement between sender and receiver."/>
+  </data_element>
+  <data_element id="0543" name="CertificateOriginalCharacterSetRepertoireCoded" desc="Identification of the character set repertoire used to create the certificate it was signed." type="an" maxlength="3">
+    <code id="1" title="UN/ECE level A" desc="As defined in the basic code table of ISO/IEC 646 with the exceptions of lower case letters, alternative graphic character allocations and national or application- oriented graphic character allocations."/>
+    <code id="2" title="UN/ECE level B" desc="As defined in the basic code table of ISO/IEC 646 with the exceptions of alternative graphic character allocations and national or application-oriented graphic character allocations."/>
+    <code id="3" title="UN/ECE level C" desc="As defined in ISO/IEC 8859-1 (Latin alphabet No. 1)"/>
+    <code id="4" title="UN/ECE level D" desc="As defined in ISO/IEC 8859-2 (Latin alphabet No. 2)"/>
+    <code id="5" title="UN/ECE level E" desc="As defined in ISO/IEC 8859-5 (Latin/Cyrillic alphabet)"/>
+    <code id="6" title="UN/ECE level F" desc="As defined in ISO/IEC 8859-7 (Latin/Greek alphabet)"/>
+    <code id="7" title="UN/ECE level G" desc="As defined in ISO/IEC 8859-3 (Latin alphabet No. 3)"/>
+    <code id="8" title="UN/ECE level H" desc="As defined in ISO/IEC 8859-4 (Latin alphabet No. 4)"/>
+    <code id="9" title="UN/ECE level I" desc="As defined in ISO/IEC 8859-6 (Latin/Arabic alphabet)"/>
+    <code id="10" title="UN/ECE level J" desc="As defined in ISO/IEC 8859-8 (Latin/Hebrew alphabet)"/>
+    <code id="11" title="UN/ECE level K" desc="As defined in ISO/IEC 8859-9 (Latin alphabet No. 5)"/>
+    <code id="12" title="UN/ECE level X" desc="Code extension technique as defined by ISO/IEC 2022 utilizing the escape techniques in accordance with ISO/IEC 2375."/>
+    <code id="13" title="UN/ECE level Y" desc="ISO/IEC 10646 octet without code extension technique."/>
+    <code id="14" title="UN/ECE level W" desc="ISO/IEC 10646 octet with code extension technique to support UTF-8 (UCS Transformation Format, 8 bit) encoding."/>
+  </data_element>
+  <data_element id="0545" name="CertificateSyntaxAndVersionCoded" desc="Coded identification of the syntax and version used to create the certificate." type="an" maxlength="3">
+    <code id="1" title="EDIFACT version 4" desc="ISO 9735 version 4."/>
+    <code id="2" title="EDIFACT version 3" desc="ISO 9735 version 3."/>
+    <code id="3" title="X.509" desc="ISO/IEC 9594-8, ITU X.509 key/certificate reference."/>
+    <code id="4" title="PGP" desc="PGP (Pretty Good Privacy) based format key/certificate reference."/>
+    <code id="5" title="EDI 5 v1.4" desc="Version 1.4 of the EDI 5 certificate (French national standard)."/>
+  </data_element>
+  <data_element id="0551" name="ServiceCharacterForSignatureQualifier" desc="Identification of the type of service character used when the signature was computed." type="an" maxlength="3">
+    <code id="1" title="Segment terminator" desc="Specifies that this is the separator at the end of segments."/>
+    <code id="2" title="Component data element separator" desc="Specifies that this is the separator between component data elements."/>
+    <code id="3" title="Data element separator" desc="Specifies that this is the separator between data elements."/>
+    <code id="4" title="Release character" desc="Specifies that this is the release character."/>
+    <code id="5" title="Repetition separator" desc="Specifies that this is the separator between repeating data elements."/>
+  </data_element>
+  <data_element id="0563" name="ValidationValueQualifier" desc="Identification of the type of validation value." type="an" maxlength="3">
+    <code id="1" title="Unique validation value" desc="Specifies that this is the unique validation value. This code shall be used when the algorithm involved produces a single parameter result (one MAC with DES algorithm, or one digital signature with RSA algorithm, for instance)."/>
+    <code id="2" title="DSA algorithm r parameter" desc="Specifies that this is the r parameter, resulting of the use of DSA algorithm."/>
+    <code id="3" title="DSA algorithm s parameter" desc="Specifies that this is the s parameter, resulting of the use of DSA algorithm."/>
+    <code id="4" title="Random number for party A" desc="A random number generated by party A in a key agreement or entity authentication protocol."/>
+    <code id="5" title="Random number for party B" desc="A random number generated by party B in a key agreement or entity authentication protocol."/>
+    <code id="6" title="Enciphered block under a symmetric algorithm" desc="The result of the encipherment of data under a symmetric algorithm in an entity authentication protocol."/>
+    <code id="7" title="Enciphered block under an asymmetric algorithm" desc="The result of the encipherment of data under an asymmetric algorithm in an entity authentication protocol."/>
+    <code id="8" title="Key agreement value" desc="The value calculated in a key agreement protocol."/>
+  </data_element>
+  <data_element id="0565" name="MessageRelationCoded" desc="Relationship with another message, past or future." type="an" maxlength="3">
+    <code id="1" title="No relation" desc="The message is initial."/>
+    <code id="2" title="Response" desc="The message is a response message."/>
+    <code id="3" title="Response requested" desc="The message requests an answer."/>
+  </data_element>
+  <data_element id="0567" name="SecurityStatusCoded" desc="Identification of the security element (key or certificate, for instance) status." type="an" maxlength="3">
+    <code id="1" title="Valid" desc="The security element is valid."/>
+    <code id="2" title="Revoked" desc="The security element has been revoked."/>
+    <code id="3" title="Unknown" desc="The status of the security element is unknown."/>
+    <code id="4" title="Discontinued" desc="The security element should not be used for ?????"/>
+    <code id="5" title="Alert" desc="The security element has been put on alert, but is not revoked yet."/>
+    <code id="6" title="Expired" desc="The validity period of the security element is expired."/>
+  </data_element>
+  <data_element id="0569" name="RevocationReasonCoded" desc="Identification of the reason why the certificate has been revoked." type="an" maxlength="3">
+    <code id="1" title="Owner key compromised" desc="The owner key linked to this certificate has been compromised."/>
+    <code id="2" title="Issuer key compromised" desc="The issuer key used to generate this certificate has been compromised."/>
+    <code id="3" title="Owner changed affiliation" desc="The identification details of the certificate are no longer valid."/>
+    <code id="4" title="Certificate superseded" desc="This certificate has been renewed and is superseded by another certificate."/>
+    <code id="5" title="Certificate terminated" desc="This certificate has reached the end of its validity period and has not been renewed."/>
+    <code id="6" title="No information available" desc="This certificate is revoked but the reason is not explicit stated."/>
+    <code id="ZZZ" title="Mutually agreed" desc="Mutually agreed between trading partners."/>
+  </data_element>
+  <data_element id="0571" name="SecurityErrorCoded" desc="Identifies the security error causing the rejection of the EDIFACT structure." type="an" maxlength="3">
+    <code id="1" title="Wrong authenticator" desc="The validation is wrong."/>
+    <code id="2" title="Wrong certificate" desc="The certificate is wrong."/>
+    <code id="3" title="Certification path" desc="The certification path is incomplete. Cannot verify."/>
+    <code id="4" title="Algorithm not supported" desc="The algorithm is not supported."/>
+    <code id="5" title="Hashing method not supported" desc="The hashing method is not supported."/>
+    <code id="6" title="Protocol error" desc="The stated protocol has not been followed."/>
+    <code id="7" title="Security expected but not present" desc="It was expected the user message would be secured (e.g. using integrated message security or the AUTACK message in authentication mode), but this was not present or received in the expected time period."/>
+    <code id="8" title="Security parameters do not match those expected" desc="The parameters specifying the applied security do not match those expected (e.g. from an interchange agreement)."/>
+  </data_element>
+  <data_element id="0575" name="ListParameterQualifier" desc="Specification of the type of list parameter." type="an" maxlength="3">
+    <code id="ZZZ" title="Mutually defined" desc="Mutually defined between trading partners."/>
+  </data_element>
+  <data_element id="0577" name="SecurityPartyQualifier" desc="Identification of the role of the security party." type="an" maxlength="3">
+    <code id="1" title="Message sender" desc="Identifies the party which generates the security parameters of the message (i.e. security originator)."/>
+    <code id="2" title="Message receiver" desc="Identifies the party which verifies the security parameters of the message (i.e. security recipient)."/>
+    <code id="3" title="Certificate owner" desc="Identifies the party which owns the certificate."/>
+    <code id="4" title="Authenticating party" desc="Party which certifies that the document (i.e. the certificate) is authentic."/>
+  </data_element>
+  <data_element id="0579" name="KeyManagementFunctionQualifier" desc="Specification of the type of key management function." type="an" maxlength="3">
+    <code id="101" title="Registration submission" desc="Submission of information for registration."/>
+    <code id="102" title="Asymmetric key pair request" desc="Request a trusted party to generate an asymmetric key pair."/>
+    <code id="110" title="Certification request" desc="Request certification of credentials and public key."/>
+    <code id="111" title="Certificate renewal request" desc="Request to extend the validity period of the current valid key, whose certificate is about to expire."/>
+    <code id="112" title="Certificate replacement request" desc="Request to replace the current certificate by a new one with a different public key (and possibly other information)."/>
+    <code id="121" title="Certificate (path) retrieval request" desc="Request the delivery of an existing (valid or revoked) certificate, with path details where appropriate."/>
+    <code id="123" title="Certificate list retrieval request" desc="Request full or partial list of certificate."/>
+    <code id="124" title="Certificate status request" desc="Request current status of a given certificate."/>
+    <code id="125" title="Certificate validation request" desc="Request the CA to validate an existing certificate."/>
+    <code id="126" title="Certificate delivery request" desc="Request the CA to deliver a (valid or revoked) certificate to a list of recipients known to the CA or specified elsewhere."/>
+    <code id="130" title="Revocation request" desc="Request revocation of a party's certificate."/>
+    <code id="131" title="Alert request" desc="Request to put a party's certificate on alert."/>
+    <code id="140" title="Revocation list request" desc="Request full or partial list of revoked certificates."/>
+    <code id="150" title="Symmetric key request" desc="Request the delivery of symmetric keys."/>
+    <code id="151" title="Symmetric key discontinuation request" desc="Request discontinuation of symmetric key."/>
+    <code id="152" title="Asymmetric key discontinuation request" desc="Request discontinuation of asymmetric key."/>
+    <code id="221" title="Certificate delivery" desc="Delivery of an existing (valid or revoked) certificate."/>
+    <code id="222" title="Certificate path delivery" desc="Delivery of a path."/>
+    <code id="224" title="Certificate status notice" desc="Notice of current status of a given certificate."/>
+    <code id="225" title="Certificate validation notice" desc="Notice of validation of an existing certificate."/>
+    <code id="231" title="Revocation confirmation" desc="Confirmation of revocation of a party's certificate."/>
+    <code id="251" title="Symmetric key delivery" desc="Delivery of symmetric keys."/>
+    <code id="252" title="Discontinuation acknowledgement" desc="Acknowledgement of the requested discontinuation."/>
+  </data_element>
+  <data_element id="0591" name="PaddingMechanismCoded" desc="Padding mechanism or padding scheme applied." type="an" maxlength="3">
+    <code id="1" title="Zero padding" desc="Message padding used for block cipher algorithms. Binary zeros are appended to the end of the message in order to make the message length an exact integer multiple of the block length. The block length is implicitly specified through the algorithm and mode of operation."/>
+    <code id="2" title="PKCS #1 padding" desc="Message padding used for block cipher algorithms according to PKCS #1 (published by RSA Inc., 1993)."/>
+    <code id="3" title="ISO 10126 padding" desc="Message padding used for block cipher algorithms according to ISO-10126 specification."/>
+    <code id="4" title="TBSS padding" desc="Message padding used for block cipher algorithms according to TBSS (Swiss standard, published by Telekurs AG, 1996)."/>
+    <code id="5" title="FF padding" desc="Message padding used for block cipher algorithms. Binary 255 are padded to fill a message up to a block length. The block length is implicit specified through the algorithm and mode of operation."/>
+    <code id="6" title="ISO/IEC 9796-1 padding" desc="Message padding for digital signature schemes according to ISO/IEC 9796-1."/>
+    <code id="7" title="ISO/IEC 9796-2 padding" desc="Message padding for digital signature schemes according to ISO/IEC 9796-2."/>
+    <code id="8" title="ISO/IEC 9796-3 padding" desc="Message padding for digital signature schemes according to ISO/IEC 9796-3."/>
+    <code id="9" title="TBSS envelope padding" desc="Message padding for digital envelopes according to TBSS (Swiss standard, published by Telekurs AG, 1996)"/>
+    <code id="10" title="PKCS #1 envelope padding" desc="Message padding for digital envelopes according to PKCS #1 (published by RSA Inc, 1993)."/>
+    <code id="11" title="PKCS #1 signature padding" desc="Message padding for digital signature schemes according to PKCS #1 (published by RSA Inc, 1993)."/>
+    <code id="12" title="BCS signature padding" desc="Message padding for digital signature schemes according to ZKA (German standard published by ZKA 1995)."/>
+    <code id="13" title="OAEP" desc="Optimal Asymmetric Encryption Padding (published in IEEE P1363)."/>
+    <code id="14" title="RSAES-OAEP" desc="Padding mechanism specified in PKCS#1, version2, for encryption with a RSA public key."/>
+    <code id="15" title="RSAES-PKCS#1-v1_5" desc="Padding mechanism specified in PKCS#1, version2, for encryption with a RSA public key."/>
+    <code id="16" title="RSASA-PKCS-v1_5" desc="Padding mechanism specified in PKCS#1, version2, for digital signatures."/>
+    <code id="17" title="Encryption Block Formatting" desc="Padding mechanism specified in PKCS#1, version 1.5."/>
+    <code id="18" title="PKCS#5" desc="Padding mechanism specified in PKCS#5 for symmetric encryption."/>
+    <code id="19" title="ANSI X9.23" desc="Padding mechanism specified in ANSI X9.23 for symmetric encryption."/>
+  </data_element>
+  <data_element id="0601" name="PaddingMechanismCodeListIdentifier" desc="Specification of the code list used to identify the padding mechanism or padding scheme." type="an" maxlength="3">
+    <code id="1" title="UN/CEFACT" desc="United Nations Centre for Trade Facilitation and Electronic Business (UN/CEFACT)."/>
+  </data_element>
+  <data_element id="0805" name="ObjectTypeQualifier" desc="Qualifier referring to the type of object." type="an" maxlength="3">
+    <code id="1" title="Computer environment type" desc="Specification of the type of computer environment for which the object is intended."/>
+    <code id="2" title="Computer environment version" desc="Specification of the version of the computer environment for which the object is intended."/>
+    <code id="3" title="Computer environment release" desc="Specification of the release of the computer environment for which the object is intended."/>
+    <code id="5" title="Computer environment name" desc="Specification of the name of the computer environment for which the object is intended."/>
+    <code id="6" title="Non-EDIFACT security level code" desc="Specification of the level such as interchange, group or message at which non-EDIFACT security is applied to the data constituting the object."/>
+    <code id="7" title="Non-EDIFACT security version" desc="Specification of the version of the non-EDIFACT security technique applied to the data constituting the object."/>
+    <code id="8" title="Non-EDIFACT security release" desc="Specification of the release of the non-EDIFACT security technique applied to the data constituting the object."/>
+    <code id="9" title="Non-EDIFACT security technique" desc="Specification of the non-EDIFACT security technique applied to the data constituting the object."/>
+    <code id="10" title="Non-EDIFACT security free text information" desc="Free form description of the non-EDIFACT security technique applied to the data constituting the object."/>
+    <code id="11" title="File identification by number" desc="Identification number assigned to the file constituting the object."/>
+    <code id="12" title="File identification by name" desc="Name assigned to the file constituting the object."/>
+    <code id="13" title="File format" desc="Specification of the format of the file constituting the object."/>
+    <code id="14" title="File version" desc="Specification of the version of the file constituting the object."/>
+    <code id="15" title="File release" desc="Specification of the release of the file constituting the object."/>
+    <code id="16" title="File status" desc="Specification of the status of the file constituting the object."/>
+    <code id="17" title="File size" desc="Specification of the size of the file constituting the object in bytes."/>
+    <code id="18" title="File description" desc="Free form description of the file constituting the object."/>
+    <code id="19" title="File block type" desc="Specification of the type of blocking used to partition the file constituting the object."/>
+    <code id="20" title="File block length" desc="Specification of the length of the blocks used to partition the file constituting the object."/>
+    <code id="21" title="File record length" desc="Specification of the length of the records contained in the file constituting the object expressed as the number of character positions."/>
+    <code id="22" title="Program identification by number" desc="Identification number assigned to the program constituting the object."/>
+    <code id="23" title="Program identification by name" desc="Name assigned to the program constituting the object."/>
+    <code id="24" title="Program type" desc="Specification of the type of program constituting the object."/>
+    <code id="25" title="Program version" desc="Specification of the version of the program constituting the object."/>
+    <code id="26" title="Program release" desc="Specification of the release of the program constituting the object."/>
+    <code id="27" title="Program status" desc="Specification of the status of the program constituting the object."/>
+    <code id="28" title="Program description" desc="Free form description of the program constituting the object."/>
+    <code id="29" title="Program size" desc="Specification of the size of the program constituting the object in bytes."/>
+    <code id="30" title="Interchange format" desc="Specification of the format of the interchange constituting the object."/>
+    <code id="31" title="Interchange version" desc="Specification of the version of the interchange constituting the object."/>
+    <code id="32" title="Interchange release" desc="Specification of the release of the interchange constituting the object."/>
+    <code id="33" title="Interchange status" desc="Specification of the status of the interchange constituting the object."/>
+    <code id="34" title="Interchange identification" desc="Identification number assigned to the interchange constituting the object."/>
+    <code id="35" title="Compression technique identification" desc="An identification assigned to the compression technique applied to the object."/>
+    <code id="36" title="Compression technique version" desc="Specification of the version of the compression technique applied to the object."/>
+    <code id="37" title="Compression technique release" desc="Specification of the release of the compression technique applied to the object."/>
+    <code id="38" title="Drawing identification by name" desc="Name assigned to the drawing constituting the object."/>
+    <code id="39" title="Drawing identification by number" desc="Identification number assigned to the drawing constituting the object."/>
+    <code id="40" title="Drawing type" desc="Specification of the type of drawing constituting the object."/>
+    <code id="41" title="Drawing format" desc="Specification of the format of the drawing constituting the object."/>
+    <code id="42" title="Drawing version" desc="Specification of the version of the drawing constituting the object."/>
+    <code id="43" title="Drawing release" desc="Specification of the release of the drawing constituting the object."/>
+    <code id="44" title="Drawing status" desc="Specification of the status of the drawing constituting the object."/>
+    <code id="45" title="Drawing size" desc="Specification of the size of the drawing constituting the object in bytes."/>
+    <code id="46" title="Drawing description" desc="Free form description of the drawing constituting the object."/>
+    <code id="48" title="Filter type" desc="Specification of the type of filtering technique applied to the object."/>
+    <code id="49" title="Filter version" desc="Specification of the version of the filtering technique applied to the object."/>
+    <code id="50" title="Filter code page" desc="Specification of the code page used for the filtering technique applied to the object."/>
+    <code id="51" title="Filter technique" desc="Specification of the filtering technique applied to the object."/>
+    <code id="52" title="Character set repertoire identification" desc="Identification of the character set repertoire used for the object."/>
+    <code id="53" title="Character set encoding technique" desc="Specification of the character set encoding technique used for the object."/>
+    <code id="54" title="Character set encoding technique code page" desc="Specification of the code page used for the character set encoding technique used for the object."/>
+    <code id="55" title="Certificate type" desc="Specification of the type of certificate constituting the object."/>
+    <code id="56" title="Certificate version" desc="Specification of the version of the certificate constituting the object."/>
+    <code id="57" title="Certificate release" desc="Specification of the release of the certificate constituting the object."/>
+    <code id="58" title="Certificate status" desc="Specification of the status of the certificate constituting the object."/>
+    <code id="60" title="Certificate identification by name" desc="Name assigned to the certificate constituting the object."/>
+    <code id="61" title="Certificate identification by number" desc="Identification number assigned to the certificate constituting the object."/>
+    <code id="62" title="Certificate format" desc="Specification of the format of the certificate constituting the object."/>
+    <code id="63" title="Certificate code page" desc="Specification of the code page used when generating the certificate constituting the object."/>
+  </data_element>
+  <data_element id="0813" name="ReferenceQualifier" desc="Code giving specific meaning to a reference identification number." type="an" maxlength="3">
+    <code id="1" title="Object identification number" desc="Identification number assigned to an object."/>
+    <code id="2" title="Application message reference number" desc="Reference number assigned to a message by a computer application."/>
+  </data_element>
+</data_elements>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<composite_data_elements>
+  <composite_data_element id="S001" name="SyntaxIdentifier" desc="Identification of the agency controlling the syntax and indication of syntax level, plus the syntax version number."/>
+  <composite_data_element id="S002" name="InterchangeSender" desc="Identification of the sender of the interchange."/>
+  <composite_data_element id="S003" name="InterchangeRecipient" desc="Identification of the recipient of the interchange."/>
+  <composite_data_element id="S004" name="DateOrTimeOfPreparation" desc="Date/time of preparation of the interchange."/>
+  <composite_data_element id="S005" name="Recipient" desc="Reference or password as agreed between the communicating partners."/>
+  <composite_data_element id="S006" name="ApplicationSender" desc="Identification of the sender's division, department etc. from which a group of message is sent."/>
+  <composite_data_element id="S007" name="ApplicationRecipient" desc="Identification of the recipient's division, department etc. for which a group of messages is intended."/>
+  <composite_data_element id="S008" name="MessageVersion" desc="Specification of the type of messages in the functional group."/>
+  <composite_data_element id="S009" name="MessageIdentifier" desc="Identification of the type, version etc. of the message being interchanged."/>
+  <composite_data_element id="S010" name="StatusOfTheTransfer" desc="Statement that the message is one in a sequence of transfers relating to the same topic."/>
+  <composite_data_element id="S011" name="DataElementIdentification" desc="Identification of the position for an erroneous data element. This can be the position of a simple or composite data element in the definition of a segment or a component data element in the definition a composite data element."/>
+</composite_data_elements>
