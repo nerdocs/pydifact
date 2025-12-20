@@ -90,7 +90,7 @@ class Segment:
     plugins: list = []
     schema: list[tuple[type[CompositeDataElement | DataElement], str, int, str]] = []
     tag = ""
-    elements = None
+    elements: list[Element] = []
 
     def __init_subclass__(cls, **kwargs):
         super().__init_subclass__(**kwargs)
@@ -185,13 +185,13 @@ class Segment:
             ValidationError, if the validation fails.
         """
         release_version = get_syntax_release_version(syntax_version)
+        if not directory and self.tag in service_segments:
+            directory = f"service/v{release_version}"
+
         if directory:
             try:
                 # load segments xml (or cache it)
-                if self.tag in service_segments:
-                    xml_root = _load_segments_xml(f"service/v{release_version}")
-                else:
-                    xml_root = _load_segments_xml(directory)
+                xml_root = _load_segments_xml(directory)
 
                 # Find the segment definition in XML
                 segment_def = xml_root.find(f".//segment[@id='{self.tag}']")
@@ -201,27 +201,89 @@ class Segment:
                 else:
                     # Validate against XML schema
 
-                    # get sub elements, if this is a composite
-                    xml_elements = segment_def.findall(".//data_element")
-                    for index, element in enumerate(self.elements):
-                        if index >= len(xml_elements):
-                            raise ValidationError(
-                                f"{self.tag}: Too many elements. Expected {len(xml_elements)}, "
-                                f"got {len(self.elements)}"
-                            )
+                    # get sub elements (data_element or composite_data_element)
+                    xml_elements = segment_def.findall("./*")
+                    # get count of required elements
+                    required_element_count = len(
+                        [
+                            e
+                            for e in xml_elements
+                            if e.get("required", "false").lower() == "true"
+                        ]
+                    )
 
-                        xml_element = xml_elements[index]
+                    # check if we have less than the required number of elements
+                    # defined in XML
+                    if len(self.elements) < required_element_count:
+                        raise ValidationError(
+                            f"{self.tag}: Too few elements. Expected at least {required_element_count}, "
+                            f"got {len(self.elements)}"
+                        )
+
+                    # check if we have more elements than defined in XML
+                    if len(self.elements) > len(xml_elements):
+                        raise ValidationError(
+                            f"{self.tag}: Too many elements. Expected {len(xml_elements)}, "
+                            f"got {len(self.elements)}"
+                        )
+
+                    for index, xml_element in enumerate(xml_elements):
+                        element = (
+                            self.elements[index] if index < len(self.elements) else None
+                        )
                         is_mandatory = (
                             xml_element.get("required", "false").lower() == "true"
                         )
-                        repeat = int(xml_element.get("repeat", "1"))
+                        # repeat = int(xml_element.get("repeat", "1")) # not used yet
 
                         if is_mandatory and (element is None or element == ""):
                             raise ValidationError(
                                 f"{self.tag} Segment, pos. {index}: "
-                                f"element {xml_element.get('name')}"
+                                f"element {xml_element.get('id')} ({xml_element.get('name')}) "
                                 f"is required."
                             )
+
+                        if element:
+                            if xml_element.tag == "composite_data_element":
+                                if not isinstance(element, list):
+                                    raise ValidationError(
+                                        f"{self.tag} Segment, pos. {index}: "
+                                        f"Element {xml_element.get('id')} must be a "
+                                        f"composite data element, "
+                                        f"but got '{type(element).__name__}': '{element}'"
+                                    )
+                                # TODO: validate internal structure of composite
+                            elif xml_element.tag == "data_element":
+                                if isinstance(element, list):
+                                    raise ValidationError(
+                                        f"{self.tag} Segment, pos. {index}: "
+                                        f"element {xml_element.get('id')} ({xml_element.get('name')}) "
+                                        f"must be a data element, but got a list:"
+                                        f" {element}"
+                                    )
+
+                                # validate data element (length, type)
+                                # convert type and maxlength/minlength to repr string (e.g. "an..3")
+                                type_code = xml_element.get("type", "an")
+                                maxlength = xml_element.get("maxlength")
+                                minlength = xml_element.get("minlength")
+                                if maxlength:
+                                    if minlength and minlength == maxlength:
+                                        repr_str = f"{type_code}{maxlength}"
+                                    else:
+                                        repr_str = f"{type_code}..{maxlength}"
+
+                                    # we use the DataElement class from common.py to validate
+                                    # but we don't want to create an instance if we don't have to
+                                    # however, DataElement.validate is an instance method.
+                                    # Since we have the value as a string (or Element), we can use it.
+                                    from pydifact.syntax.common import DataElement
+
+                                    de = DataElement(str(element))
+                                    # provide a fake code and title for better error messages
+                                    de.code = xml_element.get("id")
+                                    de.title = xml_element.get("name")
+                                    de.validate(mandatory=is_mandatory, repr=repr_str)
 
             except FileNotFoundError:
                 warnings.warn(
