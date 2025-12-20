@@ -7,6 +7,7 @@ def get_syntax_release_version(version: str):
     E.g., when you pass "4", you get the newest release version "402".
     For version 1/2/3, it returns 100/200/300.
     """
+    version = str(version)
     if version == "4":
         return "402"
     if re.match(r"^4\d{4}$", version):
