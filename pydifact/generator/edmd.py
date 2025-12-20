@@ -100,7 +100,7 @@ class EDMDParser(UntidBaseParser):
             self.errors.append(f"{file_path} is a directory")
             return
 
-        with open(file_path, "r", encoding="iso8859-1", errors="replace") as f:
+        with open(file_path, "r", encoding="ibm437", errors="replace") as f:
             file_lines = f.readlines()
 
         skip = True
