@@ -72,7 +72,7 @@ class EDSDParser(UntidBaseParser):
                 f"File '{file_path}' may not be properly formatted - found only {len(edsd_list)} sections"
             )
 
-        # Remove first empty section
+        # Remove the first empty section
         edsd_list = edsd_list[1:]
 
         for edsd_item in edsd_list:

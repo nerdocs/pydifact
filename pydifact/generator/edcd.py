@@ -62,7 +62,7 @@ class EDCDParser(UntidBaseParser):
         with open(file_path, "r", encoding="iso8859-1", errors="replace") as f:
             file_lines = f.read()
 
-        # Replace special character
+        # Replace special characters
         file_lines = file_lines.replace("\xc4", "-")
 
         # Split by separator line (70 dashes)

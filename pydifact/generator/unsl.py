@@ -62,7 +62,7 @@ class UNSLParser(UntidBaseParser):
                 f"File '{file_path}' may not be properly formatted - found only {len(unsl_list)} sections"
             )
 
-        # Remove first empty section
+        # Remove the first empty section
         unsl_list = unsl_list[1:]
 
         for unsl_element in unsl_list:
