@@ -214,7 +214,7 @@ def get_syntax_version(argv: list) -> tuple[str, str, str]:
                 service_subrelease = list(V3_SERVICE_CODE_LISTS.keys())[-1]
                 extended_syntax_version = "300"
             case "4":
-                syntax_version = "3"
+                syntax_version = "4"
                 # use latest supported v4 syntax release
                 service_subrelease = list(V4_SERVICE_CODE_LISTS.keys())[-1]
                 extended_syntax_version = "402"
