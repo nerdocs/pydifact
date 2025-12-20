@@ -298,8 +298,8 @@ class EDSDParser(UntidBaseParser):
                 # check if the element was created successfully
                 if "composite" not in top_level_element:
                     print(
-                        f"❌ Element {top_level_element} is malformed (parsing error?), "
-                        f"skipping..."
+                        f"❌ Element {top_level_element} in '{file_path}' is malformed "
+                        f"(parsing error?), skipping..."
                     )
                     continue
 
