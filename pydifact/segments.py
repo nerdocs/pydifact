@@ -40,6 +40,7 @@ from pydifact.exceptions import (
     EDISyntaxError,
 )
 from pydifact.syntax.common import DataElement, CompositeDataElement
+from pydifact.utils import get_syntax_release_version
 
 logger = logging.getLogger(__name__)
 
@@ -59,10 +60,18 @@ def _load_segments_xml(directory: str) -> ET.Element:
         ET.ParseError: If the XML file cannot be parsed
     """
     # Get the path to the syntax directory
-    syntax_path = Path(__file__).parent / "syntax" / directory / "segments.xml"
+    syntax_path = Path(__file__).parent / "syntax" / directory / "data" / "segments.xml"
 
     if not syntax_path.exists():
-        raise FileNotFoundError(f"segments.xml not found in directory: {directory}")
+        syntax_path = (
+            Path(__file__).parent
+            / "syntax"
+            / directory
+            / "data"
+            / "simple_segments.xml"
+        )
+        if not syntax_path.exists():
+            raise FileNotFoundError(f"segments.xml not found in directory: {directory}")
 
     tree = ET.parse(syntax_path)
     return tree.getroot()
@@ -166,17 +175,21 @@ class Segment:
 
         The Segment class is part of the lower level interfaces of pydifact.
         Args:
-            syntax_version: The EDIFACT syntax version to validate against (e.g., 'D96A')
-            directory: The directory name under pydifact.syntax (e.g., 'd00a', 'd96a')
+            syntax_version: The EDIFACT syntax version to validate the segment against
+                (e.g., "1", "300", "402", "40219"). The correct release will be
+                determined automatically.
+            directory: The directory name to validate the segment against
+                (e.g., "d00a", "d96a")
 
         Raises:
             ValidationError, if the validation fails.
         """
+        release_version = get_syntax_release_version(syntax_version)
         if directory:
             try:
                 # load segments xml (or cache it)
                 if self.tag in service_segments:
-                    xml_root = _load_segments_xml(f"service/v{syntax_version}")
+                    xml_root = _load_segments_xml(f"service/v{release_version}")
                 else:
                     xml_root = _load_segments_xml(directory)
 
