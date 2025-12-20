@@ -79,5 +79,6 @@
   </segment>
   <segment id="UNZ" name="InterchangeTrailer" desc="To end and check the completeness of an interchange.">
     <data_element id="0036" required="true" repetition="1" type="n" maxlength="6"/>
+    <data_element id="0020" required="true" repetition="1" type="an" maxlength="14"/>
   </segment>
 </segments>

@@ -53,5 +53,6 @@
   </segment>
   <segment id="UNT" name="MessageTrailer" desc="To end and check the completeness of a Message">
     <data_element id="0074" required="true" desc="Control count including UNH and UNT" repetition="1" type="n" maxlength="6"/>
+    <data_element id="0062" required="true" desc="Shall be identical to 0062 in UNH" repetition="1" type="an" maxlength="14"/>
   </segment>
 </segments>

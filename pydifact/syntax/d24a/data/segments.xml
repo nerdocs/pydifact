@@ -2252,5 +2252,6 @@
       <data_element id="7036" name="CharacteristicDescription" usage="C" type="an" maxlength="35" desc="Free form description of a characteristic." />
       <data_element id="7036" name="CharacteristicDescription" usage="C" type="an" maxlength="35" desc="Free form description of a characteristic." />
     </composite_data_element>
+    <data_element id="4513" repetition="1" type="an" maxlength="3" name="MaintenanceOperationCode" usage="C" desc="Code specifying a maintenance operation." />
   </segment>
 </segments>
