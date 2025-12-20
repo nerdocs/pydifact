@@ -20,13 +20,19 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 import warnings
+import logging
 from typing import overload
+from functools import lru_cache
+from pathlib import Path
+import xml.etree.ElementTree as ET
 
 from pydifact.constants import (
     EDI_DEFAULT_VERSION,
     M,
     EDI_DEFAULT_SYNTAX,
-    Element
+    Element,
+    EDI_DEFAULT_DIRECTORY,
+    service_segments,
 )
 from pydifact.exceptions import (
     ValidationError,
@@ -35,20 +41,46 @@ from pydifact.exceptions import (
 )
 from pydifact.syntax.common import DataElement, CompositeDataElement
 
+logger = logging.getLogger(__name__)
+
+
+@lru_cache(maxsize=32)
+def _load_segments_xml(directory: str) -> ET.Element:
+    """Load and cache segments.xml from the specified directory.
+
+    Args:
+        directory: The directory name under pydifact.syntax (e.g., 'd00a', 'd96a')
+
+    Returns:
+        The root element of the parsed XML tree
+
+    Raises:
+        FileNotFoundError: If segments.xml cannot be found in the directory
+        ET.ParseError: If the XML file cannot be parsed
+    """
+    # Get the path to the syntax directory
+    syntax_path = Path(__file__).parent / "syntax" / directory / "segments.xml"
+
+    if not syntax_path.exists():
+        raise FileNotFoundError(f"segments.xml not found in directory: {directory}")
+
+    tree = ET.parse(syntax_path)
+    return tree.getroot()
+
 
 class Segment:
     """Represents a low-level segment of an EDI interchange.
 
     This class is used internally. Real-world implementations of specialized should
     subclass Segment and provide
-    the `tag` and `validate` attributes.
+    the `tag` attribute and `validate()` method.
     """
 
     # tag is not a class attribute in this case, as each Segment instance could have another tag.
     __omitted__ = True
     plugins: list = []
     schema: list[tuple[type[CompositeDataElement | DataElement], str, int, str]] = []
-    tag = None
+    tag = ""
     elements = None
 
     def __init_subclass__(cls, **kwargs):
@@ -73,7 +105,7 @@ class Segment:
         """
         # if there is no tag defined in the class itself, it MUST be passed as the first
         # argument.
-        if self.tag is None:
+        if not self.tag:
             if len(args) < 1:
                 raise AttributeError(
                     f"{self}: A generic segment must provide a tag as first argument."
@@ -128,21 +160,64 @@ class Segment:
     def __setitem__(self, key: int, value: Element) -> None:
         self.elements[key] = value
 
-    def validate(self) -> None:
+    def validate(self, syntax_version: str = "", directory: str = "") -> None:
         """
-        Segment validation.
+        Segment validation against a given syntax version and EDIFACT directory.
 
         The Segment class is part of the lower level interfaces of pydifact.
-        So it assumes that the given parameters are correct, there is no validation done here.
-        However, in segments derived from this class, there should be validation.
+        Args:
+            syntax_version: The EDIFACT syntax version to validate against (e.g., 'D96A')
+            directory: The directory name under pydifact.syntax (e.g., 'd00a', 'd96a')
 
         Raises:
-            ValidationError, if the validation fails
-
-        Returns:
-             bool True if the given tag and elements are a valid EDIFACT segment,
-                False if not.
+            ValidationError, if the validation fails.
         """
+        if directory:
+            try:
+                # load segments xml (or cache it)
+                if self.tag in service_segments:
+                    xml_root = _load_segments_xml(f"service/v{syntax_version}")
+                else:
+                    xml_root = _load_segments_xml(directory)
+
+                # Find the segment definition in XML
+                segment_def = xml_root.find(f".//segment[@id='{self.tag}']")
+
+                if segment_def is None:
+                    logger.warning(f"No definition found for segment {self.tag}")
+                else:
+                    # Validate against XML schema
+                    xml_elements = segment_def.findall(".//element")
+
+                    for index, element in enumerate(self.elements):
+                        if index >= len(xml_elements):
+                            raise ValidationError(
+                                f"{self.tag}: Too many elements. Expected {len(xml_elements)}, "
+                                f"got {len(self.elements)}"
+                            )
+
+                        xml_element = xml_elements[index]
+                        is_mandatory = (
+                            xml_element.get("mandatory", "false").lower() == "true"
+                        )
+
+                        if is_mandatory and (element is None or element == ""):
+                            raise ValidationError(
+                                f"{self.tag} Segment, pos. {index}: Mandatory element is missing"
+                            )
+
+            except FileNotFoundError:
+                warnings.warn(
+                    f"segments.xml not found for directory '{directory}'. "
+                    f"Falling back to schema-based validation.",
+                    category=MissingImplementationWarning,
+                )
+            except ET.ParseError as e:
+                warnings.warn(
+                    f"Failed to parse segments.xml: {e}. "
+                    f"Falling back to schema-based validation.",
+                    category=MissingImplementationWarning,
+                )
 
         for index, element in enumerate(self.elements):
             # validation is only done in specific segments, not in generic "Segment"
@@ -186,8 +261,9 @@ class SegmentFactory:
         name: str,
         *elements: Element,
         validate: bool = True,
-        syntax_identifier: str = EDI_DEFAULT_SYNTAX,
-        version: int = EDI_DEFAULT_VERSION,
+        version: str = EDI_DEFAULT_VERSION,
+        directory: str = EDI_DEFAULT_DIRECTORY,
+        syntax_identifier: str = EDI_DEFAULT_SYNTAX,  # unused yet
     ) -> Segment:
         """Create a new instance of the relevant class type.
 
@@ -227,6 +303,6 @@ class SegmentFactory:
             segment = Segment(name, *elements)
 
         if validate:
-            segment.validate()
+            segment.validate(version, directory)
 
         return segment

@@ -117,7 +117,7 @@ class UNSLParser(UntidBaseParser):
                     match = re.match(r"^ +Repr: (a?n?)[.]*(\d+)", row)
                     if not match:
                         self.warnings.append(
-                            f"Could not parse 'Repr 'representation: {row}"
+                            f"Could not parse 'Repr': '{row}' at line {i}"
                         )
                     else:
                         element_type = match.group(1).strip()

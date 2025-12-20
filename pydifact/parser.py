@@ -26,7 +26,8 @@ from pydifact.constants import (
     EDI_DEFAULT_VERSION,
     EDI_DEFAULT_SYNTAX,
     Element,
-    Elements
+    Elements,
+    EDI_DEFAULT_DIRECTORY,
 )
 from pydifact.exceptions import EDISyntaxError
 from pydifact.tokenizer import Tokenizer
@@ -49,17 +50,22 @@ class Parser:
         self,
         factory: SegmentFactory | None = None,
         characters: Characters | None = None,
-        syntax_identifier: str | None = None,
-        version: int | None = None,
+        version_override: str = "",
+        directory: str = "",
+        syntax_identifier: str = "",
     ) -> None:
         """Initializes parser with segment factory and control characters"""
         self.factory = factory or SegmentFactory()
         self.characters = characters or Characters()
-        self.syntax_identifier = syntax_identifier
-        self.version = version
+        self.version = version_override or EDI_DEFAULT_VERSION
+        self.directory = directory or EDI_DEFAULT_DIRECTORY
+        self.syntax_identifier = syntax_identifier or EDI_DEFAULT_SYNTAX
 
     def parse(
-        self, message: str, characters: Characters | None = None
+        self,
+        message: str,
+        characters: Characters | None = None,
+        directory: str = EDI_DEFAULT_DIRECTORY,
     ) -> Iterator[Segment]:
         """Parse the message into a list of segments.
 
@@ -108,7 +114,7 @@ class Parser:
         )
 
         for raw_segment in raw_segments:
-            yield self.convert_raw_segment_to_segment(raw_segment)
+            yield self.convert_raw_segment_to_segment(raw_segment, directory=directory)
 
     @staticmethod
     def get_control_characters(
@@ -235,7 +241,12 @@ class Parser:
             data_element.append(token.value)
             empty_component_counter = 0
 
-    def convert_raw_segment_to_segment(self, raw_segment: Elements) -> Segment:
+    def convert_raw_segment_to_segment(
+        self,
+        raw_segment: Elements,
+        version: str = EDI_DEFAULT_VERSION,
+        directory: str = EDI_DEFAULT_DIRECTORY,
+    ) -> Segment:
         name = raw_segment.pop(0)
         if isinstance(name, list):
             raise EDISyntaxError("Invalid segment name: {name}")
@@ -271,6 +282,7 @@ class Parser:
         return self.factory.create_segment(
             name,
             *raw_segment,
+            version=self.version,
+            directory=directory,
             syntax_identifier=self.syntax_identifier or EDI_DEFAULT_SYNTAX,
-            version=self.version or EDI_DEFAULT_VERSION,
         )

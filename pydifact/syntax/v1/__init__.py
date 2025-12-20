@@ -280,8 +280,8 @@ class UNASegment(Segment):
         self.reserved_character = characters.reserved_character
         self.segment_terminator = characters.segment_terminator
 
-    def validate(self) -> None:
-        super().validate()
+    def validate(self, *args, **kwargs) -> None:
+        super().validate(*args, **kwargs)
 
     def __str__(self):
         return "".join(
@@ -294,6 +294,7 @@ class UNASegment(Segment):
                 self.segment_terminator,
             ]
         )
+
 
 class UNBSegment(Segment):
     """Interchange header.

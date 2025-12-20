@@ -65,13 +65,15 @@ class EDCDParser(UntidBaseParser):
         # Replace special characters
         file_lines = file_lines.replace("\xc4", "-")
 
-        # Split by separator line (70 dashes)
-        edcd_list = re.split(r"(?= +C\d{3} +[A-Z/ ]+ *)", file_lines)
+        # Split by S000/C000 lines
+        edcd_list = re.split(r"(?= +[CS]\d{3} +[A-Z/ ]+ *)", file_lines)
 
         if len(edcd_list) < 2:
-            self.warnings.append(
-                f"File '{file_path}' may not be properly formatted - found only {len(edcd_list)} sections"
-            )
+            edcd_list = re.split(r"[-─\xc4]{70,}", file_lines)
+            if len(edcd_list) < 2:
+                self.warnings.append(
+                    f"File '{file_path}' may not be properly formatted - found only {len(edcd_list)} sections"
+                )
 
         # Remove the first empty section
         edcd_list = edcd_list[1:]
@@ -96,7 +98,9 @@ class EDCDParser(UntidBaseParser):
 
                 # Parse segment name and change indicator
                 if composite_code == "":
-                    match = re.match(r"[*+ |X]+([A-Z][0-9]{3}) +([A-Z /]+)", row)
+                    match = re.match(
+                        r"[*+ |X]*([A-Z][0-9]{3}) +([A-Z /]+)", row.strip()
+                    )
                     if not match:
                         self.warnings.append(f"Could not parse segment header: {row}")
                         break
