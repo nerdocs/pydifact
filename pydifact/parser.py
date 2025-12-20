@@ -43,7 +43,9 @@ class Parser:
         factory: The SegmentFactory to use for creating segments.
             (default: SegmentFactory())
         characters: The control characters to use. (default: Characters())
-        version: The EDI version to use (default: 4)
+        version: The EDI version to override. (default: from UNB header)
+        directory: The directory to use for segments. (default: EDI_DEFAULT_DIRECTORY)
+        syntax_identifier: The syntax identifier to use for segments. (default: from UNB header)
     """
 
     def __init__(
@@ -69,10 +71,15 @@ class Parser:
     ) -> Iterator[Segment]:
         """Parse the message into a list of segments.
 
-        :param characters: the control characters to use, if there is no
-                UNA segment present
-        :param message: The EDI message
-        :rtype:
+        Args:
+            message: The EDI message string to parse.
+            characters: The control characters to use, if there is no
+                UNA segment present. Defaults to None.
+            directory: The directory to use for segments. Defaults to
+                EDI_DEFAULT_DIRECTORY.
+
+        Yields:
+            Segment: Parsed segment objects from the EDI message.
         """
 
         # If there is a UNA segment, take the following 6 characters
