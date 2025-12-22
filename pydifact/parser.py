@@ -76,8 +76,6 @@ class Parser:
             message: The EDI message string to parse.
             characters: The control characters to use, if there is no
                 UNA segment present. Defaults to None.
-            directory: The directory to use for segments. Defaults to
-                EDI_DEFAULT_DIRECTORY.
 
         Yields:
             Segment: Parsed segment objects from the EDI message.
