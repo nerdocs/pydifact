@@ -116,7 +116,7 @@ class DataElement:
     """A possible dict of codes that can be used for validation"""
 
     def __init__(self, value: str):
-        self.plugins = None
+        self.plugins = []
         self.value = value
 
     def validate(self, mandatory: bool = None, repr: str = None) -> None:
@@ -134,50 +134,60 @@ class DataElement:
 
         try:
             r = repr or self.repr
+            if not r:
+                return
             tag_name = f"Tag {self.code} ({self.title})"
-            if r[0] == "a":
-                if r[1] == "n":
-                    if r[2:4] == "..":
-                        assert_an_max(
-                            self.value,
-                            r[4:],
-                            f"{tag_name} "
-                            f"must have max. {r[4:]} alphanumeric characters. Current value: "
-                            f"'{self.value}'",
-                        )
-                    else:
-                        assert_an(
-                            self.value,
-                            r[2:],
-                            f"{tag_name} must have exactly "
-                            f"{r[2:]} alphanumeric characters. Current value: "
-                            f"'{self.value}'",
-                        )
+            if r.startswith("an"):
+                if r[2:4] == "..":
+                    assert_an_max(
+                        self.value,
+                        r[4:],
+                        f"{tag_name} "
+                        f"must have max. {r[4:]} alphanumeric characters. Current value: "
+                        f"'{self.value}'",
+                    )
                 else:
-                    if r[1:2] == "..":
-                        assert_a_max(
-                            self.value,
-                            r[3:],
-                            message=f"{tag_name} "
-                            f"must have max. {r[3:]} alphabetic characters. Current value: "
-                            f"'{self.value}'",
-                        ),
-                    else:
-                        assert_a(
-                            self.value,
-                            r[1:],
-                            message=f"{tag_name} "
-                            f"must have exactly {r[1:]} alphabetic characters. Current value: "
-                            f"'{self.value}'",
-                        )
-            elif r[0] == "n":
-                assert_n(
-                    self.value,
-                    r[1:],
-                    message=f"{tag_name} must "
-                    f"be numeric and must have {r[1:]} digits. Current value: "
-                    f"'{self.value}'",
-                )
+                    assert_an(
+                        self.value,
+                        r[2:],
+                        f"{tag_name} must have exactly "
+                        f"{r[2:]} alphanumeric characters. Current value: "
+                        f"'{self.value}'",
+                    )
+            elif r.startswith("a"):
+                if r[1:3] == "..":
+                    assert_a_max(
+                        self.value,
+                        r[3:],
+                        message=f"{tag_name} "
+                        f"must have max. {r[3:]} alphabetic characters. Current value: "
+                        f"'{self.value}'",
+                    )
+                else:
+                    assert_a(
+                        self.value,
+                        r[1:],
+                        message=f"{tag_name} "
+                        f"must have exactly {r[1:]} alphabetic characters. Current value: "
+                        f"'{self.value}'",
+                    )
+            elif r.startswith("n"):
+                if r[1:3] == "..":
+                    assert_n_max(
+                        self.value,
+                        r[3:],
+                        message=f"{tag_name} must "
+                        f"be numeric and must have max. {r[3:]} digits. Current value: "
+                        f"'{self.value}'",
+                    )
+                else:
+                    assert_n(
+                        self.value,
+                        r[1:],
+                        message=f"{tag_name} must "
+                        f"be numeric and must have {r[1:]} digits. Current value: "
+                        f"'{self.value}'",
+                    )
             if self.codes and self.value not in self.codes:
                 warnings.warn(
                     f"'{self.value}' is not a valid value of '{self.code}: {self.title}'.",
