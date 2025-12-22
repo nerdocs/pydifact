@@ -48,13 +48,13 @@ def assert_a_max(s, length, message=""):
 
 def assert_n(s, length, message=""):
     """checks if s is numeric and has a given length."""
-    assert int(s), message
+    assert int(s) or s == "0", message
     assert len(s) == int(length), message
 
 
 def assert_n_max(s, length, message=""):
     """checks if s is numeric and has a given length."""
-    assert int(s), message
+    assert int(s) or s == "0", message
     assert len(s) <= int(length), message
 
 
