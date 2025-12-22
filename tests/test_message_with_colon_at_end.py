@@ -13,6 +13,8 @@
 #
 #    You should have received a copy of the GNU Lesser General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+import os
+
 from pydifact.segmentcollection import Interchange
 
 
@@ -21,5 +23,15 @@ def test_message_with_colon_at_end():
     Interchange.from_file("tests/data/invoice_with_colon_at_end.edi")
 
 
-if __name__ == "__main__":
-    test_message_with_colon_at_end()
+def test_v3_messages():
+    # list .edi files in tests/data/messages/v3 dir and create Interchanges from them
+    for file in os.listdir("tests/data/messages/v3"):
+        if file.endswith(".edi"):
+            Interchange.from_file(f"tests/data/messages/v3/{file}")
+
+
+def test_v4_messages():
+    # list .edi files in tests/data/messages/v4 dir and create Interchanges from them
+    for file in os.listdir("tests/data/messages/v4"):
+        if file.endswith(".edi"):
+            Interchange.from_file(f"tests/data/messages/v4/{file}")
