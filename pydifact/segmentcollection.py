@@ -233,14 +233,14 @@ class AbstractSegmentsContainer:
         Returns:
             Segment | None: The header segment, or None if not applicable.
         """
-        return None
+        raise NotImplementedError
 
     def get_footer_segment(self) -> Segment | None:
         """Craft and return a footer segment.
 
         This is similar to `get_header_segment`, but for the footer segment.
         """
-        return None
+        raise NotImplementedError
 
     def serialize(self, break_lines: bool = False) -> str:
         """Return the string representation of the object.
@@ -285,6 +285,14 @@ class RawSegmentCollection(AbstractSegmentsContainer):
     those classes to RawSegmentCollection, as they offer more features and
     checks.
     """
+
+    def get_header_segment(self) -> Segment | None:
+        """This is just a stub method."""
+        return None
+
+    def get_footer_segment(self) -> Segment | None:
+        """This is just a stub method."""
+        return None
 
     def validate(self):
         """This is just a stub method, no validation done here."""
