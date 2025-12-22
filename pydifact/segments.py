@@ -324,8 +324,8 @@ class Segment:
                                     f"{self.tag} Segment, pos. {index}: "
                                     f"element {xml_element.get('id')} "
                                     f"({xml_element.get('name')}) "
-                                    f"should be {length} characters long, but is {len(
-                                        element)}: {element}"
+                                    f"should be {length} characters long, but is "
+                                    f"{len(element)}: {element}"
                                 )
 
         except FileNotFoundError as e:
