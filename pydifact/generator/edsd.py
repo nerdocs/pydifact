@@ -318,7 +318,7 @@ class EDSDParser(UntidBaseParser):
                 if top_level_element.get("elementDescription"):
                     cdef_xml.set("desc", top_level_element["elementDescription"])
                 if top_level_element.get("elementRepetition"):
-                    cdef_xml.set("repetition", top_level_element["elementRepetition"])
+                    cdef_xml.set("repeat", top_level_element["elementRepetition"])
                 if top_level_element.get("elementType"):
                     element_type, is_fixed_length, length = self.parse_repr(
                         top_level_element["elementType"]

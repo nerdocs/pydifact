@@ -141,7 +141,7 @@ class EDCDParser(UntidBaseParser):
 
                     if match.group(3):
                         data_element["elementCondition"] = match.group(3)
-                        data_element["elementRepetition"] = match.group(4).strip()
+                        data_element["elementRepitition"] = match.group(4).strip()
                         if match.group(5):
                             data_element["elementType"] = match.group(5).strip()
                     else:
@@ -204,7 +204,7 @@ class EDCDParser(UntidBaseParser):
 
                 repetition = child.get("elementRepetition")
                 if repetition:
-                    cdef_xml.set("repetition", repetition)
+                    cdef_xml.set("repeat", repetition)
 
                 el_type = child.get("elementType")
                 if el_type:

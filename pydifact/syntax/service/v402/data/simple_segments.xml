@@ -1,232 +1,232 @@
 <?xml version="1.0" encoding="utf-8"?>
 <segments>
   <segment id="UCD" name="DataElementErrorIndication" desc="To identify an erroneous stand-alone, composite or component data element, and to identify the nature of the error.">
-    <data_element id="0085" name="SyntaxErrorCoded" required="true" repetition="1" type="an" maxlength="3"/>
-    <composite_data_element id="S011" name="DataElementIdentification" required="true" repetition="1"/>
+    <data_element id="0085" name="SyntaxErrorCoded" required="true" repeat="1" type="an" maxlength="3"/>
+    <composite_data_element id="S011" name="DataElementIdentification" required="true" repeat="1"/>
   </segment>
   <segment id="UCF" name="GroupResponse" desc="To identify a group in the subject interchange and to indicate acknowledgement or rejection (action taken) of the UNG and UNE segments, and to identify any error related to these segments. It can also identify errors related to the USA, USC, USD, USH, USR, UST, or USU security segments when they appear at the group level. Depending on the action code, it may also indicate the action taken on the messages and packages within that group.">
-    <data_element id="0048" name="GroupReferenceNumber" required="true" repetition="1" type="an" maxlength="14"/>
-    <composite_data_element id="S006" name="ApplicationSenderIdentification" desc="7" repetition="1"/>
-    <composite_data_element id="S007" name="ApplicationRecipientIdentification" desc="7" repetition="1"/>
-    <data_element id="0083" name="ActionCoded" required="true" repetition="1" type="an" maxlength="3"/>
-    <data_element id="0085" name="SyntaxErrorCoded" desc="1,2,3, 4" repetition="1" type="an" maxlength="3"/>
-    <data_element id="0135" name="ServiceSegmentTagCoded" desc="1,2,3, 4,5" repetition="1" type="an" maxlength="3"/>
-    <composite_data_element id="S011" name="DataElementIdentification" desc="2" repetition="1"/>
-    <data_element id="0534" name="SecurityReferenceNumber" desc="3,4,6" repetition="1" type="an" maxlength="14"/>
-    <data_element id="0138" name="SecuritySegmentPosition" desc="3,4,6" repetition="1" type="n" maxlength="6"/>
+    <data_element id="0048" name="GroupReferenceNumber" required="true" repeat="1" type="an" maxlength="14"/>
+    <composite_data_element id="S006" name="ApplicationSenderIdentification" desc="7" repeat="1"/>
+    <composite_data_element id="S007" name="ApplicationRecipientIdentification" desc="7" repeat="1"/>
+    <data_element id="0083" name="ActionCoded" required="true" repeat="1" type="an" maxlength="3"/>
+    <data_element id="0085" name="SyntaxErrorCoded" desc="1,2,3, 4" repeat="1" type="an" maxlength="3"/>
+    <data_element id="0135" name="ServiceSegmentTagCoded" desc="1,2,3, 4,5" repeat="1" type="an" maxlength="3"/>
+    <composite_data_element id="S011" name="DataElementIdentification" desc="2" repeat="1"/>
+    <data_element id="0534" name="SecurityReferenceNumber" desc="3,4,6" repeat="1" type="an" maxlength="14"/>
+    <data_element id="0138" name="SecuritySegmentPosition" desc="3,4,6" repeat="1" type="n" maxlength="6"/>
   </segment>
   <segment id="UCI" name="InterchangeResponse" desc="To identify the subject interchange, to indicate interchange receipt, to indicate acknowledgement or rejection (action taken) of the UNA, UNB and UNZ segments, and to identify any error related to these segments. It can also identify errors related to the USA, USC, USD, USH, USR, UST, or USU security segments when they appear at the interchange level. Depending on the action code, it may also indicate the action taken on the groups, messages, and packages within that interchange.">
-    <data_element id="0020" name="InterchangeControlReference" required="true" repetition="1" type="an" maxlength="14"/>
-    <composite_data_element id="S002" name="InterchangeSender" required="true" repetition="1"/>
-    <composite_data_element id="S003" name="InterchangeRecipient" required="true" repetition="1"/>
-    <data_element id="0083" name="ActionCoded" required="true" repetition="1" type="an" maxlength="3"/>
-    <data_element id="0085" name="SyntaxErrorCoded" desc="1,2,3, 4" repetition="1" type="an" maxlength="3"/>
-    <data_element id="0135" name="ServiceSegmentTagCoded" desc="1,2,3, 4,5" repetition="1" type="an" maxlength="3"/>
-    <composite_data_element id="S011" name="DataElementIdentification" desc="2" repetition="1"/>
-    <data_element id="0534" name="SecurityReferenceNumber" desc="3,4,6" repetition="1" type="an" maxlength="14"/>
-    <data_element id="0138" name="SecuritySegmentPosition" desc="3,4,6" repetition="1" type="n" maxlength="6"/>
+    <data_element id="0020" name="InterchangeControlReference" required="true" repeat="1" type="an" maxlength="14"/>
+    <composite_data_element id="S002" name="InterchangeSender" required="true" repeat="1"/>
+    <composite_data_element id="S003" name="InterchangeRecipient" required="true" repeat="1"/>
+    <data_element id="0083" name="ActionCoded" required="true" repeat="1" type="an" maxlength="3"/>
+    <data_element id="0085" name="SyntaxErrorCoded" desc="1,2,3, 4" repeat="1" type="an" maxlength="3"/>
+    <data_element id="0135" name="ServiceSegmentTagCoded" desc="1,2,3, 4,5" repeat="1" type="an" maxlength="3"/>
+    <composite_data_element id="S011" name="DataElementIdentification" desc="2" repeat="1"/>
+    <data_element id="0534" name="SecurityReferenceNumber" desc="3,4,6" repeat="1" type="an" maxlength="14"/>
+    <data_element id="0138" name="SecuritySegmentPosition" desc="3,4,6" repeat="1" type="n" maxlength="6"/>
   </segment>
   <segment id="UCM" name="MessageOrPackageResponse" desc="To identify a message or package in the subject interchange, and to indicate that message's or package's acknowledgement or rejection (action taken), and to identify any error related to the UNH, UNT, UNO, and UNP segments. It can also identify errors related to the USA, USC, USD, USH, USR, UST, or USU security segments when they appear at the message or package level.">
-    <data_element id="0062" name="MessageReferenceNumber" desc="1,2" repetition="1" type="an" maxlength="14"/>
-    <composite_data_element id="S009" name="MessageIdentifier" desc="2" repetition="1"/>
-    <data_element id="0083" name="ActionCoded" required="true" repetition="1" type="an" maxlength="3"/>
-    <data_element id="0085" name="SyntaxErrorCoded" desc="4,5,6, 7" repetition="1" type="an" maxlength="3"/>
-    <data_element id="0135" name="ServiceSegmentTagCoded" desc="4,5,6, 7,8" repetition="1" type="an" maxlength="3"/>
-    <composite_data_element id="S011" name="DataElementIdentification" desc="5" repetition="1"/>
-    <data_element id="0800" name="PackageReferenceNumber" desc="1,3" repetition="1" type="an" maxlength="35"/>
-    <composite_data_element id="S020" name="ReferenceIdentification" desc="3" repetition="99"/>
-    <data_element id="0534" name="SecurityReferenceNumber" desc="6,7,9" repetition="1" type="an" maxlength="14"/>
-    <data_element id="0138" name="SecuritySegmentPosition" desc="6,7,9" repetition="1" type="n" maxlength="6"/>
+    <data_element id="0062" name="MessageReferenceNumber" desc="1,2" repeat="1" type="an" maxlength="14"/>
+    <composite_data_element id="S009" name="MessageIdentifier" desc="2" repeat="1"/>
+    <data_element id="0083" name="ActionCoded" required="true" repeat="1" type="an" maxlength="3"/>
+    <data_element id="0085" name="SyntaxErrorCoded" desc="4,5,6, 7" repeat="1" type="an" maxlength="3"/>
+    <data_element id="0135" name="ServiceSegmentTagCoded" desc="4,5,6, 7,8" repeat="1" type="an" maxlength="3"/>
+    <composite_data_element id="S011" name="DataElementIdentification" desc="5" repeat="1"/>
+    <data_element id="0800" name="PackageReferenceNumber" desc="1,3" repeat="1" type="an" maxlength="35"/>
+    <composite_data_element id="S020" name="ReferenceIdentification" desc="3" repeat="99"/>
+    <data_element id="0534" name="SecurityReferenceNumber" desc="6,7,9" repeat="1" type="an" maxlength="14"/>
+    <data_element id="0138" name="SecuritySegmentPosition" desc="6,7,9" repeat="1" type="n" maxlength="6"/>
   </segment>
   <segment id="UCS" name="SegmentErrorIndication" desc="To identify either a segment containing an error or a missing segment, and to identify any error related to the complete segment.">
-    <data_element id="0096" name="SegmentPositionInMessageBody" required="true" repetition="1" type="n" maxlength="6"/>
-    <data_element id="0085" name="SyntaxErrorCoded" desc="1" repetition="1" type="an" maxlength="3"/>
+    <data_element id="0096" name="SegmentPositionInMessageBody" required="true" repeat="1" type="n" maxlength="6"/>
+    <data_element id="0085" name="SyntaxErrorCoded" desc="1" repeat="1" type="an" maxlength="3"/>
   </segment>
   <segment id="UGH" name="AnticollisionSegmentGroupHeader" desc="To head, identify and specify an anti-collision segment group.">
-    <data_element id="0087" name="AnticollisionSegmentGroupIdentification" required="true" desc="1" repetition="1" type="an" maxlength="4"/>
+    <data_element id="0087" name="AnticollisionSegmentGroupIdentification" required="true" desc="1" repeat="1" type="an" maxlength="4"/>
   </segment>
   <segment id="UGT" name="AnticollisionSegmentGroupTrailer" desc="To end and check the completeness of an anti-collision segment group.">
-    <data_element id="0087" name="AnticollisionSegmentGroupIdentification" required="true" desc="1" repetition="1" type="an" maxlength="4"/>
+    <data_element id="0087" name="AnticollisionSegmentGroupIdentification" required="true" desc="1" repeat="1" type="an" maxlength="4"/>
   </segment>
   <segment id="UIB" name="InteractiveInterchangeHeader" desc="To head and identify an interchange.">
-    <composite_data_element id="S001" name="SyntaxIdentifier" required="true" desc="3" repetition="1"/>
-    <composite_data_element id="S302" name="DialogueReference" desc="1,2,4, 5,8" repetition="1"/>
-    <composite_data_element id="S303" name="TransactionReference" desc="1,8" repetition="1"/>
-    <composite_data_element id="S018" name="ScenarioIdentification" repetition="1"/>
-    <composite_data_element id="S305" name="DialogueIdentification" desc="2" repetition="1"/>
-    <composite_data_element id="S002" name="InterchangeSender" desc="5" repetition="1"/>
-    <composite_data_element id="S003" name="InterchangeRecipient" repetition="1"/>
-    <composite_data_element id="S300" name="DateAndOrOrTimeOfInitiation" repetition="1"/>
-    <data_element id="0325" name="DuplicateIndicator" desc="6" repetition="1" type="a" maxlength="1"/>
-    <data_element id="0035" name="TestIndicator" desc="7" repetition="1" type="n" maxlength="1"/>
+    <composite_data_element id="S001" name="SyntaxIdentifier" required="true" desc="3" repeat="1"/>
+    <composite_data_element id="S302" name="DialogueReference" desc="1,2,4, 5,8" repeat="1"/>
+    <composite_data_element id="S303" name="TransactionReference" desc="1,8" repeat="1"/>
+    <composite_data_element id="S018" name="ScenarioIdentification" repeat="1"/>
+    <composite_data_element id="S305" name="DialogueIdentification" desc="2" repeat="1"/>
+    <composite_data_element id="S002" name="InterchangeSender" desc="5" repeat="1"/>
+    <composite_data_element id="S003" name="InterchangeRecipient" repeat="1"/>
+    <composite_data_element id="S300" name="DateAndOrOrTimeOfInitiation" repeat="1"/>
+    <data_element id="0325" name="DuplicateIndicator" desc="6" repeat="1" type="a" maxlength="1"/>
+    <data_element id="0035" name="TestIndicator" desc="7" repeat="1" type="n" maxlength="1"/>
   </segment>
   <segment id="UIH" name="InteractiveMessageHeader" desc="To head, identify and specify a message.">
-    <composite_data_element id="S306" name="InteractiveMessageIdentifier" required="true" repetition="1"/>
-    <data_element id="0340" name="InteractiveMessageReferenceNumber" desc="1,5" repetition="1" type="an" maxlength="35"/>
-    <composite_data_element id="S302" name="DialogueReference" desc="2,4,5" repetition="1"/>
-    <composite_data_element id="S301" name="StatusOfTransferInteractive" repetition="1"/>
-    <composite_data_element id="S300" name="DateAndOrOrTimeOfInitiation" repetition="1"/>
-    <data_element id="0035" name="TestIndicator" desc="3" repetition="1" type="n" maxlength="1"/>
+    <composite_data_element id="S306" name="InteractiveMessageIdentifier" required="true" repeat="1"/>
+    <data_element id="0340" name="InteractiveMessageReferenceNumber" desc="1,5" repeat="1" type="an" maxlength="35"/>
+    <composite_data_element id="S302" name="DialogueReference" desc="2,4,5" repeat="1"/>
+    <composite_data_element id="S301" name="StatusOfTransferInteractive" repeat="1"/>
+    <composite_data_element id="S300" name="DateAndOrOrTimeOfInitiation" repeat="1"/>
+    <data_element id="0035" name="TestIndicator" desc="3" repeat="1" type="n" maxlength="1"/>
   </segment>
   <segment id="UIR" name="InteractiveStatus" desc="To report the status of the dialogue.">
-    <data_element id="0331" name="ReportFunctionCoded" required="true" repetition="1" type="an" maxlength="3"/>
-    <composite_data_element id="S307" name="ReportReason" repetition="9"/>
-    <composite_data_element id="S302" name="DialogueReference" repetition="1"/>
-    <composite_data_element id="S300" name="DateAndOrOrTimeOfInitiation" repetition="1"/>
-    <data_element id="0340" name="InteractiveMessageReferenceNumber" desc="1,2" repetition="1" type="an" maxlength="35"/>
-    <data_element id="0800" name="PackageReferenceNumber" desc="1,3" repetition="1" type="an" maxlength="35"/>
+    <data_element id="0331" name="ReportFunctionCoded" required="true" repeat="1" type="an" maxlength="3"/>
+    <composite_data_element id="S307" name="ReportReason" repeat="9"/>
+    <composite_data_element id="S302" name="DialogueReference" repeat="1"/>
+    <composite_data_element id="S300" name="DateAndOrOrTimeOfInitiation" repeat="1"/>
+    <data_element id="0340" name="InteractiveMessageReferenceNumber" desc="1,2" repeat="1" type="an" maxlength="35"/>
+    <data_element id="0800" name="PackageReferenceNumber" desc="1,3" repeat="1" type="an" maxlength="35"/>
   </segment>
   <segment id="UIT" name="InteractiveMessageTrailer" desc="To end and check the completeness of a message.">
-    <data_element id="0340" name="InteractiveMessageReferenceNumber" desc="1" repetition="1" type="an" maxlength="35"/>
-    <data_element id="0074" name="NumberOfSegmentsInAMessage" repetition="1" type="n" maxlength="10"/>
+    <data_element id="0340" name="InteractiveMessageReferenceNumber" desc="1" repeat="1" type="an" maxlength="35"/>
+    <data_element id="0074" name="NumberOfSegmentsInAMessage" repeat="1" type="n" maxlength="10"/>
   </segment>
   <segment id="UIZ" name="InteractiveInterchangeTrailer" desc="To end and check the completeness of an interchange.">
-    <composite_data_element id="S302" name="DialogueReference" desc="1" repetition="1"/>
-    <data_element id="0036" name="InterchangeControlCount" repetition="1" type="n" maxlength="6"/>
-    <data_element id="0325" name="DuplicateIndicator" desc="2" repetition="1" type="a" maxlength="1"/>
+    <composite_data_element id="S302" name="DialogueReference" desc="1" repeat="1"/>
+    <data_element id="0036" name="InterchangeControlCount" repeat="1" type="n" maxlength="6"/>
+    <data_element id="0325" name="DuplicateIndicator" desc="2" repeat="1" type="a" maxlength="1"/>
   </segment>
   <segment id="UNA" name="ServiceStringAdvice" desc="To define the characters selected for use as delimiters and indicators in the rest of the interchange that follows">
     <data_element required="true" type="an" length="6"/>
   </segment>
   <segment id="UNB" name="InterchangeHeader" desc="To identify an interchange.">
-    <composite_data_element id="S001" name="SyntaxIdentifier" required="true" desc="1" repetition="1"/>
-    <composite_data_element id="S002" name="InterchangeSender" required="true" desc="2" repetition="1"/>
-    <composite_data_element id="S003" name="InterchangeRecipient" required="true" desc="2" repetition="1"/>
-    <composite_data_element id="S004" name="DateAndTimeOfPreparation" required="true" repetition="1"/>
-    <data_element id="0020" name="InterchangeControlReference" required="true" desc="2" repetition="1" type="an" maxlength="14"/>
-    <composite_data_element id="S005" name="RecipientReferenceOrPasswordDetails" repetition="1"/>
-    <data_element id="0026" name="ApplicationReference" repetition="1" type="an" maxlength="14"/>
-    <data_element id="0029" name="ProcessingPriorityCode" repetition="1" type="a" maxlength="1"/>
-    <data_element id="0031" name="AcknowledgementRequest" repetition="1" type="n" maxlength="1"/>
-    <data_element id="0032" name="InterchangeAgreementIdentifier" repetition="1" type="an" maxlength="35"/>
-    <data_element id="0035" name="TestIndicator" repetition="1" type="n" maxlength="1"/>
+    <composite_data_element id="S001" name="SyntaxIdentifier" required="true" desc="1" repeat="1"/>
+    <composite_data_element id="S002" name="InterchangeSender" required="true" desc="2" repeat="1"/>
+    <composite_data_element id="S003" name="InterchangeRecipient" required="true" desc="2" repeat="1"/>
+    <composite_data_element id="S004" name="DateAndTimeOfPreparation" required="true" repeat="1"/>
+    <data_element id="0020" name="InterchangeControlReference" required="true" desc="2" repeat="1" type="an" maxlength="14"/>
+    <composite_data_element id="S005" name="RecipientReferenceOrPasswordDetails" repeat="1"/>
+    <data_element id="0026" name="ApplicationReference" repeat="1" type="an" maxlength="14"/>
+    <data_element id="0029" name="ProcessingPriorityCode" repeat="1" type="a" maxlength="1"/>
+    <data_element id="0031" name="AcknowledgementRequest" repeat="1" type="n" maxlength="1"/>
+    <data_element id="0032" name="InterchangeAgreementIdentifier" repeat="1" type="an" maxlength="35"/>
+    <data_element id="0035" name="TestIndicator" repeat="1" type="n" maxlength="1"/>
   </segment>
   <segment id="UNE" name="GroupTrailer" desc="To end and check the completeness of a group.">
-    <data_element id="0060" name="GroupControlCount" required="true" repetition="1" type="n" maxlength="6"/>
-    <data_element id="0048" name="GroupReferenceNumber" required="true" desc="1" repetition="1" type="an" maxlength="14"/>
+    <data_element id="0060" name="GroupControlCount" required="true" repeat="1" type="n" maxlength="6"/>
+    <data_element id="0048" name="GroupReferenceNumber" required="true" desc="1" repeat="1" type="an" maxlength="14"/>
   </segment>
   <segment id="UNG" name="GroupHeader" desc="To head, identify and specify a group of messages and/or packages, which may be used for internal routing and which may contain one or more message types and/or packages.">
-    <composite_data_element id="S006" name="ApplicationSenderIdentification" desc="5" repetition="1"/>
-    <composite_data_element id="S007" name="ApplicationRecipientIdentification" desc="5" repetition="1"/>
-    <composite_data_element id="S004" name="DateAndTimeOfPreparation" desc="3" repetition="1"/>
-    <data_element id="0048" name="GroupReferenceNumber" required="true" desc="5" repetition="1" type="an" maxlength="14"/>
-    <data_element id="0051" name="ControllingAgencyCoded" desc="1,2,4" repetition="1" type="an" maxlength="3"/>
-    <data_element id="0058" name="ApplicationPassword" repetition="1" type="an" maxlength="14"/>
+    <composite_data_element id="S006" name="ApplicationSenderIdentification" desc="5" repeat="1"/>
+    <composite_data_element id="S007" name="ApplicationRecipientIdentification" desc="5" repeat="1"/>
+    <composite_data_element id="S004" name="DateAndTimeOfPreparation" desc="3" repeat="1"/>
+    <data_element id="0048" name="GroupReferenceNumber" required="true" desc="5" repeat="1" type="an" maxlength="14"/>
+    <data_element id="0051" name="ControllingAgencyCoded" desc="1,2,4" repeat="1" type="an" maxlength="3"/>
+    <data_element id="0058" name="ApplicationPassword" repeat="1" type="an" maxlength="14"/>
   </segment>
   <segment id="UNH" name="MessageHeader" desc="To head, identify and specify a message.">
-    <data_element id="0062" name="MessageReferenceNumber" required="true" desc="2" repetition="1" type="an" maxlength="14"/>
-    <composite_data_element id="S009" name="MessageIdentifier" required="true" desc="1,2" repetition="1"/>
-    <data_element id="0068" name="CommonAccessReference" repetition="1" type="an" maxlength="35"/>
-    <composite_data_element id="S010" name="StatusOfTheTransfer" repetition="1"/>
-    <composite_data_element id="S016" name="MessageSubsetIdentification" desc="1" repetition="1"/>
-    <composite_data_element id="S017" name="MessageImplementationGuidelineIdentification" desc="1" repetition="1"/>
-    <composite_data_element id="S018" name="ScenarioIdentification" repetition="1"/>
+    <data_element id="0062" name="MessageReferenceNumber" required="true" desc="2" repeat="1" type="an" maxlength="14"/>
+    <composite_data_element id="S009" name="MessageIdentifier" required="true" desc="1,2" repeat="1"/>
+    <data_element id="0068" name="CommonAccessReference" repeat="1" type="an" maxlength="35"/>
+    <composite_data_element id="S010" name="StatusOfTheTransfer" repeat="1"/>
+    <composite_data_element id="S016" name="MessageSubsetIdentification" desc="1" repeat="1"/>
+    <composite_data_element id="S017" name="MessageImplementationGuidelineIdentification" desc="1" repeat="1"/>
+    <composite_data_element id="S018" name="ScenarioIdentification" repeat="1"/>
   </segment>
   <segment id="UNO" name="ObjectHeader" desc="To head, identify and specify an object.">
-    <data_element id="0800" name="PackageReferenceNumber" required="true" desc="1" repetition="1" type="an" maxlength="35"/>
-    <composite_data_element id="S020" name="ReferenceIdentification" required="true" desc="2" repetition="99"/>
-    <composite_data_element id="S021" name="ObjectTypeIdentification" required="true" desc="3" repetition="99"/>
-    <composite_data_element id="S022" name="StatusOfTheObject" required="true" repetition="1"/>
-    <composite_data_element id="S302" name="DialogueReference" desc="4" repetition="1"/>
-    <composite_data_element id="S301" name="StatusOfTransferInteractive" desc="4" repetition="1"/>
-    <composite_data_element id="S300" name="DateAndOrOrTimeOfInitiation" desc="4" repetition="1"/>
-    <data_element id="0035" name="TestIndicator" desc="4" repetition="1" type="n" maxlength="1"/>
+    <data_element id="0800" name="PackageReferenceNumber" required="true" desc="1" repeat="1" type="an" maxlength="35"/>
+    <composite_data_element id="S020" name="ReferenceIdentification" required="true" desc="2" repeat="99"/>
+    <composite_data_element id="S021" name="ObjectTypeIdentification" required="true" desc="3" repeat="99"/>
+    <composite_data_element id="S022" name="StatusOfTheObject" required="true" repeat="1"/>
+    <composite_data_element id="S302" name="DialogueReference" desc="4" repeat="1"/>
+    <composite_data_element id="S301" name="StatusOfTransferInteractive" desc="4" repeat="1"/>
+    <composite_data_element id="S300" name="DateAndOrOrTimeOfInitiation" desc="4" repeat="1"/>
+    <data_element id="0035" name="TestIndicator" desc="4" repeat="1" type="n" maxlength="1"/>
   </segment>
   <segment id="UNP" name="ObjectTrailer" desc="To end and check the completeness of an object.">
-    <data_element id="0810" name="LengthOfObjectInOctetsOfBits" required="true" desc="1" repetition="1" type="n" maxlength="18"/>
-    <data_element id="0800" name="PackageReferenceNumber" required="true" desc="2" repetition="1" type="an" maxlength="35"/>
+    <data_element id="0810" name="LengthOfObjectInOctetsOfBits" required="true" desc="1" repeat="1" type="n" maxlength="18"/>
+    <data_element id="0800" name="PackageReferenceNumber" required="true" desc="2" repeat="1" type="an" maxlength="35"/>
   </segment>
   <segment id="UNS" name="SectionControl" desc="To separate header, detail and summary sections of a message. Note: To be used by message designers only when required to avoid ambiguities.">
-    <data_element id="0081" name="SectionIdentification" required="true" repetition="1" type="a" maxlength="1"/>
+    <data_element id="0081" name="SectionIdentification" required="true" repeat="1" type="a" maxlength="1"/>
   </segment>
   <segment id="UNT" name="MessageTrailer" desc="To end and check the completeness of a message.">
-    <data_element id="0074" name="NumberOfSegmentsInAMessage" required="true" repetition="1" type="n" maxlength="10"/>
-    <data_element id="0062" name="MessageReferenceNumber" required="true" desc="1" repetition="1" type="an" maxlength="14"/>
+    <data_element id="0074" name="NumberOfSegmentsInAMessage" required="true" repeat="1" type="n" maxlength="10"/>
+    <data_element id="0062" name="MessageReferenceNumber" required="true" desc="1" repeat="1" type="an" maxlength="14"/>
   </segment>
   <segment id="UNZ" name="InterchangeTrailer" desc="To end and check the completeness of an interchange.">
-    <data_element id="0036" name="InterchangeControlCount" required="true" repetition="1" type="n" maxlength="6"/>
-    <data_element id="0020" name="InterchangeControlReference" required="true" desc="1" repetition="1" type="an" maxlength="14"/>
+    <data_element id="0036" name="InterchangeControlCount" required="true" repeat="1" type="n" maxlength="6"/>
+    <data_element id="0020" name="InterchangeControlReference" required="true" desc="1" repeat="1" type="an" maxlength="14"/>
   </segment>
   <segment id="USA" name="SecurityAlgorithm" desc="To identify a security algorithm, the technical usage made of it, and to contain the technical parameters required.">
-    <composite_data_element id="S502" name="SecurityAlgorithm" required="true" repetition="1"/>
-    <composite_data_element id="S503" name="AlgorithmParameter" desc="1" repetition="9"/>
+    <composite_data_element id="S502" name="SecurityAlgorithm" required="true" repeat="1"/>
+    <composite_data_element id="S503" name="AlgorithmParameter" desc="1" repeat="9"/>
   </segment>
   <segment id="USB" name="SecuredDataIdentification" desc="To contain details related to the AUTACK.">
-    <data_element id="0503" name="ResponseTypeCoded" required="true" repetition="1" type="an" maxlength="3"/>
-    <composite_data_element id="S501" name="SecurityDateAndTime" repetition="1"/>
-    <composite_data_element id="S002" name="InterchangeSender" required="true" repetition="1"/>
-    <composite_data_element id="S003" name="InterchangeRecipient" required="true" repetition="1"/>
+    <data_element id="0503" name="ResponseTypeCoded" required="true" repeat="1" type="an" maxlength="3"/>
+    <composite_data_element id="S501" name="SecurityDateAndTime" repeat="1"/>
+    <composite_data_element id="S002" name="InterchangeSender" required="true" repeat="1"/>
+    <composite_data_element id="S003" name="InterchangeRecipient" required="true" repeat="1"/>
   </segment>
   <segment id="USC" name="Certificate" desc="To convey the public key and the credentials of its owner.">
-    <data_element id="0536" name="CertificateReference" desc="2" repetition="1" type="an" maxlength="35"/>
-    <composite_data_element id="S500" name="SecurityIdentificationDetails" desc="3" repetition="2"/>
-    <data_element id="0545" name="CertificateSyntaxAndVersionCoded" desc="2" repetition="1" type="an" maxlength="3"/>
-    <data_element id="0505" name="FilterFunctionCoded" repetition="1" type="an" maxlength="3"/>
-    <data_element id="0507" name="OriginalCharacterSetEncodingCoded" desc="4" repetition="1" type="an" maxlength="3"/>
-    <data_element id="0543" name="CertificateOriginalCharacterSetRepertoireCoded" desc="5" repetition="1" type="an" maxlength="3"/>
-    <data_element id="0546" name="UserAuthorisationLevel" repetition="1" type="an" maxlength="35"/>
-    <composite_data_element id="S505" name="ServiceCharacterForSignature" desc="6" repetition="5"/>
-    <composite_data_element id="S501" name="SecurityDateAndTime" desc="7" repetition="4"/>
-    <data_element id="0567" name="SecurityStatusCoded" desc="1" repetition="1" type="an" maxlength="3"/>
-    <data_element id="0569" name="RevocationReasonCoded" desc="1" repetition="1" type="an" maxlength="3"/>
+    <data_element id="0536" name="CertificateReference" desc="2" repeat="1" type="an" maxlength="35"/>
+    <composite_data_element id="S500" name="SecurityIdentificationDetails" desc="3" repeat="2"/>
+    <data_element id="0545" name="CertificateSyntaxAndVersionCoded" desc="2" repeat="1" type="an" maxlength="3"/>
+    <data_element id="0505" name="FilterFunctionCoded" repeat="1" type="an" maxlength="3"/>
+    <data_element id="0507" name="OriginalCharacterSetEncodingCoded" desc="4" repeat="1" type="an" maxlength="3"/>
+    <data_element id="0543" name="CertificateOriginalCharacterSetRepertoireCoded" desc="5" repeat="1" type="an" maxlength="3"/>
+    <data_element id="0546" name="UserAuthorisationLevel" repeat="1" type="an" maxlength="35"/>
+    <composite_data_element id="S505" name="ServiceCharacterForSignature" desc="6" repeat="5"/>
+    <composite_data_element id="S501" name="SecurityDateAndTime" desc="7" repeat="4"/>
+    <data_element id="0567" name="SecurityStatusCoded" desc="1" repeat="1" type="an" maxlength="3"/>
+    <data_element id="0569" name="RevocationReasonCoded" desc="1" repeat="1" type="an" maxlength="3"/>
   </segment>
   <segment id="USD" name="DataEncryptionHeader" desc="To specify size (i.e. length of data in octets of bits) of encrypted data following the segment terminator of this segment.">
-    <data_element id="0556" name="LengthOfDataInOctetsOfBits" required="true" repetition="1" type="n" maxlength="18"/>
-    <data_element id="0518" name="EncryptionReferenceNumber" repetition="1" type="an" maxlength="35"/>
-    <data_element id="0582" name="NumberOfPaddingBytes" repetition="1" type="n" maxlength="2"/>
+    <data_element id="0556" name="LengthOfDataInOctetsOfBits" required="true" repeat="1" type="n" maxlength="18"/>
+    <data_element id="0518" name="EncryptionReferenceNumber" repeat="1" type="an" maxlength="35"/>
+    <data_element id="0582" name="NumberOfPaddingBytes" repeat="1" type="n" maxlength="2"/>
   </segment>
   <segment id="USE" name="SecurityMessageRelation" desc="To specify the relation to earlier security messages, such as response to a particular request, or request for a particular answer.">
-    <data_element id="0565" name="MessageRelationCoded" required="true" repetition="1" type="an" maxlength="3"/>
+    <data_element id="0565" name="MessageRelationCoded" required="true" repeat="1" type="an" maxlength="3"/>
   </segment>
   <segment id="USF" name="KeyManagementFunction" desc="To specify the type of key management function and the status of a corresponding key or certificate.">
-    <data_element id="0579" name="KeyManagementFunctionQualifier" repetition="1" type="an" maxlength="3"/>
-    <composite_data_element id="S504" name="ListParameter" repetition="1"/>
-    <data_element id="0567" name="SecurityStatusCoded" repetition="1" type="an" maxlength="3"/>
-    <data_element id="0572" name="CertificateSequenceNumber" repetition="1" type="n" maxlength="4"/>
-    <data_element id="0505" name="FilterFunctionCoded" repetition="1" type="an" maxlength="3"/>
+    <data_element id="0579" name="KeyManagementFunctionQualifier" repeat="1" type="an" maxlength="3"/>
+    <composite_data_element id="S504" name="ListParameter" repeat="1"/>
+    <data_element id="0567" name="SecurityStatusCoded" repeat="1" type="an" maxlength="3"/>
+    <data_element id="0572" name="CertificateSequenceNumber" repeat="1" type="n" maxlength="4"/>
+    <data_element id="0505" name="FilterFunctionCoded" repeat="1" type="an" maxlength="3"/>
   </segment>
   <segment id="USH" name="SecurityHeader" desc="To specify a security mechanism applied to a EDIFACT structure (i.e.: either message/package, group or interchange).">
-    <data_element id="0501" name="SecurityServiceCoded" required="true" repetition="1" type="an" maxlength="3"/>
-    <data_element id="0534" name="SecurityReferenceNumber" required="true" repetition="1" type="an" maxlength="14"/>
-    <data_element id="0541" name="ScopeOfSecurityApplicationCoded" desc="1" repetition="1" type="an" maxlength="3"/>
-    <data_element id="0503" name="ResponseTypeCoded" repetition="1" type="an" maxlength="3"/>
-    <data_element id="0505" name="FilterFunctionCoded" repetition="1" type="an" maxlength="3"/>
-    <data_element id="0507" name="OriginalCharacterSetEncodingCoded" desc="2" repetition="1" type="an" maxlength="3"/>
-    <data_element id="0509" name="RoleOfSecurityProviderCoded" repetition="1" type="an" maxlength="3"/>
-    <composite_data_element id="S500" name="SecurityIdentificationDetails" desc="3,4" repetition="2"/>
-    <data_element id="0520" name="SecuritySequenceNumber" repetition="1" type="an" maxlength="35"/>
-    <composite_data_element id="S501" name="SecurityDateAndTime" desc="5" repetition="1"/>
+    <data_element id="0501" name="SecurityServiceCoded" required="true" repeat="1" type="an" maxlength="3"/>
+    <data_element id="0534" name="SecurityReferenceNumber" required="true" repeat="1" type="an" maxlength="14"/>
+    <data_element id="0541" name="ScopeOfSecurityApplicationCoded" desc="1" repeat="1" type="an" maxlength="3"/>
+    <data_element id="0503" name="ResponseTypeCoded" repeat="1" type="an" maxlength="3"/>
+    <data_element id="0505" name="FilterFunctionCoded" repeat="1" type="an" maxlength="3"/>
+    <data_element id="0507" name="OriginalCharacterSetEncodingCoded" desc="2" repeat="1" type="an" maxlength="3"/>
+    <data_element id="0509" name="RoleOfSecurityProviderCoded" repeat="1" type="an" maxlength="3"/>
+    <composite_data_element id="S500" name="SecurityIdentificationDetails" desc="3,4" repeat="2"/>
+    <data_element id="0520" name="SecuritySequenceNumber" repeat="1" type="an" maxlength="35"/>
+    <composite_data_element id="S501" name="SecurityDateAndTime" desc="5" repeat="1"/>
   </segment>
   <segment id="USL" name="SecurityListStatus" desc="To specify the status of security objects, such as keys or certificates to be delivered in a list, and the corresponding list parameters.">
-    <data_element id="0567" name="SecurityStatusCoded" required="true" repetition="1" type="an" maxlength="3"/>
-    <composite_data_element id="S504" name="ListParameter" repetition="9"/>
+    <data_element id="0567" name="SecurityStatusCoded" required="true" repeat="1" type="an" maxlength="3"/>
+    <composite_data_element id="S504" name="ListParameter" repeat="9"/>
   </segment>
   <segment id="USR" name="SecurityResult" desc="To contain the result of the security mechanisms.">
-    <composite_data_element id="S508" name="ValidationResult" required="true" desc="1" repetition="2"/>
+    <composite_data_element id="S508" name="ValidationResult" required="true" desc="1" repeat="2"/>
   </segment>
   <segment id="UST" name="SecurityTrailer" desc="To establish a link between security header and security trailer segment groups.">
-    <data_element id="0534" name="SecurityReferenceNumber" required="true" desc="1" repetition="1" type="an" maxlength="14"/>
-    <data_element id="0588" name="NumberOfSecuritySegments" required="true" repetition="1" type="n" maxlength="10"/>
+    <data_element id="0534" name="SecurityReferenceNumber" required="true" desc="1" repeat="1" type="an" maxlength="14"/>
+    <data_element id="0588" name="NumberOfSecuritySegments" required="true" repeat="1" type="n" maxlength="10"/>
   </segment>
   <segment id="USU" name="DataEncryptionTrailer" desc="To provide a trailer for the encrypted data.">
-    <data_element id="0556" name="LengthOfDataInOctetsOfBits" required="true" desc="1" repetition="1" type="n" maxlength="18"/>
-    <data_element id="0518" name="EncryptionReferenceNumber" desc="2" repetition="1" type="an" maxlength="35"/>
+    <data_element id="0556" name="LengthOfDataInOctetsOfBits" required="true" desc="1" repeat="1" type="n" maxlength="18"/>
+    <data_element id="0518" name="EncryptionReferenceNumber" desc="2" repeat="1" type="an" maxlength="35"/>
   </segment>
   <segment id="USX" name="SecurityReferences" desc="To refer to the secured EDIFACT structure and its associated date and time.">
-    <data_element id="0020" name="InterchangeControlReference" required="true" repetition="1" type="an" maxlength="14"/>
-    <composite_data_element id="S002" name="InterchangeSender" repetition="1"/>
-    <composite_data_element id="S003" name="InterchangeRecipient" repetition="1"/>
-    <data_element id="0048" name="GroupReferenceNumber" desc="1,3" repetition="1" type="an" maxlength="14"/>
-    <composite_data_element id="S006" name="ApplicationSenderIdentification" desc="1" repetition="1"/>
-    <composite_data_element id="S007" name="ApplicationRecipientIdentification" desc="3" repetition="1"/>
-    <data_element id="0062" name="MessageReferenceNumber" desc="2,4" repetition="1" type="an" maxlength="14"/>
-    <composite_data_element id="S009" name="MessageIdentifier" desc="4" repetition="1"/>
-    <data_element id="0800" name="PackageReferenceNumber" desc="2" repetition="1" type="an" maxlength="35"/>
-    <composite_data_element id="S501" name="SecurityDateAndTime" repetition="1"/>
+    <data_element id="0020" name="InterchangeControlReference" required="true" repeat="1" type="an" maxlength="14"/>
+    <composite_data_element id="S002" name="InterchangeSender" repeat="1"/>
+    <composite_data_element id="S003" name="InterchangeRecipient" repeat="1"/>
+    <data_element id="0048" name="GroupReferenceNumber" desc="1,3" repeat="1" type="an" maxlength="14"/>
+    <composite_data_element id="S006" name="ApplicationSenderIdentification" desc="1" repeat="1"/>
+    <composite_data_element id="S007" name="ApplicationRecipientIdentification" desc="3" repeat="1"/>
+    <data_element id="0062" name="MessageReferenceNumber" desc="2,4" repeat="1" type="an" maxlength="14"/>
+    <composite_data_element id="S009" name="MessageIdentifier" desc="4" repeat="1"/>
+    <data_element id="0800" name="PackageReferenceNumber" desc="2" repeat="1" type="an" maxlength="35"/>
+    <composite_data_element id="S501" name="SecurityDateAndTime" repeat="1"/>
   </segment>
   <segment id="USY" name="SecurityOnReferences" desc="To identify the applicable header, and to contain the security result and/or to indicate the possible cause of security rejection for the referred value.">
-    <data_element id="0534" name="SecurityReferenceNumber" required="true" repetition="1" type="an" maxlength="14"/>
-    <composite_data_element id="S508" name="ValidationResult" desc="1" repetition="2"/>
-    <data_element id="0571" name="SecurityErrorCoded" desc="1" repetition="1" type="an" maxlength="3"/>
+    <data_element id="0534" name="SecurityReferenceNumber" required="true" repeat="1" type="an" maxlength="14"/>
+    <composite_data_element id="S508" name="ValidationResult" desc="1" repeat="2"/>
+    <data_element id="0571" name="SecurityErrorCoded" desc="1" repeat="1" type="an" maxlength="3"/>
   </segment>
 </segments>
