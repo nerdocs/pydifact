@@ -88,5 +88,21 @@ def test_order_file():
     assert message.sender == ["12345678", "8"]
 
 
+def test_order2_file():
+    message = Interchange.from_file(f"{path}/order2.edi")
+    assert message.HEADER_TAG == "UNB"
+    assert message.FOOTER_TAG == "UNZ"
+    assert message.has_una_segment is False
+
+    # UNH+1+ORDERS:D:01B:UN:EAN010'
+    assert message.get_segment("UNH") == Segment(
+        "UNH", "1", ["ORDERS", "D", "01B", "UN", "EAN010"]
+    )
+    assert len(message.segments) == 24
+    assert message.recipient == ["4019315000007", "14"]
+    # Sender identification and Partner identification code qualifier
+    assert message.sender == ["4000000000000", "14"]
+
+
 def test_patient1_file():
     message = Interchange.from_file(f"{path}/patient1.edi")
