@@ -25,7 +25,7 @@ import datetime
 from collections.abc import Callable, Iterable, Iterator, Sequence
 from typing import Type, TypeVar
 
-from pydifact.exceptions import EDISyntaxError
+from pydifact.exceptions import EDISyntaxError, ValidationError
 from pydifact.control import Characters
 from pydifact.parser import Parser
 from pydifact.segments import Segment
@@ -284,6 +284,9 @@ class RawSegmentCollection(AbstractSegmentsContainer):
     If you are handling an Interchange or a Message, you may want to prefer
     those classes to RawSegmentCollection, as they offer more features and
     checks.
+
+    There are no header and footer segments in this collection, and validation is
+    omitted.
     """
 
     def get_header_segment(self) -> Segment | None:
@@ -513,33 +516,73 @@ class Interchange(AbstractSegmentsContainer):
             unb = first_segment
         else:
             raise EDISyntaxError("An interchange must start with UNB or UNA and UNB")
-        # Loosy syntax check :
-        if len(unb.elements) < 4:
-            raise EDISyntaxError("Missing elements in UNB header")
 
-        # In syntax version 3 the year is formatted using two digits, while in version 4 four digits are used.
-        # Since some EDIFACT files in the wild don't adhere to this specification, we just use whatever format seems
-        # more appropriate according to the length of the date string.
-        if isinstance(unb.elements[3], list) and len(unb.elements[3]) > 0:
-            if len(unb.elements[3][0]) == 6:
-                datetime_fmt = "%y%m%d-%H%M"
-            elif len(unb.elements[3][0]) == 8:
-                datetime_fmt = "%Y%m%d-%H%M"
-            else:
-                raise EDISyntaxError("Timestamp of file-creation malformed.")
-        else:
-            raise EDISyntaxError("Timestamp of file-creation malformed.")
-
+        # extract syntax identifier to know which version to validate against
         if (
-            isinstance(unb.elements[0], list)
-            and len(unb.elements[0]) == 2
-            and unb.elements[0][1].isdecimal()
+            not isinstance(unb.elements[0], list)
+            or len(unb.elements[0]) < 2
+            or not unb.elements[0][1].isdecimal()
         ):
-            syntax_identifier = (unb.elements[0][0], int(unb.elements[0][1]))
-        else:
             raise EDISyntaxError("Syntax identifier malformed.")
 
-        datetime_str = "-".join(unb.elements[3])
+        syntax_version = unb.elements[0][1]
+
+        # Validate UNB segment according to the applicable syntax version
+        try:
+            unb.validate(syntax_version=syntax_version, directory="")
+        except (ValidationError, FileNotFoundError) as e:
+            raise EDISyntaxError(f"Invalid UNB header: {e}") from e
+
+        # In syntax version 3 and earlier the year is formatted using two digits,
+        # while in version 4 four digits are used.
+        # Since some EDIFACT files in the wild don't adhere to this specification, we just use whatever format seems
+        # more appropriate according to the length of the date string.
+        # Element 3 of UNB is the date/time of preparation.
+        # In syntax v4 it's a composite S004 (0017 date, 0019 time)
+        # In syntax v3 it's also a composite S004 (0017 date, 0019 time)
+        # Note that Segment.elements might contain strings or lists of strings.
+        preparation_datetime = unb.elements[3]
+        if (
+            isinstance(preparation_datetime, (list, tuple))
+            and len(preparation_datetime) > 0
+        ):
+            date_str = preparation_datetime[0]
+            if len(date_str) == 6:
+                datetime_fmt = "%y%m%d"
+            elif len(date_str) == 8:
+                datetime_fmt = "%Y%m%d"
+            else:
+                raise EDISyntaxError(
+                    f"Timestamp of file-creation malformed: {date_str}"
+                )
+
+            if len(preparation_datetime) > 1:
+                time_str = preparation_datetime[1]
+                datetime_fmt += "-%H%M"
+                datetime_str = f"{date_str}-{time_str}"
+            else:
+                datetime_str = date_str
+        elif isinstance(preparation_datetime, str) and preparation_datetime:
+            # Fallback if it's not a composite but a single string
+            if len(preparation_datetime) == 6:
+                datetime_fmt = "%y%m%d"
+                datetime_str = preparation_datetime
+            elif len(preparation_datetime) == 8:
+                datetime_fmt = "%Y%m%d"
+                datetime_str = preparation_datetime
+            elif len(preparation_datetime) == 10:
+                datetime_fmt = "%y%m%d%H%M"
+                datetime_str = preparation_datetime
+            elif len(preparation_datetime) == 12:
+                datetime_fmt = "%Y%m%d%H%M"
+                datetime_str = preparation_datetime
+            else:
+                raise EDISyntaxError(
+                    f"Timestamp of file-creation malformed: {preparation_datetime}"
+                )
+        else:
+            raise EDISyntaxError("Timestamp of file-creation malformed.")
+        syntax_identifier = (unb.elements[0][0], int(unb.elements[0][1]))
         timestamp = datetime.datetime.strptime(datetime_str, datetime_fmt)
         interchange = Interchange(
             syntax_identifier=syntax_identifier,
