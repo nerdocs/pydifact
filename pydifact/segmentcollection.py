@@ -525,6 +525,7 @@ class Interchange(AbstractSegmentsContainer):
         ):
             raise EDISyntaxError("Syntax identifier malformed.")
 
+        syntax_identifier = unb.elements[0][0]
         syntax_version = unb.elements[0][1]
 
         # Validate UNB segment according to the applicable syntax version
@@ -582,10 +583,10 @@ class Interchange(AbstractSegmentsContainer):
                 )
         else:
             raise EDISyntaxError("Timestamp of file-creation malformed.")
-        syntax_identifier = (unb.elements[0][0], int(unb.elements[0][1]))
+
         timestamp = datetime.datetime.strptime(datetime_str, datetime_fmt)
         interchange = Interchange(
-            syntax_identifier=syntax_identifier,
+            syntax_identifier=(syntax_identifier, int(syntax_version)),
             sender=unb.elements[1],
             recipient=unb.elements[2],
             timestamp=timestamp,

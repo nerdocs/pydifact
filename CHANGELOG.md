@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - BREAKING CHANGE: Remove SegmentCollection
 - BREAKING CHANGE: Remove FileSourcableMixin
 - BREAKING CHANGE: Segment() calls *must* provide the tag name now as the first parameter.
+- BREAKING CHANGE: Parser cannot override syntax_version and syntax_identifier anymore. It is determined from the UNB header.
 - change plugin system from `metaclass` to `__init_subclass__`
 - raise ValidationError, not AssertionError, when ServiceAdviceString is not 6 chars long
 - Drop support for Python versions < 3.10 (3.8 was EOL 2024-10-07, 3.9 not much used in Distros.)

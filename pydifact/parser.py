@@ -34,6 +34,9 @@ from pydifact.tokenizer import Tokenizer
 from pydifact.token import Token
 from pydifact.segments import Segment, SegmentFactory
 from pydifact.control import Characters
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 class Parser:
@@ -52,16 +55,15 @@ class Parser:
         self,
         factory: SegmentFactory | None = None,
         characters: Characters | None = None,
-        version: str = "",
         directory: str = "",
-        syntax_identifier: str = "",
     ) -> None:
         """Initializes parser with segment factory and control characters"""
         self.factory = factory or SegmentFactory()
         self.characters = characters or Characters()
-        self.version = version
         self.directory = directory
-        self.syntax_identifier = syntax_identifier
+
+        self.syntax_identifier = ""
+        self.version = ""
 
     def parse(
         self,
@@ -121,7 +123,7 @@ class Parser:
 
         for raw_segment in raw_segments:
             yield self.convert_raw_segment_to_segment(
-                raw_segment, version=self.version, directory=self.directory
+                raw_segment, directory=self.directory
             )
 
     @staticmethod
@@ -252,7 +254,6 @@ class Parser:
     def convert_raw_segment_to_segment(
         self,
         raw_segment: Elements,
-        version: str = EDI_DEFAULT_VERSION,
         directory: str = EDI_DEFAULT_DIRECTORY,
     ) -> Segment:
         name = raw_segment.pop(0)
@@ -270,23 +271,13 @@ class Parser:
             # then we don't override it here, even if the UNB segment has another
             # value. The user might want to override this manually.
 
-            print(f"Found edifact syntax '{raw_segment[0][0]}' in UNB header", end="")
-            if self.syntax_identifier:
-                print(", but using override syntax '{self.syntax_identifier}'")
-            else:
-                print(".")
-                self.syntax_identifier = raw_segment[0][0]
-
-            print(
-                f"Found edifact version '{int(raw_segment[0][1])}' in UNB header",
-                end="",
+            self.syntax_identifier = raw_segment[0][0]
+            self.version = raw_segment[0][1]
+            logger.info(
+                f"Using edifact syntax identifier '{self.syntax_identifier}' with  "
+                f"syntax version {self.version} in UNB header.",
             )
-            if self.version:
-                print(f", but using override version '{self.version}'.")
 
-            else:
-                self.version = int(raw_segment[0][1])
-                print(".")
         return self.factory.create_segment(
             name,
             *raw_segment,

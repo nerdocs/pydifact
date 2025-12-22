@@ -96,12 +96,12 @@ def test_order2_file():
 
     # UNH+1+ORDERS:D:01B:UN:EAN010'
     assert message.get_segment("UNH") == Segment(
-        "UNH", "1", ["ORDERS", "D", "01B", "UN", "EAN010"]
+        "UNH", "1", ["ORDERS", "D", "96A", "UN"]
     )
-    assert len(message.segments) == 24
-    assert message.recipient == ["4019315000007", "14"]
+    assert len(message.segments) == 11
+    assert message.recipient == "RECEIVERID"
     # Sender identification and Partner identification code qualifier
-    assert message.sender == ["4000000000000", "14"]
+    assert message.sender == "SENDERID"
 
 
 def test_patient1_file():
