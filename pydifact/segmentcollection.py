@@ -297,7 +297,7 @@ class RawSegmentCollection(AbstractSegmentsContainer):
         """This is just a stub method."""
         return None
 
-    def validate(self):
+    def validate(self) -> None:
         """This is just a stub method, no validation done here."""
         pass
 
@@ -350,7 +350,7 @@ class Message(AbstractSegmentsContainer):
             self.reference_number,
         )
 
-    def validate(self):
+    def validate(self) -> None:
         """Validates the message.
 
         :raises EDISyntaxError in case of syntax errors in the segments
@@ -621,6 +621,6 @@ class Interchange(AbstractSegmentsContainer):
             return
         super().add_segment(segment)
 
-    def validate(self):
+    def validate(self) -> None:
         # TODO: proper validation
         pass
