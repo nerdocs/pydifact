@@ -21,7 +21,7 @@
 # THE SOFTWARE.
 
 
-__version__ = "0.2.0"
+__version__ = "0.2.1"
 
 from .control.characters import Characters
 from .parser import Parser
