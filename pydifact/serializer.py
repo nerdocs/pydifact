@@ -77,10 +77,11 @@ class Serializer:
             for element in segment.elements:
                 collection_parts += [self.characters.data_separator]
                 if isinstance(element, list):
+                    escaped = [self.escape(subelement) for subelement in element]
+                    while escaped and escaped[-1] == "":
+                        escaped.pop()
                     collection_parts += [
-                        self.characters.component_separator.join(
-                            self.escape(subelement) for subelement in element
-                        )
+                        self.characters.component_separator.join(escaped)
                     ]
 
                 else:
