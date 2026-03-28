@@ -19,7 +19,7 @@ classifiers = [
 requires-python = ">=3.10"
 dependencies = []
 
-[project.optional-dependencies]
+[dependency-groups]
 dev = [
     "pytest>=8.0.1",
     "pytest-cov>=4.1.0",
@@ -33,7 +33,7 @@ dev = [
     "build",
     "twine",
     "mypy>=1.15.0"
- ]
+]
 
 [tool.black]
 target_version = ["py310", "py311", "py312", "py313"]
@@ -44,7 +44,7 @@ Repository = "https://github.com/nerdocs/pydifact"
 Issues =  "https://github.com/nerdocs/pydifact/issues"
 
 [build-system]
-requires = ["setuptools>=61.0.0", "wheel"]
+requires = ["setuptools>=82.0.0", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [tool.setuptools.dynamic]
