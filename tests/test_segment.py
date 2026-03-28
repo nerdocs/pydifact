@@ -53,6 +53,36 @@ def test_get_non_existing_element():
         segment.elements[7]  # noqa
 
 
+def test_invalid_segment_tag():
+    # Tag must be uppercase
+    with pytest.raises(
+        ValueError, match="Segment tag must be an uppercase 3-letter string"
+    ):
+        Segment("omd", "element")
+
+    # Tag must be 3 characters
+    with pytest.raises(
+        ValueError, match="Segment tag must be an uppercase 3-letter string"
+    ):
+        Segment("OM", "element")
+    with pytest.raises(
+        ValueError, match="Segment tag must be an uppercase 3-letter string"
+    ):
+        Segment("OMDA", "element")
+
+    # Tag must be alphanumeric
+    with pytest.raises(
+        ValueError, match="Segment tag must be an uppercase 3-letter string"
+    ):
+        Segment("OM!", "element")
+
+    # Tag must be a string
+    with pytest.raises(
+        ValueError, match="Segment tag must be an uppercase 3-letter string"
+    ):
+        Segment(123, "element")
+
+
 def test_has_plugin():
     class TestSegment(Segment):
         tag = "TES"
