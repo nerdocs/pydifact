@@ -14,9 +14,10 @@
 #    You should have received a copy of the GNU Lesser General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 from pydifact.exceptions import EDISyntaxError
-from pydifact.parser import Parser
+from pydifact.parser import Parser, TokenIterator
 from pydifact.segments import Segment
 from pydifact.control.characters import Characters
+from pydifact.token import Token
 import pytest
 
 # @pytest.fixture
@@ -287,6 +288,55 @@ UNZ+2+1'"""
     assert len(segments) == 12
     segments = list(Parser().parse("UNA:+,? '" + example_text))
     assert len(segments) == 13
+
+
+def _make_token(value: str) -> Token:
+    return Token(Token.Type.CONTENT, value)
+
+
+class TestTokenIterator:
+    def test_iterates_normally(self):
+        tokens = [_make_token("a"), _make_token("b"), _make_token("c")]
+        it = TokenIterator(tokens)
+        assert list(it) == tokens
+
+    def test_push_back_returns_token_on_next_call(self):
+        tokens = [_make_token("a"), _make_token("b")]
+        it = TokenIterator(tokens)
+        t = next(it)
+        assert t == _make_token("a")
+        it.push_back(t)
+        assert next(it) == _make_token("a")
+        assert next(it) == _make_token("b")
+
+    def test_push_back_multiple_tokens_lifo_order(self):
+        tokens = [_make_token("a")]
+        it = TokenIterator(tokens)
+        next(it)  # consume the only item
+        t1 = _make_token("x")
+        t2 = _make_token("y")
+        it.push_back(t1)
+        it.push_back(t2)
+        # stack: last pushed is returned first
+        assert next(it) == t2
+        assert next(it) == t1
+
+    def test_exhausted_iterator_raises_stop_iteration(self):
+        it = TokenIterator([])
+        with pytest.raises(StopIteration):
+            next(it)
+
+    def test_push_back_then_exhaust(self):
+        it = TokenIterator([_make_token("a")])
+        t = next(it)
+        it.push_back(t)
+        assert next(it) == _make_token("a")
+        with pytest.raises(StopIteration):
+            next(it)
+
+    def test_iter_returns_self(self):
+        it = TokenIterator([])
+        assert iter(it) is it
 
 
 def test_edifact_text_with_newline_at_end():

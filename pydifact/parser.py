@@ -20,7 +20,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-from collections.abc import Iterator
+from collections.abc import Iterator, Iterable
 
 from pydifact.constants import (
     EDI_DEFAULT_VERSION,
@@ -37,6 +37,30 @@ from pydifact.control import Characters
 import logging
 
 logger = logging.getLogger(__name__)
+
+
+class TokenIterator:
+    """Wrapper for token iterator to allow pushing back tokens.
+
+    TokenIterator is a thin push-back wrapper around a normal token stream.
+    Its only special power is push_back(token), which lets a consumer "un-read" a token
+    so it gets returned again on the next __next__() call.
+    """
+
+    def __init__(self, iterable: Iterable[Token]):
+        self.iterator = iter(iterable)
+        self.pushed_back: list[Token] = []
+
+    def __iter__(self):
+        return self
+
+    def __next__(self) -> Token:
+        if self.pushed_back:
+            return self.pushed_back.pop()
+        return next(self.iterator)
+
+    def push_back(self, token: Token):
+        self.pushed_back.append(token)
 
 
 class Parser:
@@ -115,14 +139,17 @@ class Parser:
             yield self.factory.create_segment("UNA", str(characters))
 
         tokenizer = Tokenizer()
-        raw_segments = self.convert_tokens_to_raw_segments(
-            tokenizer.get_tokens(message, characters),
-        )
+        token_iterator = TokenIterator(tokenizer.get_tokens(message, characters))
 
-        for raw_segment in raw_segments:
-            yield self.convert_raw_segment_to_segment(
-                raw_segment, directory=self.directory
-            )
+        while True:
+            raw_segments = self.convert_tokens_to_raw_segments(token_iterator)
+            try:
+                raw_segment = next(raw_segments)
+                yield self.convert_raw_segment_to_segment(
+                    raw_segment, directory=self.directory
+                )
+            except StopIteration:
+                break
 
     @staticmethod
     def get_control_characters(
@@ -162,7 +189,7 @@ class Parser:
         return characters
 
     def convert_tokens_to_raw_segments(
-        self, tokens: Iterator[Token]
+        self, tokens: Iterable[Token]
     ) -> Iterator[Elements]:
         """Convert the tokenized message into an array of segments.
 
