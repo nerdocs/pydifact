@@ -21,7 +21,7 @@
 # THE SOFTWARE.
 import logging
 import warnings
-import xml.etree.ElementTree as ET
+import xml.etree.ElementTree as ET  # nosec B405 - parses only bundled XML
 from functools import lru_cache
 from pathlib import Path
 from typing import overload
@@ -73,7 +73,7 @@ def _load_segments_xml(directory: str) -> ET.Element:
         if not syntax_path.exists():
             raise FileNotFoundError(f"segments.xml not found in directory: {directory}")
 
-    tree = ET.parse(syntax_path)
+    tree = ET.parse(syntax_path)  # nosec B314 - bundled package XML
     return tree.getroot()
 
 

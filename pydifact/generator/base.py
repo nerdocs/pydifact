@@ -1,8 +1,8 @@
 import re
 from os import PathLike
 from typing import List
-from xml.dom import minidom
-from xml.etree import ElementTree
+from xml.dom import minidom  # nosec B408 - used only for formatting own generated XML
+from xml.etree import ElementTree  # nosec B405 - only creates XML
 
 
 class UntidBaseParser:
@@ -32,7 +32,7 @@ class UntidBaseParser:
     def get_xml(self) -> str:
         """Return a formatted XML string."""
         rough_string = ElementTree.tostring(self.msg_xml, encoding="utf-8")
-        reparsed = minidom.parseString(rough_string)
+        reparsed = minidom.parseString(rough_string)  # nosec B318 - own generated XML
         return reparsed.toprettyxml(indent="  ", encoding="utf-8").decode("utf-8")
 
     def _validate_input(self, file_path: PathLike | str) -> None:

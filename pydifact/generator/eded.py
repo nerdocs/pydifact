@@ -1,7 +1,7 @@
 import re
 from os import PathLike
 from pathlib import Path
-from xml.etree import ElementTree
+from xml.etree import ElementTree  # nosec B405 - only creates XML
 
 from pydifact.generator.base import UntidBaseParser
 

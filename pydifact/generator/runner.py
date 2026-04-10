@@ -4,7 +4,9 @@ import sys
 import zipfile
 from os import PathLike
 from pathlib import Path
-from xml.etree import ElementTree
+from xml.etree import ElementTree  # nosec B405 - only creates XML
+
+from defusedxml import ElementTree as SafeElementTree
 
 from pydifact.generator.base import UntidBaseParser
 from pydifact.generator.constants import (
@@ -564,13 +566,15 @@ def generate_directory_release(release_upper: str):
         print("Starting XML merge process...")
 
         # Load XML files
-        seg_tree = ElementTree.parse(f"{generated_data_dir}/simple_segments.xml")
+        seg_tree = SafeElementTree.parse(f"{generated_data_dir}/simple_segments.xml")
         segment_root = seg_tree.getroot()
 
-        data_element_tree = ElementTree.parse(f"{generated_data_dir}/data_elements.xml")
+        data_element_tree = SafeElementTree.parse(
+            f"{generated_data_dir}/data_elements.xml"
+        )
         data_element_root = data_element_tree.getroot()
 
-        composite_tree = ElementTree.parse(
+        composite_tree = SafeElementTree.parse(
             f"{generated_data_dir}/composite_data_elements.xml"
         )
         composite_root = composite_tree.getroot()
