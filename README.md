@@ -15,17 +15,18 @@ Feel free to help.
 
 ## Install
 
-As usual, use a virtualenv, and install via pip or pipenv:
-
 ```bash
-pip install pydifact
+uv pip install pydifact
+# or
+python -m pip install pydifact
 ```
 
-However, it is not stable yet, so the pypi version, including documentation and code examples, could differ from the latest git code. If in doubt, use the git version:
+However, it is not marked as stable yet, so the pypi version, including documentation and code examples, could differ 
+from the latest git code. If in doubt, use the git version. You should use uv for the development process:
 ```bash
 git clone https://github.com/nerdocs/pydifact.git
 cd pydifact
-pip install -e .
+uv sync
 ```
 
 
@@ -110,7 +111,7 @@ for segment in collection.segments:
 
 ## Alternatives
 
-In python ecosystem:
+In the Python ecosystem:
 
 - [python-edifact](https://github.com/FriedrichK/python-edifact) - simpler, IMHO less clean code, less flexible. may be faster though (not tested). Seems unmaintained.
 - [bots](https://github.com/bots-edi/bots) - huge, with webinterface (bots-monitor), webserver, bots-engine.
@@ -123,16 +124,18 @@ In python ecosystem:
 To develop pydifact, clone the repository and install the dev requirements:
 
 ```bash
-make dev
-# or
-# pip install -e .[dev]
+uv sync
 ```
 
 This installs all the python packages needed for development and testing.
 
 ### Code formatting
 
-Format all python files using [black](https://black.readthedocs.io) before committing.
+Format all python files using [black](https://black.readthedocs.io) before committing:
+
+```bash
+uv run black .
+```
 
 Happy coding, PR are more than welcome to make this library better, or to add a feature that matches your needs.
 Nevertheless, don't forget adding tests for every aspect you add in code.
@@ -155,7 +158,8 @@ make test-extended
 ```
 
 ## Credits
-The official formats for UN/EDIFAT provided by UN Secretariat are raw text files located [here](http://www.unece.org/tradewelcome/un-centre-for-trade-facilitation-and-e-business-uncefact/outputs/standards/unedifact/directories/download.html) and html (.htm) files located [here](http://www.unece.org/tradewelcome/un-centre-for-trade-facilitation-and-e-business-uncefact/outputs/standards/unedifact/directories/2011-present.html), similarly for service codes as text and html files located at https://www.gefeg.com/jswg/.
+The official formats for UN/EDIFAT provided by UN Secretariat are raw text files located [here](http://www.unece.org/tradewelcome/un-centre-for-trade-facilitation-and-e-business-uncefact/outputs/standards/unedifact/directories/download.html) and 
+html (.htm) files located [here](http://www.unece.org/tradewelcome/un-centre-for-trade-facilitation-and-e-business-uncefact/outputs/standards/unedifact/directories/2011-present.html), similarly for service codes as text and html files located at https://www.gefeg.com/jswg/.
 
 There are many other helpful projects and people who made this possible:
 * [untid-parser](https://github.com/php-edifact/untdid-parser) by [Stefano](https://github.com/sabas) - thanks for your help.

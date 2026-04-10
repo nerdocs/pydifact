@@ -1,20 +1,20 @@
 dev:
-	pip install -e .[dev]
+	uv sync
 
 install:
-	pip install .
+	uv sync --no-dev
 
-build: dev
-	python -m build
+build:
+	uv build
 
 upload: build
-	twine upload dist/*
+	uv run twine upload dist/*
 
 test:
-	pytest --ignore tests/test_huge_message.py
+	uv run pytest --ignore tests/test_huge_message.py
 
 mypy:
-	mypy --pretty pydifact
+	uv run mypy --pretty pydifact
 
 test-extended:
-	pytest
+	uv run pytest
