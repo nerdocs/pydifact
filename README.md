@@ -166,6 +166,13 @@ There are many other helpful projects and people who made this possible:
 
 For a contributors' list, see [Contributors](https://github.com/nerdocs/pydifact/graphs/contributors).
 
+## Sponsor
+
+If you want to support the project, consider becoming a sponsor on [GitHub Sponsors](https://github.com/sponsors/nerdocs).
+Or buy me a "coffee" at [Buy me a coffee](https://buymeacoffee.com/nerdoc).
+
+If you are around Salzburg/Austria, we can meet for a real coffee too. ;-)
+
 ## License
 
 This library is licensed under the
