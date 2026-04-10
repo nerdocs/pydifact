@@ -328,17 +328,12 @@ class Segment:
                                     f"{len(element)}: {element}"
                                 )
 
-        except FileNotFoundError as e:
+        except FileNotFoundError:
             warnings.warn(
                 f"segments.xml not found for directory '{directory}'. "
-                f"Falling back to schema-based validation.",
+                f"Skipping XML-based validation for segment {self.tag}.",
                 category=MissingImplementationWarning,
             )
-            if self.tag in service_segments:
-                raise ValidationError(
-                    f"Schema for service segment {self.tag} not found "
-                    f"(directory '{directory}')"
-                ) from e
         except ET.ParseError as e:
             warnings.warn(
                 f"Failed to parse segments.xml: {e}. ",

@@ -18,7 +18,8 @@ from typing import Iterable
 
 import pytest
 
-from pydifact.exceptions import EDISyntaxError
+from pydifact.exceptions import EDISyntaxError, MissingImplementationWarning
+from pydifact.parser import Parser
 from pydifact.segmentcollection import Interchange, Message, RawSegmentCollection
 from pydifact.segments import Segment
 
@@ -303,6 +304,23 @@ def test_counting_of_messages(interchange, message):
     )
     i = Interchange.from_str(edi_str)
     assert i.serialize() == edi_str
+
+
+def test_interchange_with_unbundled_directory_emits_warning_not_error():
+    """Regression test: parsing with a directory that has no bundled segments.xml
+    must succeed with a MissingImplementationWarning, not raise a ValidationError
+    (regression introduced in 0.2.x, fixed again)."""
+    edi = (
+        "UNA:+.? '"
+        "UNB+UNOC:1+1234+3333+200102:2212+42'"
+        "UNH+1+ORDERS:D:96A:UN'"
+        "UNT+2+1'"
+        "UNZ+1+42'"
+    )
+    with pytest.warns(MissingImplementationWarning):
+        interchange = Interchange.from_str(edi, parser=Parser(directory="nonexistent"))
+    assert interchange is not None
+    assert len(list(interchange.get_messages())) == 1
 
 
 def test_interchange_with_extra_header_elements():

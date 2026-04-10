@@ -15,6 +15,7 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import pytest
 
+from pydifact.exceptions import MissingImplementationWarning
 from pydifact.segments import Segment
 
 
@@ -81,6 +82,14 @@ def test_invalid_segment_tag():
         ValueError, match="Segment tag must be an uppercase 3-letter string"
     ):
         Segment(123, "element")
+
+
+def test_validate_missing_directory_warns_not_raises():
+    """Regression: validate() must emit MissingImplementationWarning and not
+    raise when segments.xml is absent for the given directory."""
+    seg = Segment("UNB", ["UNOC", "1"], "sender", "rcpt", ["200102", "1200"], "42")
+    with pytest.warns(MissingImplementationWarning):
+        seg.validate(syntax_version="1", directory="nonexistent_dir")
 
 
 def test_has_plugin():
