@@ -32,7 +32,8 @@ dev = [
     "sphinx-rtd-theme>=2.0.0",
     "build",
     "twine",
-    "mypy>=1.15.0"
+    "mypy>=1.15.0",
+    "defusedxml>=0.7.1",
 ]
 
 [tool.ruff]
