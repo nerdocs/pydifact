@@ -183,12 +183,8 @@ def test_escaped_newline_char():
     with pytest.raises(EDISyntaxError) as excinfo:
         # must raise a EDISyntaxError as there is no newline after an escape char
         # "?" allowed.
-        list(
-            Tokenizer().get_tokens(
-                """UNB+?
-FOO'"""
-            )
-        )
+        list(Tokenizer().get_tokens("""UNB+?
+FOO'"""))
     assert "Newlines after escape characters are not allowed." in str(excinfo.value)
     assert "line 0, column 5" in str(excinfo.value)
 

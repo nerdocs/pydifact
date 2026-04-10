@@ -18,7 +18,6 @@ import pytest
 from pydifact.exceptions import MissingImplementationWarning
 from pydifact.segments import Segment
 
-
 elements = ["field1", ["field2", "extra"], "stuff"]
 
 

@@ -17,7 +17,6 @@ import os
 from pydifact.segmentcollection import Interchange
 from pydifact.segments import Segment
 
-
 path = os.path.dirname(os.path.realpath(__file__)) + "/data"
 
 

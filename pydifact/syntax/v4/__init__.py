@@ -13,7 +13,6 @@ from ... import Segment
 __version__ = 4
 
 
-
 class SyntaxIdentifier(v1.SyntaxIdentifier):
     code = "0001"
     repr = "a4"

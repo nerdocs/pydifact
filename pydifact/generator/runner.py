@@ -24,14 +24,12 @@ from pydifact.generator.utils import is_prehistoric, download_file
 
 from os import PathLike
 
-
 V4_RELEASE_NUMBER = "40219"
 zips_directory = Path(__file__).parent / "zips"
 
 
 def print_usage() -> None:
-    print(
-        """
+    print("""
 Usage: python edifact_generator.py  ( release | "service" syntax-version ) 
 Options:
     release             EDIFACT Directory release, e.g. 'd24a', 'D21B', '90-1', 'service'
@@ -46,8 +44,7 @@ Examples:
     pydifact-generator service 19A
     pydifact-generator service 40219
     pydifact-generator service 1
-"""
-    )
+""")
 
 
 def xml_adopt(root: ElementTree.Element, new: ElementTree.Element) -> None:
