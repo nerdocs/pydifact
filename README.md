@@ -1,5 +1,8 @@
 # pydifact
 
+[![Tests](https://github.com/nerdocs/pydifact/actions/workflows/unittests.yml/badge.svg)](https://github.com/nerdocs/pydifact/actions/workflows/unittests.yml)
+[![Python Version](https://img.shields.io/python/required-version-toml?tomlFilePath=https://raw.githubusercontent.com/nerdocs/pydifact/master/pyproject.toml)](https://github.com/nerdocs/pydifact/blob/master/pyproject.toml)
+
 A Python library to parse and serialize UN/EDIFACT interchanges.
 
 ## Preamble
