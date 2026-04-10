@@ -1,5 +1,7 @@
 # pydifact
 
+[![Tests](https://github.com/nerdocs/pydifact/actions/workflows/unittests.yml/badge.svg)](https://github.com/nerdocs/pydifact/actions/workflows/unittests.yml)
+
 A Python library to parse and serialize UN/EDIFACT interchanges.
 
 ## Preamble
