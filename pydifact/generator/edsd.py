@@ -4,8 +4,6 @@ from xml.etree import ElementTree
 from pathlib import Path
 from typing import List, Dict, Any
 
-from mypy.fastparse import Match
-
 from pydifact.generator.base import UntidBaseParser
 
 
