@@ -32,7 +32,14 @@ def download_file(url: str, output_file_path: os.PathLike | str) -> bool:
             )
         return False
 
-    response = requests.get(url, stream=True)
+    # Only allow downloads over TLS. Plain HTTP can be transparently
+    # intercepted (MITM), and the downloaded archive is extracted on disk,
+    # so an attacker-controlled response could otherwise write arbitrary
+    # files (see _expand_zip / Zip Slip protection).
+    if not url.startswith("https://"):
+        raise ValueError(f"Refusing to download over insecure URL: {url}")
+
+    response = requests.get(url, stream=True, timeout=30)
     if response.status_code == 403:  # Forbidden
         print(f"Cound not download {url} to '{output_file_path}', as it is forbidden.")
         print("Maybe there is a captcha on the page.")
