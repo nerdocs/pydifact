@@ -1,8 +1,8 @@
 import re
 from os import PathLike
-from xml.etree import ElementTree
 from pathlib import Path
-from typing import List, Dict, Any, Optional
+from typing import Any, Dict, List, Optional
+from xml.etree import ElementTree
 
 from pydifact.generator.base import UntidBaseParser
 
@@ -207,7 +207,6 @@ class EDMDParser(UntidBaseParser):
 
             # Handle level changes
             if parts[1] != "" and "Segment group" not in parts[2] and "-" in parts[5]:
-
                 level = parts[5].replace("-", "")
                 levels_to_remove = level.count("+")
                 current_level -= levels_to_remove

@@ -28,15 +28,20 @@ dev = [
     "Sphinx>=7.2.0",
     "setuptools>=69.1.0",
     "wheel>=0.42.0",
-    "black>=25.1.0",
+    "ruff>=0.11.0",
     "sphinx-rtd-theme>=2.0.0",
     "build",
     "twine",
     "mypy>=1.15.0"
 ]
 
-[tool.black]
-target_version = ["py310", "py311", "py312", "py313"]
+[tool.ruff]
+target-version = "py310"
+
+[tool.ruff.lint]
+# Limit linting to import sorting (isort) for now; ruff format handles
+# code style. Additional rule sets (e.g. "F" for pyflakes) can be enabled later.
+select = ["I"]
 
 [project.urls]
 Documentation = "https://pydifact.readthedocs.io"

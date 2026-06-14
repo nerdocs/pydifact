@@ -13,12 +13,13 @@
 #
 #    You should have received a copy of the GNU Lesser General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+import pytest
+
+from pydifact.control.characters import Characters
 from pydifact.exceptions import EDISyntaxError
 from pydifact.parser import Parser, TokenIterator
 from pydifact.segments import Segment
-from pydifact.control.characters import Characters
 from pydifact.token import Token
-import pytest
 
 # @pytest.fixture
 # def mocked_tokenizer(mocker):
@@ -107,9 +108,9 @@ def test_compare_equal_segments(parser, default_una_segment):
     a = Segment("RFF", ["PD", "50515"])
     b = Segment("RFF", ["PD", "50515"])
     assert a == b
-    assert (
-        a is not b
-    ), "Two separatedly, but visually identically created Segment objects may not be the same object."
+    assert a is not b, (
+        "Two separatedly, but visually identically created Segment objects may not be the same object."
+    )
 
 
 def test_una_parser1(parser):

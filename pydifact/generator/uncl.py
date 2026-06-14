@@ -1,8 +1,8 @@
 import re
 from os import PathLike
-from xml.etree import ElementTree
 from pathlib import Path
 from typing import List
+from xml.etree import ElementTree
 
 from pydifact.generator.base import UntidBaseParser
 from pydifact.generator.constants import MAX_LINE_LENGTH
@@ -249,7 +249,6 @@ class UNCLParser(UntidBaseParser):
                                     else:  # no additional line found, break
                                         break
                                 else:
-
                                     match2 = re.match(r"^[\s]{14}(.*)", lines[i])
                                     if match2:
                                         if value_description:

@@ -1,7 +1,7 @@
 import re
 from os import PathLike
-from xml.etree import ElementTree
 from pathlib import Path
+from xml.etree import ElementTree
 
 from pydifact.generator.base import UntidBaseParser
 

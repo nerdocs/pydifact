@@ -19,27 +19,27 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
-import warnings
 import logging
-from typing import overload
+import warnings
+import xml.etree.ElementTree as ET
 from functools import lru_cache
 from pathlib import Path
-import xml.etree.ElementTree as ET
+from typing import overload
 
 from pydifact.constants import (
-    EDI_DEFAULT_VERSION,
-    M,
-    EDI_DEFAULT_SYNTAX,
-    Element,
     EDI_DEFAULT_DIRECTORY,
+    EDI_DEFAULT_SYNTAX,
+    EDI_DEFAULT_VERSION,
+    Element,
+    M,
     service_segments,
 )
 from pydifact.exceptions import (
-    ValidationError,
-    MissingImplementationWarning,
     EDISyntaxError,
+    MissingImplementationWarning,
+    ValidationError,
 )
-from pydifact.syntax.common import DataElement, CompositeDataElement
+from pydifact.syntax.common import CompositeDataElement, DataElement
 from pydifact.utils import get_syntax_release_version
 
 logger = logging.getLogger(__name__)

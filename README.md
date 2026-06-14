@@ -134,10 +134,12 @@ This installs all the python packages needed for development and testing.
 
 ### Code formatting
 
-Format all python files using [black](https://black.readthedocs.io) before committing:
+Format all python files and sort imports using [ruff](https://docs.astral.sh/ruff/)
+before committing:
 
 ```bash
-uv run black .
+uv run ruff format .
+uv run ruff check --fix .
 ```
 
 Happy coding, PR are more than welcome to make this library better, or to add a feature that matches your needs.
