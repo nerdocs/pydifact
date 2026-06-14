@@ -68,6 +68,19 @@ def xml_adopt(root: ElementTree.Element, new: ElementTree.Element) -> None:
         xml_adopt(node, child)
 
 
+def _is_within_directory(
+    base: PathLike[str] | str, target: PathLike[str] | str
+) -> bool:
+    """Return True if `target` resolves to a path inside `base`."""
+    base = os.path.realpath(base)
+    target = os.path.realpath(target)
+    try:
+        return os.path.commonpath([base]) == os.path.commonpath([base, target])
+    except ValueError:
+        # Raised e.g. on Windows when paths are on different drives.
+        return False
+
+
 def _expand_zip(
     zip_path: PathLike[str] | str,
     extract_to: PathLike[str] | str,
@@ -78,6 +91,17 @@ def _expand_zip(
         if isinstance(members, str):
             members = [members]
         with zipfile.ZipFile(zip_path, "r") as zip_ref:
+            # Guard against Zip Slip / path traversal: every entry that will be
+            # written must stay within extract_to. This protects against
+            # malicious archives containing "../" or absolute path entries.
+            names = members if members is not None else zip_ref.namelist()
+            for name in names:
+                target_path = os.path.join(extract_to, name)
+                if not _is_within_directory(extract_to, target_path):
+                    raise ValueError(
+                        f"Unsafe entry '{name}' in archive '{zip_path}': "
+                        f"would extract outside of '{extract_to}'."
+                    )
             zip_ref.extractall(path=extract_to, members=members or None)
         return True
     except Exception as e:
