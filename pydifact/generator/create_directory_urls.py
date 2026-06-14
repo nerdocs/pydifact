@@ -1,6 +1,5 @@
 import sys
 
-import black
 from bs4 import BeautifulSoup
 
 # This file parses the https://unece.org/trade/uncefact/unedifact/download page

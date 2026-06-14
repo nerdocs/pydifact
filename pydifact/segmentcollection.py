@@ -25,11 +25,11 @@ import datetime
 from collections.abc import Callable, Iterable, Iterator, Sequence
 from typing import Type, TypeVar
 
-from pydifact.exceptions import EDISyntaxError, ValidationError
+from pydifact.constants import Element, Elements
 from pydifact.control import Characters
+from pydifact.exceptions import EDISyntaxError, ValidationError
 from pydifact.parser import Parser
 from pydifact.segments import Segment
-from pydifact.constants import Element, Elements
 from pydifact.serializer import Serializer
 
 T = TypeVar("T", bound="AbstractSegmentsContainer")

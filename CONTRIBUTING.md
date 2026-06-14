@@ -12,5 +12,6 @@ Rules are easy. You can
 Writing code
 ------------
 
-All files must be formatted using [Black](https://black.readthedocs.io). Easier is not possible.
+All files must be formatted using [ruff](https://docs.astral.sh/ruff/)
+(`ruff format` for code style, `ruff check` for import sorting). Easier is not possible.
 For bigger features it is recommended to create an own branch.

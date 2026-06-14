@@ -218,7 +218,7 @@ def test_empty_interchange_w_una():
             Segment("UNZ", "0", "42"),
         ]
     )
-    assert str(i) == ("UNA:+,? '" "UNB+UNOC:1+1234+3333+200102:2212+42'UNZ+0+42'")
+    assert str(i) == ("UNA:+,? 'UNB+UNOC:1+1234+3333+200102:2212+42'UNZ+0+42'")
 
 
 def test_interchange_messages(interchange, message):
@@ -252,7 +252,7 @@ def test_interchange_from_str_multi_messages():
 def test_faulty_interchange__UNH_not_closed():
     """creates a message with an opening UNH message, without closing UNT"""
     i = Interchange.from_str(
-        "UNB+UNOC:1+1234+3333+200102:2212+42'" "UNH+42z42+PAORES:93:1:IA'" "UNZ+2+42'"
+        "UNB+UNOC:1+1234+3333+200102:2212+42'UNH+42z42+PAORES:93:1:IA'UNZ+2+42'"
     )
 
     with pytest.raises(EDISyntaxError):
@@ -275,7 +275,7 @@ def test_faulty_interchange__nested_UNH_not_closed():
 def test_faulty_interchange__UNT_without_UNH():
     """creates a message with an cloding UNT, without UNH"""
     i = Interchange.from_str(
-        "UNB+UNOC:1+1234+3333+200102:2212+42'" "UNT+2+42z42'" "UNZ+2+42'"
+        "UNB+UNOC:1+1234+3333+200102:2212+42'UNT+2+42z42'UNZ+2+42'"
     )
 
     with pytest.raises(EDISyntaxError):

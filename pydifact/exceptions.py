@@ -1,5 +1,4 @@
 class EDISyntaxError(Exception):
-
     def __init__(
         self, message: str, line_number: int = None, column_number: int = None
     ):

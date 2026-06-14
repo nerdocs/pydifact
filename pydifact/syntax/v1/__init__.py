@@ -1,15 +1,15 @@
+from pydifact.constants import C, M
+from pydifact.segments import Segment
 from pydifact.syntax.common import (
-    DataElement,
     CompositeDataElement,
+    DataElement,
     SyntaxVersionNumber,
 )
-from pydifact.constants import M, C
-from pydifact.segments import Segment
 
 __version__ = 1
 
-from .data import partner_identification_codes
 from ... import Characters
+from .data import partner_identification_codes
 
 
 class ServiceStringAdvice(DataElement):

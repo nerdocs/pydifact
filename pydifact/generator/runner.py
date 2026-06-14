@@ -1,28 +1,26 @@
-import sys
 import os
-import zipfile
-from xml.etree import ElementTree
-from pathlib import Path
 import re
-
+import sys
+import zipfile
+from os import PathLike
+from pathlib import Path
+from xml.etree import ElementTree
 
 from pydifact.generator.base import UntidBaseParser
-from pydifact.generator.edsd import EDSDParser
-from pydifact.generator.edcd import EDCDParser
-from pydifact.generator.eded import EDEDParser
-from pydifact.generator.uncl import UNCLParser
-from pydifact.generator.edmd import EDMDParser
-from pydifact.generator.unsl import UNSLParser
 from pydifact.generator.constants import (
-    directories_urls,
     V3_SERVICE_CODE_LISTS,
     V4_SERVICE_CODE_LISTS,
-    services_map,
+    directories_urls,
     renames,
+    services_map,
 )
-from pydifact.generator.utils import is_prehistoric, download_file
-
-from os import PathLike
+from pydifact.generator.edcd import EDCDParser
+from pydifact.generator.eded import EDEDParser
+from pydifact.generator.edmd import EDMDParser
+from pydifact.generator.edsd import EDSDParser
+from pydifact.generator.uncl import UNCLParser
+from pydifact.generator.unsl import UNSLParser
+from pydifact.generator.utils import download_file, is_prehistoric
 
 V4_RELEASE_NUMBER = "40219"
 zips_directory = Path(__file__).parent / "zips"
@@ -189,7 +187,6 @@ def extract_edifact_data(
     """
     print(f"Parsing {parser.name}... for release '{release}'")
     try:
-
         with open(output_file, "w", encoding="utf-8") as f:
             f.write(parser.get_xml())
 
@@ -313,7 +310,6 @@ def parse_messages(source_dir, target_dir) -> None:
 def generate_service_codes(
     syntax_version: str, extended_syntax_version: str, service_subrelease: str
 ):
-
     specific_release = service_subrelease.lower()
     version_dir = f"v{extended_syntax_version}"
     generator_base_dir = Path(__file__).parent

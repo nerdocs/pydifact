@@ -20,21 +20,21 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-from collections.abc import Iterator, Iterable
+import logging
+from collections.abc import Iterable, Iterator
 
 from pydifact.constants import (
-    EDI_DEFAULT_VERSION,
+    EDI_DEFAULT_DIRECTORY,
     EDI_DEFAULT_SYNTAX,
+    EDI_DEFAULT_VERSION,
     Element,
     Elements,
-    EDI_DEFAULT_DIRECTORY,
 )
-from pydifact.exceptions import EDISyntaxError
-from pydifact.tokenizer import Tokenizer
-from pydifact.token import Token
-from pydifact.segments import Segment, SegmentFactory
 from pydifact.control import Characters
-import logging
+from pydifact.exceptions import EDISyntaxError
+from pydifact.segments import Segment, SegmentFactory
+from pydifact.token import Token
+from pydifact.tokenizer import Tokenizer
 
 logger = logging.getLogger(__name__)
 
@@ -122,7 +122,7 @@ class Parser:
         if una_found:
             idx_begin = idx_una + len(una_pattern)
             idx_end = idx_begin + 6
-            characters = Characters.from_str(f"UNA{message[idx_begin: idx_end]}")
+            characters = Characters.from_str(f"UNA{message[idx_begin:idx_end]}")
 
             # remove the UNA segment from the string,
             # ignore everything before UNA because it should be the first segment if una_found.
