@@ -16,7 +16,7 @@
 import pytest
 
 from pydifact.control.characters import Characters
-from pydifact.exceptions import EDISyntaxError
+from pydifact.exceptions import EDISyntaxError, ValidationError
 from pydifact.parser import Parser, TokenIterator
 from pydifact.segments import Segment
 from pydifact.token import Token
@@ -348,3 +348,21 @@ UNZ+2+1'
 """
     segments = list(Parser().parse(example_text))
     assert len(segments) == 4
+
+
+# UNH message reference number (0062) is limited to an..14; segments are only
+# validated after UNB has set the syntax version
+INVALID_EDI = (
+    "UNA:+,? 'UNB+UNOC:1+1234+3333+200102:2212+42'UNH+123456789012345+PAORES:93:1:IA'"
+)
+
+
+def test_parser_validates_segments_by_default():
+    with pytest.raises(ValidationError):
+        list(Parser().parse(INVALID_EDI))
+
+
+def test_parser_without_validation():
+    segments = list(Parser(validate=False).parse(INVALID_EDI))
+    assert [s.tag for s in segments] == ["UNA", "UNB", "UNH"]
+    assert segments[2].elements[0] == "123456789012345"
