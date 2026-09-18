@@ -73,6 +73,7 @@ class Parser:
         version: The EDI version to override. (default: from UNB header)
         directory: The directory to use for segments. (default: EDI_DEFAULT_DIRECTORY)
         syntax_identifier: The syntax identifier to use for segments. (default: from UNB header)
+        validate: Whether to validate the parsed segments. (default: True)
     """
 
     def __init__(
@@ -80,11 +81,13 @@ class Parser:
         factory: SegmentFactory | None = None,
         characters: Characters | None = None,
         directory: str = "",
+        validate: bool = True,
     ) -> None:
         """Initializes parser with segment factory and control characters"""
         self.factory = factory or SegmentFactory()
         self.characters = characters or Characters()
         self.directory = directory
+        self.validate = validate
 
         self.syntax_identifier = ""
         self.version = ""
@@ -136,7 +139,9 @@ class Parser:
 
         # if UNA is available, yield the UNA segment first, even before tokenizing
         if una_found:
-            yield self.factory.create_segment("UNA", str(characters))
+            yield self.factory.create_segment(
+                "UNA", str(characters), validate=self.validate
+            )
 
         tokenizer = Tokenizer()
         token_iterator = TokenIterator(tokenizer.get_tokens(message, characters))
@@ -306,6 +311,7 @@ class Parser:
         return self.factory.create_segment(
             name,
             *raw_segment,
+            validate=self.validate,
             version=self.version,
             directory=directory,
         )

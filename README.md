@@ -107,6 +107,20 @@ for segment in collection.segments:
     print(f"Segment tag: {segment.tags}, content: {segment.elements}")
 ```
 
+By default, the segments (and the `UNB` header of an interchange) are validated
+against the EDIFACT specifications while parsing. For files that don't strictly
+adhere to them, validation can be switched off:
+
+```python
+interchange = Interchange.from_file("./tests/data/wikipedia_en.edi", validate=False)
+collection = RawSegmentCollection.from_str(
+    "UNH+1+ORDERS:D:96A:UN:EAN008'", validate=False
+)
+```
+
+If you pass your own `Parser`, create it with `Parser(validate=False)` to skip the
+segment validation.
+
 
 ## Limitations
 
