@@ -81,10 +81,12 @@ Or you can create an EDI interchange on the fly:
 from pydifact.segmentcollection import Interchange
 from pydifact.segments import Segment
 
-interchange = Interchange(syntax_identifier=("IBMA",1),
-                          sender="MeMyselfAndIrene",
-                          recipient="TheOtherOne",
-                          control_reference="KLuzs7c6")
+interchange = Interchange(
+    syntax_identifier=("IBMA", 1),
+    sender="MeMyselfAndIrene",
+    recipient="TheOtherOne",
+    control_reference="KLuzs7c6",
+)
 interchange.add_segment(Segment("QTY", ["12", "3"]))
 
 print(interchange.serialize())
