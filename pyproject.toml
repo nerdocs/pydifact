@@ -59,3 +59,7 @@ version = {attr = "pydifact.__version__"}
 where = ["."]  # TODO use src layout
 include = ["pydifact*"]
 exclude = ["pydifact.generator*"]
+
+[tool.setuptools.package-data]
+# EDIFACT directory/service definitions used for validation
+"pydifact.syntax" = ["**/*.xml"]
