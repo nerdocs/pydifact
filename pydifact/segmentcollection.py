@@ -34,7 +34,7 @@ from pydifact.exceptions import (
     ValidationError,
 )
 from pydifact.parser import Parser
-from pydifact.segments import Segment
+from pydifact.segments import Segment, SegmentFactory
 from pydifact.serializer import Serializer
 
 T = TypeVar("T", bound="AbstractSegmentsContainer")
@@ -424,7 +424,8 @@ class Interchange(AbstractSegmentsContainer):
         self.timestamp = timestamp or datetime.datetime.now()
 
     def get_header_segment(self) -> Segment:
-        return Segment(
+        # let the factory pick the typed UNB class of this syntax version
+        return SegmentFactory.create_segment(
             self.HEADER_TAG,
             [self.syntax_identifier[0], str(self.syntax_identifier[1])],
             self.sender,
@@ -432,6 +433,8 @@ class Interchange(AbstractSegmentsContainer):
             [f"{self.timestamp:%y%m%d}", f"{self.timestamp:%H%M}"],
             self.control_reference,
             *self.extra_header_elements,
+            validate=False,
+            version=str(self.syntax_identifier[1]),
         )
 
     def get_footer_segment(self) -> Segment:

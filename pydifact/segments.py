@@ -94,15 +94,18 @@ class Segment:
 
     # tag is not a class attribute in this case, as each Segment instance could have another tag.
     __omitted__ = True
-    plugins: list = []
+    # registry of typed segment subclasses, keyed by (tag, syntax version)
+    plugins: dict[tuple[str, str], type["Segment"]] = {}
     schema: list[SegmentSchemaEntry] = []
     tag = ""
+    # the EDIFACT syntax version this (typed) segment class applies to
+    version: str = EDI_DEFAULT_VERSION
     elements: list[Element] = []
 
     def __init_subclass__(cls, **kwargs):
         super().__init_subclass__(**kwargs)
         if "__omitted__" not in cls.__dict__ or getattr(cls, "__omitted__") is False:
-            cls.plugins.append(cls)
+            cls.plugins[(cls.tag, str(cls.version))] = cls
 
     @overload
     def __init__(self, tag: str, /, *elements: Element): ...
@@ -158,9 +161,10 @@ class Segment:
     def __eq__(self, other) -> bool:
         if isinstance(other, str):
             return str(self) == other
-        # FIXME the other way round too? isinstance(other, type(self))?
+        # a typed segment (e.g. UNBSegment) equals a generic Segment with the
+        # same tag and elements - in both directions.
         return (
-            isinstance(self, type(other))
+            isinstance(other, Segment)
             and self.tag == other.tag
             and list(self.elements) == list(other.elements)
         )
@@ -392,15 +396,10 @@ class SegmentFactory:
             raise EDISyntaxError(
                 f"Tag '{name}': A tag name must only contain alphanumeric characters."
             )
-        # TODO: don't iterate over plugins, use a dict to find plugins faster
-        for Plugin in Segment.plugins:
-            if (
-                getattr(Plugin, "tag", "") == name
-                and getattr(Plugin, "version", EDI_DEFAULT_VERSION) == version
-            ):
-                # use specific Segment subclass for this tag
-                segment = Plugin(*elements)
-                break
+        plugin = Segment.plugins.get((name, str(version)))
+        if plugin is not None:
+            # use specific Segment subclass for this tag
+            segment = plugin(*elements)
         else:
             # we don't support this kind of EDIFACT segment (yet), so
             # just create a generic Segment()

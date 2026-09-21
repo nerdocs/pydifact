@@ -20,6 +20,7 @@ from pydifact.exceptions import EDISyntaxError, ValidationError
 from pydifact.parser import Parser, TokenIterator
 from pydifact.segmentcollection import Interchange
 from pydifact.segments import Segment
+from pydifact.syntax import v1, v3, v4
 from pydifact.token import Token
 
 # @pytest.fixture
@@ -411,3 +412,27 @@ def test_parser_reuse_resets_version():
     list(parser.parse("BGM+220+1'"))
     assert parser.version == ""
     assert parser.syntax_identifier == ""
+
+
+@pytest.mark.parametrize(
+    "unb, expected_cls",
+    [
+        ("UNB+UNOA:1+1+2+200102:2212+42'", v1.UNBSegment),
+        ("UNB+UNOC:3+1+2+200102:2212+42'", v3.UNBSegment),
+        ("UNB+UNOC:4+1+2+20200102:2212+42'", v4.UNBSegment),
+    ],
+)
+def test_interchange_yields_typed_unb(unb, expected_cls):
+    """The parser picks the typed UNB class matching the syntax version in the
+    UNB header, without the user importing the syntax modules."""
+    interchange = Interchange.from_str(f"{unb}UNZ+0+42'")
+    header = interchange.get_header_segment()
+    assert type(header) is expected_cls
+    assert header == Segment("UNB", *header.elements)
+    assert Segment("UNB", *header.elements) == header
+
+
+def test_unknown_syntax_version_yields_generic_unb():
+    """No typed UNB for syntax version 2 - the generic Segment is used."""
+    interchange = Interchange.from_str("UNB+UNOA:2+1+2+200102:2212+42'UNZ+0+42'")
+    assert type(interchange.get_header_segment()) is Segment

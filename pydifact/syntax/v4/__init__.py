@@ -1,6 +1,7 @@
 from typing import NamedTuple
 
 from pydifact.constants import C, M
+from pydifact.segments import Segment
 from pydifact.syntax import v1, v2, v3
 from pydifact.syntax.common import (
     CompositeDataElement,
@@ -8,10 +9,9 @@ from pydifact.syntax.common import (
     SyntaxVersionNumber,
 )
 
-from ... import Segment
 from .data import partner_identification_codes
 
-__version__ = 4
+__version__ = "4"
 
 
 class SyntaxIdentifier(v1.SyntaxIdentifier):

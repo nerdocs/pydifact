@@ -108,7 +108,18 @@ def test_has_plugin():
         def validate(self, *args, **kwargs):
             pass
 
-    assert TestSegment in Segment.plugins
+    assert Segment.plugins[("TES", "4")] is TestSegment
+
+
+def test_factory_normalises_version_type():
+    """The syntax version is compared as str, an int works the same."""
+    from pydifact.segments import SegmentFactory
+    from pydifact.syntax import v4
+
+    elements = (["UNOC", "4"], "1", "2", ["20200102", "2212"], "42")
+    for version in ("4", 4):
+        segment = SegmentFactory.create_segment("UNB", *elements, version=version)
+        assert type(segment) is v4.UNBSegment
 
 
 def test_getitem_out_of_range_returns_none():

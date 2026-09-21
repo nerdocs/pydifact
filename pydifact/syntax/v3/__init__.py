@@ -1,8 +1,8 @@
 import pydifact.syntax.common
-from pydifact import Segment
+from pydifact.segments import Segment
 from pydifact.syntax import v1, v2
 
-__version__ = 3
+__version__ = "3"
 
 
 class UNASegment(Segment):

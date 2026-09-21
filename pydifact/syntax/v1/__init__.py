@@ -1,4 +1,5 @@
 from pydifact.constants import C, M
+from pydifact.control import Characters
 from pydifact.segments import Segment
 from pydifact.syntax.common import (
     CompositeDataElement,
@@ -6,9 +7,8 @@ from pydifact.syntax.common import (
     SyntaxVersionNumber,
 )
 
-__version__ = 1
+__version__ = "1"
 
-from ... import Characters
 from .data import partner_identification_codes
 
 

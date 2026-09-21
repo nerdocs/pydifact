@@ -18,6 +18,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Malformed input raises `EDISyntaxError` instead of `StopIteration`, `IndexError`, `ValueError` or `AssertionError`
 - A reused `Parser` no longer leaks the UNB version of the previous interchange into the next `parse()`
 - `Segment.__getitem__` returns `None` for negative out-of-range indices too, instead of raising `IndexError`
+- The parser now picks the typed service segment classes (e.g. `syntax.v4.UNBSegment`) matching the UNB syntax version
+- `Segment.__eq__` is symmetric between typed segments and generic `Segment`s
 - Numeric elements accept a leading minus and a decimal mark (not counted in length); alphabetic elements accept spaces
 - Empty segments warn with `NonConformantEDIWarning` instead of Python's `SyntaxWarning`
 - `Parser(directory=...)` pointing outside the package raises `ValueError` instead of a misleading warning
