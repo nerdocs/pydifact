@@ -85,6 +85,7 @@ class AbstractSegmentsContainer:
         string: str,
         parser: Parser | None = None,
         characters: Characters | None = None,
+        validate: bool = True,
     ) -> T:
         """Create an instance from a string.
 
@@ -92,25 +93,32 @@ class AbstractSegmentsContainer:
             string: The EDI content.
             parser: A parser to convert the tokens to segments; defaults to `Parser`.
             characters: The set of control characters.
+            validate: Whether to validate the content. If a `parser` is given,
+                its own `validate` setting applies to the parsed segments.
         """
         if parser is None:
-            parser = Parser(characters=characters)
+            parser = Parser(characters=characters, validate=validate)
 
         segments = parser.parse(string)
 
-        return cls.from_segments(segments=segments, characters=parser.characters)
+        return cls.from_segments(
+            segments=segments, characters=parser.characters, validate=validate
+        )
 
     @classmethod
     def from_segments(
         cls: Type[T],
         segments: Iterable[Segment],
         characters: Characters | None = None,
+        validate: bool = True,
     ) -> T:
         """Create an instance from a list of segments.
 
         Args:
             segments: The segments of the EDI interchange (list/iterable of Segment).
             characters: The set of control characters.
+            validate: Whether to validate the segments. Unused here, but
+                subclasses may validate while creating the instance.
         """
         # create a new instance of AbstractSegmentsContainer and return it
         # with the added segments
@@ -474,7 +482,11 @@ class Interchange(AbstractSegmentsContainer):
 
     @classmethod
     def from_file(
-        cls, file: str, encoding: str = "iso8859-1", parser: Parser | None = None
+        cls,
+        file: str,
+        encoding: str = "iso8859-1",
+        parser: Parser | None = None,
+        validate: bool = True,
     ) -> "Interchange":
         """Create an Interchange instance from a file.
 
@@ -485,6 +497,9 @@ class Interchange(AbstractSegmentsContainer):
                 The encoding to use when reading the file.
             parser : Parser, optional
                 A parser to convert the tokens to segments.
+            validate : bool, default=True
+                Whether to validate the content. If a `parser` is given,
+                its own `validate` setting applies to the parsed segments.
 
         Returns:
             Interchange
@@ -501,12 +516,22 @@ class Interchange(AbstractSegmentsContainer):
 
         with open(file, encoding=encoding) as f:
             collection = f.read()
-        return cls.from_str(collection, parser=parser)
+        return cls.from_str(collection, parser=parser, validate=validate)
 
     @classmethod
     def from_segments(
-        cls, segments: Iterable[Segment], characters: Characters | None = None
+        cls,
+        segments: Iterable[Segment],
+        characters: Characters | None = None,
+        validate: bool = True,
     ) -> "Interchange":
+        """Create an Interchange instance from a list of segments.
+
+        Args:
+            segments: The segments of the EDI interchange, starting with UNA or UNB.
+            characters: The set of control characters.
+            validate: Whether to validate the UNB header.
+        """
         segments = iter(segments)
 
         first_segment = next(segments)
@@ -529,10 +554,11 @@ class Interchange(AbstractSegmentsContainer):
         syntax_version = unb.elements[0][1]
 
         # Validate UNB segment according to the applicable syntax version
-        try:
-            unb.validate(syntax_version=syntax_version, directory="")
-        except (ValidationError, FileNotFoundError) as e:
-            raise EDISyntaxError(f"Invalid UNB header: {e}") from e
+        if validate:
+            try:
+                unb.validate(syntax_version=syntax_version, directory="")
+            except (ValidationError, FileNotFoundError) as e:
+                raise EDISyntaxError(f"Invalid UNB header: {e}") from e
 
         # In syntax version 3 and earlier the year is formatted using two digits,
         # while in version 4 four digits are used.
