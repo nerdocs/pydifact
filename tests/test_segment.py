@@ -15,7 +15,7 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import pytest
 
-from pydifact.exceptions import MissingImplementationWarning
+from pydifact.exceptions import MissingImplementationWarning, NonConformantEDIWarning
 from pydifact.segments import Segment
 
 elements = ["field1", ["field2", "extra"], "stuff"]
@@ -23,7 +23,7 @@ elements = ["field1", ["field2", "extra"], "stuff"]
 
 def test_get_segment_code_empty():
     # check if pytest output contains warning
-    with pytest.warns(SyntaxWarning):
+    with pytest.warns(NonConformantEDIWarning):
         Segment("OMD")  # noqa
 
 
@@ -101,3 +101,17 @@ def test_has_plugin():
             pass
 
     assert TestSegment in Segment.plugins
+
+
+def test_getitem_out_of_range_returns_none():
+    seg = Segment("FTX", "a")
+    assert seg[0] == "a"
+    assert seg[-1] == "a"
+    assert seg[100] is None
+    assert seg[-100] is None
+
+
+def test_validate_directory_outside_package_raises():
+    seg = Segment("BGM", ["380"], "1")
+    with pytest.raises(ValueError):
+        seg.validate(syntax_version="1", directory="../..")

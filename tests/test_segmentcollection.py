@@ -259,6 +259,15 @@ def test_faulty_interchange__UNH_not_closed():
         list(i.get_messages())
 
 
+def test_faulty_interchange__no_message():
+    """segments without any enclosing UNH/UNT must not be reported as an
+    unclosed UNH"""
+    i = Interchange.from_str("UNB+UNOC:1+1234+3333+200102:2212+42'BGM+220+1'UNZ+1+42'")
+
+    with pytest.raises(EDISyntaxError, match="No message found"):
+        list(i.get_messages())
+
+
 def test_faulty_interchange__nested_UNH_not_closed():
     """creates a message with 2 nested UNH, one of them not closed"""
     i = Interchange.from_str(

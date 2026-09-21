@@ -496,9 +496,13 @@ class Interchange(AbstractSegmentsContainer):
                 if message:
                     message.add_segment(segment)
                 last_segment = segment
-        if last_segment:
-            if not last_segment.tag == "UNT":
-                raise EDISyntaxError("UNH segment was not closed with a UNT segment.")
+        if message:
+            raise EDISyntaxError("UNH segment was not closed with a UNT segment.")
+        if last_segment is not None and last_segment.tag != "UNT":
+            raise EDISyntaxError(
+                f'No message found: segment "{last_segment}" is not enclosed in '
+                f"UNH ... UNT."
+            )
 
     def add_message(self, message: Message) -> "Interchange":
         """Append a message to the interchange."""

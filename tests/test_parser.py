@@ -400,3 +400,14 @@ def test_una_with_leading_whitespace():
     """Whitespace (or a BOM) before a leading UNA must not hide the UNA segment."""
     segments = list(Parser().parse("\nUNA:+.? 'FOO+TEST'"))
     assert segments == [Segment("UNA", ":+.? '"), Segment("FOO", "TEST")]
+
+
+def test_parser_reuse_resets_version():
+    """Regression: a reused Parser must not leak the UNB version of the
+    previous interchange into the next parse."""
+    parser = Parser()
+    list(parser.parse("UNB+UNOC:3+1+2+200102:2212+42'UNZ+1+42'"))
+    assert parser.version == "3"
+    list(parser.parse("BGM+220+1'"))
+    assert parser.version == ""
+    assert parser.syntax_identifier == ""

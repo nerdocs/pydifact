@@ -71,9 +71,7 @@ class Parser:
         factory: The SegmentFactory to use for creating segments.
             (default: SegmentFactory())
         characters: The control characters to use. (default: Characters())
-        version: The EDI version to override. (default: from UNB header)
         directory: The directory to use for segments. (default: EDI_DEFAULT_DIRECTORY)
-        syntax_identifier: The syntax identifier to use for segments. (default: from UNB header)
         validate: Whether to validate the parsed segments. (default: True)
         warn_non_conformant: Whether to emit a `NonConformantEDIWarning` when
             the input deviates from the EDIFACT specification but is accepted
@@ -113,6 +111,9 @@ class Parser:
         Yields:
             Segment: Parsed segment objects from the EDI message.
         """
+        # reset the values read from a previous interchange's UNB header
+        self.syntax_identifier = ""
+        self.version = ""
 
         # If there is a UNA segment, take the following 6 characters
         # unconditionally, strip them, and make control Characters()

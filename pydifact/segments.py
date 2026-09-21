@@ -37,6 +37,7 @@ from pydifact.constants import (
 from pydifact.exceptions import (
     EDISyntaxError,
     MissingImplementationWarning,
+    NonConformantEDIWarning,
     ValidationError,
 )
 from pydifact.syntax.common import CompositeDataElement, DataElement
@@ -56,20 +57,20 @@ def _load_segments_xml(directory: str) -> ET.Element:
         The root element of the parsed XML tree
 
     Raises:
+        ValueError: If `directory` points outside of pydifact.syntax
         FileNotFoundError: If segments.xml cannot be found in the directory
         ET.ParseError: If the XML file cannot be parsed
     """
-    # Get the path to the syntax directory
-    syntax_path = Path(__file__).parent / "syntax" / directory / "data" / "segments.xml"
+    syntax_root = Path(__file__).parent / "syntax"
+    data_path = (syntax_root / directory / "data").resolve()
+    if not data_path.is_relative_to(syntax_root.resolve()):
+        raise ValueError(
+            f"Invalid directory '{directory}': must be a name below pydifact.syntax."
+        )
+    syntax_path = data_path / "segments.xml"
 
     if not syntax_path.exists():
-        syntax_path = (
-            Path(__file__).parent
-            / "syntax"
-            / directory
-            / "data"
-            / "simple_segments.xml"
-        )
+        syntax_path = data_path / "simple_segments.xml"
         if not syntax_path.exists():
             raise FileNotFoundError(f"segments.xml not found in directory: {directory}")
 
@@ -128,7 +129,7 @@ class Segment:
         if not self.elements:
             warnings.warn(
                 f"Segment {self.tag} is empty, and should be omitted completely.",
-                category=SyntaxWarning,
+                category=NonConformantEDIWarning,
             )
         # Validate segment tag is uppercase alphanumeric 3‑letter string
         if (
@@ -162,9 +163,12 @@ class Segment:
         """
         Retrieves an element from the list of elements based on the provided index.
 
-        If the index is out of bounds, the method returns `Ǹone`.
+        If the index is out of bounds, the method returns `None`.
         """
-        return self.elements[key] if len(self.elements) > key else None
+        try:
+            return self.elements[key]
+        except IndexError:
+            return None
 
     def __setitem__(self, key: int, value: Element) -> None:
         self.elements[key] = value

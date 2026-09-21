@@ -84,8 +84,8 @@ class Characters:
 
         :param cc_type: The type of control character to set,
             as one of the following attribute strings:
-            componentSeparator, dataSeparator, decimalPoint,
-            escapeCharacter, segmentTerminator
+            component_separator, data_separator, decimal_point,
+            escape_character, reserved_character, segment_terminator
         :param char: The character to set it to
         :return: clone of self
         """
