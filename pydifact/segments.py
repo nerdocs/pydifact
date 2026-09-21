@@ -20,7 +20,6 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 import logging
-import re
 import warnings
 import xml.etree.ElementTree as ET  # nosec B405 - parses only bundled XML
 from functools import lru_cache
@@ -41,15 +40,10 @@ from pydifact.exceptions import (
     NonConformantEDIWarning,
     ValidationError,
 )
-from pydifact.syntax.common import SegmentSchemaEntry
+from pydifact.syntax.common import NUMERIC_RE, SegmentSchemaEntry
 from pydifact.utils import get_syntax_release_version
 
 logger = logging.getLogger(__name__)
-
-# ISO 9735-1, 10.1.2.2: optional leading minus sign, digits, and at most one
-# decimal mark with at least one digit on each side. The decimal mark is defined
-# by the UNA (default ","), but "." is common in the wild, so both are accepted.
-_NUMERIC_RE = re.compile(r"-?[0-9]+(?:[.,][0-9]+)?")
 
 
 @lru_cache(maxsize=32)
@@ -309,7 +303,7 @@ class Segment:
                                 #         )
                                 pass
                             case "n":
-                                if not _NUMERIC_RE.fullmatch(element):
+                                if not NUMERIC_RE.fullmatch(element):
                                     raise ValidationError(
                                         f"{self.tag} Segment, pos. {index}: "
                                         f"element {xml_element.get('id')} ({xml_element.get('name')}) "

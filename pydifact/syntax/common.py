@@ -14,7 +14,7 @@ import re
 import warnings
 from typing import NamedTuple, Type, TypeAlias, TypeVar
 
-from pydifact.constants import EDI_DEFAULT_VERSION, M
+from pydifact.constants import M
 from pydifact.exceptions import ValidationError
 
 allowed_alphanum_chars = set(
@@ -33,44 +33,63 @@ def is_edifact_alphanum(s: str) -> bool:
     )
 
 
-def assert_a(s, length, message=""):
-    """checks if s consists of only alphabetical characters, and has a given length."""
-    assert str(s).isalpha(), message
-    assert len(s) == int(length), message
+# ISO 9735-1, 10.1.2.2: optional leading minus sign, digits, and at most one
+# decimal mark with at least one digit on each side. The decimal mark is defined
+# by the UNA (default ","), but "." is common in the wild, so both are accepted.
+NUMERIC_RE = re.compile(r"-?[0-9]+(?:[.,][0-9]+)?")
+
+# data structure representation: character type, optional ".." for variable
+# length, and the (maximum) length. Examples: "a4", "an1", "an..35", "n..6".
+_REPR_RE = re.compile(r"(an|a|n)(\.\.)?([0-9]+)")
 
 
-def assert_a_max(s, length, message=""):
-    """checks if s consists of only alphabetical characters, and has a given maximum length."""
-    assert str(s).isalpha() or s == "", message
-    assert len(s) <= int(length), message
+def validate_repr(value: str, repr: str, name: str = "") -> None:
+    """Checks `value` against a data structure representation like "an..35".
 
+    Args:
+        value: The string to check.
+        repr: The representation: `a`/`n`/`an` followed by an exact length
+            (`a4`) or `..` and a maximum length (`an..35`).
+        name: Element name used in the error message.
 
-def assert_n(s, length, message=""):
-    """checks if s is numeric and has a given length."""
-    assert int(s) or s == "0", message
-    assert len(s) == int(length), message
+    Raises:
+        ValidationError: if `value` does not conform to `repr`.
+        ValueError: if `repr` itself is malformed.
+    """
+    match = _REPR_RE.fullmatch(repr)
+    if match is None:
+        raise ValueError(f"Invalid data structure representation: '{repr}'")
+    char_type, variable, length_str = match.groups()
+    length = int(length_str)
+    value_length = len(value)
 
+    if char_type == "a":
+        # letters and spaces, but no digits
+        if not all(c.isalpha() or c == " " for c in value):
+            raise ValidationError(
+                f"{name} must contain alphabetic characters only. "
+                f"Current value: '{value}'"
+            )
+    elif char_type == "n":
+        if not NUMERIC_RE.fullmatch(value):
+            raise ValidationError(f"{name} must be numeric. Current value: '{value}'")
+        # sign and decimal mark do not count towards the length
+        value_length = sum(c.isdigit() for c in value)
+    elif not is_edifact_alphanum(value):
+        raise ValidationError(
+            f"{name} must contain alphanumeric characters only. "
+            f"Current value: '{value}'"
+        )
 
-def assert_n_max(s, length, message=""):
-    """checks if s is numeric and has a given length."""
-    assert int(s) or s == "0", message
-    assert len(s) <= int(length), message
-
-
-def assert_an(s, length, message=""):
-    """checks if s is alphanumeric and has a given length."""
-    assert is_edifact_alphanum(s), message
-    assert len(s) == int(length), message
-
-
-def assert_an_max(s, length, message=""):
-    """checks if s is alphanumeric and has a given length."""
-    assert is_edifact_alphanum(s), message
-    assert len(s) <= int(length), message
-
-
-def assert_format(s, fmt_str, message=""):
-    assert re.match(fmt_str, s), message
+    if variable:
+        if value_length > length:
+            raise ValidationError(
+                f"{name} must have max. {length} characters. Current value: '{value}'"
+            )
+    elif value_length != length:
+        raise ValidationError(
+            f"{name} must have exactly {length} characters. Current value: '{value}'"
+        )
 
 
 class Code(NamedTuple):
@@ -78,7 +97,6 @@ class Code(NamedTuple):
     description: str
 
 
-# TODO: test DataElement
 class DataElement:
     """Basic EDIFACT service code.
 
@@ -100,100 +118,48 @@ class DataElement:
     code: str
     """A 4 digit numeric code"""
 
-    repr: str
+    repr: str = ""
     """the constraint of the data element's value."""
 
-    title: str
+    title: str = ""
     """The human readable title of the data element."""
 
-    description: str
+    description: str = ""
     """A short description of the data element"""
-
-    plugins: list = []
 
     codes: dict[str, dict[str, str]] = {}
     """A possible dict of codes that can be used for validation"""
 
     def __init__(self, value: str):
-        self.plugins = []
         self.value = value
 
-    def validate(self, mandatory: bool | None = None, repr: str | None = None) -> None:
+    def validate(self, mandatory: bool = False, repr: str | None = None) -> None:
         """Validates the DataElement.
 
+        An empty value is only an error if the element is mandatory; a present
+        value is always checked against the representation.
+
         Attributes:
-            mandatory (bool): overrides the DataElement's default `mandatory` status
-            repr (str): The data structure representation and length constraints
+            mandatory (bool): whether the element must not be empty
+            repr (str): The data structure representation and length constraints;
+                overrides the class' `repr` if given.
 
         Raises:
             ValidationError if validation fails.
         """
-        if mandatory is True and not self.value:
-            raise ValidationError(f"{self.__class__.__name__} must not be empty.")
+        if not self.value:
+            if mandatory:
+                raise ValidationError(f"{self.__class__.__name__} must not be empty.")
+            return
 
-        try:
-            r = repr or self.repr
-            if not r:
-                return
-            tag_name = f"Tag {self.code} ({self.title})"
-            if r.startswith("an"):
-                if r[2:4] == "..":
-                    assert_an_max(
-                        self.value,
-                        r[4:],
-                        f"{tag_name} "
-                        f"must have max. {r[4:]} alphanumeric characters. Current value: "
-                        f"'{self.value}'",
-                    )
-                else:
-                    assert_an(
-                        self.value,
-                        r[2:],
-                        f"{tag_name} must have exactly "
-                        f"{r[2:]} alphanumeric characters. Current value: "
-                        f"'{self.value}'",
-                    )
-            elif r.startswith("a"):
-                if r[1:3] == "..":
-                    assert_a_max(
-                        self.value,
-                        r[3:],
-                        message=f"{tag_name} "
-                        f"must have max. {r[3:]} alphabetic characters. Current value: "
-                        f"'{self.value}'",
-                    )
-                else:
-                    assert_a(
-                        self.value,
-                        r[1:],
-                        message=f"{tag_name} "
-                        f"must have exactly {r[1:]} alphabetic characters. Current value: "
-                        f"'{self.value}'",
-                    )
-            elif r.startswith("n"):
-                if r[1:3] == "..":
-                    assert_n_max(
-                        self.value,
-                        r[3:],
-                        message=f"{tag_name} must "
-                        f"be numeric and must have max. {r[3:]} digits. Current value: "
-                        f"'{self.value}'",
-                    )
-                else:
-                    assert_n(
-                        self.value,
-                        r[1:],
-                        message=f"{tag_name} must "
-                        f"be numeric and must have {r[1:]} digits. Current value: "
-                        f"'{self.value}'",
-                    )
-            if self.codes and self.value not in self.codes:
-                warnings.warn(
-                    f"'{self.value}' is not a valid value of '{self.code}: {self.title}'.",
-                    category=SyntaxWarning,
-                )
-        except AssertionError as e:
-            raise ValidationError(e)
+        r = repr or self.repr
+        if r:
+            validate_repr(self.value, r, f"Tag {self.code} ({self.title})")
+        if self.codes and self.value not in self.codes:
+            warnings.warn(
+                f"'{self.value}' is not a valid value of '{self.code}: {self.title}'.",
+                category=SyntaxWarning,
+            )
 
 
 T = TypeVar("T", bound="CompositeDataElement")
@@ -203,7 +169,6 @@ CompositeSchemaEntry: TypeAlias = tuple[type[DataElement], str, str]
 M(andatory)/C(onditional) flag and the data structure representation."""
 
 
-# TODO: test CompositeDataElement
 class CompositeDataElement:
     code: str
     """A structured representation of a composite data element.
@@ -242,43 +207,32 @@ class CompositeDataElement:
     def __init__(self, elements: str | list[str]):
         self.elements = elements if not isinstance(elements, str) else [elements]
 
-    def validate(
-        self, mandatory: bool | None = None, repeat: int | None = None
-    ) -> None:
+    def validate(self, mandatory: bool = False, repeat: int | None = None) -> None:
         """Validates the CompositeDataElement.
 
+        Each component is checked against its schema entry: the M/C flag decides
+        whether it may be empty, the representation constrains its value.
+
         Attributes:
-            mandatory (bool): If `True`, the element's default `mandatory` value is
-                overridden. If `False`, the default value of the `DataElement`
-                definition is used.
+            mandatory (bool): whether the composite must not be empty
             repeat: The maximum number of times this composite data element is allowed to occur in this segment.
                 A value of 1 means it can only appear once, while a value greater than 1 allows multiple occurrences
                 up to that limit.
-        """
-        if mandatory and not self.elements:
-            raise ValidationError(f"{self.__class__.__name__} must not be empty.")
-        # TODO implement repeat
-        # walk through all elements and check them against the schema
-        for index, value in enumerate(self.elements):
-            current_schema = self.schema[index]
-            TemplateClass = current_schema[0]
-            # If data structure representation is not overridden, use
-            # the default value of the DataElement class.
-            data_struct_representation = getattr(TemplateClass, "repr", None)
-            if len(current_schema) > 1:
-                if mandatory is None:
-                    # If mandatory is not set, use the default value from the schema,
-                    # or assume True if not set.
-                    mandatory = current_schema[1] == M
-            elif len(current_schema) > 2:
-                # override representation if set in schema
-                data_struct_representation = current_schema[2]
 
-            if mandatory:
-                # FIXME: even if not mandatory, but present, validation should be done.
-                TemplateClass(value).validate(
-                    mandatory=mandatory, repr=data_struct_representation
-                )
+        Raises:
+            ValidationError if validation fails.
+        """
+        if mandatory and not any(self.elements):
+            raise ValidationError(f"{self.__class__.__name__} must not be empty.")
+        if len(self.elements) > len(self.schema):
+            raise ValidationError(
+                f"{self.__class__.__name__}: Too many components. Expected at most "
+                f"{len(self.schema)}, got {len(self.elements)}: {self.elements}"
+            )
+        # TODO implement repeat
+        for index, (TemplateClass, flag, repr) in enumerate(self.schema):
+            value = self.elements[index] if index < len(self.elements) else ""
+            TemplateClass(value).validate(mandatory=flag == M, repr=repr)
 
 
 SegmentSchemaEntry: TypeAlias = (
@@ -288,46 +242,6 @@ SegmentSchemaEntry: TypeAlias = (
 """One entry of a `Segment.schema`: the element class, its M(andatory)/C(onditional)
 flag, the maximum repeat count and optionally a representation that overrides the
 element's default `repr`."""
-
-
-# TODO: DataElementFactory is not used ATM
-class DataElementFactory:
-    """A factory for creating DataElement instances."""
-
-    @staticmethod
-    def create_data_element(
-        code: str,
-        value: str = "",
-        validate: bool = True,
-        version: str = EDI_DEFAULT_VERSION,
-    ) -> DataElement:
-        """Create a new instance of a DataElement
-
-        Parameters:
-            code: The code of the DataElement
-            value: The data for this segment
-            validate: bool if True, the created element should be validated
-                before return
-            version: The version of the EDI standard this element is based on
-                (default: 4)
-        """
-        for Plugin in DataElement.plugins:
-            if (
-                getattr(Plugin, "code", "") == code
-                and getattr(Plugin, "version") == version
-            ):
-                s = Plugin(code, value)
-                break
-        else:
-            # we don't support this kind of EDIFACT DataElement (yet), so
-            # just create a generic DataElement()
-            s = DataElement(value)
-            s.code = "0000"  # unknown code. TODO: maybe find something better as code
-
-        if validate:
-            if not s.validate():
-                raise ValueError(f"DataElement ({code}) `{value}` is not valid.")
-        return s
 
 
 # we provide the SyntaxVersionNumber here, as it does not make sense to include old

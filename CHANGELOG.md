@@ -26,6 +26,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `Interchange.get_messages()` reports "no message found" instead of an unclosed UNH when there is no UNH at all
 - `mypy pydifact` is clean and enforced in CI; `Segment.schema`/`CompositeDataElement.schema` have honest types
 - `v4.InterchangeSenderInternalSubIdentification` now subclasses `DataElement`; `v1` C080/C082 schemas use tuples
+- `DataElement`/`CompositeDataElement.validate()` use explicit checks (no `assert`) and raise `ValidationError`
 
 [0.2.3]
 - Update dependencies (recommendations from dependabot)
