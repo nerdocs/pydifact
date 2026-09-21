@@ -25,8 +25,8 @@ class MissingImplementationWarning(Warning):
 
 class NonConformantEDIWarning(Warning):
     """Emitted when pydifact accepts input that deviates from the EDIFACT
-    specification (e.g. content in front of the UNA segment, or an empty
-    segment).
+    specification (e.g. content in front of the UNA segment, an empty
+    segment, or an empty mandatory element).
 
     Suppress it with a standard `warnings` filter; the parser's own warnings
     can also be switched off with `Parser(warn_non_conformant=False)`.

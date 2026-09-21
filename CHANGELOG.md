@@ -11,6 +11,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `validate` parameter for `Parser`, `from_str()`, `from_segments()` and `Interchange.from_file()` to skip validation when parsing
 
 ### Changed
+- An empty mandatory element (e.g. `UNB+…++…`) warns with `NonConformantEDIWarning` instead of raising
+  `ValidationError`; a missing element still raises
 - The `UNB` date/time of preparation is strict: composite `date:time`, 6-digit date for syntax 1–3, 8-digit for 4;
   wrong length, missing time or the Austrian AEK-style split `date+time` raise `EDISyntaxError` (no warning anymore)
 - `Interchange` serializes an 8-digit `UNB` date for syntax version 4

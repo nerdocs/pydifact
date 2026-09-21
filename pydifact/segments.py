@@ -254,11 +254,23 @@ class Segment:
                 is_mandatory = xml_element.get("required", "false").lower() == "true"
                 # repeat = int(xml_element.get("repeat", "1")) # not used yet
 
-                if is_mandatory and (element is None or element == ""):
+                if is_mandatory and element is None:
                     raise ValidationError(
                         f"{self.tag} Segment, pos. {index}: "
                         f"element {xml_element.get('id')} ({xml_element.get('name')}) "
                         f"is required."
+                    )
+
+                # An empty mandatory element is a content error, not a
+                # structural one: the segment layout is intact, so the data is
+                # still unambiguous. Accept it with a warning.
+                if is_mandatory and element == "":
+                    warnings.warn(
+                        f"{self.tag} Segment, pos. {index}: "
+                        f"mandatory element {xml_element.get('id')} "
+                        f"({xml_element.get('name')}) is empty.",
+                        category=NonConformantEDIWarning,
+                        stacklevel=2,
                     )
 
                 if element:

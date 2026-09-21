@@ -185,3 +185,17 @@ def test_alpha_element_allows_space(alpha_segment_xml):
 def test_alpha_element_rejects_digits(alpha_segment_xml):
     with pytest.raises(ValidationError):
         Segment("TST", "Area 51").validate(syntax_version="4", directory="d24a")
+
+
+# an empty mandatory element is a content error only: the segment layout stays
+# intact, so it is accepted with a warning – a missing element still raises
+def test_empty_mandatory_element_warns():
+    with pytest.warns(NonConformantEDIWarning, match="0062"):
+        Segment("UNH", "", ["INVOIC", "D", "24A", "UN"]).validate(
+            syntax_version="4", directory="d24a"
+        )
+
+
+def test_missing_mandatory_element_raises():
+    with pytest.raises(ValidationError, match="Too few elements"):
+        Segment("UNH", "1").validate(syntax_version="4", directory="d24a")
