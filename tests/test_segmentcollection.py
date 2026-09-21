@@ -314,7 +314,8 @@ def test_interchange_with_unbundled_directory_emits_warning_not_error():
         "UNA:+.? '"
         "UNB+UNOC:1+1234+3333+200102:2212+42'"
         "UNH+1+ORDERS:D:96A:UN'"
-        "UNT+2+1'"
+        "BGM+220+1'"
+        "UNT+3+1'"
         "UNZ+1+42'"
     )
     with pytest.warns(MissingImplementationWarning):

@@ -86,7 +86,7 @@ def test_invalid_segment_tag():
 def test_validate_missing_directory_warns_not_raises():
     """Regression: validate() must emit MissingImplementationWarning and not
     raise when segments.xml is absent for the given directory."""
-    seg = Segment("UNB", ["UNOC", "1"], "sender", "rcpt", ["200102", "1200"], "42")
+    seg = Segment("BGM", ["380"], "1")
     with pytest.warns(MissingImplementationWarning):
         seg.validate(syntax_version="1", directory="nonexistent_dir")
 

@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 - Include the XML syntax definitions in sdist and wheel, so validation works in installed packages
+- Validate service segments against the service directory even when an explicit `directory` is passed to `Parser`
 - `Segment.__init__` overload signature now matches the implementation (`tag` is positional-only)
 
 [0.2.3]

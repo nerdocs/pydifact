@@ -18,6 +18,7 @@ import pytest
 from pydifact.control.characters import Characters
 from pydifact.exceptions import EDISyntaxError, ValidationError
 from pydifact.parser import Parser, TokenIterator
+from pydifact.segmentcollection import Interchange
 from pydifact.segments import Segment
 from pydifact.token import Token
 
@@ -366,3 +367,16 @@ def test_parser_without_validation():
     segments = list(Parser(validate=False).parse(INVALID_EDI))
     assert [s.tag for s in segments] == ["UNA", "UNB", "UNH"]
     assert segments[2].elements[0] == "123456789012345"
+
+
+def test_parser_with_explicit_directory_validates_service_segments():
+    """Service segments must be validated against the service directory, not `directory`."""
+    edi = (
+        "UNB+UNOA:4+SENDER+RECIPIENT+20240101:1200+REF1'"
+        "UNH+1+INVOIC:D:24A:UN'"
+        "BGM+380+1'"
+        "UNT+3+1'"
+        "UNZ+1+REF1'"
+    )
+    interchange = Interchange.from_str(edi, parser=Parser(directory="d24a"))
+    assert [s.tag for s in interchange.segments] == ["UNH", "BGM", "UNT"]

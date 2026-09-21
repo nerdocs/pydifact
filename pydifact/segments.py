@@ -179,13 +179,17 @@ class Segment:
                 (e.g., "1", "300", "402", "40219"). The correct release will be
                 determined automatically.
             directory: The directory name to validate the segment against
-                (e.g., "d00a", "d96a")
+                (e.g., "d00a", "d96a"). Ignored for service segments, which are
+                always validated against the service directory of the syntax
+                release. If empty, no validation takes place.
 
         Raises:
             ValidationError, if the validation fails.
         """
         release_version = get_syntax_release_version(syntax_version)
-        if not directory and self.tag in service_segments:
+        if self.tag in service_segments:
+            # service segments are never part of a message directory, they are
+            # defined per syntax release.
             directory = f"service/v{release_version}"
 
         if not directory:
