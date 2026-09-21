@@ -1,6 +1,5 @@
-# Supported Python versions, used by `make test-all`. Keep in sync with
-# `requires-python` in pyproject.toml and the CI matrix in .github/workflows/unittests.yml.
-PYTHON_VERSIONS := 3.10 3.11 3.12 3.13 3.14
+# Supported Python versions, read from the classifiers in pyproject.toml.
+PYTHON_VERSIONS := $(shell python3 scripts/python_versions.py)
 
 dev:
 	uv sync

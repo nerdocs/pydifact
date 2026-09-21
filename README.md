@@ -184,6 +184,9 @@ To run the tests against all supported Python versions (the same matrix as in CI
 make test-all
 ```
 
+The list of supported versions is declared once, as `Programming Language :: Python :: 3.X` classifiers in
+`pyproject.toml`; both `make test-all` and the CI matrix read it from there.
+
 ## Credits
 The official formats for UN/EDIFAT provided by UN Secretariat are raw text files located [here](http://www.unece.org/tradewelcome/un-centre-for-trade-facilitation-and-e-business-uncefact/outputs/standards/unedifact/directories/download.html) and 
 html (.htm) files located [here](http://www.unece.org/tradewelcome/un-centre-for-trade-facilitation-and-e-business-uncefact/outputs/standards/unedifact/directories/2011-present.html), similarly for service codes as text and html files located at https://www.gefeg.com/jswg/.

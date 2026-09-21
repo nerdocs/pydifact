@@ -2,11 +2,21 @@ name: "Test"
 
 on: [push, pull_request]
 jobs:
+  python-versions:
+    # Supported Python versions come from the classifiers in pyproject.toml.
+    runs-on: ubuntu-latest
+    outputs:
+      versions: ${{ steps.read.outputs.versions }}
+    steps:
+      - uses: actions/checkout@v7
+      - id: read
+        run: echo "versions=$(python3 scripts/python_versions.py --json)" >> "$GITHUB_OUTPUT"
   pytest:
+    needs: python-versions
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        python-version: ["3.10", "3.11", "3.12", "3.13", "3.14"]
+        python-version: ${{ fromJSON(needs.python-versions.outputs.versions) }}
         os: [ubuntu-latest]
     steps:
       - uses: actions/checkout@v7
