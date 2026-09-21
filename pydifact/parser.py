@@ -21,6 +21,7 @@
 # THE SOFTWARE.
 
 import logging
+import warnings
 from collections.abc import Iterable, Iterator
 
 from pydifact.constants import (
@@ -31,7 +32,7 @@ from pydifact.constants import (
     Elements,
 )
 from pydifact.control import Characters
-from pydifact.exceptions import EDISyntaxError
+from pydifact.exceptions import EDISyntaxError, NonConformantEDIWarning
 from pydifact.segments import Segment, SegmentFactory
 from pydifact.token import Token
 from pydifact.tokenizer import Tokenizer
@@ -74,6 +75,9 @@ class Parser:
         directory: The directory to use for segments. (default: EDI_DEFAULT_DIRECTORY)
         syntax_identifier: The syntax identifier to use for segments. (default: from UNB header)
         validate: Whether to validate the parsed segments. (default: True)
+        warn_non_conformant: Whether to emit a `NonConformantEDIWarning` when
+            the input deviates from the EDIFACT specification but is accepted
+            anyway. (default: True)
     """
 
     def __init__(
@@ -82,12 +86,14 @@ class Parser:
         characters: Characters | None = None,
         directory: str = "",
         validate: bool = True,
+        warn_non_conformant: bool = True,
     ) -> None:
         """Initializes parser with segment factory and control characters"""
         self.factory = factory or SegmentFactory()
         self.characters = characters or Characters()
         self.directory = directory
         self.validate = validate
+        self.warn_non_conformant = warn_non_conformant
 
         self.syntax_identifier = ""
         self.version = ""
@@ -115,6 +121,10 @@ class Parser:
         # If it starts by UNA - tolerating a BOM/whitespace in front of it
         stripped = message.lstrip("\ufeff \t\r\n")
         if stripped.startswith("UNA"):
+            if len(stripped) != len(message):
+                self._warn_non_conformant(
+                    "Leading whitespace or BOM before the UNA segment."
+                )
             message = stripped
             idx_una = 0
             idx_begin = 3
@@ -122,6 +132,11 @@ class Parser:
         else:
             idx_una = self._find_mid_message_una(message)
             idx_begin = idx_una + 4
+            if idx_una > 0:
+                self._warn_non_conformant(
+                    f"Ignoring {idx_una + 1} characters of content before the "
+                    "UNA segment."
+                )
         una_found = idx_una != -1
 
         if una_found:
@@ -156,6 +171,12 @@ class Parser:
                 )
             except StopIteration:
                 break
+
+    def _warn_non_conformant(self, message: str) -> None:
+        """Emit a `NonConformantEDIWarning`, unless disabled via
+        `warn_non_conformant`."""
+        if self.warn_non_conformant:
+            warnings.warn(message, category=NonConformantEDIWarning, stacklevel=3)
 
     @staticmethod
     def _find_mid_message_una(message: str) -> int:

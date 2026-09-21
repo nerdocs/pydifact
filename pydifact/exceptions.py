@@ -18,3 +18,12 @@ class ValidationError(Exception):
 # ---------------- Warnings ----------------
 class MissingImplementationWarning(Warning):
     pass
+
+
+class NonConformantEDIWarning(Warning):
+    """Emitted when pydifact accepts input that deviates from the EDIFACT
+    specification (e.g. content in front of the UNA segment).
+
+    Suppress it with `Parser(warn_non_conformant=False)` or a standard
+    `warnings` filter.
+    """

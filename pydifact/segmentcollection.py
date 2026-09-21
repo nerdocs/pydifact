@@ -22,12 +22,17 @@
 
 import codecs
 import datetime
+import warnings
 from collections.abc import Callable, Iterable, Iterator, Sequence
 from typing import Type, TypeVar
 
 from pydifact.constants import Element, Elements
 from pydifact.control import Characters
-from pydifact.exceptions import EDISyntaxError, ValidationError
+from pydifact.exceptions import (
+    EDISyntaxError,
+    NonConformantEDIWarning,
+    ValidationError,
+)
 from pydifact.parser import Parser
 from pydifact.segments import Segment
 from pydifact.serializer import Serializer
@@ -86,6 +91,7 @@ class AbstractSegmentsContainer:
         parser: Parser | None = None,
         characters: Characters | None = None,
         validate: bool = True,
+        warn_non_conformant: bool = True,
     ) -> T:
         """Create an instance from a string.
 
@@ -95,14 +101,24 @@ class AbstractSegmentsContainer:
             characters: The set of control characters.
             validate: Whether to validate the content. If a `parser` is given,
                 its own `validate` setting applies to the parsed segments.
+            warn_non_conformant: Whether to emit a `NonConformantEDIWarning` for
+                accepted deviations from the EDIFACT specification. If a `parser`
+                is given, its own setting applies.
         """
         if parser is None:
-            parser = Parser(characters=characters, validate=validate)
+            parser = Parser(
+                characters=characters,
+                validate=validate,
+                warn_non_conformant=warn_non_conformant,
+            )
 
         segments = parser.parse(string)
 
         return cls.from_segments(
-            segments=segments, characters=parser.characters, validate=validate
+            segments=segments,
+            characters=parser.characters,
+            validate=validate,
+            warn_non_conformant=parser.warn_non_conformant,
         )
 
     @classmethod
@@ -111,6 +127,7 @@ class AbstractSegmentsContainer:
         segments: Iterable[Segment],
         characters: Characters | None = None,
         validate: bool = True,
+        warn_non_conformant: bool = True,
     ) -> T:
         """Create an instance from a list of segments.
 
@@ -119,6 +136,8 @@ class AbstractSegmentsContainer:
             characters: The set of control characters.
             validate: Whether to validate the segments. Unused here, but
                 subclasses may validate while creating the instance.
+            warn_non_conformant: Whether to warn about accepted deviations from
+                the EDIFACT specification. Unused here, but subclasses may use it.
         """
         # create a new instance of AbstractSegmentsContainer and return it
         # with the added segments
@@ -498,6 +517,7 @@ class Interchange(AbstractSegmentsContainer):
         encoding: str = "iso8859-1",
         parser: Parser | None = None,
         validate: bool = True,
+        warn_non_conformant: bool = True,
     ) -> "Interchange":
         """Create an Interchange instance from a file.
 
@@ -511,6 +531,10 @@ class Interchange(AbstractSegmentsContainer):
             validate : bool, default=True
                 Whether to validate the content. If a `parser` is given,
                 its own `validate` setting applies to the parsed segments.
+            warn_non_conformant : bool, default=True
+                Whether to emit a `NonConformantEDIWarning` for accepted
+                deviations from the EDIFACT specification. If a `parser` is
+                given, its own setting applies.
 
         Returns:
             Interchange
@@ -527,7 +551,12 @@ class Interchange(AbstractSegmentsContainer):
 
         with open(file, encoding=encoding) as f:
             collection = f.read()
-        return cls.from_str(collection, parser=parser, validate=validate)
+        return cls.from_str(
+            collection,
+            parser=parser,
+            validate=validate,
+            warn_non_conformant=warn_non_conformant,
+        )
 
     @classmethod
     def from_segments(
@@ -535,6 +564,7 @@ class Interchange(AbstractSegmentsContainer):
         segments: Iterable[Segment],
         characters: Characters | None = None,
         validate: bool = True,
+        warn_non_conformant: bool = True,
     ) -> "Interchange":
         """Create an Interchange instance from a list of segments.
 
@@ -542,6 +572,8 @@ class Interchange(AbstractSegmentsContainer):
             segments: The segments of the EDI interchange, starting with UNA or UNB.
             characters: The set of control characters.
             validate: Whether to validate the UNB header.
+            warn_non_conformant: Whether to emit a `NonConformantEDIWarning` if
+                the UNB preparation date does not match the syntax version.
         """
         segments = iter(segments)
 
@@ -632,6 +664,17 @@ class Interchange(AbstractSegmentsContainer):
                 )
         else:
             raise EDISyntaxError("Timestamp of file-creation malformed.")
+
+        # Syntax version 4 requires a 4-digit year (%Y), earlier versions a
+        # 2-digit year (%y).
+        expected_year_fmt = "%Y" if int(syntax_version) >= 4 else "%y"
+        if warn_non_conformant and expected_year_fmt not in datetime_fmt:
+            warnings.warn(
+                f"UNB preparation date '{datetime_str}' does not match syntax "
+                f"version {syntax_version}.",
+                category=NonConformantEDIWarning,
+                stacklevel=2,
+            )
 
         try:
             timestamp = datetime.datetime.strptime(datetime_str, datetime_fmt)

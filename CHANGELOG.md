@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 [Unreleased]
 ### Added
+- `NonConformantEDIWarning` for accepted deviations from the spec; switch off with `warn_non_conformant=False`
 - `validate` parameter for `Parser`, `from_str()`, `from_segments()` and `Interchange.from_file()` to skip validation when parsing
 
 ### Fixed
