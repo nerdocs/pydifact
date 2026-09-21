@@ -1,3 +1,7 @@
+# Supported Python versions, used by `make test-all`. Keep in sync with
+# `requires-python` in pyproject.toml and the CI matrix in .github/workflows/unittests.yml.
+PYTHON_VERSIONS := 3.10 3.11 3.12 3.13 3.14
+
 dev:
 	uv sync
 
@@ -26,6 +30,12 @@ check-format:
 
 test-extended:
 	uv run pytest
+
+# Run the test suite against every supported Python version (as in CI).
+test-all:
+	for v in $(PYTHON_VERSIONS); do \
+		uv run --python $$v --isolated pytest -q --ignore tests/test_huge_message.py || exit 1; \
+	done
 
 # Generate EDIFACT directory release syntax data.
 # Usage: make generate RELEASE=21a
