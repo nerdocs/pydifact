@@ -65,3 +65,6 @@ Pipfile.lock
 .history/
 /pydifact/generator/extracted/
 /pydifact/generator/zips/*
+# Local
+.run/
+docs/vendor/
