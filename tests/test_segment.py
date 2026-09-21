@@ -13,9 +13,17 @@
 #
 #    You should have received a copy of the GNU Lesser General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+import xml.etree.ElementTree as ET
+
 import pytest
 
-from pydifact.exceptions import MissingImplementationWarning, NonConformantEDIWarning
+from pydifact import segments
+from pydifact.exceptions import (
+    MissingImplementationWarning,
+    NonConformantEDIWarning,
+    ValidationError,
+)
+from pydifact.parser import Parser
 from pydifact.segments import Segment
 
 elements = ["field1", ["field2", "extra"], "stuff"]
@@ -115,3 +123,54 @@ def test_validate_directory_outside_package_raises():
     seg = Segment("BGM", ["380"], "1")
     with pytest.raises(ValueError):
         seg.validate(syntax_version="1", directory="../..")
+
+
+# PAC 7224 (PackageQuantity) is n..8
+@pytest.mark.parametrize("value", ["-2", "1,5", "1.5", "0000", "-0,5", "12345678"])
+def test_numeric_element_accepts_iso9735_values(value):
+    Segment("PAC", value).validate(syntax_version="4", directory="d24a")
+
+
+# sign and decimal mark do not count towards the length
+def test_numeric_element_length_excludes_sign_and_decimal_mark():
+    Segment("PAC", "-1234567,8").validate(syntax_version="4", directory="d24a")
+    with pytest.raises(ValidationError):
+        Segment("PAC", "-12345678,9").validate(syntax_version="4", directory="d24a")
+
+
+@pytest.mark.parametrize("value", ["1a", " 2", "2 ", "1,", ",5", "1,2,3", "1-", "--1"])
+def test_numeric_element_rejects_non_numeric(value):
+    with pytest.raises(ValidationError):
+        Segment("PAC", value).validate(syntax_version="4", directory="d24a")
+
+
+def test_parser_accepts_negative_numeric_element():
+    edi = (
+        "UNB+UNOA:4+SENDER+RECIPIENT+20240101:1200+REF1'"
+        "UNH+1+INVOIC:D:24A:UN'"
+        "PAC+-2'"
+        "UNT+3+1'"
+        "UNZ+1+REF1'"
+    )
+    assert [s.tag for s in Parser().parse(edi)][2] == "PAC"
+
+
+# no directory ships a top-level "a" element longer than one character, so use a
+# minimal segment definition to exercise the alphabetic check
+@pytest.fixture
+def alpha_segment_xml(monkeypatch):
+    root = ET.fromstring(
+        '<segments><segment id="TST">'
+        '<data_element id="1" name="Name" repeat="1" type="a" maxlength="35"/>'
+        "</segment></segments>"
+    )
+    monkeypatch.setattr(segments, "_load_segments_xml", lambda directory: root)
+
+
+def test_alpha_element_allows_space(alpha_segment_xml):
+    Segment("TST", "New Zealand").validate(syntax_version="4", directory="d24a")
+
+
+def test_alpha_element_rejects_digits(alpha_segment_xml):
+    with pytest.raises(ValidationError):
+        Segment("TST", "Area 51").validate(syntax_version="4", directory="d24a")

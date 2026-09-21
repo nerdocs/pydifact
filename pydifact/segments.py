@@ -20,6 +20,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 import logging
+import re
 import warnings
 import xml.etree.ElementTree as ET  # nosec B405 - parses only bundled XML
 from functools import lru_cache
@@ -44,6 +45,11 @@ from pydifact.syntax.common import SegmentSchemaEntry
 from pydifact.utils import get_syntax_release_version
 
 logger = logging.getLogger(__name__)
+
+# ISO 9735-1, 10.1.2.2: optional leading minus sign, digits, and at most one
+# decimal mark with at least one digit on each side. The decimal mark is defined
+# by the UNA (default ","), but "." is common in the wild, so both are accepted.
+_NUMERIC_RE = re.compile(r"-?[0-9]+(?:[.,][0-9]+)?")
 
 
 @lru_cache(maxsize=32)
@@ -281,6 +287,7 @@ class Segment:
                         type_code = xml_element.get("type")
                         length = int(xml_element.get("length", "0"))
                         maxlength = int(xml_element.get("maxlength", "0"))
+                        value_length = len(element)
                         match type_code:
                             case "an":
                                 # no validation necessary, all is allowed.
@@ -298,20 +305,21 @@ class Segment:
                                 #         )
                                 pass
                             case "n":
-                                # make sure the element only consists of numbers
-                                if not element.strip().isdigit():
+                                if not _NUMERIC_RE.fullmatch(element):
                                     raise ValidationError(
                                         f"{self.tag} Segment, pos. {index}: "
                                         f"element {xml_element.get('id')} ({xml_element.get('name')}) "
-                                        f"should only contain numbers, but got: "
+                                        f"should be numeric, but got: "
                                         f"{element}"
                                     )
+                                # sign and decimal mark do not count towards the length
+                                value_length = sum(c.isdigit() for c in element)
                             case "a":
                                 # Data element can include any letters, special
                                 # characters, and control characters but no digits.
-                                # make sure all chars are in SYNTAX_CHARACTERS
+                                # Level A/B character sets include the space.
                                 for char in element:
-                                    if not char.isalpha():
+                                    if not (char.isalpha() or char == " "):
                                         raise ValidationError(
                                             f"{self.tag} Segment, pos. {index}: "
                                             f"element {xml_element.get('id')} ({xml_element.get('name')}) "
@@ -319,7 +327,7 @@ class Segment:
                                         )
 
                         if maxlength:
-                            if len(element) > maxlength:
+                            if value_length > maxlength:
                                 raise ValidationError(
                                     f"{self.tag} Segment, pos. {index}: "
                                     f"element {xml_element.get('id')} "
@@ -327,13 +335,13 @@ class Segment:
                                     f"exceeds maximum length of {maxlength}: {element}"
                                 )
                         elif length:
-                            if len(element) != length:
+                            if value_length != length:
                                 raise ValidationError(
                                     f"{self.tag} Segment, pos. {index}: "
                                     f"element {xml_element.get('id')} "
                                     f"({xml_element.get('name')}) "
                                     f"should be {length} characters long, but is "
-                                    f"{len(element)}: {element}"
+                                    f"{value_length}: {element}"
                                 )
 
         except FileNotFoundError:
