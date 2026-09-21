@@ -10,6 +10,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `NonConformantEDIWarning` for accepted deviations from the spec; switch off with `warn_non_conformant=False`
 - `validate` parameter for `Parser`, `from_str()`, `from_segments()` and `Interchange.from_file()` to skip validation when parsing
 
+### Changed
+- The `UNB` date/time of preparation is strict: composite `date:time`, 6-digit date for syntax 1–3, 8-digit for 4;
+  wrong length, missing time or the Austrian AEK-style split `date+time` raise `EDISyntaxError` (no warning anymore)
+- `Interchange` serializes an 8-digit `UNB` date for syntax version 4
+
 ### Fixed
 - Include the XML syntax definitions in sdist and wheel, so validation works in installed packages
 - Validate service segments against the service directory even when an explicit `directory` is passed to `Parser`

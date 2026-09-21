@@ -171,7 +171,7 @@ def test_no_terminator():
     with pytest.raises(EDISyntaxError) as excinfo:
         list(
             Tokenizer().get_tokens(
-                "UNB+IBMA:1+FACHARZT A+PRAKTIKER X+950402+1200+1'"
+                "UNB+IBMA:1+FACHARZT A+PRAKTIKER X+950402:1200+1'"
                 "UNH+000001+MEDRPT:1:901:UN'UNT+7+000002'"
                 "UNZ+2+1"  # <-- no terminator char here
             )

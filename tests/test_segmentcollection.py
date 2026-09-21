@@ -351,3 +351,15 @@ def test_interchange_with_extra_header_elements():
         "",
         "TL",
     )
+
+
+def test_interchange_v4_serializes_8_digit_date():
+    i = Interchange(
+        sender="1234",
+        recipient="3333",
+        timestamp=datetime.datetime(2020, 1, 2, 22, 12),
+        control_reference="42",
+        syntax_identifier=("UNOC", 4),
+    )
+    assert str(i) == "UNB+UNOC:4+1234+3333+20200102:2212+42'UNZ+0+42'"
+    assert Interchange.from_str(str(i)).timestamp == i.timestamp

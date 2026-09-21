@@ -430,7 +430,12 @@ class Interchange(AbstractSegmentsContainer):
             [self.syntax_identifier[0], str(self.syntax_identifier[1])],
             self.sender,
             self.recipient,
-            [f"{self.timestamp:%y%m%d}", f"{self.timestamp:%H%M}"],
+            [
+                f"{self.timestamp:%Y%m%d}"
+                if self.syntax_identifier[1] >= 4
+                else f"{self.timestamp:%y%m%d}",
+                f"{self.timestamp:%H%M}",
+            ],
             self.control_reference,
             *self.extra_header_elements,
             validate=False,
@@ -579,8 +584,8 @@ class Interchange(AbstractSegmentsContainer):
             segments: The segments of the EDI interchange, starting with UNA or UNB.
             characters: The set of control characters.
             validate: Whether to validate the UNB header.
-            warn_non_conformant: Whether to emit a `NonConformantEDIWarning` if
-                the UNB preparation date does not match the syntax version.
+            warn_non_conformant: Unused, the UNB header has no accepted
+                deviations. Kept for signature compatibility with `from_str()`.
         """
         segments = iter(segments)
 
@@ -622,72 +627,30 @@ class Interchange(AbstractSegmentsContainer):
             except (ValidationError, FileNotFoundError) as e:
                 raise EDISyntaxError(f"Invalid UNB header: {e}") from e
 
-        # In syntax version 3 and earlier the year is formatted using two digits,
-        # while in version 4 four digits are used.
-        # Since some EDIFACT files in the wild don't adhere to this specification, we just use whatever format seems
-        # more appropriate according to the length of the date string.
-        # Element 3 of UNB is the date/time of preparation.
-        # In syntax v4 it's a composite S004 (0017 date, 0019 time)
-        # In syntax v3 it's also a composite S004 (0017 date, 0019 time)
-        # Note that Segment.elements might contain strings or lists of strings.
+        # Element 3 of UNB is the date/time of preparation, composite S004
+        # (0017 date, 0019 time). Syntax version 4 uses a 4-digit year
+        # (CCYYMMDD), earlier versions a 2-digit year (YYMMDD).
         preparation_datetime = unb.elements[3]
-        if (
-            isinstance(preparation_datetime, (list, tuple))
-            and len(preparation_datetime) > 0
-        ):
-            date_str = preparation_datetime[0]
-            if len(date_str) == 6:
-                datetime_fmt = "%y%m%d"
-            elif len(date_str) == 8:
-                datetime_fmt = "%Y%m%d"
-            else:
-                raise EDISyntaxError(
-                    f"Timestamp of file-creation malformed: {date_str}"
-                )
-
-            if len(preparation_datetime) > 1:
-                time_str = preparation_datetime[1]
-                datetime_fmt += "-%H%M"
-                datetime_str = f"{date_str}-{time_str}"
-            else:
-                datetime_str = date_str
-        elif isinstance(preparation_datetime, str) and preparation_datetime:
-            # Fallback if it's not a composite but a single string
-            if len(preparation_datetime) == 6:
-                datetime_fmt = "%y%m%d"
-                datetime_str = preparation_datetime
-            elif len(preparation_datetime) == 8:
-                datetime_fmt = "%Y%m%d"
-                datetime_str = preparation_datetime
-            elif len(preparation_datetime) == 10:
-                datetime_fmt = "%y%m%d%H%M"
-                datetime_str = preparation_datetime
-            elif len(preparation_datetime) == 12:
-                datetime_fmt = "%Y%m%d%H%M"
-                datetime_str = preparation_datetime
-            else:
-                raise EDISyntaxError(
-                    f"Timestamp of file-creation malformed: {preparation_datetime}"
-                )
-        else:
-            raise EDISyntaxError("Timestamp of file-creation malformed.")
-
-        # Syntax version 4 requires a 4-digit year (%Y), earlier versions a
-        # 2-digit year (%y).
-        expected_year_fmt = "%Y" if int(syntax_version) >= 4 else "%y"
-        if warn_non_conformant and expected_year_fmt not in datetime_fmt:
-            warnings.warn(
-                f"UNB preparation date '{datetime_str}' does not match syntax "
-                f"version {syntax_version}.",
-                category=NonConformantEDIWarning,
-                stacklevel=2,
+        if not isinstance(preparation_datetime, list) or len(preparation_datetime) != 2:
+            raise EDISyntaxError(
+                "UNB date/time of preparation must be a composite of date and time, "
+                f"got: {preparation_datetime}"
             )
-
+        date_str, time_str = preparation_datetime
+        date_len = 8 if int(syntax_version) >= 4 else 6
+        if len(date_str) != date_len or len(time_str) != 4:
+            raise EDISyntaxError(
+                f"UNB date/time of preparation '{date_str}:{time_str}' does not match "
+                f"syntax version {syntax_version} (expected {date_len}-digit date "
+                f"and 4-digit time)."
+            )
         try:
-            timestamp = datetime.datetime.strptime(datetime_str, datetime_fmt)
+            timestamp = datetime.datetime.strptime(
+                date_str + time_str, ("%Y" if date_len == 8 else "%y") + "%m%d%H%M"
+            )
         except ValueError as e:
             raise EDISyntaxError(
-                f"Timestamp of file-creation malformed: {datetime_str}"
+                f"UNB date/time of preparation malformed: {date_str}:{time_str}"
             ) from e
         interchange = Interchange(
             syntax_identifier=(syntax_identifier, int(syntax_version)),

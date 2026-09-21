@@ -124,8 +124,8 @@ If you pass your own `Parser`, create it with `Parser(validate=False)` to skip t
 segment validation.
 
 Some deviations from the specification are accepted anyway, e.g. content in front
-of the `UNA` segment or a `UNB` date that does not match the syntax version. Each
-of them emits a `NonConformantEDIWarning`, which can be switched off with
+of the `UNA` segment or leading whitespace. Each of them emits a
+`NonConformantEDIWarning`, which can be switched off with
 `warn_non_conformant=False` (on `Parser`, `from_str()` and `from_file()`) or a
 standard `warnings` filter.
 
