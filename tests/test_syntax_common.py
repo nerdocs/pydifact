@@ -148,3 +148,8 @@ def test_composite_too_many_components():
         Composite(["a", "b", "1", "d"]).validate()
     with pytest.raises(ValidationError):
         EmptyCDataElement(["a"]).validate()
+
+
+def test_composite_conditional_absent_skips_components():
+    Composite([]).validate()
+    Composite([""]).validate()

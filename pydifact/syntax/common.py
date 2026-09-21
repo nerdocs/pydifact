@@ -222,8 +222,10 @@ class CompositeDataElement:
         Raises:
             ValidationError if validation fails.
         """
-        if mandatory and not any(self.elements):
-            raise ValidationError(f"{self.__class__.__name__} must not be empty.")
+        if not any(self.elements):
+            if mandatory:
+                raise ValidationError(f"{self.__class__.__name__} must not be empty.")
+            return
         if len(self.elements) > len(self.schema):
             raise ValidationError(
                 f"{self.__class__.__name__}: Too many components. Expected at most "
