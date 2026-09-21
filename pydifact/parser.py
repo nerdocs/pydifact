@@ -112,18 +112,19 @@ class Parser:
         # unconditionally, strip them, and make control Characters()
         # for further parsing
 
-        # If it starts by UNA
-        una_pattern = "UNA"
-        if message.startswith(una_pattern):
+        # If it starts by UNA - tolerating a BOM/whitespace in front of it
+        stripped = message.lstrip("\ufeff \t\r\n")
+        if stripped.startswith("UNA"):
+            message = stripped
             idx_una = 0
-        # Otherwise we look for UNA, so to avoid finding "lorem ipsum UNA lorem ipsum" we look for the segment separator following by UNA.
+            idx_begin = 3
+        # Otherwise look for a UNA in the middle of the message.
         else:
-            una_pattern = "'UNA"
-            idx_una = message.find(una_pattern)
+            idx_una = self._find_mid_message_una(message)
+            idx_begin = idx_una + 4
         una_found = idx_una != -1
 
         if una_found:
-            idx_begin = idx_una + len(una_pattern)
             idx_end = idx_begin + 6
             characters = Characters.from_str(f"UNA{message[idx_begin:idx_end]}")
 
@@ -155,6 +156,39 @@ class Parser:
                 )
             except StopIteration:
                 break
+
+    @staticmethod
+    def _find_mid_message_una(message: str) -> int:
+        """Find a UNA service string advice that does not start the message.
+
+        Some non-standard files (e.g. those written by SAGE COALA) put a
+        proprietary segment in front of the UNA, so a UNA can legitimately
+        appear in the middle of a message. But "UNA" also occurs in free text,
+        possibly right behind an *escaped* segment terminator - which must not
+        be mistaken for a service string advice. A candidate is therefore only
+        accepted if it is plausible as a real UNA:
+
+        * the segment terminator it declares (the 6th character after "UNA")
+          is the terminator that precedes it, and
+        * that preceding terminator is not escaped itself, i.e. the character
+          in front of it is not the escape character the candidate declares.
+
+        :param message: the EDI message to search
+        :return: the index of the segment terminator preceding "UNA", or -1 if
+                 there is no plausible candidate.
+        """
+
+        idx = message.find("'UNA")
+        while idx != -1:
+            chars = message[idx + 4 : idx + 10]
+            if (
+                len(chars) == 6
+                and chars[5] == message[idx]
+                and (idx == 0 or message[idx - 1] != chars[3])
+            ):
+                return idx
+            idx = message.find("'UNA", idx + 1)
+        return -1
 
     @staticmethod
     def get_control_characters(

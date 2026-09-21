@@ -380,3 +380,23 @@ def test_parser_with_explicit_directory_validates_service_segments():
     )
     interchange = Interchange.from_str(edi, parser=Parser(directory="d24a"))
     assert [s.tag for s in interchange.segments] == ["UNH", "BGM", "UNT"]
+
+
+def test_escaped_terminator_before_una_is_no_service_string_advice():
+    """An escaped segment terminator followed by "UNA" is free text, not a UNA segment."""
+    edi = (
+        "UNB+UNOA:4+SENDER+RECIPIENT+20240101:1200+REF1'"
+        "UNH+1+ORDERS:D:96A:UN'"
+        "FTX+AAI+++Don?'UNAble to ship'"
+        "UNT+3+1'"
+        "UNZ+1+REF1'"
+    )
+    segments = list(Parser(validate=False).parse(edi))
+    assert [s.tag for s in segments] == ["UNB", "UNH", "FTX", "UNT", "UNZ"]
+    assert segments[2].elements[3] == "Don'UNAble to ship"
+
+
+def test_una_with_leading_whitespace():
+    """Whitespace (or a BOM) before a leading UNA must not hide the UNA segment."""
+    segments = list(Parser().parse("\nUNA:+.? 'FOO+TEST'"))
+    assert segments == [Segment("UNA", ":+.? '"), Segment("FOO", "TEST")]
