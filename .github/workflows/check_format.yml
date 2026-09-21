@@ -18,3 +18,12 @@ jobs:
       - name: "Ruff import sorting check"
         run: |
           uv run ruff check .
+  mypy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: Install uv
+        uses: astral-sh/setup-uv@v7
+      - name: "Type check"
+        run: |
+          uv run mypy pydifact

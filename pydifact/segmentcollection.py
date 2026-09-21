@@ -293,7 +293,7 @@ class AbstractSegmentsContainer:
             break_lines,
         )
 
-    def validate(self) -> bool:
+    def validate(self) -> None:
         """Validate the object.
 
         Raises an exception if the object is invalid.

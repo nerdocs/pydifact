@@ -51,6 +51,10 @@ target-version = "py310"
 # code style. Additional rule sets (e.g. "F" for pyflakes) can be enabled later.
 select = ["I"]
 
+[tool.mypy]
+# The generator is a dev-only tool with untyped third-party deps (bs4, defusedxml).
+exclude = ["pydifact/generator/"]
+
 [project.urls]
 Documentation = "https://pydifact.readthedocs.io"
 Repository = "https://github.com/nerdocs/pydifact"

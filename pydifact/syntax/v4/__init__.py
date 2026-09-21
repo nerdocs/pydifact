@@ -70,7 +70,7 @@ class TestIndicator(DataElement):
     repr = "n1"
 
 
-class InterchangeSenderInternalSubIdentification:
+class InterchangeSenderInternalSubIdentification(DataElement):
     code = "0042"
     repr = "an..35"
     title = "Interchange sender internal sub-identification"

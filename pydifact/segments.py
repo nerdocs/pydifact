@@ -40,7 +40,7 @@ from pydifact.exceptions import (
     NonConformantEDIWarning,
     ValidationError,
 )
-from pydifact.syntax.common import CompositeDataElement, DataElement
+from pydifact.syntax.common import SegmentSchemaEntry
 from pydifact.utils import get_syntax_release_version
 
 logger = logging.getLogger(__name__)
@@ -89,7 +89,7 @@ class Segment:
     # tag is not a class attribute in this case, as each Segment instance could have another tag.
     __omitted__ = True
     plugins: list = []
-    schema: list[tuple[type[CompositeDataElement | DataElement], str, int, str]] = []
+    schema: list[SegmentSchemaEntry] = []
     tag = ""
     elements: list[Element] = []
 

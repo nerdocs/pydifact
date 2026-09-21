@@ -199,18 +199,18 @@ class PartyNameComposite(CompositeDataElement):
     code = "C080"
     desc = "Identification of a transaction party by name, one to five lines. Party name may be formatted."
     schema = [
-        PartyName,
-        PartyName,
-        PartyName,
-        PartyName,
-        PartyName,
-        PartyNameFormat,
+        (PartyName, M, "an..35"),
+        (PartyName, C, "an..35"),
+        (PartyName, C, "an..35"),
+        (PartyName, C, "an..35"),
+        (PartyName, C, "an..35"),
+        (PartyNameFormat, C, "an..3"),
     ]
 
 
 class PartyIdentificationDetails(CompositeDataElement):
     code = "C082"
-    schema = [NameAndAddressLine]
+    schema = [(NameAndAddressLine, M, "an..35")]
 
 
 # ------------- Segments -------------

@@ -12,7 +12,7 @@ herby providing the same structure.
 
 import re
 import warnings
-from typing import NamedTuple, Optional, Type, TypeAlias, TypeVar
+from typing import NamedTuple, Type, TypeAlias, TypeVar
 
 from pydifact.constants import EDI_DEFAULT_VERSION, M
 from pydifact.exceptions import ValidationError
@@ -111,14 +111,14 @@ class DataElement:
 
     plugins: list = []
 
-    codes = {}
+    codes: dict[str, dict[str, str]] = {}
     """A possible dict of codes that can be used for validation"""
 
     def __init__(self, value: str):
         self.plugins = []
         self.value = value
 
-    def validate(self, mandatory: bool = None, repr: str = None) -> None:
+    def validate(self, mandatory: bool | None = None, repr: str | None = None) -> None:
         """Validates the DataElement.
 
         Attributes:
@@ -198,6 +198,10 @@ class DataElement:
 
 T = TypeVar("T", bound="CompositeDataElement")
 
+CompositeSchemaEntry: TypeAlias = tuple[type[DataElement], str, str]
+"""One entry of a `CompositeDataElement.schema`: the `DataElement` class, its
+M(andatory)/C(onditional) flag and the data structure representation."""
+
 
 # TODO: test CompositeDataElement
 class CompositeDataElement:
@@ -233,12 +237,14 @@ class CompositeDataElement:
     haven't.
     """
 
-    schema: list[tuple[type(DataElement), str, str]]
+    schema: list[CompositeSchemaEntry]
 
-    def __init__(self, elements: list[DataElement]):
+    def __init__(self, elements: str | list[str]):
         self.elements = elements if not isinstance(elements, str) else [elements]
 
-    def validate(self, mandatory: bool = None, repeat: int = None) -> None:
+    def validate(
+        self, mandatory: bool | None = None, repeat: int | None = None
+    ) -> None:
         """Validates the CompositeDataElement.
 
         Attributes:
@@ -275,6 +281,15 @@ class CompositeDataElement:
                 )
 
 
+SegmentSchemaEntry: TypeAlias = (
+    tuple[type[CompositeDataElement | DataElement], str, int]
+    | tuple[type[CompositeDataElement | DataElement], str, int, str]
+)
+"""One entry of a `Segment.schema`: the element class, its M(andatory)/C(onditional)
+flag, the maximum repeat count and optionally a representation that overrides the
+element's default `repr`."""
+
+
 # TODO: DataElementFactory is not used ATM
 class DataElementFactory:
     """A factory for creating DataElement instances."""
@@ -282,9 +297,9 @@ class DataElementFactory:
     @staticmethod
     def create_data_element(
         code: str,
-        value: Optional[str] = None,
+        value: str = "",
         validate: bool = True,
-        version: Optional[int] = EDI_DEFAULT_VERSION,
+        version: str = EDI_DEFAULT_VERSION,
     ) -> DataElement:
         """Create a new instance of a DataElement
 
