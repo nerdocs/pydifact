@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Validate service segments against the service directory even when an explicit `directory` is passed to `Parser`
 - `Segment.__init__` overload signature now matches the implementation (`tag` is positional-only)
 - Don't mistake an escaped segment terminator followed by `UNA` in free text for a service string advice
+- Malformed input raises `EDISyntaxError` instead of `StopIteration`, `IndexError`, `ValueError` or `AssertionError`
 
 [0.2.3]
 - Update dependencies (recommendations from dependabot)

@@ -445,8 +445,19 @@ class Interchange(AbstractSegmentsContainer):
         for segment in self.segments:
             if segment.tag == "UNH":
                 if not message:
-                    assert isinstance(segment.elements[0], str)
-                    assert isinstance(segment.elements[1], list)
+                    if len(segment.elements) < 2:
+                        raise EDISyntaxError(
+                            f"UNH segment needs a message reference number and a "
+                            f'message identifier: "{segment}"'
+                        )
+                    if not isinstance(segment.elements[0], str) or not isinstance(
+                        segment.elements[1], list
+                    ):
+                        raise EDISyntaxError(
+                            f"UNH segment malformed: the message reference number "
+                            f"must be a simple element and the message identifier a "
+                            f'composite one: "{segment}"'
+                        )
                     message = Message(segment.elements[0], segment.elements[1])
                     last_segment = segment
                 else:
@@ -534,13 +545,25 @@ class Interchange(AbstractSegmentsContainer):
         """
         segments = iter(segments)
 
-        first_segment = next(segments)
+        first_segment = next(segments, None)
+        if first_segment is None:
+            raise EDISyntaxError("An interchange must not be empty.")
         if first_segment.tag == "UNA":
-            unb = next(segments)
+            unb = next(segments, None)
+            if unb is None or unb.tag != "UNB":
+                raise EDISyntaxError("A UNA segment must be followed by a UNB segment.")
         elif first_segment.tag == "UNB":
             unb = first_segment
         else:
             raise EDISyntaxError("An interchange must start with UNB or UNA and UNB")
+
+        # UNB needs at least the syntax identifier, sender, recipient, date/time of
+        # preparation and the interchange control reference (elements 0..4).
+        if len(unb.elements) < 5:
+            raise EDISyntaxError(
+                f"UNB segment is incomplete, it needs at least 5 elements, "
+                f"got {len(unb.elements)}."
+            )
 
         # extract syntax identifier to know which version to validate against
         if (
@@ -610,7 +633,12 @@ class Interchange(AbstractSegmentsContainer):
         else:
             raise EDISyntaxError("Timestamp of file-creation malformed.")
 
-        timestamp = datetime.datetime.strptime(datetime_str, datetime_fmt)
+        try:
+            timestamp = datetime.datetime.strptime(datetime_str, datetime_fmt)
+        except ValueError as e:
+            raise EDISyntaxError(
+                f"Timestamp of file-creation malformed: {datetime_str}"
+            ) from e
         interchange = Interchange(
             syntax_identifier=(syntax_identifier, int(syntax_version)),
             sender=unb.elements[1],
@@ -642,7 +670,11 @@ class Interchange(AbstractSegmentsContainer):
         """
         if segment.tag == "UNA":
             self.has_una_segment = True
-            assert isinstance(segment.elements[0], str)
+            if not segment.elements or not isinstance(segment.elements[0], str):
+                raise EDISyntaxError(
+                    "A UNA segment must contain the service string advice as a "
+                    "single string element."
+                )
             self.characters = Characters.from_str(segment.elements[0])
             return
         super().add_segment(segment)

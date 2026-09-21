@@ -322,7 +322,7 @@ class Parser:
     ) -> Segment:
         name = raw_segment.pop(0)
         if isinstance(name, list):
-            raise EDISyntaxError("Invalid segment name: {name}")
+            raise EDISyntaxError(f"Invalid segment name: {name}")
 
         if name == "UNA":
             # We found another UNA segment.
@@ -334,6 +334,16 @@ class Parser:
             # However, if the syntax is set by force (Parser init parameter),
             # then we don't override it here, even if the UNB segment has another
             # value. The user might want to override this manually.
+
+            if (
+                not raw_segment
+                or not isinstance(raw_segment[0], list)
+                or len(raw_segment[0]) < 2
+            ):
+                raise EDISyntaxError(
+                    "UNB segment must start with a syntax identifier composite "
+                    "containing at least identifier and version."
+                )
 
             self.syntax_identifier = raw_segment[0][0]
             self.version = raw_segment[0][1]
