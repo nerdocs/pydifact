@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 [Unreleased]
+
+[0.2.4] - 2026-10-27
 ### Added
 - `NonConformantEDIWarning` for accepted deviations from the spec; switch off with `warn_non_conformant=False`
 - `validate` parameter for `Parser`, `from_str()`, `from_segments()` and `Interchange.from_file()` to skip validation when parsing
