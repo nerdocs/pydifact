@@ -7,8 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 [Unreleased]
 
-[0.2.4] - 2026-10-27
+[0.3.0] - 2026-10-27
 ### Added
+- Support for Python 3.14
 - `NonConformantEDIWarning` for accepted deviations from the spec; switch off with `warn_non_conformant=False`
 - `validate` parameter for `Parser`, `from_str()`, `from_segments()` and `Interchange.from_file()` to skip validation when parsing
 
@@ -18,6 +19,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - The `UNB` date/time of preparation is strict: composite `date:time`, 6-digit date for syntax 1–3, 8-digit for 4;
   wrong length, missing time or the Austrian AEK-style split `date+time` raise `EDISyntaxError` (no warning anymore)
 - `Interchange` serializes an 8-digit `UNB` date for syntax version 4
+- Update dependencies (dependabot, incl. security fixes)
+
+### Security
+- Generator downloads are hardened against Zip Slip and MITM; untrusted XML is parsed with `defusedxml`
 
 ### Fixed
 - Include the XML syntax definitions in sdist and wheel, so validation works in installed packages
@@ -36,6 +41,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `mypy pydifact` is clean and enforced in CI; `Segment.schema`/`CompositeDataElement.schema` have honest types
 - `v4.InterchangeSenderInternalSubIdentification` now subclasses `DataElement`; `v1` C080/C082 schemas use tuples
 - `DataElement`/`CompositeDataElement.validate()` use explicit checks (no `assert`) and raise `ValidationError`
+
+[0.2.4] - 2026-10-27
+- Mistakenly released as a patch version; same content as 0.3.0
 
 [0.2.3]
 - Update dependencies (recommendations from dependabot)
