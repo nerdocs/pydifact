@@ -40,7 +40,6 @@ dev = [
     "mypy>=1.15.0",
     "defusedxml>=0.7.1",
     "bandit>=1.9.4",
-    "safety>=3.7.0",
 ]
 
 [tool.ruff]
