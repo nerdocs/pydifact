@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 [Unreleased]
 
+### Fixed
+- Honor `break_lines=True` after the UNA header when serializing an empty segment list.
+
 [0.3.0] - 2026-10-27
 ### Added
 - Support for Python 3.14

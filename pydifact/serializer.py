@@ -56,17 +56,9 @@ class Serializer:
 
         # first, check if UNA header is wanted.
         if with_una_header:
-            if not segments:
-                return self.characters.service_string_advice
-            else:
-                collection_parts += [self.characters.service_string_advice]
-                if break_lines:
-                    collection_parts += ["\n"]
-
-        else:
-            # no una header wanted!
-            if not segments:
-                return ""
+            collection_parts += [self.characters.service_string_advice]
+            if break_lines:
+                collection_parts += ["\n"]
 
         # iter through all segments
         for segment in segments:

@@ -174,3 +174,9 @@ def test_interchange_serialization_with_una(interchange_str):
 def test_interchange_serialization_without_una(interchange_str):
     i = Interchange.from_str(interchange_str)
     assert i.serialize() == interchange_str
+
+
+def test_empty_segments_una_breakline(serializer):
+    assert serializer.serialize([], break_lines=True) == (
+        serializer.characters.service_string_advice + "\n"
+    )
